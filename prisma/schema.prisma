@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  GERENTE_OPERACIONES_AEREAS
+  JEFE_SEGURIDAD_AEREA
+  ADC
+  ESPECIALISTA_DOCUMENTAL
+  OPERADOR_RPA
+  AUDITOR
+  VIEWER
+}
+
+enum RecordStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum FlightPlanStatus {
+  DRAFT
+  READY_FOR_GEOMETRY
+  ON_HOLD
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  fullName  String
+  role      Role     @default(VIEWER)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CostCenter {
+  id          String       @id @default(cuid())
+  code        String       @unique
+  name        String
+  description String?
+  status      RecordStatus @default(ACTIVE)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  drones      Drone[]
+  operators   Operator[]
+  flightPlans FlightPlan[]
+}
+
+model Client {
+  id           String       @id @default(cuid())
+  code         String?      @unique
+  name         String
+  contactName  String?
+  contactEmail String?
+  notes        String?
+  status       RecordStatus @default(ACTIVE)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  flightPlans  FlightPlan[]
+}
+
+model Drone {
+  id           String       @id @default(cuid())
+  code         String?      @unique
+  serialNumber String       @unique
+  manufacturer String?
+  model        String
+  notes        String?
+  status       RecordStatus @default(ACTIVE)
+  costCenterId String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  costCenter   CostCenter?  @relation(fields: [costCenterId], references: [id])
+  flightPlans  FlightPlan[]
+}
+
+model Operator {
+  id            String       @id @default(cuid())
+  code          String?      @unique
+  fullName      String
+  email         String?
+  phone         String?
+  licenseNumber String?
+  notes         String?
+  status        RecordStatus @default(ACTIVE)
+  costCenterId  String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  costCenter    CostCenter?  @relation(fields: [costCenterId], references: [id])
+  flightPlans   FlightPlan[]
+}
+
+model FlightPlan {
+  id           String           @id @default(cuid())
+  code         String           @unique
+  title        String
+  operationDate DateTime
+  status       FlightPlanStatus @default(DRAFT)
+  notes        String?
+  geometryJson Json?
+  geometryType String?
+  costCenterId String
+  clientId     String
+  droneId      String
+  operatorId   String
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  costCenter   CostCenter       @relation(fields: [costCenterId], references: [id])
+  client       Client           @relation(fields: [clientId], references: [id])
+  drone        Drone            @relation(fields: [droneId], references: [id])
+  operator     Operator         @relation(fields: [operatorId], references: [id])
+}
