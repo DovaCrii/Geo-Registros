@@ -499,10 +499,10 @@ function CtaSection() {
             entregables técnicos.
           </p>
           <Link
-            href="#"
+            href="/dashboard"
             className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-gradient-to-b from-cyan-500/20 to-cyan-600/10 px-8 py-3.5 text-base font-medium text-cyan-100 shadow-lg shadow-cyan-500/5 transition hover:from-cyan-500/30 hover:to-cyan-600/20"
           >
-            Solicitar demo
+            Ingresar a Aeroflow
           </Link>
         </div>
       </div>
