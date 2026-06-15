@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ReactNode } from "react";
+import { FlowGuide } from "@/modules/flow-guide/flow-guide";
 
 const navigationItems = [
   { href: "/dashboard", label: "Dashboard" },
@@ -38,6 +39,7 @@ export function PageShell({ children }: { children: ReactNode }) {
 
         <main className="flex-1">{children}</main>
       </div>
+      <FlowGuide />
     </div>
   );
 }
