@@ -9,8 +9,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "AeroFlow",
-  description: "Drone & RPA flight operations platform — mission planning, permissions & documents",
+  title: "AeroFlow — Gestión centralizada de operaciones RPA",
+  description:
+    "Plataforma integral para planificación de misiones con drones, gestión de permisos DGAC, trazabilidad documental, control de flota y reportes operacionales. Cumplimiento normativo RPA.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

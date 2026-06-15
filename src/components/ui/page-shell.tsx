@@ -15,7 +15,7 @@ export function PageShell({ children }: { children: ReactNode }) {
       <div className="mx-auto flex min-h-screen max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:px-8">
         <aside className="hidden w-64 shrink-0 rounded-3xl border border-slate-800/80 bg-slate-950/55 p-5 shadow-2xl shadow-cyan-950/10 backdrop-blur lg:block">
           <div className="mb-8 space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Geo-Registros</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">AeroFlow</p>
             <h1 className="text-2xl font-semibold text-white">Operational workspace</h1>
             <p className="text-sm leading-6 text-slate-400">
               Master data foundation for flight operations, documents, and geospatial workflows.
