@@ -1,6 +1,6 @@
 "use server";
 
-import { FlightPlanStatus, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -21,20 +21,6 @@ const allowedGeometryTypes = new Set([
 function readString(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";
-}
-
-function readStatus(formData: FormData) {
-  const value = readString(formData, "status");
-
-  if (value === FlightPlanStatus.READY_FOR_GEOMETRY) {
-    return FlightPlanStatus.READY_FOR_GEOMETRY;
-  }
-
-  if (value === FlightPlanStatus.ON_HOLD) {
-    return FlightPlanStatus.ON_HOLD;
-  }
-
-  return FlightPlanStatus.DRAFT;
 }
 
 function readRequiredRelation(formData: FormData, key: string) {
@@ -101,7 +87,6 @@ export async function createFlightPlan(formData: FormData) {
   const code = readString(formData, "code");
   const title = readString(formData, "title");
   const operationDate = readOperationDate(formData);
-  const status = readStatus(formData);
   const notes = readString(formData, "notes");
   const { geometryJson, geometryType } = readGeometryPayload(formData);
   const costCenterId = readRequiredRelation(formData, "costCenterId");
@@ -118,7 +103,7 @@ export async function createFlightPlan(formData: FormData) {
       code,
       title,
       operationDate,
-      status,
+      permissionStatus: "DRAFT",
       notes: notes || null,
       geometryJson,
       geometryType,
@@ -137,7 +122,6 @@ export async function updateFlightPlan(id: string, formData: FormData) {
   const code = readString(formData, "code");
   const title = readString(formData, "title");
   const operationDate = readOperationDate(formData);
-  const status = readStatus(formData);
   const notes = readString(formData, "notes");
   const { geometryJson, geometryType } = readGeometryPayload(formData);
   const costCenterId = readRequiredRelation(formData, "costCenterId");
@@ -155,7 +139,6 @@ export async function updateFlightPlan(id: string, formData: FormData) {
       code,
       title,
       operationDate,
-      status,
       notes: notes || null,
       geometryJson,
       geometryType,

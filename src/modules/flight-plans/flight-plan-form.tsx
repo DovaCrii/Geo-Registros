@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { FlightPlanStatus } from "@prisma/client";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PrimaryButton } from "@/components/ui/primary-button";
@@ -13,7 +12,6 @@ type FlightPlanFormValues = {
   code: string;
   title: string;
   operationDate: string;
-  status: FlightPlanStatus;
   notes: string;
   geometryPayload: string;
   costCenterId: string;
@@ -21,8 +19,6 @@ type FlightPlanFormValues = {
   droneId: string;
   operatorId: string;
 };
-
-const statusOptions = [FlightPlanStatus.DRAFT, FlightPlanStatus.READY_FOR_GEOMETRY, FlightPlanStatus.ON_HOLD];
 
 function SelectField({
   name,
@@ -116,21 +112,6 @@ export function FlightPlanForm({
             defaultValue={initialValues.operationDate}
             className="w-full rounded-2xl border border-slate-700/80 bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20"
           />
-        </label>
-
-        <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Status</span>
-          <select
-            name="status"
-            defaultValue={initialValues.status}
-            className="w-full rounded-2xl border border-slate-700/80 bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20"
-          >
-            {statusOptions.map((status) => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
         </label>
 
         <SelectField name="costCenterId" label="Cost center" defaultValue={initialValues.costCenterId} options={costCenterOptions} />

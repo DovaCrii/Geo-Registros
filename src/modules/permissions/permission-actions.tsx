@@ -1,0 +1,107 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+const VALID_TRANSITIONS: Record<string, string[]> = {
+  DRAFT: ["IN_REVIEW"],
+  IN_REVIEW: ["DRAFT", "READY_FOR_SUBMISSION"],
+  READY_FOR_SUBMISSION: ["SUBMITTED"],
+  SUBMITTED: ["AUTHORIZED", "OBSERVED", "REJECTED"],
+  OBSERVED: ["IN_REVIEW", "EXPIRED"],
+  AUTHORIZED: ["EXPIRED", "CLOSED"],
+  REJECTED: ["DRAFT", "CANCELLED"],
+  EXPIRED: ["DRAFT", "CANCELLED"],
+  CLOSED: [],
+  CANCELLED: [],
+};
+
+const TRANSITION_LABELS: Record<string, string> = {
+  IN_REVIEW: "Send to review",
+  READY_FOR_SUBMISSION: "Mark ready",
+  SUBMITTED: "Submit",
+  AUTHORIZED: "Authorize",
+  OBSERVED: "Return with observations",
+  REJECTED: "Reject",
+  EXPIRED: "Mark expired",
+  CLOSED: "Close",
+  DRAFT: "Send back to draft",
+  CANCELLED: "Cancel",
+};
+
+const TRANSITION_TONES: Record<string, string> = {
+  AUTHORIZED: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20",
+  REJECTED: "border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20",
+  CANCELLED: "border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20",
+  CLOSED: "border-slate-600 bg-slate-700/50 text-slate-200 hover:bg-slate-600/50",
+};
+
+export function PermissionActions({
+  flightPlanId,
+  currentStatus,
+}: {
+  flightPlanId: string;
+  currentStatus: string;
+}) {
+  const router = useRouter();
+  const [pending, setPending] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const nextStates = VALID_TRANSITIONS[currentStatus] ?? [];
+
+  async function handleTransition(newStatus: string) {
+    setPending(newStatus);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/permissions/transition", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ flightPlanId, newStatus }),
+      });
+
+      if (!response.ok) {
+        const body = await response.text();
+        throw new Error(body || "Transition failed.");
+      }
+
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unexpected error.");
+    } finally {
+      setPending(null);
+    }
+  }
+
+  if (nextStates.length === 0) {
+    return <p className="text-xs text-slate-500">No transitions available (terminal state).</p>;
+  }
+
+  return (
+    <div className="space-y-3">
+      {error ? (
+        <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2">
+          <p className="text-xs text-rose-300">{error}</p>
+        </div>
+      ) : null}
+
+      <div className="flex flex-wrap gap-2">
+        {nextStates.map((state) => {
+          const toneClass = TRANSITION_TONES[state] ?? "border-cyan-400/30 bg-cyan-500/15 text-cyan-100 hover:bg-cyan-400/20";
+
+          return (
+            <button
+              key={state}
+              type="button"
+              disabled={pending === state}
+              onClick={() => handleTransition(state)}
+              className={`inline-flex items-center justify-center rounded-2xl border px-3 py-1.5 text-xs font-medium transition disabled:opacity-40 ${toneClass}`}
+            >
+              {pending === state ? "Processing..." : TRANSITION_LABELS[state] ?? state}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

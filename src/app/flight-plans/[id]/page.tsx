@@ -1,30 +1,21 @@
 import Link from "next/link";
-import { FlightPlanStatus } from "@prisma/client";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
-import { StatusChip } from "@/components/ui/status-chip";
 import { FlightPlanForm } from "@/modules/flight-plans/flight-plan-form";
+import { PermissionActions } from "@/modules/permissions/permission-actions";
+import { PermissionStatusBadge } from "@/modules/permissions/permission-status-badge";
+import { PermissionTimeline } from "@/modules/permissions/permission-timeline";
+import { DocumentUpload } from "@/modules/permissions/document-upload";
 import { listActiveClients } from "@/server/clients/queries";
 import { listActiveCostCenters } from "@/server/cost-centers/queries";
 import { listActiveDrones } from "@/server/drones/queries";
 import { updateFlightPlan } from "@/server/flight-plans/actions";
-import { getFlightPlanById } from "@/server/flight-plans/queries";
 import { listActiveOperators } from "@/server/operators/queries";
+import { getFlightPlanWithPermissions } from "@/server/permissions/queries";
 
 export const dynamic = "force-dynamic";
-
-function toneFromStatus(status: FlightPlanStatus) {
-  switch (status) {
-    case FlightPlanStatus.READY_FOR_GEOMETRY:
-      return "info";
-    case FlightPlanStatus.ON_HOLD:
-      return "warning";
-    default:
-      return "neutral";
-  }
-}
 
 function formatDateInput(value: Date) {
   return value.toISOString().slice(0, 10);
@@ -35,7 +26,7 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
 
   try {
     const [record, costCenters, clients, drones, operators] = await Promise.all([
-      getFlightPlanById(id),
+      getFlightPlanWithPermissions(id),
       listActiveCostCenters().catch(() => []),
       listActiveClients().catch(() => []),
       listActiveDrones().catch(() => []),
@@ -56,9 +47,9 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
       <PageShell>
         <div className="space-y-6">
           <PageHeader
-            eyebrow="Block 3 / Flight plans"
+            eyebrow="Permission workflow"
             title={record.title}
-            description="Edit the operational record before geometry, permits, and documentation layers are attached."
+            description="Manage the operational record, permission state, documents, and audit trail."
             actions={
               <>
                 <Link
@@ -67,34 +58,63 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
                 >
                   Open geometry page
                 </Link>
-                <StatusChip label={record.status} tone={toneFromStatus(record.status)} />
+                <PermissionStatusBadge status={record.permissionStatus} />
               </>
             }
           />
 
-          <FlightPlanForm
-            title="Edit flight plan"
-            description="Adjust the operational identity, date, assignment links, and canonical payload if needed. For assisted editing, use the dedicated geometry page."
-            action={updateFlightPlan.bind(null, record.id)}
-            submitLabel="Save changes"
-            initialValues={{
-              code: record.code,
-              title: record.title,
-              operationDate: formatDateInput(record.operationDate),
-              status: record.status,
-              notes: record.notes ?? "",
-              geometryPayload: record.geometryJson ? JSON.stringify(record.geometryJson, null, 2) : "",
-              costCenterId: record.costCenterId,
-              clientId: record.clientId,
-              droneId: record.droneId,
-              operatorId: record.operatorId,
-            }}
-            costCenterOptions={costCenters.map((item) => ({ id: item.id, label: `${item.code} · ${item.name}` }))}
-            clientOptions={clients.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.name}` : item.name }))}
-            droneOptions={drones.map((item) => ({ id: item.id, label: `${item.model} · ${item.serialNumber}` }))}
-            operatorOptions={operators.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.fullName}` : item.fullName }))}
-            geometrySummary={record.geometryType ?? "No geometry attached yet"}
-          />
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_360px]">
+            {/* Left column: form + permission controls */}
+            <div className="space-y-6">
+              <FlightPlanForm
+                title="Flight plan details"
+                description="Adjust the operational identity, date, assignment links, and canonical payload."
+                action={updateFlightPlan.bind(null, record.id)}
+                submitLabel="Save changes"
+                initialValues={{
+                  code: record.code,
+                  title: record.title,
+                  operationDate: formatDateInput(record.operationDate),
+                  notes: record.notes ?? "",
+                  geometryPayload: record.geometryJson ? JSON.stringify(record.geometryJson, null, 2) : "",
+                  costCenterId: record.costCenterId,
+                  clientId: record.clientId,
+                  droneId: record.droneId,
+                  operatorId: record.operatorId,
+                }}
+                costCenterOptions={costCenters.map((item) => ({ id: item.id, label: `${item.code} · ${item.name}` }))}
+                clientOptions={clients.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.name}` : item.name }))}
+                droneOptions={drones.map((item) => ({ id: item.id, label: `${item.model} · ${item.serialNumber}` }))}
+                operatorOptions={operators.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.fullName}` : item.fullName }))}
+                geometrySummary={record.geometryType ?? "No geometry attached yet"}
+              />
+
+              <DetailPanel title="Permission workflow" description="Manage the permission state and transitions for this flight plan.">
+                <div className="space-y-6">
+                  <div>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Current status</p>
+                    <PermissionStatusBadge status={record.permissionStatus} />
+                  </div>
+
+                  <div>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Available transitions</p>
+                    <PermissionActions flightPlanId={record.id} currentStatus={record.permissionStatus} />
+                  </div>
+                </div>
+              </DetailPanel>
+
+              <DetailPanel title="Documents" description="Attach and manage operational documents for this flight plan.">
+                <DocumentUpload flightPlanId={record.id} documents={record.documents} />
+              </DetailPanel>
+            </div>
+
+            {/* Right column: timeline */}
+            <div className="space-y-6">
+              <DetailPanel title="Event timeline" description="Audit trail of all permission-related events.">
+                <PermissionTimeline events={record.permissionEvents} />
+              </DetailPanel>
+            </div>
+          </div>
         </div>
       </PageShell>
     );

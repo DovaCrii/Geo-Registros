@@ -1,5 +1,3 @@
-import { FlightPlanStatus } from "@prisma/client";
-
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
@@ -46,7 +44,6 @@ export default async function NewFlightPlanPage() {
             code: "",
             title: "",
             operationDate: "",
-            status: FlightPlanStatus.DRAFT,
             notes: "",
             geometryPayload: "",
             costCenterId: "",

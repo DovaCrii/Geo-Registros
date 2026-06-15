@@ -23,10 +23,17 @@ enum RecordStatus {
   INACTIVE
 }
 
-enum FlightPlanStatus {
+enum PermissionStatus {
   DRAFT
-  READY_FOR_GEOMETRY
-  ON_HOLD
+  IN_REVIEW
+  READY_FOR_SUBMISSION
+  SUBMITTED
+  AUTHORIZED
+  OBSERVED
+  REJECTED
+  EXPIRED
+  CLOSED
+  CANCELLED
 }
 
 model User {
@@ -97,22 +104,51 @@ model Operator {
 }
 
 model FlightPlan {
+  id               String           @id @default(cuid())
+  code             String           @unique
+  title            String
+  operationDate    DateTime
+  permissionStatus PermissionStatus @default(DRAFT)
+  notes            String?
+  geometryJson     Json?
+  geometryType     String?
+  costCenterId     String
+  clientId         String
+  droneId          String
+  operatorId       String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  costCenter       CostCenter       @relation(fields: [costCenterId], references: [id])
+  client           Client           @relation(fields: [clientId], references: [id])
+  drone            Drone            @relation(fields: [droneId], references: [id])
+  operator         Operator         @relation(fields: [operatorId], references: [id])
+  permissionEvents PermissionEvent[]
+  documents        Document[]
+}
+
+model PermissionEvent {
   id           String           @id @default(cuid())
-  code         String           @unique
-  title        String
-  operationDate DateTime
-  status       FlightPlanStatus @default(DRAFT)
-  notes        String?
-  geometryJson Json?
-  geometryType String?
-  costCenterId String
-  clientId     String
-  droneId      String
-  operatorId   String
+  flightPlanId String
+  eventType    String
+  fromStatus   PermissionStatus?
+  toStatus     PermissionStatus?
+  description  String?
+  metadata     Json?
+  createdById  String?
   createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-  costCenter   CostCenter       @relation(fields: [costCenterId], references: [id])
-  client       Client           @relation(fields: [clientId], references: [id])
-  drone        Drone            @relation(fields: [droneId], references: [id])
-  operator     Operator         @relation(fields: [operatorId], references: [id])
+  flightPlan   FlightPlan       @relation(fields: [flightPlanId], references: [id])
+}
+
+model Document {
+  id           String     @id @default(cuid())
+  flightPlanId String
+  docType      String
+  fileName     String
+  filePath     String
+  mimeType     String?
+  fileSize     Int?
+  notes        String?
+  uploadedById String?
+  createdAt    DateTime   @default(now())
+  flightPlan   FlightPlan @relation(fields: [flightPlanId], references: [id])
 }

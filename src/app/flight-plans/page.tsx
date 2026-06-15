@@ -1,6 +1,4 @@
 import Link from "next/link";
-import { FlightPlanStatus } from "@prisma/client";
-
 import { DataColumn, DataTable } from "@/components/ui/data-table";
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { FilterBar, FilterField } from "@/components/ui/filter-bar";
@@ -13,15 +11,21 @@ export const dynamic = "force-dynamic";
 
 type FlightPlanRow = Awaited<ReturnType<typeof listFlightPlans>>[number];
 
-function toneFromStatus(status: FlightPlanStatus) {
-  switch (status) {
-    case FlightPlanStatus.READY_FOR_GEOMETRY:
-      return "info";
-    case FlightPlanStatus.ON_HOLD:
-      return "warning";
-    default:
-      return "neutral";
-  }
+const STATUS_TONES: Record<string, "success" | "warning" | "danger" | "info" | "neutral"> = {
+  DRAFT: "neutral",
+  IN_REVIEW: "info",
+  READY_FOR_SUBMISSION: "info",
+  SUBMITTED: "info",
+  AUTHORIZED: "success",
+  OBSERVED: "warning",
+  REJECTED: "danger",
+  EXPIRED: "danger",
+  CLOSED: "neutral",
+  CANCELLED: "neutral",
+};
+
+function toneFromPermissionStatus(status: string) {
+  return STATUS_TONES[status] ?? "neutral";
 }
 
 const formatter = new Intl.DateTimeFormat("en-CA", {
@@ -70,9 +74,9 @@ const columns: Array<DataColumn<FlightPlanRow>> = [
       ),
   },
   {
-    key: "status",
-    header: "Status",
-    render: (row) => <StatusChip label={row.status} tone={toneFromStatus(row.status)} />,
+    key: "permissionStatus",
+    header: "Permission",
+    render: (row) => <StatusChip label={row.permissionStatus} tone={toneFromPermissionStatus(row.permissionStatus)} />,
   },
   {
     key: "actions",

@@ -8,7 +8,7 @@ export async function listFlightPlans() {
       code: true,
       title: true,
       operationDate: true,
-      status: true,
+      permissionStatus: true,
       geometryType: true,
       costCenter: {
         select: {
@@ -48,7 +48,7 @@ export async function getFlightPlanById(id: string) {
       code: true,
         title: true,
         operationDate: true,
-        status: true,
+        permissionStatus: true,
         notes: true,
         geometryJson: true,
         geometryType: true,

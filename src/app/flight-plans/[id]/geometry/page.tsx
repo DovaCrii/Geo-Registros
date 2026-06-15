@@ -1,5 +1,3 @@
-import { FlightPlanStatus } from "@prisma/client";
-
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
@@ -10,15 +8,21 @@ import { getFlightPlanById } from "@/server/flight-plans/queries";
 
 export const dynamic = "force-dynamic";
 
-function toneFromStatus(status: FlightPlanStatus) {
-  switch (status) {
-    case FlightPlanStatus.READY_FOR_GEOMETRY:
-      return "info";
-    case FlightPlanStatus.ON_HOLD:
-      return "warning";
-    default:
-      return "neutral";
-  }
+const STATUS_TONES: Record<string, "success" | "warning" | "danger" | "info" | "neutral"> = {
+  DRAFT: "neutral",
+  IN_REVIEW: "info",
+  READY_FOR_SUBMISSION: "info",
+  SUBMITTED: "info",
+  AUTHORIZED: "success",
+  OBSERVED: "warning",
+  REJECTED: "danger",
+  EXPIRED: "danger",
+  CLOSED: "neutral",
+  CANCELLED: "neutral",
+};
+
+function toneFromPermissionStatus(status: string) {
+  return STATUS_TONES[status] ?? "neutral";
 }
 
 export default async function FlightPlanGeometryPage({ params }: { params: Promise<{ id: string }> }) {
@@ -44,7 +48,7 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
             eyebrow="Block 3 / Map-assisted geometry"
             title={`${record.code} · geometry`}
             description="Render the current GeoJSON on a real 2D map, edit it in a controlled way, and save it back to this flight plan."
-            actions={<StatusChip label={record.status} tone={toneFromStatus(record.status)} />}
+            actions={<StatusChip label={record.permissionStatus} tone={toneFromPermissionStatus(record.permissionStatus)} />}
           />
 
           <GeometryEditor
