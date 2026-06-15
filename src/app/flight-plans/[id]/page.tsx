@@ -14,6 +14,8 @@ import { listActiveDrones } from "@/server/drones/queries";
 import { updateFlightPlan } from "@/server/flight-plans/actions";
 import { listActiveOperators } from "@/server/operators/queries";
 import { getFlightPlanWithPermissions } from "@/server/permissions/queries";
+import { getWeatherForecast } from "@/server/weather/service";
+import { WeatherCard } from "@/modules/weather/weather-card";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +44,10 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
         </PageShell>
       );
     }
+
+    const weatherData = record.geometryJson
+      ? await getWeatherForecast(record.geometryJson, record.operationDate).catch(() => null)
+      : null;
 
     return (
       <PageShell>
@@ -108,11 +114,13 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
               </DetailPanel>
             </div>
 
-            {/* Right column: timeline */}
+            {/* Right column: timeline + weather */}
             <div className="space-y-6">
               <DetailPanel title="Event timeline" description="Audit trail of all permission-related events.">
                 <PermissionTimeline events={record.permissionEvents} />
               </DetailPanel>
+
+              <WeatherCard data={weatherData} />
             </div>
           </div>
         </div>
