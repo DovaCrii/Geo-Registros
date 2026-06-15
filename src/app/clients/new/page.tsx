@@ -2,10 +2,13 @@ import { RecordStatus } from "@prisma/client";
 
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import { requirePageAuth } from "@/lib/require-page-auth";
 import { ClientForm } from "@/modules/clients/client-form";
 import { createClient } from "@/server/clients/actions";
 
-export default function NewClientPage() {
+export default async function NewClientPage() {
+  await requirePageAuth("/clients/new");
+
   return (
     <PageShell>
       <div className="space-y-6">

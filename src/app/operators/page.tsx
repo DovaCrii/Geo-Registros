@@ -3,15 +3,18 @@ import { RecordStatus } from "@prisma/client";
 
 import { DataColumn, DataTable } from "@/components/ui/data-table";
 import { DetailPanel } from "@/components/ui/detail-panel";
-import { FilterBar, FilterField } from "@/components/ui/filter-bar";
+import { FilterBar } from "@/components/ui/filter-bar";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import { SearchInput } from "@/components/ui/search-input";
+import { Pagination } from "@/components/ui/pagination";
 import { StatusChip } from "@/components/ui/status-chip";
+import { requirePageAuth } from "@/lib/require-page-auth";
 import { listOperators } from "@/server/operators/queries";
 
 export const dynamic = "force-dynamic";
 
-type OperatorRow = Awaited<ReturnType<typeof listOperators>>[number];
+type OperatorRow = Awaited<ReturnType<typeof listOperators>>["rows"][number];
 
 function toneFromStatus(status: RecordStatus) {
   return status === RecordStatus.ACTIVE ? "success" : "neutral";
@@ -61,9 +64,20 @@ const columns: Array<DataColumn<OperatorRow>> = [
   },
 ];
 
-export default async function OperatorsPage() {
+export default async function OperatorsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; page?: string }>;
+}) {
+  const { q, page: pageStr } = await searchParams;
+  const page = Number(pageStr) || 1;
+  const params = new URLSearchParams();
+  if (q) params.set("q", q);
+  if (pageStr) params.set("page", pageStr);
+  await requirePageAuth(params.toString() ? `/operators?${params.toString()}` : "/operators");
+
   try {
-    const rows = await listOperators();
+    const { rows, total } = await listOperators(q, page);
 
     return (
       <PageShell>
@@ -80,10 +94,10 @@ export default async function OperatorsPage() {
           />
 
           <FilterBar>
-            <FilterField label="Search" placeholder="Search name, code, or license" />
-            <FilterField label="Certification" placeholder="Reserved for next slice" />
-            <FilterField label="Cost center" placeholder="Reserved for next slice" />
-            <FilterField label="Status" placeholder="ACTIVE / INACTIVE" />
+            <SearchInput placeholder="Nombre, código o licencia…" />
+            <div />
+            <div />
+            <div />
           </FilterBar>
 
           <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_360px]">
@@ -119,6 +133,8 @@ export default async function OperatorsPage() {
               </Link>
             </DetailPanel>
           </div>
+
+          <Pagination total={total} page={page} pageSize={10} />
         </div>
       </PageShell>
     );

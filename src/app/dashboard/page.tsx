@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { StatusChip } from "@/components/ui/status-chip";
 import { PageShell } from "@/components/ui/page-shell";
-import { auth } from "@/lib/auth";
+import { requirePageAuth } from "@/lib/require-page-auth";
 import { getDashboardStats } from "@/server/dashboard/queries";
 
 export const dynamic = "force-dynamic";
@@ -117,7 +117,7 @@ const STATUS_LABELS: Record<string, string> = {
 // ─── Page ─────────────────────────────────────────────────────
 
 export default async function DashboardPage() {
-  const session = await auth();
+  const session = await requirePageAuth("/dashboard");
   const stats = await getDashboardStats();
 
   const userName = session?.user?.name ?? "Usuario";
@@ -193,6 +193,18 @@ export default async function DashboardPage() {
                   </Link>
                 </p>
               )}
+            </div>
+
+            {/* Export button */}
+            <div className="flex justify-end">
+              <a
+                href="/api/reports/dashboard"
+                className="inline-flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-xs font-medium text-emerald-200 transition hover:border-emerald-400/30 hover:bg-emerald-500/20"
+                download
+              >
+                <span>⬇</span>
+                Exportar Excel
+              </a>
             </div>
 
             {/* Recent activity */}

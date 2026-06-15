@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 export function FilterBar({ children }: { children: ReactNode }) {
   return (
     <section className="rounded-3xl border border-slate-800/80 bg-slate-950/45 p-5 shadow-xl shadow-slate-950/10 backdrop-blur">
-      <div className="grid gap-4 lg:grid-cols-4">{children}</div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{children}</div>
     </section>
   );
 }

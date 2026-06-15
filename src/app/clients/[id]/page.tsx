@@ -4,6 +4,7 @@ import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { StatusChip } from "@/components/ui/status-chip";
+import { requirePageAuth } from "@/lib/require-page-auth";
 import { ClientForm } from "@/modules/clients/client-form";
 import { updateClient } from "@/server/clients/actions";
 import { getClientById } from "@/server/clients/queries";
@@ -16,6 +17,7 @@ function toneFromStatus(status: RecordStatus) {
 
 export default async function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  await requirePageAuth(`/clients/${id}`);
 
   try {
     const record = await getClientById(id);

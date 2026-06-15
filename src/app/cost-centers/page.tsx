@@ -3,15 +3,18 @@ import { RecordStatus } from "@prisma/client";
 
 import { DataColumn, DataTable } from "@/components/ui/data-table";
 import { DetailPanel } from "@/components/ui/detail-panel";
-import { FilterBar, FilterField } from "@/components/ui/filter-bar";
+import { FilterBar } from "@/components/ui/filter-bar";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import { SearchInput } from "@/components/ui/search-input";
+import { Pagination } from "@/components/ui/pagination";
 import { StatusChip } from "@/components/ui/status-chip";
+import { requirePageAuth } from "@/lib/require-page-auth";
 import { listCostCenters } from "@/server/cost-centers/queries";
 
 export const dynamic = "force-dynamic";
 
-type CostCenterRow = Awaited<ReturnType<typeof listCostCenters>>[number];
+type CostCenterRow = Awaited<ReturnType<typeof listCostCenters>>["rows"][number];
 
 function toneFromStatus(status: RecordStatus) {
   return status === RecordStatus.ACTIVE ? "success" : "neutral";
@@ -58,9 +61,20 @@ const columns: Array<DataColumn<CostCenterRow>> = [
   },
 ];
 
-export default async function CostCentersPage() {
+export default async function CostCentersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; page?: string }>;
+}) {
+  const { q, page: pageStr } = await searchParams;
+  const page = Number(pageStr) || 1;
+  const params = new URLSearchParams();
+  if (q) params.set("q", q);
+  if (pageStr) params.set("page", pageStr);
+  await requirePageAuth(params.toString() ? `/cost-centers?${params.toString()}` : "/cost-centers");
+
   try {
-    const rows = await listCostCenters();
+    const { rows, total } = await listCostCenters(q, page);
 
     return (
       <PageShell>
@@ -80,10 +94,10 @@ export default async function CostCentersPage() {
           />
 
           <FilterBar>
-            <FilterField label="Search" placeholder="Search cost center code or name" />
-            <FilterField label="Business unit" placeholder="Reserved for next slice" />
-            <FilterField label="Operations lead" placeholder="Reserved for next slice" />
-            <FilterField label="Status" placeholder="ACTIVE / INACTIVE" />
+            <SearchInput placeholder="Código o nombre del centro…" />
+            <div />
+            <div />
+            <div />
           </FilterBar>
 
           <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_360px]">
@@ -125,6 +139,8 @@ export default async function CostCentersPage() {
               </Link>
             </DetailPanel>
           </div>
+
+          <Pagination total={total} page={page} pageSize={10} />
         </div>
       </PageShell>
     );

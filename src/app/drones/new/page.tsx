@@ -2,6 +2,7 @@ import { RecordStatus } from "@prisma/client";
 
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import { requirePageAuth } from "@/lib/require-page-auth";
 import { DroneForm } from "@/modules/drones/drone-form";
 import { listActiveCostCenters } from "@/server/cost-centers/queries";
 import { createDrone } from "@/server/drones/actions";
@@ -9,6 +10,8 @@ import { createDrone } from "@/server/drones/actions";
 export const dynamic = "force-dynamic";
 
 export default async function NewDronePage() {
+  await requirePageAuth("/drones/new");
+
   const costCenterOptions = await listActiveCostCenters().catch(() => []);
 
   return (

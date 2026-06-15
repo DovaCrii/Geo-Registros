@@ -1,6 +1,7 @@
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import { requirePageAuth } from "@/lib/require-page-auth";
 import { FlightPlanForm } from "@/modules/flight-plans/flight-plan-form";
 import { listActiveClients } from "@/server/clients/queries";
 import { listActiveCostCenters } from "@/server/cost-centers/queries";
@@ -11,6 +12,8 @@ import { listActiveOperators } from "@/server/operators/queries";
 export const dynamic = "force-dynamic";
 
 export default async function NewFlightPlanPage() {
+  await requirePageAuth("/flight-plans/new");
+
   const [costCenters, clients, drones, operators] = await Promise.all([
     listActiveCostCenters().catch(() => []),
     listActiveClients().catch(() => []),

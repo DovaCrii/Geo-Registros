@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/lib/toast-context";
 
 const DOC_TYPE_LABELS: Record<string, string> = {
   DGAC_REGISTRY: "DGAC Registry",
@@ -34,13 +35,16 @@ export function DocumentUpload({
   }>;
 }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [selectedType, setSelectedType] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pendingRemove, setPendingRemove] = useState<string | null>(null);
+  const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
 
   async function handleRemove(documentId: string) {
     setPendingRemove(documentId);
     setError(null);
+    setConfirmRemove(null);
 
     try {
       const response = await fetch("/api/permissions/documents/remove", {
@@ -54,9 +58,12 @@ export function DocumentUpload({
         throw new Error(body || "Failed to remove document.");
       }
 
+      toast("success", "Documento eliminado");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unexpected error.");
+      const msg = err instanceof Error ? err.message : "Unexpected error.";
+      setError(msg);
+      toast("error", "Error al eliminar documento", msg);
     } finally {
       setPendingRemove(null);
     }
@@ -96,11 +103,14 @@ export function DocumentUpload({
         throw new Error(body || "Upload failed.");
       }
 
+      toast("success", "Documento subido");
       setSelectedType("");
       fileInput.value = "";
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unexpected error.");
+      const msg = err instanceof Error ? err.message : "Unexpected error.";
+      setError(msg);
+      toast("error", "Error al subir documento", msg);
     }
   }
 
@@ -154,24 +164,53 @@ export function DocumentUpload({
           </p>
           <div className="space-y-2">
             {documents.map((doc) => (
-              <div
-                key={doc.id}
-                className="flex items-center justify-between rounded-2xl border border-slate-800/80 bg-slate-900/70 px-4 py-2.5"
-              >
-                <div className="min-w-0 flex-1 space-y-0.5">
-                  <p className="truncate text-sm font-medium text-slate-200">{doc.fileName}</p>
-                  <p className="text-xs text-slate-500">
-                    {DOC_TYPE_LABELS[doc.docType] ?? doc.docType}
-                  </p>
+              <div key={doc.id} className="relative">
+                <div className="flex items-center justify-between rounded-2xl border border-slate-800/80 bg-slate-900/70 px-4 py-2.5">
+                  <div className="min-w-0 flex-1 space-y-0.5">
+                    <p className="truncate text-sm font-medium text-slate-200">{doc.fileName}</p>
+                    <p className="text-xs text-slate-500">
+                      {DOC_TYPE_LABELS[doc.docType] ?? doc.docType}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={pendingRemove === doc.id}
+                    onClick={() => setConfirmRemove(doc.id)}
+                    className="ml-3 shrink-0 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-1 text-xs font-medium text-rose-300 transition hover:bg-rose-500/20 disabled:opacity-40"
+                  >
+                    {pendingRemove === doc.id ? "..." : "Remove"}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  disabled={pendingRemove === doc.id}
-                  onClick={() => handleRemove(doc.id)}
-                  className="ml-3 shrink-0 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-1 text-xs font-medium text-rose-300 transition hover:bg-rose-500/20 disabled:opacity-40"
-                >
-                  {pendingRemove === doc.id ? "..." : "Remove"}
-                </button>
+
+                {/* Confirmation overlay */}
+                {confirmRemove === doc.id && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-slate-950/90 backdrop-blur-sm">
+                    <div className="text-center">
+                      <p className="mb-2 text-sm font-medium text-white">
+                        ¿Eliminar "{doc.fileName}"?
+                      </p>
+                      <p className="mb-3 text-xs text-slate-400">
+                        Esta acción no se puede deshacer.
+                      </p>
+                      <div className="flex justify-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setConfirmRemove(null)}
+                          className="rounded-xl border border-slate-700/80 bg-slate-900/80 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:bg-slate-800"
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleRemove(doc.id)}
+                          className="rounded-xl border border-rose-500/40 bg-rose-500/20 px-3 py-1.5 text-xs font-medium text-rose-200 transition hover:bg-rose-500/30"
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>

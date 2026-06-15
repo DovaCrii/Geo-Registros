@@ -4,6 +4,7 @@ import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { StatusChip } from "@/components/ui/status-chip";
+import { requirePageAuth } from "@/lib/require-page-auth";
 import { CostCenterForm } from "@/modules/cost-centers/cost-center-form";
 import { updateCostCenter } from "@/server/cost-centers/actions";
 import { getCostCenterById } from "@/server/cost-centers/queries";
@@ -16,6 +17,7 @@ function toneFromStatus(status: RecordStatus) {
 
 export default async function CostCenterDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  await requirePageAuth(`/cost-centers/${id}`);
 
   try {
     const record = await getCostCenterById(id);

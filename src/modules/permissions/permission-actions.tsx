@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useToast } from "@/lib/toast-context";
 
 const VALID_TRANSITIONS: Record<string, string[]> = {
   DRAFT: ["IN_REVIEW"],
@@ -44,6 +45,7 @@ export function PermissionActions({
   currentStatus: string;
 }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [pending, setPending] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,9 +67,12 @@ export function PermissionActions({
         throw new Error(body || "Transition failed.");
       }
 
+      toast("success", `Permiso ${TRANSITION_LABELS[newStatus]?.toLowerCase() ?? newStatus}`);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unexpected error.");
+      const msg = err instanceof Error ? err.message : "Unexpected error.";
+      setError(msg);
+      toast("error", "Error al cambiar estado", msg);
     } finally {
       setPending(null);
     }

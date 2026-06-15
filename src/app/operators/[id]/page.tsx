@@ -4,6 +4,7 @@ import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { StatusChip } from "@/components/ui/status-chip";
+import { requirePageAuth } from "@/lib/require-page-auth";
 import { OperatorForm } from "@/modules/operators/operator-form";
 import { listActiveCostCenters } from "@/server/cost-centers/queries";
 import { updateOperator } from "@/server/operators/actions";
@@ -17,6 +18,7 @@ function toneFromStatus(status: RecordStatus) {
 
 export default async function OperatorDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  await requirePageAuth(`/operators/${id}`);
 
   try {
     const [record, costCenterOptions] = await Promise.all([getOperatorById(id), listActiveCostCenters().catch(() => [])]);

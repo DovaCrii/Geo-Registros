@@ -475,7 +475,7 @@ export function GeometryEditor({
           </div>
         </div>
 
-        <div className="relative h-[560px] bg-slate-950">
+        <div className="relative h-[300px] sm:h-[400px] lg:h-[560px] bg-slate-950">
           <div ref={containerRef} className="h-full w-full" />
           {!parsed.valid ? (
             <div className="pointer-events-none absolute inset-x-4 top-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200 backdrop-blur">

@@ -2,7 +2,8 @@ import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { StatusChip } from "@/components/ui/status-chip";
-import { GeometryEditor } from "@/modules/flight-plans/geometry-editor";
+import { requirePageAuth } from "@/lib/require-page-auth";
+import { GeometryEditorWrapper } from "@/modules/flight-plans/geometry-editor-wrapper";
 import { updateFlightPlanGeometry } from "@/server/flight-plans/actions";
 import { getFlightPlanById } from "@/server/flight-plans/queries";
 
@@ -27,6 +28,7 @@ function toneFromPermissionStatus(status: string) {
 
 export default async function FlightPlanGeometryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  await requirePageAuth(`/flight-plans/${id}/geometry`);
 
   try {
     const record = await getFlightPlanById(id);
@@ -51,7 +53,7 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
             actions={<StatusChip label={record.permissionStatus} tone={toneFromPermissionStatus(record.permissionStatus)} />}
           />
 
-          <GeometryEditor
+          <GeometryEditorWrapper
             title="Geometry payload editor"
             description="Use this page to round-trip canonical GeoJSON with a live map preview. Heavy geospatial tooling remains deferred on purpose."
             action={updateFlightPlanGeometry.bind(null, record.id)}

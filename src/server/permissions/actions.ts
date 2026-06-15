@@ -3,56 +3,41 @@
 import type { PermissionStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-
-const VALID_TRANSITIONS: Record<string, string[]> = {
-  DRAFT: ["IN_REVIEW"],
-  IN_REVIEW: ["DRAFT", "READY_FOR_SUBMISSION"],
-  READY_FOR_SUBMISSION: ["SUBMITTED"],
-  SUBMITTED: ["AUTHORIZED", "OBSERVED", "REJECTED"],
-  OBSERVED: ["IN_REVIEW", "EXPIRED"],
-  AUTHORIZED: ["EXPIRED", "CLOSED"],
-  REJECTED: ["DRAFT", "CANCELLED"],
-  EXPIRED: ["DRAFT", "CANCELLED"],
-  CLOSED: [],
-  CANCELLED: [],
-};
-
-const TERMINAL_STATES = new Set(["CLOSED", "CANCELLED"]);
-
-function isValidTransition(from: string, to: string): boolean {
-  const allowed = VALID_TRANSITIONS[from];
-  return allowed ? allowed.includes(to) : false;
-}
+import { broadcastNotification } from "@/server/notifications/service";
+import { requirePermission } from "@/lib/authorize";
+import {
+  isTerminalState,
+  isValidTransition,
+  VALID_TRANSITIONS,
+  validateTransition,
+} from "@/server/permissions/transitions";
 
 export async function transitionPermission(
   flightPlanId: string,
   newStatus: PermissionStatus,
   description?: string
 ) {
+  await requirePermission("permission:transition");
+  const session = await auth();
+  const userId = session?.user?.id;
+
   const flightPlan = await prisma.flightPlan.findUnique({
     where: { id: flightPlanId },
-    select: { permissionStatus: true },
+    select: { permissionStatus: true, code: true, deletedAt: true },
   });
 
-  if (!flightPlan) {
+  if (!flightPlan || flightPlan.deletedAt) {
     throw new Error("Flight plan not found.");
   }
 
   const currentStatus = flightPlan.permissionStatus;
 
-  if (currentStatus === newStatus) {
-    throw new Error(`Flight plan is already in ${currentStatus} status.`);
-  }
-
-  if (TERMINAL_STATES.has(currentStatus)) {
-    throw new Error(`Cannot transition from terminal state ${currentStatus}.`);
-  }
-
-  if (!isValidTransition(currentStatus, newStatus)) {
-    throw new Error(
-      `Invalid transition from ${currentStatus} to ${newStatus}. Allowed: ${VALID_TRANSITIONS[currentStatus].join(", ")}`
-    );
+  // Pure validation — no DB needed
+  const validationError = validateTransition(currentStatus, newStatus);
+  if (validationError) {
+    throw new Error(validationError);
   }
 
   const [updated] = await prisma.$transaction([
@@ -67,12 +52,24 @@ export async function transitionPermission(
         fromStatus: currentStatus,
         toStatus: newStatus,
         description: description || `Status changed from ${currentStatus} to ${newStatus}`,
+        createdById: userId,
       },
     }),
   ]);
 
   revalidatePath(`/flight-plans/${flightPlanId}`);
   revalidatePath("/flight-plans");
+
+  // Notify all active users, exclude the one who triggered it
+  await broadcastNotification(
+    {
+      title: `Permiso actualizado: ${flightPlan.code}`,
+      message: description || `${currentStatus} → ${newStatus}`,
+      type: "PERMISSION_TRANSITION",
+      link: `/flight-plans/${flightPlanId}`,
+    },
+    userId,
+  );
 
   return updated;
 }
@@ -86,24 +83,48 @@ export async function attachDocument(
   fileSize?: number,
   notes?: string
 ) {
-  const document = await prisma.document.create({
-    data: {
-      flightPlanId,
-      docType,
-      fileName,
-      filePath,
-      mimeType: mimeType || null,
-      fileSize: fileSize || null,
-      notes: notes || null,
-    },
+  await requirePermission("document:upload");
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  const flightPlanRecord = await prisma.flightPlan.findUnique({
+    where: { id: flightPlanId },
+    select: { id: true, code: true, deletedAt: true },
   });
+
+  if (!flightPlanRecord || flightPlanRecord.deletedAt) {
+    throw new Error("Flight plan not found.");
+  }
+
+  const [document] = await Promise.all([
+    prisma.document.create({
+      data: {
+        flightPlanId,
+        docType,
+        fileName,
+        filePath,
+        mimeType: mimeType || null,
+        fileSize: fileSize || null,
+        notes: notes || null,
+        uploadedById: userId,
+      },
+    }),
+  ]);
 
   await prisma.permissionEvent.create({
     data: {
       flightPlanId,
       eventType: "DOCUMENT_ATTACHED",
       description: `Document "${fileName}" (${docType}) attached.`,
+      createdById: userId,
     },
+  });
+
+  await broadcastNotification({
+    title: `Documento adjuntado: ${flightPlanRecord.code}`,
+    message: `Se adjuntó "${fileName}" (${docType})`,
+    type: "DOCUMENT_ATTACHED",
+    link: `/flight-plans/${flightPlanId}`,
   });
 
   revalidatePath(`/flight-plans/${flightPlanId}`);
@@ -113,23 +134,52 @@ export async function attachDocument(
 }
 
 export async function removeDocument(flightPlanId: string, documentId: string) {
+  await requirePermission("document:remove");
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  const flightPlanRecord = await prisma.flightPlan.findUnique({
+    where: { id: flightPlanId },
+    select: { id: true, deletedAt: true, code: true },
+  });
+
+  if (!flightPlanRecord || flightPlanRecord.deletedAt) {
+    throw new Error("Flight plan not found.");
+  }
+
   const doc = await prisma.document.findUnique({
     where: { id: documentId },
-    select: { fileName: true, docType: true },
+    select: { fileName: true, docType: true, deletedAt: true },
   });
 
   if (!doc) {
     throw new Error("Document not found.");
   }
 
-  await prisma.document.delete({ where: { id: documentId } });
+  if (doc.deletedAt) {
+    throw new Error("Document has already been removed.");
+  }
+
+  // Soft delete: set deletedAt instead of removing the record
+  await prisma.document.update({
+    where: { id: documentId },
+    data: { deletedAt: new Date() },
+  });
 
   await prisma.permissionEvent.create({
     data: {
       flightPlanId,
       eventType: "DOCUMENT_REMOVED",
       description: `Document "${doc.fileName}" (${doc.docType}) removed.`,
+      createdById: userId,
     },
+  });
+
+  await broadcastNotification({
+    title: `Documento eliminado: ${flightPlanRecord.code}`,
+    message: `Se eliminó "${doc.fileName}" (${doc.docType})`,
+    type: "DOCUMENT_REMOVED",
+    link: `/flight-plans/${flightPlanId}`,
   });
 
   revalidatePath(`/flight-plans/${flightPlanId}`);
@@ -137,12 +187,33 @@ export async function removeDocument(flightPlanId: string, documentId: string) {
 }
 
 export async function addPermissionNote(flightPlanId: string, note: string) {
+  await requirePermission("permission:transition");
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  const flightPlanRecord = await prisma.flightPlan.findUnique({
+    where: { id: flightPlanId },
+    select: { code: true, deletedAt: true },
+  });
+
+  if (!flightPlanRecord || flightPlanRecord.deletedAt) {
+    throw new Error("Flight plan not found.");
+  }
+
   await prisma.permissionEvent.create({
     data: {
       flightPlanId,
       eventType: "NOTE_ADDED",
       description: note,
+      createdById: userId,
     },
+  });
+
+  await broadcastNotification({
+    title: `Nota agregada: ${flightPlanRecord.code}`,
+    message: note,
+    type: "NOTE_ADDED",
+    link: `/flight-plans/${flightPlanId}`,
   });
 
   revalidatePath(`/flight-plans/${flightPlanId}`);

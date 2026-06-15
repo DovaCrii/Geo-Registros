@@ -5,6 +5,7 @@ export async function getDashboardStats() {
     await Promise.all([
       prisma.flightPlan.groupBy({
         by: ["permissionStatus"],
+        where: { deletedAt: null },
         _count: true,
       }),
 
@@ -20,6 +21,7 @@ export async function getDashboardStats() {
       prisma.costCenter.count(),
 
       prisma.permissionEvent.findMany({
+        where: { deletedAt: null },
         orderBy: { createdAt: "desc" },
         take: 10,
         include: {
@@ -30,6 +32,7 @@ export async function getDashboardStats() {
       }),
 
       prisma.document.findMany({
+        where: { deletedAt: null },
         orderBy: { createdAt: "desc" },
         take: 5,
         include: {

@@ -3,15 +3,18 @@ import { RecordStatus } from "@prisma/client";
 
 import { DataColumn, DataTable } from "@/components/ui/data-table";
 import { DetailPanel } from "@/components/ui/detail-panel";
-import { FilterBar, FilterField } from "@/components/ui/filter-bar";
+import { FilterBar } from "@/components/ui/filter-bar";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import { SearchInput } from "@/components/ui/search-input";
+import { Pagination } from "@/components/ui/pagination";
 import { StatusChip } from "@/components/ui/status-chip";
+import { requirePageAuth } from "@/lib/require-page-auth";
 import { listDrones } from "@/server/drones/queries";
 
 export const dynamic = "force-dynamic";
 
-type DroneRow = Awaited<ReturnType<typeof listDrones>>[number];
+type DroneRow = Awaited<ReturnType<typeof listDrones>>["rows"][number];
 
 function toneFromStatus(status: RecordStatus) {
   return status === RecordStatus.ACTIVE ? "success" : "neutral";
@@ -61,9 +64,20 @@ const columns: Array<DataColumn<DroneRow>> = [
   },
 ];
 
-export default async function DronesPage() {
+export default async function DronesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; page?: string }>;
+}) {
+  const { q, page: pageStr } = await searchParams;
+  const page = Number(pageStr) || 1;
+  const params = new URLSearchParams();
+  if (q) params.set("q", q);
+  if (pageStr) params.set("page", pageStr);
+  await requirePageAuth(params.toString() ? `/drones?${params.toString()}` : "/drones");
+
   try {
-    const rows = await listDrones();
+    const { rows, total } = await listDrones(q, page);
 
     return (
       <PageShell>
@@ -83,10 +97,10 @@ export default async function DronesPage() {
           />
 
           <FilterBar>
-            <FilterField label="Search" placeholder="Search code, serial, or model" />
-            <FilterField label="Platform class" placeholder="Reserved for next slice" />
-            <FilterField label="Cost center" placeholder="Reserved for next slice" />
-            <FilterField label="Status" placeholder="ACTIVE / INACTIVE" />
+            <SearchInput placeholder="Código, serie, modelo…" />
+            <div />
+            <div />
+            <div />
           </FilterBar>
 
           <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_360px]">
@@ -128,6 +142,8 @@ export default async function DronesPage() {
               </Link>
             </DetailPanel>
           </div>
+
+          <Pagination total={total} page={page} pageSize={10} />
         </div>
       </PageShell>
     );

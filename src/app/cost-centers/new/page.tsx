@@ -2,10 +2,13 @@ import { RecordStatus } from "@prisma/client";
 
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import { requirePageAuth } from "@/lib/require-page-auth";
 import { CostCenterForm } from "@/modules/cost-centers/cost-center-form";
 import { createCostCenter } from "@/server/cost-centers/actions";
 
-export default function NewCostCenterPage() {
+export default async function NewCostCenterPage() {
+  await requirePageAuth("/cost-centers/new");
+
   return (
     <PageShell>
       <div className="space-y-6">

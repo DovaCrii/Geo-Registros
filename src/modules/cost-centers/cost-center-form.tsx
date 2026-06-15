@@ -2,7 +2,7 @@ import Link from "next/link";
 import { RecordStatus } from "@prisma/client";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
-import { PrimaryButton } from "@/components/ui/primary-button";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 type CostCenterFormValues = {
   code: string;
@@ -80,7 +80,7 @@ export function CostCenterForm({
         </label>
 
         <div className="flex items-center gap-3 pt-2">
-          <PrimaryButton type="submit">{submitLabel}</PrimaryButton>
+          <SubmitButton label={submitLabel} />
           <Link
             href="/cost-centers"
             className="inline-flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800"

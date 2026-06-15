@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { requirePermission } from "@/lib/authorize";
 import { prisma } from "@/lib/prisma";
 
 const allowedGeometryTypes = new Set([
@@ -83,6 +84,19 @@ function readGeometryPayload(formData: FormData) {
   };
 }
 
+async function requireActiveFlightPlan(id: string) {
+  const flightPlan = await prisma.flightPlan.findFirst({
+    where: { id, deletedAt: null },
+    select: { id: true },
+  });
+
+  if (!flightPlan) {
+    throw new Error("Flight plan not found.");
+  }
+
+  return flightPlan;
+}
+
 export async function createFlightPlan(formData: FormData) {
   const code = readString(formData, "code");
   const title = readString(formData, "title");
@@ -119,6 +133,8 @@ export async function createFlightPlan(formData: FormData) {
 }
 
 export async function updateFlightPlan(id: string, formData: FormData) {
+  await requireActiveFlightPlan(id);
+
   const code = readString(formData, "code");
   const title = readString(formData, "title");
   const operationDate = readOperationDate(formData);
@@ -155,6 +171,8 @@ export async function updateFlightPlan(id: string, formData: FormData) {
 }
 
 export async function updateFlightPlanGeometry(id: string, formData: FormData) {
+  await requireActiveFlightPlan(id);
+
   const { geometryJson, geometryType } = readGeometryPayload(formData);
 
   await prisma.flightPlan.update({
@@ -169,4 +187,20 @@ export async function updateFlightPlanGeometry(id: string, formData: FormData) {
   revalidatePath(`/flight-plans/${id}`);
   revalidatePath(`/flight-plans/${id}/geometry`);
   redirect(`/flight-plans/${id}/geometry`);
+}
+
+export async function deleteFlightPlan(id: string) {
+  await requirePermission("flight_plan:delete");
+  await requireActiveFlightPlan(id);
+
+  await prisma.flightPlan.update({
+    where: { id },
+    data: { deletedAt: new Date() },
+  });
+
+  revalidatePath("/flight-plans");
+  revalidatePath("/dashboard");
+  revalidatePath(`/flight-plans/${id}`);
+  revalidatePath(`/flight-plans/${id}/geometry`);
+  redirect("/flight-plans");
 }

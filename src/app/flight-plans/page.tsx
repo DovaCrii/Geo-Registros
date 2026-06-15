@@ -1,15 +1,18 @@
 import Link from "next/link";
 import { DataColumn, DataTable } from "@/components/ui/data-table";
 import { DetailPanel } from "@/components/ui/detail-panel";
-import { FilterBar, FilterField } from "@/components/ui/filter-bar";
+import { FilterBar } from "@/components/ui/filter-bar";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import { SearchInput } from "@/components/ui/search-input";
+import { Pagination } from "@/components/ui/pagination";
 import { StatusChip } from "@/components/ui/status-chip";
+import { requirePageAuth } from "@/lib/require-page-auth";
 import { listFlightPlans } from "@/server/flight-plans/queries";
 
 export const dynamic = "force-dynamic";
 
-type FlightPlanRow = Awaited<ReturnType<typeof listFlightPlans>>[number];
+type FlightPlanRow = Awaited<ReturnType<typeof listFlightPlans>>["rows"][number];
 
 const STATUS_TONES: Record<string, "success" | "warning" | "danger" | "info" | "neutral"> = {
   DRAFT: "neutral",
@@ -94,9 +97,20 @@ const columns: Array<DataColumn<FlightPlanRow>> = [
   },
 ];
 
-export default async function FlightPlansPage() {
+export default async function FlightPlansPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; page?: string }>;
+}) {
+  const { q, page: pageStr } = await searchParams;
+  const page = Number(pageStr) || 1;
+  const params = new URLSearchParams();
+  if (q) params.set("q", q);
+  if (pageStr) params.set("page", pageStr);
+  await requirePageAuth(params.toString() ? `/flight-plans?${params.toString()}` : "/flight-plans");
+
   try {
-    const rows = await listFlightPlans();
+    const { rows, total } = await listFlightPlans(q, page);
 
     return (
       <PageShell>
@@ -116,10 +130,10 @@ export default async function FlightPlansPage() {
           />
 
           <FilterBar>
-            <FilterField label="Search" placeholder="Search code or title" />
-            <FilterField label="Operation date" placeholder="Reserved for next slice" />
-            <FilterField label="Cost center" placeholder="Reserved for next slice" />
-            <FilterField label="Status" placeholder="DRAFT / READY / HOLD" />
+            <SearchInput placeholder="Código, título, cliente, dron…" />
+            <div />
+            <div />
+            <div />
           </FilterBar>
 
           <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_360px]">
@@ -161,6 +175,8 @@ export default async function FlightPlansPage() {
               </Link>
             </DetailPanel>
           </div>
+
+          <Pagination total={total} page={page} pageSize={10} />
         </div>
       </PageShell>
     );

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import { requirePageAuth } from "@/lib/require-page-auth";
 import { FlightPlanForm } from "@/modules/flight-plans/flight-plan-form";
 import { PermissionActions } from "@/modules/permissions/permission-actions";
 import { PermissionStatusBadge } from "@/modules/permissions/permission-status-badge";
@@ -11,7 +12,7 @@ import { DocumentUpload } from "@/modules/permissions/document-upload";
 import { listActiveClients } from "@/server/clients/queries";
 import { listActiveCostCenters } from "@/server/cost-centers/queries";
 import { listActiveDrones } from "@/server/drones/queries";
-import { updateFlightPlan } from "@/server/flight-plans/actions";
+import { deleteFlightPlan, updateFlightPlan } from "@/server/flight-plans/actions";
 import { listActiveOperators } from "@/server/operators/queries";
 import { getFlightPlanWithPermissions } from "@/server/permissions/queries";
 import { getWeatherForecast } from "@/server/weather/service";
@@ -25,6 +26,7 @@ function formatDateInput(value: Date) {
 
 export default async function FlightPlanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  await requirePageAuth(`/flight-plans/${id}`);
 
   try {
     const [record, costCenters, clients, drones, operators] = await Promise.all([
@@ -58,6 +60,14 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
             description="Manage the operational record, permission state, documents, and audit trail."
             actions={
               <>
+                <a
+                  href={`/api/reports/flight-plan/${record.id}`}
+                  className="inline-flex items-center gap-2 rounded-2xl border border-emerald-400/30 bg-emerald-500/15 px-4 py-2.5 text-sm font-medium text-emerald-100 transition hover:border-emerald-300/50 hover:bg-emerald-400/20"
+                  download
+                >
+                  <span>⬇</span>
+                  Reporte PDF
+                </a>
                 <Link
                   href={`/flight-plans/${record.id}/geometry`}
                   className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20"
@@ -111,6 +121,23 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
 
               <DetailPanel title="Documents" description="Attach and manage operational documents for this flight plan.">
                 <DocumentUpload flightPlanId={record.id} documents={record.documents} />
+              </DetailPanel>
+
+              <DetailPanel
+                title="Danger zone"
+                description="Soft delete hides this flight plan from the app while preserving its historical record."
+              >
+                <form action={deleteFlightPlan.bind(null, record.id)} className="space-y-3">
+                  <p className="text-sm leading-6 text-slate-400">
+                    This action removes the record from active views, list pages, dashboard counts, and geometry access.
+                  </p>
+                  <button
+                    type="submit"
+                    className="inline-flex items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-400/20"
+                  >
+                    Delete flight plan
+                  </button>
+                </form>
               </DetailPanel>
             </div>
 

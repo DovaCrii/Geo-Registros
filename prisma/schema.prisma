@@ -49,6 +49,7 @@ model User {
   updatedAt      DateTime  @updatedAt
   accounts       Account[]
   sessions       Session[]
+  notifications  Notification[]
 }
 
 model Account {
@@ -158,6 +159,7 @@ model FlightPlan {
   operatorId       String
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
+  deletedAt        DateTime?
   costCenter       CostCenter       @relation(fields: [costCenterId], references: [id])
   client           Client           @relation(fields: [clientId], references: [id])
   drone            Drone            @relation(fields: [droneId], references: [id])
@@ -176,6 +178,7 @@ model PermissionEvent {
   metadata     Json?
   createdById  String?
   createdAt    DateTime         @default(now())
+  deletedAt    DateTime?
   flightPlan   FlightPlan       @relation(fields: [flightPlanId], references: [id])
 }
 
@@ -190,5 +193,21 @@ model Document {
   notes        String?
   uploadedById String?
   createdAt    DateTime   @default(now())
+  deletedAt    DateTime?
   flightPlan   FlightPlan @relation(fields: [flightPlanId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+  deletedAt DateTime?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
 }
