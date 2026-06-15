@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
+import { ThemeProvider } from "@/components/ui/theme-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,9 +30,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es" className="scroll-smooth">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
-        {children}
+    <html lang="es" className="scroll-smooth" suppressHydrationWarning>
+      <body
+        className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 0%, rgba(8, 145, 178, 0.1), transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(34, 211, 238, 0.04), transparent 40%), linear-gradient(180deg, var(--background) 0%, var(--background-elevated) 50%, var(--background) 100%)",
+          backgroundColor: "var(--background)",
+          color: "var(--text-primary)",
+        }}
+      >
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

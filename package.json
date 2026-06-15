@@ -11,18 +11,24 @@
     "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.11.2",
+    "@next/font": "^14.2.15",
     "@prisma/client": "^6.9.0",
     "@tmcw/togeojson": "^7.1.2",
     "@watergis/maplibre-gl-terradraw": "^1.13.2",
+    "bcryptjs": "^3.0.3",
     "dxf-parser": "^1.1.2",
     "dxf-writer": "^1.18.4",
     "maplibre-gl": "^4.7.1",
     "next": "^15.3.3",
+    "next-auth": "^5.0.0-beta.31",
+    "next-themes": "^0.4.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "tokml": "^0.4.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.15.29",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.5",
