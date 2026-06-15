@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Geo-Registros",
-  description: "Geo-Registros foundation workspace",
+  title: "AeroFlow",
+  description: "Drone & RPA flight operations platform — mission planning, permissions & documents",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

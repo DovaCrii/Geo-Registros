@@ -35,9 +35,9 @@ export default function HomePage() {
           <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Block 2 / Visual base</p>
-              <h1 className="text-4xl font-semibold tracking-tight text-white">Geo-Registros</h1>
+              <h1 className="text-4xl font-semibold tracking-tight text-white">AeroFlow</h1>
               <p className="max-w-2xl text-sm leading-7 text-slate-400">
-                The foundation is verified. This workspace now establishes the visual system for operational master data before real CRUD and map-heavy modules arrive.
+                Drone & RPA flight operations platform — mission planning, interactive mapping, permission workflows, document tracking, and operational history in one place.
               </p>
             </div>
 

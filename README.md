@@ -1,6 +1,6 @@
-# 🗺️ Geo-Registros
+# AeroFlow
 
-**Registro operacional para planes de vuelo, geometrías y gestión documental — con ADN geoespacial desde el inicio.**
+**Drone & RPA flight operations platform — mission planning, permissions, documents, geo-spatial tracking.**
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=next.js)](https://nextjs.org/)
@@ -9,159 +9,173 @@
 [![MapLibre](https://img.shields.io/badge/MapLibre-4-7CB342?logo=maplibre)](https://maplibre.org/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind-3-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-En%20desarrollo-blueviolet)](.)
+[![Status](https://img.shields.io/badge/Status-Development-blueviolet)](.)
 
 ---
 
-## 📌 Concepto
+## Concept
 
-> **Geo-Registros no es un dashboard más. Es un sistema de registro operacional donde la geometría es ciudadana de primera clase.**
+> **AeroFlow centralizes RPA/drone flight operations into a single platform — from mission planning and interactive mapping to document tracking, permission workflows, and operational history.**
 
-La mayoría de los sistemas de gestión tratan la ubicación como un campo de texto. Geo-Registros la trata como lo que es: **un dato espacial con coordenadas, proyecciones y operaciones geométricas**.
+Today, managing drone permits, flight logs, aircraft documents, operator credentials, and mission geometry often means juggling emails, spreadsheets, PDFs, KML files, and shared folders. AeroFlow replaces that fragmentation with a structured, visual, and traceable platform.
 
-Esto permite:
+**What makes AeroFlow different:**
 
-- **Dibujar** polígonos, líneas y puntos directamente sobre un mapa
-- **Validar** geometrías antes de persistirlas
-- **Importar/exportar** en formatos del mundo real (KML, DXF, GeoJSON)
-- **Trazar** la operación completa: desde el plan de vuelo hasta el paquete documental
+- **Permission-first workflow** — Full state machine for DGAC/SIGO approvals (draft → review → sent → authorized → rejected → closed)
+- **Map as a tool, not a decoration** — Draw zones, measure areas, mark no-fly zones, save GeoJSON directly from the browser
+- **Weather-aware planning** — Automatic wind, temperature, and precipitation data via free APIs (Open-Meteo)
+- **Process guidance** — Built-in helper that tells you what's missing, what's next, and how to complete each step
+- **Document-centric** — Every mission carries its document package: permits, insurance, checklists, logbooks, KMZ files
+- **Audit trail** — Every state change, document upload, and communication is logged with who, when, and why
+- **Learning journey** — The project itself is documented as it grows, with decisions, trade-offs, and lessons learned alongside the code
 
 ---
 
-## 🧱 Entidades principales
+## Entity model
 
 ```
 ┌────────────┐       ┌──────────┐       ┌──────────┐
 │ CostCenter │──────▸│  Drone   │       │  Client  │
-│ (centro de │       │ (dron)   │       │(cliente) │
-│  costo)    │       └──────────┘       └──────────┘
+│ (cost      │       │ (fleet)  │       │(customer)│
+│  center)   │       └──────────┘       └──────────┘
 └────────────┘              │                  │
-       │                   │                  │
-       │          ┌────────▼──────────────────▼──┐
-       │          │         FlightPlan           │
-       ├─────────▸│      (plan de vuelo)         │
-       │          │                              │
-       │          │  ┌──────────────────────┐    │
-       │          │  │  geometryJson        │    │
-       │          │  │  (GeoJSON canónico)  │    │
-       │          │  └──────────────────────┘    │
-       │          └──────────────────────────────┘
+       │                    │                  │
+       │           ┌────────▼──────────────────▼──┐
+       │           │         Mission              │
+       │           │   (flight plan / permiso)    │
+       ├──────────▸│                              │
+       │           │  ┌──────────────────────┐    │
+       │           │  │  geometry (GeoJSON)  │    │
+       │           │  │  documents           │    │
+       │           │  │  weather data        │    │
+       │           │  │  status history      │    │
+       │           │  └──────────────────────┘    │
+       │           └──────────────────────────────┘
        │
 ┌──────▼──────┐
 │  Operator   │
-│ (operador)  │
+│ (pilot/RPA) │
 └─────────────┘
 ```
 
-Todas las entidades están vinculadas a través de `CostCenter`, que agrupa la estructura operativa.
-
 ---
 
-## 🛠️ Stack técnico
+## Tech stack
 
-| Capa | Tecnología | ¿Por qué? |
+| Layer | Technology | Why |
 |---|---|---|
-| **Frontend** | Next.js 15 (App Router) + React 19 | SSR, server actions, routing nativo |
-| **Estilos** | TailwindCSS 3 | Utilidades rápidas, sin fugas de CSS |
-| **Backend** | Next.js server actions + server components | Monorepo full-stack sin desacople prematuro |
-| **Base de datos** | PostgreSQL 16 + PostGIS 3 | Geometrías nativas, índice espacial, consultas geográficas |
-| **ORM** | Prisma 6 | Type safety, migrations, DX superior |
-| **Mapa** | MapLibre GL JS 4 | Open source, sin API keys, renderizado GL |
-| **Editor geométrico** | TerraDraw vía `@watergis/maplibre-gl-terradraw` | Dibujo interactivo de puntos, líneas y polígonos |
-| **Formatos** | toGeoJSON, tokml, dxf-parser/writer | Import/export sin dependencias pesadas |
-| **Entorno local** | Docker Compose | PostgreSQL + PostGIS en un comando |
+| **Frontend** | Next.js 15 (App Router) + React 19 | SSR, server actions, file-based routing, full-stack monorepo |
+| **Styling** | TailwindCSS 3 + shadcn/ui (planned) | Utility-first, consistent design system, dark theme native |
+| **Backend** | Next.js server actions + route handlers | Monorepo without premature backend separation |
+| **Database** | PostgreSQL 16 + PostGIS 3.4 | Spatial queries, geometry indexes, GeoJSON native |
+| **ORM** | Prisma 6 | Type-safe queries, schema-first, migration pipeline |
+| **Map** | MapLibre GL JS 4 | Open-source, no API keys, WebGL rendering |
+| **Drawing** | TerraDraw via @watergis/maplibre-gl-terradraw | Point, polygon, line, circle, select — interactive editing |
+| **Geo analysis** | Turf.js (planned) | Area/perimeter/distance measurements, spatial operations |
+| **Formats** | toGeoJSON, tokml, dxf-parser/writer | KML and DXF import/export without heavy dependencies |
+| **Weather** | Open-Meteo API (free, no key) | Wind, temperature, precipitation for mission planning |
+| **PDF** | react-pdf / pdf-lib (planned) | Export mission sheets, reports, permit packages |
+| **Storage** | Local-first (MinIO/S3 future) | Document uploads with prepared adapter |
+| **Local dev** | Docker Compose | PostgreSQL + PostGIS in one command |
+| **Auth** | Scaffolded roles (8 roles) — full auth planned | Ready for credential-based or OIDC login |
 
 ---
 
-## 📊 Progreso del proyecto
+## Project progress
 
-| Bloque | Estado | Descripción |
+| Block | Status | What it delivers |
 |---|---|---|
-| **Block 0** — Fundación | ✅ | Next.js + TS + Tailwind + Prisma + Docker |
-| **Block 1** — Master Data | ✅ | CRUD de cost-centers, clients, drones, operators |
-| **Block 2** — FlightPlan | ✅ | Foundation + geometry boundary + GeoJSON persistido |
-| **Block 3** — Editor geométrico | ✅ | Mapa MapLibre + TerraDraw interactivo |
-| **Block 4** — KML / DXF | 🚧 | Importación y exportación de formatos geoespaciales |
-| **Block 5** — Mapa completo | ⏳ | Editor en vivo, mediciones, capturas |
-| **Block 6** — Permisos | ⏳ | Roles y autorización por entidad |
-| **Block 7** — Paquete documental | ⏳ | Documentos asociados a flight plans |
+| **Foundation** | ✅ Done | Next.js + TypeScript + Tailwind + Prisma + Docker + folder structure |
+| **Master Data** | ✅ Done | CostCenter, Client, Drone, Operator CRUD with relations |
+| **Mission (Flight Plan)** | ✅ Done | Create, edit, list flight plans with required relations |
+| **Geometry boundary** | ✅ Done | GeoJSON validation, storage, type inference, edit support |
+| **Map editing** | ✅ Done | MapLibre + TerraDraw: draw points, lines, polygons interactively |
+| **KML / DXF** | 🚧 Libraries ready | Import and export infrastructure prepared |
+| **Permission workflow** | ⏳ Next | Full state machine (10 states), history log, document association |
+| **Weather integration** | ⏳ Planned | Open-Meteo API: wind, temp, precipitation on mission creation |
+| **Process helper** | ⏳ Planned | Contextual guidance: missing fields, next steps, status messages |
+| **Document management** | ⏳ Planned | Upload, link, search, download per mission |
+| **Dashboard** | ⏳ Planned | KPIs: permits by status, active drones, pending docs, alerts |
+| **Reports & export** | ⏳ Planned | Mission PDF, monthly report, cost center summary, Excel export |
+| **Email tracking** | ⏳ Planned | Template, send log, recipients, linked documents, audit trail |
+| **Vigency control** | ⏳ Planned | Alerts for expiring insurance, licenses, permits, missing docs |
 
-> 📖 Cada bloque tiene documentación detallada en [`docs/`](docs/), donde se explica **qué**, **por qué** y **cómo** se implementó, incluyendo decisiones técnicas, lecciones aprendidas y alternativas consideradas.
+> Each block is documented in [`docs/`](docs/) with what was built, why, what was discarded, and lessons learned.
 
 ---
 
-## 🎯 Filosofía de desarrollo
+## Development philosophy
 
-### Decisiones conscientes
+### Conscious choices
 
-No seguimos modas. Cada tecnología fue elegida por su **justificación técnica**:
-
-| Decisión | Alternativa descartada | Motivo |
+| Decision | Discarded alternative | Reason |
 |---|---|---|
-| **PostGIS** en lugar de campo `lat/lng` | MongoDB, SQLite | Necesitamos consultas espaciales reales (intersección, distancia, área) |
-| **MapLibre** en lugar de Google Maps | Leaflet, Google Maps SDK | Sin API keys, sin límites de uso, stack open source |
-| **GeoJSON como interno** en lugar de KML/DXF | KML interno | GeoJSON es el estándar web, los otros son formatos de intercambio |
-| **Next.js full-stack** en lugar de backend separado | Express + React SPA | Evitamos desacople prematuro; si escala, se separa |
+| **PostGIS** over plain `lat/lng` | MongoDB, SQLite | Real spatial queries (intersection, distance, area) |
+| **MapLibre** over Google Maps | Leaflet, Google Maps SDK | No API keys, no usage limits, open-source stack |
+| **GeoJSON as canonical** over KML/DXF | KML as internal format | GeoJSON is the web standard; KML/DXF are interchange formats |
+| **Next.js full-stack** over separate backend | Express + React SPA | No premature separation; split when scaling demands it |
+| **Open-Meteo** over paid weather APIs | OpenWeatherMap (paid tier) | Completely free, no API key, good global coverage |
+| **TerraDraw** over Mapbox Draw | Mapbox Draw (v1 deprecated) | Active maintenance, compatible with MapLibre, more modes |
 
-### Registro de aprendizaje
+### Learning journey
 
-Cada avance se documenta con:
+Every feature is documented with:
 
-1. **Qué** se construyó
-2. **Por qué** se hizo así
-3. **Qué se descartó** y por qué
-4. **Lecciones aprendidas** (técnicas y de proceso)
-5. **Verificación** (typecheck, build, pruebas)
+1. **What** was built
+2. **Why** this approach was chosen
+3. **What** was discarded and why
+4. **Lessons learned** (technical and process)
+5. **Verification** (typecheck, build, test)
 
-Este enfoque convierte el repositorio en un **registro de aprendizaje vivo**, no solo en código funcionando.
+This turns the repository into a **living learning record**, not just working code.
 
 ---
 
-## 🚀 Inicio rápido
+## Quick start
 
 ```powershell
-# 1. Clonar
+# 1. Clone
 git clone https://github.com/DovaCrii/Geo-Registros.git
 cd Geo-Registros
 
-# 2. Variables de entorno
+# 2. Environment
 cp .env.example .env
 
-# 3. Base de datos (requiere Docker Desktop)
+# 3. Database (requires Docker Desktop)
 docker compose up -d
 
-# 4. Dependencias y migraciones
+# 4. Dependencies & migrations
 npm install
 npx prisma generate
 npx prisma migrate dev --name init
 
-# 5. Dev
+# 5. Dev server
 npm run dev
 # → http://localhost:3000
 ```
 
-> 📋 Guía detallada en [`docs/10_launch_guide.md`](docs/10_launch_guide.md) con troubleshooting.
+> Detailed launch guide with troubleshooting in [`docs/10_launch_guide.md`](docs/10_launch_guide.md).
 
 ---
 
-## 📚 Documentación
+## Documentation index
 
-| Documento | Contenido |
+| Document | Content |
 |---|---|
-| [`docs/00_foundation.md`](docs/00_foundation.md) | Decisiones fundacionales del proyecto |
-| [`docs/01_master_data.md`](docs/01_master_data.md) | Implementación de datos maestros |
-| [`docs/02_flightplan_foundation.md`](docs/02_flightplan_foundation.md) | Base del plan de vuelo |
-| [`docs/04_geometry_boundary.md`](docs/04_geometry_boundary.md) | Frontera de geometría y persistencia GeoJSON |
-| [`docs/08_interactive_geometry_progress.md`](docs/08_interactive_geometry_progress.md) | Editor interactivo con TerraDraw |
-| [`docs/09_kml_dxf_import_export.md`](docs/09_kml_dxf_import_export.md) | Importación/exportación de formatos |
-| [`docs/10_launch_guide.md`](docs/10_launch_guide.md) | Guía de puesta en marcha |
+| [`docs/00_foundation.md`](docs/00_foundation.md) | Foundational decisions |
+| [`docs/01_master_data.md`](docs/01_master_data.md) | Master data CRUD implementation |
+| [`docs/02_flightplan_foundation.md`](docs/02_flightplan_foundation.md) | Flight plan base |
+| [`docs/04_geometry_boundary.md`](docs/04_geometry_boundary.md) | Geometry persistence boundary |
+| [`docs/08_interactive_geometry_progress.md`](docs/08_interactive_geometry_progress.md) | Interactive map editing with TerraDraw |
+| [`docs/09_kml_dxf_import_export.md`](docs/09_kml_dxf_import_export.md) | KML/DXF format interchange |
+| [`docs/10_launch_guide.md`](docs/10_launch_guide.md) | Setup and troubleshooting |
 
 ---
 
-## 📄 Licencia
+## License
 
-MIT — ver [LICENSE](LICENSE) para más detalles.
+MIT — see [LICENSE](LICENSE).
 
 ---
 
-<p align="center"><sub>Hecho con 🌎 y TypeScript · DovaCrii © 2026</sub></p>
+<p align="center"><sub>Built with 🌎, TypeScript & drone coffee · DovaCrii © 2026</sub></p>
