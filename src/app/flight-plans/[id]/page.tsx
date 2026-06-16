@@ -209,6 +209,22 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
 
               <DetailPanel title="Flujo de permisos" description="Gestioná el estado del permiso y sus transiciones.">
                 <div className="space-y-6">
+                  {!checklistReview.canSubmit ? (
+                    <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3">
+                      <p className="text-sm font-medium text-amber-100">Checklist DGAC incompleta</p>
+                      <ul className="mt-2 space-y-1 text-xs leading-5 text-amber-50/90">
+                        {checklistReview.missingItems.map((item) => (
+                          <li key={item.id} className="flex gap-2">
+                            <span>•</span>
+                            <span>
+                              <strong>{item.label}</strong> — {item.hint}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+
                   <div>
                     <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Estado actual</p>
                     <PermissionStatusBadge status={record.permissionStatus} />
