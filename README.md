@@ -104,6 +104,7 @@ Today, managing drone permits, flight logs, aircraft documents, operator credent
 | **Email tracking** | ✅ Done | Send log with Resend, auto-logging, admin list, detail, resend failed, linked to flight plans, sidebar |
 | **Vigency control** | ✅ Done | insuranceExpiry / licenseExpiry fields, form dates, list indicators, dashboard widget (≤30 days) |
 | **DGAC help & checklist** | ✅ Done | /ayuda help center, docs/dgac/ index, persisted checklist per flight plan |
+| **UI polish & navigation consistency** | ✅ Done | Spanish UI pass, shared breadcrumbs, contextual entity links, honest error states, shell/navigation consistency |
 
 > Each block is documented in [`docs/`](docs/) with what was built, why, what was discarded, and lessons learned.
 
@@ -183,6 +184,7 @@ npm run dev
 | [`docs/09_kml_dxf_import_export.md`](docs/09_kml_dxf_import_export.md) | KML/DXF format interchange |
 | [`docs/10_launch_guide.md`](docs/10_launch_guide.md) | Setup and troubleshooting |
 | [`docs/11_permission_workflow.md`](docs/11_permission_workflow.md) | Permission workflow implementation |
+| [`docs/12_ui_navigation_consistency.md`](docs/12_ui_navigation_consistency.md) | UI polish, breadcrumbs, and contextual navigation |
 | [`docs/permission-workflow-guide.md`](docs/permission-workflow-guide.md) | Permission workflow operational guide |
 | [`docs/dgac/00_indice_normativo.md`](docs/dgac/00_indice_normativo.md) | DGAC help index |
 | [`docs/dgac/01_operaciones_rpas_chile.md`](docs/dgac/01_operaciones_rpas_chile.md) | RPAS operations in Chile |
