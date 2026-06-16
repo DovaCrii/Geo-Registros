@@ -12,6 +12,7 @@ Se cerró la pasada de consistencia visual y navegación operativa:
 - `PageShell` con navegación operativa consistente en móvil y desktop
 - Breadcrumbs reutilizables para detalle y creación de registros
 - Links contextuales entre entidades maestras y planes de vuelo
+- Bloques de relaciones cruzadas en fichas maestras con acceso directo a planes de vuelo vinculados
 - Ajustes de accesibilidad y microcopy en componentes compartidos
 
 ## Decisiones técnicas clave
@@ -40,6 +41,8 @@ Se cerró la pasada de consistencia visual y navegación operativa:
 - Operator list → cost center
 - Detail pages → breadcrumbs hacia el listado padre
 - Create pages → breadcrumbs hacia el listado padre
+- Cost center detail → drones, operators y flight plans vinculados
+- Client/Drone/Operator detail → flight plans vinculados
 
 ## Lecciones aprendidas
 
@@ -54,4 +57,4 @@ Se cerró la pasada de consistencia visual y navegación operativa:
 
 ## Próximo paso recomendado
 
-Revisar fichas de detalle para agregar bloques de relaciones cruzadas adicionales donde aporte valor real, sin saturar el layout.
+Revisar listados secundarios y estados vacíos para seguir reforzando la exploración cruzada sin saturar el layout.
