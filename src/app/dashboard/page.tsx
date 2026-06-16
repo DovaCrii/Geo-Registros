@@ -34,6 +34,46 @@ function KpiCard({
   return inner;
 }
 
+function PendingCard({
+  label,
+  value,
+  description,
+  href,
+  tone = "neutral",
+}: {
+  label: string;
+  value: number;
+  description: string;
+  href?: string;
+  tone?: "neutral" | "info" | "warning" | "danger";
+}) {
+  const toneMap = {
+    neutral: "border-slate-800/80 bg-slate-950/45 hover:border-cyan-500/25",
+    info: "border-cyan-500/20 bg-cyan-500/[0.04] hover:border-cyan-400/30",
+    warning: "border-amber-500/20 bg-amber-500/[0.04] hover:border-amber-400/30",
+    danger: "border-rose-500/20 bg-rose-500/[0.04] hover:border-rose-400/30",
+  } as const;
+
+  const inner = (
+    <div
+      className={`rounded-3xl border p-5 shadow-xl shadow-slate-950/10 backdrop-blur transition ${toneMap[tone]}`}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">{label}</p>
+          <p className="mt-2 text-3xl font-bold tracking-tight text-white">{value}</p>
+        </div>
+        <span className="rounded-full border border-slate-700/80 bg-slate-950/60 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.16em] text-slate-400">
+          Acción
+        </span>
+      </div>
+      <p className="mt-3 text-sm leading-6 text-slate-400">{description}</p>
+    </div>
+  );
+
+  return href ? <Link href={href}>{inner}</Link> : inner;
+}
+
 // ─── Activity Timeline ────────────────────────────────────────
 
 function ActivityTimeline({
@@ -122,6 +162,51 @@ export default async function DashboardPage() {
 
   const userName = session?.user?.name ?? "Usuario";
 
+  const pendingActions = [
+    {
+      label: "Planes sin área de operación",
+      value: stats.pending.noGeometry,
+      description: "Definí geometría antes de enviar a revisión o usar mapa.",
+      href: "/flight-plans",
+      tone: stats.pending.noGeometry > 0 ? ("warning" as const) : ("neutral" as const),
+    },
+    {
+      label: "Permisos en revisión",
+      value: stats.pending.inReview,
+      description: "Necesitan seguimiento operativo antes del envío DGAC.",
+      href: "/flight-plans",
+      tone: "info" as const,
+    },
+    {
+      label: "Permisos observados",
+      value: stats.pending.observed,
+      description: "Requieren corrección documental o técnica.",
+      href: "/flight-plans",
+      tone: stats.pending.observed > 0 ? ("danger" as const) : ("neutral" as const),
+    },
+    {
+      label: "Documentos faltantes",
+      value: stats.pending.missingDocuments,
+      description: "Planes sin respaldo documental completo.",
+      href: "/flight-plans",
+      tone: stats.pending.missingDocuments > 0 ? ("warning" as const) : ("neutral" as const),
+    },
+    {
+      label: "Operadores sin licencia",
+      value: stats.pending.operatorsWithoutLicense,
+      description: "Falta número o vencimiento de licencia.",
+      href: "/operators",
+      tone: stats.pending.operatorsWithoutLicense > 0 ? ("warning" as const) : ("neutral" as const),
+    },
+    {
+      label: "Drones sin vigencia",
+      value: stats.pending.dronesWithoutExpiry,
+      description: "No tienen fecha de seguro/documento registrada.",
+      href: "/drones",
+      tone: stats.pending.dronesWithoutExpiry > 0 ? ("warning" as const) : ("neutral" as const),
+    },
+  ];
+
   return (
     <PageShell>
       <div className="space-y-6">
@@ -136,6 +221,25 @@ export default async function DashboardPage() {
           <p className="mt-1 text-sm leading-6 text-slate-400">
             Resumen operativo de tu plataforma AeroFlow
           </p>
+        </div>
+
+        {/* Pending actions */}
+        <div className="rounded-3xl border border-slate-800/80 bg-slate-950/45 p-6 shadow-xl shadow-slate-950/10 backdrop-blur">
+          <div className="mb-4 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-300">
+                Acciones pendientes
+              </p>
+              <h2 className="mt-1 text-lg font-semibold text-white">Lo que requiere atención hoy</h2>
+            </div>
+            <p className="text-xs text-slate-500">Priorizado por estado operativo</p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {pendingActions.map((action) => (
+              <PendingCard key={action.label} {...action} />
+            ))}
+          </div>
         </div>
 
         {/* KPI Cards */}
@@ -269,7 +373,7 @@ export default async function DashboardPage() {
                   href="/flight-plans/new"
                   className="flex items-center justify-between rounded-2xl border border-slate-800/80 bg-slate-900/70 px-4 py-3 text-sm transition hover:border-cyan-500/30 hover:bg-slate-800/70"
                 >
-                  <span className="text-slate-300">Nuevo plan de vuelo</span>
+                  <span className="text-slate-300">Crear plan de vuelo</span>
                   <span className="text-xs text-cyan-300">+</span>
                 </Link>
                 <Link

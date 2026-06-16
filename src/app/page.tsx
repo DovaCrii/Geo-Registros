@@ -12,13 +12,19 @@ const pains = [
 ] as const;
 
 const processSteps = [
-  { step: "01", label: "Planificación" },
-  { step: "02", label: "Captura" },
-  { step: "03", label: "GeoRegistro" },
-  { step: "04", label: "Procesamiento" },
-  { step: "05", label: "Visualización" },
-  { step: "06", label: "Informe" },
-  { step: "07", label: "Cliente" },
+  { step: "01", label: "Planificación", desc: "Definí alcance, flota y operación." },
+  { step: "02", label: "Área de operación", desc: "Delimitá la geometría en mapa." },
+  { step: "03", label: "Documentación", desc: "Adjuntá seguro, credenciales y respaldos." },
+  { step: "04", label: "Revisión normativa", desc: "Validá requisitos antes de enviar." },
+  { step: "05", label: "Envío / autorización", desc: "Seguimiento del estado DGAC." },
+  { step: "06", label: "Ejecución del vuelo", desc: "Registro operacional del trabajo en terreno." },
+  { step: "07", label: "Informe / trazabilidad", desc: "Cierre, evidencia y entregables." },
+] as const;
+
+const pillars = [
+  { title: "Planificación de vuelos RPAS", desc: "Prepará la misión con datos operativos, cobertura y responsables claros." },
+  { title: "Cumplimiento documental / DGAC", desc: "Ordená permisos, vigencias, respaldos y revisión normativa antes de volar." },
+  { title: "Georegistro y entregables técnicos", desc: "Consolidá geometría, evidencia, reportes y trazabilidad operacional." },
 ] as const;
 
 const modules = [
@@ -143,6 +149,15 @@ function HeroSection() {
               Ingresar a la plataforma
             </Link>
           </div>
+
+          <div className="grid gap-3 pt-4 sm:grid-cols-3">
+            {pillars.map((pillar) => (
+              <div key={pillar.title} className="rounded-2xl border border-slate-800/60 bg-slate-950/45 p-4 backdrop-blur">
+                <p className="text-sm font-semibold text-white">{pillar.title}</p>
+                <p className="mt-2 text-sm leading-6 text-slate-400">{pillar.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* ───── Hero Visual ───── */}
@@ -258,19 +273,22 @@ function SolutionSection() {
           </h2>
         </div>
 
-        <div className="relative flex flex-wrap items-start justify-center gap-x-8 gap-y-10 lg:flex-nowrap">
-          {processSteps.map((s, i) => (
-            <div key={s.step} className="flex flex-col items-center text-center">
-              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full border border-cyan-500/20 bg-cyan-500/10 text-lg font-bold text-cyan-300" style={{ fontFamily: "var(--font-mono)" }}>
-                {s.step}
+          <div className="relative grid gap-4 md:grid-cols-2 xl:grid-cols-7">
+            {processSteps.map((s, i) => (
+            <div key={s.step} className="rounded-2xl border border-slate-800/60 bg-slate-950/45 p-4 backdrop-blur">
+              <div className="mb-3 flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full border border-cyan-500/20 bg-cyan-500/10 text-base font-bold text-cyan-300" style={{ fontFamily: "var(--font-mono)" }}>
+                  {s.step}
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-white">{s.label}</p>
+                  <p className="text-xs text-slate-500">Etapa {i + 1}</p>
+                </div>
               </div>
-              <p className="text-sm font-medium text-white">{s.label}</p>
-              {i < processSteps.length - 1 && (
-                <div className="mt-3 hidden h-px w-8 bg-gradient-to-r from-cyan-500/40 to-transparent lg:block" />
-              )}
+              <p className="text-sm leading-6 text-slate-400">{s.desc}</p>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
       </div>
     </section>
   );
@@ -317,10 +335,10 @@ function DashboardPreview() {
         <div className="mx-auto mb-16 max-w-2xl text-center">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Dashboard</p>
           <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
-            Visualizá el estado completo de tus proyectos
+            Visualizá el estado operativo completo
           </h2>
           <p className="text-base leading-7 text-slate-400">
-            Mapa central, panel de proyectos, capas activas e indicadores de avance en tiempo real.
+            Mapa central, panel operativo, capas activas e indicadores de avance en tiempo real.
           </p>
         </div>
 
@@ -332,7 +350,7 @@ function DashboardPreview() {
             <span className="h-3 w-3 rounded-full bg-amber-500/60" />
             <span className="h-3 w-3 rounded-full bg-emerald-500/60" />
             <span className="ml-4 rounded-md border border-slate-700/40 bg-slate-800/60 px-4 py-1 text-xs text-slate-500">
-              app.aeroflow.io/proyectos
+              app.aeroflow.io/panel-operativo
             </span>
           </div>
 
@@ -343,7 +361,7 @@ function DashboardPreview() {
               <div className="mb-6 space-y-1">
                 <div className="h-2 w-24 rounded bg-slate-700/60" />
               </div>
-              {["Dashboard", "Vuelos", "Entregables", "Modelos", "Reportes"].map((item) => (
+              {["Panel", "Vuelos", "Entregables", "Modelos", "Reportes"].map((item) => (
                 <div key={item} className="mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-400 transition hover:bg-slate-800/60 hover:text-white">
                   <span className="h-2 w-2 rounded-full bg-slate-600" />
                   {item}
@@ -364,7 +382,7 @@ function DashboardPreview() {
               </div>
 
               <div className="mb-5 grid grid-cols-4 gap-3">
-                {["12 proyectos", "86% avance", "24 vuelos", "18 entregables"].map((m) => (
+                {["12 planes", "86% avance", "24 vuelos", "18 entregables"].map((m) => (
                   <div key={m} className="rounded-xl border border-slate-700/40 bg-slate-800/40 p-3">
                     <div className="h-2 w-16 rounded bg-slate-700/40" />
                     <div className="mt-2 h-5 w-20 rounded bg-cyan-500/20" />
@@ -396,7 +414,7 @@ function UseCasesSection() {
       <div className="mx-auto mb-16 max-w-2xl text-center">
         <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-300">Casos de uso</p>
         <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
-          Industrias que ya confían en georegistro técnico
+            Industrias que ya confían en el georegistro técnico
         </h2>
       </div>
 
@@ -450,7 +468,7 @@ function BeforeAfterSection() {
       <div className="mx-auto mb-16 max-w-2xl text-center">
         <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">El cambio</p>
         <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
-          Antes y después de Aeroflow
+            Antes y después de AeroFlow
         </h2>
       </div>
 
@@ -470,7 +488,7 @@ function BeforeAfterSection() {
 
         {/* After */}
         <div className="rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.03] p-8">
-          <h3 className="mb-6 text-lg font-semibold text-emerald-300">Con Aeroflow</h3>
+          <h3 className="mb-6 text-lg font-semibold text-emerald-300">Con AeroFlow</h3>
           <ul className="space-y-4">
             {beforeAfter.after.map((item) => (
               <li key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-300">
@@ -495,14 +513,14 @@ function CtaSection() {
             Convertí tus levantamientos en información accionable
           </h2>
           <p className="mx-auto mb-10 max-w-lg text-base leading-7 text-slate-400">
-            Agendá una demo y descubrí cómo Aeroflow puede ordenar tus vuelos, registros, modelos y
+            Agendá una demo y descubrí cómo AeroFlow puede ordenar tus vuelos, registros, modelos y
             entregables técnicos.
           </p>
           <Link
             href="/dashboard"
             className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-gradient-to-b from-cyan-500/20 to-cyan-600/10 px-8 py-3.5 text-base font-medium text-cyan-100 shadow-lg shadow-cyan-500/5 transition hover:from-cyan-500/30 hover:to-cyan-600/20"
           >
-            Ingresar a Aeroflow
+            Ingresar a AeroFlow
           </Link>
         </div>
       </div>
@@ -516,7 +534,7 @@ function Footer() {
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 py-10 sm:flex-row sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
           <span className="text-base font-bold tracking-tight text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>
-            Aero<span className="text-cyan-400">flow</span>
+            AeroFlow
           </span>
         </div>
         <div className="flex gap-8 text-sm text-slate-500">
@@ -526,7 +544,7 @@ function Footer() {
           <Link href="#tecnología" className="transition hover:text-slate-300">Tecnología</Link>
         </div>
         <p className="text-sm text-slate-600">
-          © {new Date().getFullYear()} Aeroflow. Todos los derechos reservados.
+           © {new Date().getFullYear()} AeroFlow. Todos los derechos reservados.
         </p>
       </div>
     </footer>

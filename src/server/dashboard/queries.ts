@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 import { prisma } from "@/lib/prisma";
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
@@ -5,8 +7,19 @@ const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 export async function getDashboardStats() {
   const now = new Date();
   const thirtyDaysFromNow = new Date(now.getTime() + THIRTY_DAYS_MS);
+  const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-  const [flightPlans, drones, operators, clients, costCenters, recentEvents, recentDocuments, expiringItems] =
+  const [
+    flightPlans,
+    drones,
+    operators,
+    clients,
+    costCenters,
+    recentEvents,
+    recentDocuments,
+    expiringItems,
+    pendingCounts,
+  ] =
     await Promise.all([
       prisma.flightPlan.groupBy({
         by: ["permissionStatus"],
@@ -73,6 +86,42 @@ export async function getDashboardStats() {
           },
         }),
       ]),
+
+      Promise.all([
+        prisma.flightPlan.count({
+          where: { deletedAt: null, geometryJson: { equals: Prisma.DbNull } },
+        }),
+        prisma.flightPlan.count({
+          where: { deletedAt: null, permissionStatus: "IN_REVIEW" },
+        }),
+        prisma.flightPlan.count({
+          where: { deletedAt: null, permissionStatus: "OBSERVED" },
+        }),
+        prisma.flightPlan.count({
+          where: {
+            deletedAt: null,
+            operationDate: { gte: now, lte: sevenDaysFromNow },
+          },
+        }),
+        prisma.flightPlan.count({
+          where: {
+            deletedAt: null,
+            documents: { none: {} },
+          },
+        }),
+        prisma.operator.count({
+          where: {
+            deletedAt: null,
+            OR: [{ licenseNumber: null }, { licenseExpiry: null }],
+          },
+        }),
+        prisma.drone.count({
+          where: {
+            deletedAt: null,
+            insuranceExpiry: null,
+          },
+        }),
+      ]),
     ]);
 
   const totalFlightPlans = flightPlans.reduce((sum, g) => sum + g._count, 0);
@@ -103,6 +152,15 @@ export async function getDashboardStats() {
     expiring: {
       drones: expiringItems[0],
       operators: expiringItems[1],
+    },
+    pending: {
+      noGeometry: pendingCounts[0],
+      inReview: pendingCounts[1],
+      observed: pendingCounts[2],
+      upcomingFlights: pendingCounts[3],
+      missingDocuments: pendingCounts[4],
+      operatorsWithoutLicense: pendingCounts[5],
+      dronesWithoutExpiry: pendingCounts[6],
     },
   };
 }
