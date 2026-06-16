@@ -101,8 +101,8 @@ Today, managing drone permits, flight logs, aircraft documents, operator credent
 | **Auth & roles** | ✅ Done | Email/password + NextAuth, 8 roles, middleware + server-side gate |
 | **Soft delete** | ✅ Done | All master entities + flight plans preserve historical links |
 | **Configurable lists** | ✅ Done | Column configs, filters, sidebar, sorting — all data-driven |
-| **Email tracking** | ⏳ Planned | Template, send log, recipients, linked documents, audit trail |
-| **Vigency control** | ⏳ Planned | Alerts for expiring insurance, licenses, permits, missing docs |
+| **Email tracking** | ✅ Done | Send log with Resend, auto-logging, admin list, detail, resend failed, linked to flight plans, sidebar |
+| **Vigency control** | ✅ Done | insuranceExpiry / licenseExpiry fields, form dates, list indicators, dashboard widget (≤30 days) |
 
 > Each block is documented in [`docs/`](docs/) with what was built, why, what was discarded, and lessons learned.
 
