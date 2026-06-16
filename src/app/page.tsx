@@ -5,10 +5,10 @@ import Link from "next/link";
 // ─────────────────────────────────────────────────────────────
 
 const pains = [
-  { title: "Archivos dispersos", desc: "Fotos, informes, KML y planillas repartidos en carpetas sin orden ni trazabilidad." },
-  { title: "Falta de trazabilidad", desc: "Sin registro claro de quién hizo cada vuelo, cuándo y con qué resultados." },
-  { title: "Reportes manuales", desc: "Horas armando informes que podrían generarse automáticamente desde los datos." },
-  { title: "Entregables difíciles", desc: "Modelos 3D, nubes de puntos y ortomosaicos que cuesta compartir y revisar." },
+  { title: "Archivos dispersos", desc: "Fotos, informes, KML y planillas repartidos en carpetas sin orden ni trazabilidad.", icon: "folder" },
+  { title: "Falta de trazabilidad", desc: "Sin registro claro de quién hizo cada vuelo, cuándo y con qué resultados.", icon: "route" },
+  { title: "Reportes manuales", desc: "Horas armando informes que podrían generarse automáticamente desde los datos.", icon: "report" },
+  { title: "Entregables difíciles", desc: "Modelos 3D, nubes de puntos y ortomosaicos que cuesta compartir y revisar.", icon: "package" },
 ] as const;
 
 const processSteps = [
@@ -163,9 +163,26 @@ function HeroSection() {
         {/* ───── Hero Visual ───── */}
         <div className="relative hidden lg:block">
           {/* Map frame */}
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-slate-700/60 bg-slate-900/80 shadow-2xl shadow-cyan-950/10">
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-slate-700/60 bg-slate-950/80 shadow-2xl shadow-cyan-950/10">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.14),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(16,185,129,0.10),_transparent_24%)]" />
             {/* Inner grid */}
             <div className="geo-grid-subtle absolute inset-0" />
+
+            <div className="absolute left-4 top-4 z-20 flex items-center gap-3 rounded-2xl border border-cyan-400/20 bg-slate-950/85 px-4 py-3 backdrop-blur">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-400/25 bg-cyan-500/10 text-cyan-300">
+                ⬚
+              </div>
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-300">GCP / Vuelos registrados</p>
+                <p className="text-sm text-slate-300">Trazabilidad operativa en tiempo real</p>
+              </div>
+            </div>
+
+            <div className="absolute right-4 top-4 z-20 rounded-2xl border border-emerald-400/20 bg-slate-950/85 px-4 py-3 text-right backdrop-blur">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-300">Cobertura</p>
+              <p className="text-3xl font-bold text-white" style={{ fontFamily: "var(--font-mono)" }}>92%</p>
+              <p className="text-xs text-slate-400">entregables enlazados</p>
+            </div>
 
             {/* Animated drone path */}
             <svg className="absolute inset-0 h-full w-full" viewBox="0 0 400 300" fill="none">
@@ -191,6 +208,12 @@ function HeroSection() {
               <text x="158" y="100" fill="#94a3b8" fontSize="6">GCP-01</text>
               <text x="188" y="130" fill="#94a3b8" fontSize="6">GCP-02</text>
             </svg>
+
+            <div className="absolute left-4 bottom-4 z-20 max-w-[240px] rounded-2xl border border-slate-700/60 bg-slate-950/85 p-4 backdrop-blur">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Resumen de vuelo</p>
+              <p className="mt-1 text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>24 vuelos</p>
+              <p className="mt-1 text-sm leading-6 text-slate-300">Registro unificado con geometría, evidencias y entregables listos para revisar.</p>
+            </div>
 
             {/* Floating metric cards */}
             <div className="absolute left-3 top-3">
@@ -218,11 +241,11 @@ function MetricCard({ label, value, color, delay }: { label: string; value: stri
   const floatClass = delay === 0 ? "float-metric" : `float-metric-delay-${delay}`;
 
   return (
-    <div className={`rounded-lg border ${borderMap[color]} bg-slate-900/90 px-3 py-2 shadow-lg backdrop-blur ${floatClass}`}>
+    <div className={`rounded-xl border ${borderMap[color]} bg-slate-900/90 px-4 py-3 shadow-lg backdrop-blur ${floatClass}`}>
       <p className={`text-xs font-medium uppercase tracking-wide ${textMap[color]}`} style={{ fontFamily: "var(--font-space-grotesk)" }}>
         {label}
       </p>
-      <p className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-mono)" }}>
+      <p className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-mono)" }}>
         {value}
       </p>
     </div>
@@ -250,11 +273,11 @@ function ProblemSection() {
             key={pain.title}
             className="group rounded-2xl border border-slate-800/60 bg-slate-950/40 p-6 backdrop-blur transition hover:border-rose-500/20 hover:bg-slate-900/60"
           >
-            <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-lg border border-rose-500/20 bg-rose-500/10 text-sm text-rose-300">
-              !
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-500/10 text-rose-300">
+              <PainGlyph kind={pain.icon} />
             </div>
-            <h3 className="mb-2 text-base font-semibold text-white">{pain.title}</h3>
-            <p className="text-sm leading-6 text-slate-400">{pain.desc}</p>
+            <h3 className="mb-2 text-lg font-semibold text-white">{pain.title}</h3>
+            <p className="text-base leading-7 text-slate-400">{pain.desc}</p>
           </div>
         ))}
       </div>
@@ -275,23 +298,62 @@ function SolutionSection() {
 
           <div className="relative grid gap-4 md:grid-cols-2 xl:grid-cols-7">
             {processSteps.map((s, i) => (
-            <div key={s.step} className="rounded-2xl border border-slate-800/60 bg-slate-950/45 p-4 backdrop-blur">
+            <div key={s.step} className="rounded-2xl border border-slate-800/60 bg-slate-950/45 p-5 backdrop-blur">
               <div className="mb-3 flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full border border-cyan-500/20 bg-cyan-500/10 text-base font-bold text-cyan-300" style={{ fontFamily: "var(--font-mono)" }}>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-cyan-500/20 bg-cyan-500/10 text-lg font-bold text-cyan-300" style={{ fontFamily: "var(--font-mono)" }}>
                   {s.step}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">{s.label}</p>
-                  <p className="text-xs text-slate-500">Etapa {i + 1}</p>
+                  <p className="text-base font-semibold text-white">{s.label}</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Etapa {i + 1}</p>
                 </div>
               </div>
-              <p className="text-sm leading-6 text-slate-400">{s.desc}</p>
+              <p className="text-base leading-7 text-slate-300">{s.desc}</p>
             </div>
             ))}
           </div>
       </div>
     </section>
   );
+}
+
+function PainGlyph({ kind }: { kind: string }) {
+  const common = "h-5 w-5 stroke-[1.7] text-rose-300";
+
+  switch (kind) {
+    case "folder":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h4l2 2h7A2.5 2.5 0 0 1 21 9.5v8A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5v-10Z" stroke="currentColor" />
+        </svg>
+      );
+    case "route":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M6 6h3l2 4 3-2h4" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M6 18h4l2-4 3 2h3" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="6" cy="6" r="1.5" fill="currentColor" />
+          <circle cx="18" cy="6" r="1.5" fill="currentColor" />
+          <circle cx="6" cy="18" r="1.5" fill="currentColor" />
+          <circle cx="18" cy="18" r="1.5" fill="currentColor" />
+        </svg>
+      );
+    case "report":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M7 3.5h7l3 3V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" stroke="currentColor" />
+          <path d="M14 3.5V7h3" stroke="currentColor" />
+          <path d="M8.5 11h7M8.5 14h7M8.5 17h4" stroke="currentColor" strokeLinecap="round" />
+        </svg>
+      );
+    default:
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M4 7.5h16M6.5 7.5v11M17.5 7.5v11M6.5 18.5h11" stroke="currentColor" strokeLinecap="round" />
+          <path d="m9 11 3 3 3-5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+  }
 }
 
 function ModulesSection() {
