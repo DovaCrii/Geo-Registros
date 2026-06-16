@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { requirePageAuth } from "@/lib/require-page-auth";
+import { PageShell } from "@/components/ui/page-shell";
 
 export default async function AdminLayout({
   children,
@@ -15,5 +16,5 @@ export default async function AdminLayout({
     redirect("/dashboard");
   }
 
-  return <>{children}</>;
+  return <PageShell>{children}</PageShell>;
 }

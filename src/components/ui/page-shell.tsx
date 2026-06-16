@@ -13,6 +13,7 @@ const navigationItems = [
   { href: "/operators", label: "Operators" },
   { href: "/flight-plans", label: "Flight plans" },
   { href: "/admin/users", label: "Users", adminOnly: true },
+  { href: "/admin/email-logs", label: "Email Log", adminOnly: true },
 ];
 
 function NavLinks({ onClick }: { onClick?: () => void }) {

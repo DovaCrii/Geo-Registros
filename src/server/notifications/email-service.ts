@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import type { NotificationType } from "@/server/notifications/service";
+import { logEmail } from "@/server/email/log-email";
 
 const resend = new Resend(process.env.RESEND_API_KEY ?? "");
 
@@ -111,28 +112,56 @@ export async function sendNotificationEmail(params: NotificationEmailParams): Pr
     return false;
   }
 
+  const html = buildHtml({
+    title: params.title,
+    message: params.message,
+    type: params.type,
+    link: params.link,
+    recipientName: params.recipientName,
+  });
+
   try {
     const { error } = await resend.emails.send({
       from: FROM,
       to: params.to,
       subject: `🔔 ${params.title} — Aeroflow`,
-      html: buildHtml({
-        title: params.title,
-        message: params.message,
-        type: params.type,
-        link: params.link,
-        recipientName: params.recipientName,
-      }),
+      html,
     });
 
     if (error) {
       console.error("[email] Resend error:", error);
+      await logEmail({
+        to: params.to,
+        subject: params.title,
+        body: html,
+        status: "failed",
+        type: params.type,
+        error: error.message,
+      });
       return false;
     }
+
+    await logEmail({
+      to: params.to,
+      subject: params.title,
+      body: html,
+      status: "sent",
+      type: params.type,
+      flightPlanId: null,
+    });
 
     return true;
   } catch (err) {
     console.error("[email] Failed to send:", err);
+    const message = err instanceof Error ? err.message : "Unknown error";
+    await logEmail({
+      to: params.to,
+      subject: params.title,
+      body: html,
+      status: "failed",
+      type: params.type,
+      error: message,
+    });
     return false;
   }
 }

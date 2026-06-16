@@ -172,6 +172,7 @@ model FlightPlan {
   operator         Operator         @relation(fields: [operatorId], references: [id])
   permissionEvents PermissionEvent[]
   documents        Document[]
+  emailLogs        EmailLog[]
 }
 
 model PermissionEvent {
@@ -216,4 +217,22 @@ model Notification {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, read])
+}
+
+model EmailLog {
+  id           String     @id @default(cuid())
+  to           String
+  subject      String
+  body         String     @db.Text
+  status       String     // "sent" | "failed" | "bounced"
+  error        String?
+  type         String     // "notification" | "permit" | "report"
+  sentAt       DateTime   @default(now())
+  flightPlanId String?
+  flightPlan   FlightPlan? @relation(fields: [flightPlanId], references: [id])
+  createdById  String?
+  createdAt    DateTime   @default(now())
+
+  @@index([status])
+  @@index([sentAt])
 }
