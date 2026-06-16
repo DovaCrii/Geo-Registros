@@ -149,6 +149,7 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
     const transitionBlocks = checklistReview.canSubmit
       ? undefined
       : {
+          READY_FOR_SUBMISSION: `No se puede marcar como listo todavía. Faltan: ${checklistReview.missingItems.map((item) => item.label).join(", ")}`,
           SUBMITTED: `No se puede enviar todavía. Faltan: ${checklistReview.missingItems.map((item) => item.label).join(", ")}`,
         };
 

@@ -52,6 +52,7 @@ export function PermissionActions({
   const [error, setError] = useState<string | null>(null);
 
   const nextStates = VALID_TRANSITIONS[currentStatus] ?? [];
+  const blockedButtons = nextStates.filter((state) => Boolean(transitionBlocks?.[state]));
 
   async function handleTransition(newStatus: string) {
     setPending(newStatus);
@@ -89,6 +90,14 @@ export function PermissionActions({
       {error ? (
         <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2">
           <p className="text-xs text-rose-300">{error}</p>
+        </div>
+      ) : null}
+
+      {blockedButtons.length > 0 ? (
+        <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-2">
+          <p className="text-xs text-amber-100">
+            Flujo bloqueado por checklist DGAC para: {blockedButtons.join(", ")}
+          </p>
         </div>
       ) : null}
 

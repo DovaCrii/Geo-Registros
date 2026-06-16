@@ -37,7 +37,7 @@ export async function transitionPermission(
 
   const currentStatus = flightPlan.permissionStatus;
 
-  if (newStatus === "SUBMITTED") {
+  if (newStatus === "READY_FOR_SUBMISSION" || newStatus === "SUBMITTED") {
     const [documents, drone, operator, persistedChecklist] = await Promise.all([
       getPermissionDocuments(flightPlanId),
       flightPlan.droneId ? getDroneById(flightPlan.droneId) : Promise.resolve(null),
