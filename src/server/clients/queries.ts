@@ -61,6 +61,11 @@ export async function getClientById(id: string) {
       contactEmail: true,
       notes: true,
       status: true,
+      flightPlans: {
+        select: { id: true, code: true, title: true, operationDate: true, permissionStatus: true },
+        orderBy: { operationDate: "desc" },
+        take: 8,
+      },
     },
   });
 }

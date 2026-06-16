@@ -66,6 +66,17 @@ export async function getCostCenterById(id: string) {
       name: true,
       description: true,
       status: true,
+      drones: {
+        select: { id: true, code: true, model: true, serialNumber: true },
+      },
+      operators: {
+        select: { id: true, code: true, fullName: true, licenseNumber: true },
+      },
+      flightPlans: {
+        select: { id: true, code: true, title: true, operationDate: true, permissionStatus: true },
+        orderBy: { operationDate: "desc" },
+        take: 8,
+      },
     },
   });
 }

@@ -82,6 +82,11 @@ export async function getDroneById(id: string) {
       costCenter: {
         select: { id: true, code: true, name: true },
       },
+      flightPlans: {
+        select: { id: true, code: true, title: true, operationDate: true, permissionStatus: true },
+        orderBy: { operationDate: "desc" },
+        take: 8,
+      },
     },
   });
 }

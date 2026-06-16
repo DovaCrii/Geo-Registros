@@ -52,6 +52,46 @@ export default async function CostCenterDetailPage({ params }: { params: Promise
             actions={<StatusChip label={record.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"} tone={toneFromStatus(record.status)} />}
           />
 
+          <DetailPanel title="Relaciones vinculadas" description="Drones, operadores y planes de vuelo que dependen de este grupo.">
+            <div className="grid gap-4 xl:grid-cols-3">
+              <div className="rounded-2xl border border-slate-800/80 bg-slate-950/45 p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Drones</p>
+                <div className="mt-3 space-y-2">
+                  {record.drones.length > 0 ? record.drones.map((drone) => (
+                    <a key={drone.id} href={`/drones/${drone.id}`} className="block rounded-xl border border-slate-800/80 bg-slate-900/70 px-3 py-2 text-sm text-white transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                      {drone.code ?? "—"} · {drone.model}
+                      <span className="block text-xs text-slate-500">{drone.serialNumber}</span>
+                    </a>
+                  )) : <p className="text-sm text-slate-500">Sin drones vinculados.</p>}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-800/80 bg-slate-950/45 p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Operadores</p>
+                <div className="mt-3 space-y-2">
+                  {record.operators.length > 0 ? record.operators.map((operator) => (
+                    <a key={operator.id} href={`/operators/${operator.id}`} className="block rounded-xl border border-slate-800/80 bg-slate-900/70 px-3 py-2 text-sm text-white transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                      {operator.code ?? "—"} · {operator.fullName}
+                      <span className="block text-xs text-slate-500">{operator.licenseNumber ?? "Licencia pendiente"}</span>
+                    </a>
+                  )) : <p className="text-sm text-slate-500">Sin operadores vinculados.</p>}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-800/80 bg-slate-950/45 p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Planes de vuelo</p>
+                <div className="mt-3 space-y-2">
+                  {record.flightPlans.length > 0 ? record.flightPlans.map((flightPlan) => (
+                    <a key={flightPlan.id} href={`/flight-plans/${flightPlan.id}`} className="block rounded-xl border border-slate-800/80 bg-slate-900/70 px-3 py-2 text-sm text-white transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                      {flightPlan.code} · {flightPlan.title}
+                      <span className="block text-xs text-slate-500">{flightPlan.operationDate.toISOString().slice(0, 10)}</span>
+                    </a>
+                  )) : <p className="text-sm text-slate-500">Sin planes de vuelo vinculados.</p>}
+                </div>
+              </div>
+            </div>
+          </DetailPanel>
+
           <CostCenterForm
             title="Editar grupo de trabajo"
             description="Actualizá código, nombre, estado o descripción interna."

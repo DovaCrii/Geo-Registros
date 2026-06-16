@@ -56,6 +56,22 @@ export default async function DroneDetailPage({ params }: { params: Promise<{ id
             actions={<StatusChip label={record.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"} tone={toneFromStatus(record.status)} />}
           />
 
+          <DetailPanel title="Planes de vuelo vinculados" description="Planes donde este dron está asignado.">
+            <div className="space-y-2">
+              {record.flightPlans.length > 0 ? record.flightPlans.map((flightPlan) => (
+                <a key={flightPlan.id} href={`/flight-plans/${flightPlan.id}`} className="block rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-medium text-white">{flightPlan.code} · {flightPlan.title}</p>
+                      <p className="mt-1 text-xs text-slate-500">{flightPlan.operationDate.toISOString().slice(0, 10)}</p>
+                    </div>
+                    <span className="text-xs text-slate-500">{flightPlan.permissionStatus}</span>
+                  </div>
+                </a>
+              )) : <p className="text-sm text-slate-500">Este dron todavía no tiene planes de vuelo vinculados.</p>}
+            </div>
+          </DetailPanel>
+
             <DroneForm
               title="Editar dron"
               description="Actualizá identidad, fabricante, grupo de trabajo opcional, estado y notas."
