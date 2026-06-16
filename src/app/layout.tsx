@@ -24,9 +24,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Aeroflow | Plataforma geoespacial para vuelos, georegistro e informes técnicos",
+  title: "AeroFlow | Plataforma geoespacial para vuelos, georegistro e informes técnicos",
   description:
-    "Aeroflow centraliza vuelos, georegistros, modelos 2D/3D, ortomosaicos, nubes de puntos, entregables y reportes técnicos para ingeniería, minería, topografía e infraestructura.",
+    "AeroFlow centraliza vuelos, georegistros, modelos 2D/3D, ortomosaicos, nubes de puntos, entregables y reportes técnicos para ingeniería, minería, topografía e infraestructura.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -128,13 +128,13 @@ export default async function DashboardPage() {
         {/* Header */}
         <div className="rounded-3xl border border-slate-800/80 bg-slate-950/55 p-6 shadow-2xl shadow-cyan-950/10 backdrop-blur">
           <p className="mb-1 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">
-            Panel de control
+            Panel operativo
           </p>
           <h1 className="text-3xl font-bold tracking-tight text-white">
             Bienvenido, {userName}
           </h1>
           <p className="mt-1 text-sm leading-6 text-slate-400">
-            Resumen operativo de tu plataforma Aeroflow
+            Resumen operativo de tu plataforma AeroFlow
           </p>
         </div>
 

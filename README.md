@@ -153,6 +153,10 @@ npm install
 npx prisma generate
 npx prisma migrate dev --name init
 
+# 4b. Optional: create a development admin user
+# Set SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD / SEED_ADMIN_FULL_NAME in .env
+npm run seed:dev
+
 # 5. Dev server
 npm run dev
 # → http://localhost:3000

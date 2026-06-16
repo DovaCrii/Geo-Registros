@@ -6,14 +6,14 @@ import { FlowGuide } from "@/modules/flow-guide/flow-guide";
 import { NotificationPanel } from "@/modules/notifications/notification-panel";
 
 const navigationItems = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/cost-centers", label: "Cost centers" },
-  { href: "/clients", label: "Clients" },
-  { href: "/drones", label: "Drones" },
-  { href: "/operators", label: "Operators" },
-  { href: "/flight-plans", label: "Flight plans" },
-  { href: "/admin/users", label: "Users", adminOnly: true },
-  { href: "/admin/email-logs", label: "Email Log", adminOnly: true },
+  { href: "/dashboard", label: "Panel operativo" },
+  { href: "/cost-centers", label: "Centros de costo" },
+  { href: "/clients", label: "Clientes" },
+  { href: "/drones", label: "Flota RPAS" },
+  { href: "/operators", label: "Operadores RPAS" },
+  { href: "/flight-plans", label: "Planes de vuelo" },
+  { href: "/admin/users", label: "Usuarios", adminOnly: true },
+  { href: "/admin/email-logs", label: "Registro de correos", adminOnly: true },
 ];
 
 function NavLinks({ onClick }: { onClick?: () => void }) {
@@ -69,10 +69,10 @@ export function PageShell({ children }: { children: ReactNode }) {
       >
         <div className="mb-8 space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">AeroFlow</p>
-          <h1 className="text-2xl font-semibold text-white">Operational workspace</h1>
-          <p className="text-sm leading-6 text-slate-400">
-            Master data foundation for flight operations, documents, and geospatial workflows.
-          </p>
+           <h1 className="text-2xl font-semibold text-white">Espacio operacional</h1>
+           <p className="text-sm leading-6 text-slate-400">
+             Base de datos maestra para operaciones de vuelo, documentos y flujos geoespaciales.
+           </p>
         </div>
 
         <NavLinks onClick={() => setMobileNavOpen(false)} />
@@ -85,9 +85,9 @@ export function PageShell({ children }: { children: ReactNode }) {
           <div className="rounded-3xl border border-slate-800/80 bg-slate-950/55 p-5 shadow-2xl shadow-cyan-950/10 backdrop-blur">
             <div className="mb-8 space-y-2">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">AeroFlow</p>
-              <h1 className="text-2xl font-semibold text-white">Operational workspace</h1>
+               <h1 className="text-2xl font-semibold text-white">Espacio operacional</h1>
               <p className="text-sm leading-6 text-slate-400">
-                Master data foundation for flight operations, documents, and geospatial workflows.
+                Base de datos maestra para operaciones de vuelo, documentos y flujos geoespaciales.
               </p>
             </div>
             <NavLinks />

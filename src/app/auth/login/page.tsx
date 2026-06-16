@@ -20,21 +20,27 @@ function LoginForm() {
     setError("");
     setLoading(true);
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      const result = await signIn("credentials", {
+        email: email.trim().toLowerCase(),
+        password,
+        redirect: false,
+        callbackUrl,
+      });
 
-    setLoading(false);
+      if (!result?.ok || result.error) {
+        setError("Credenciales inválidas. Verificá tu email y contraseña.");
+        return;
+      }
 
-    if (result?.error) {
-      setError("Credenciales inválidas. Verificá tu email y contraseña.");
-      return;
+      const target = result.url ?? callbackUrl;
+      router.replace(target);
+      router.refresh();
+    } catch {
+      setError("No se pudo iniciar sesión. Intentá nuevamente.");
+    } finally {
+      setLoading(false);
     }
-
-    router.push(callbackUrl);
-    router.refresh();
   }
 
   return (
@@ -44,11 +50,11 @@ function LoginForm() {
         <div className="mb-8 text-center">
           <Link href="/" className="inline-block">
             <h1 className="text-2xl font-bold tracking-tight text-white dark:text-white">
-              Aeroflow
+              AeroFlow
             </h1>
           </Link>
           <p className="mt-2 text-sm text-slate-400 dark:text-slate-400">
-            Iniciá sesión en tu cuenta
+            Ingresá a la plataforma
           </p>
         </div>
 

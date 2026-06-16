@@ -72,7 +72,7 @@ function NavBar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2">
           <span className="text-xl font-bold tracking-tight text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>
-            Aero<span className="text-cyan-400">flow</span>
+            AeroFlow
           </span>
         </Link>
 
@@ -140,7 +140,7 @@ function HeroSection() {
               href="#proceso"
               className="inline-flex items-center justify-center rounded-xl border border-slate-700/60 bg-slate-900/60 px-7 py-3 text-sm font-medium text-slate-300 transition hover:border-slate-600 hover:bg-slate-800/80"
             >
-              Ver flujo de trabajo
+              Ingresar a la plataforma
             </Link>
           </div>
         </div>
@@ -224,7 +224,7 @@ function ProblemSection() {
         </h2>
         <p className="text-base leading-7 text-slate-400">
           En proyectos técnicos, cada vuelo, imagen, coordenada y modelo debe quedar trazado.
-          Aeroflow centraliza la información para que los equipos puedan consultar, controlar y
+            AeroFlow centraliza la información para que los equipos puedan consultar, controlar y
           reportar con claridad.
         </p>
       </div>

@@ -9,8 +9,12 @@
     "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+    "seed:dev": "node prisma/seed.cjs",
     "test": "vitest run",
     "test:watch": "vitest"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.cjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",

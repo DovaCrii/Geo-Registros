@@ -79,11 +79,11 @@ export default function RegisterPage() {
         <div className="mb-8 text-center">
           <Link href="/" className="inline-block">
             <h1 className="text-2xl font-bold tracking-tight text-white">
-              Aeroflow
+              AeroFlow
             </h1>
           </Link>
           <p className="mt-2 text-sm text-slate-400">
-            Creá tu cuenta para empezar
+            Creá tu cuenta para ingresar
           </p>
         </div>
 
