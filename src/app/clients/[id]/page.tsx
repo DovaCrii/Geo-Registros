@@ -6,6 +6,7 @@ import { PageShell } from "@/components/ui/page-shell";
 import { StatusChip } from "@/components/ui/status-chip";
 import { requirePageAuth } from "@/lib/require-page-auth";
 import { ClientForm } from "@/modules/clients/client-form";
+import { deleteClient } from "@/server/clients/actions";
 import { updateClient } from "@/server/clients/actions";
 import { getClientById } from "@/server/clients/queries";
 
@@ -56,6 +57,20 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
               status: record.status,
             }}
           />
+
+          <DetailPanel title="Danger zone" description="Soft delete hides this client from active views while preserving historical flight-plan records.">
+            <form action={deleteClient.bind(null, record.id)} className="space-y-3">
+              <p className="text-sm leading-6 text-slate-400">
+                This removes the client from list pages, selectors, and dashboard counts. Flight plans already linked to the client remain intact.
+              </p>
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-400/20"
+              >
+                Delete client
+              </button>
+            </form>
+          </DetailPanel>
         </div>
       </PageShell>
     );

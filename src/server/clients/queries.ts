@@ -1,9 +1,15 @@
 import { RecordStatus } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import type { ListQueryParams } from "@/lib/list-config/types";
 
-export async function listClients(search?: string, page = 1, pageSize = 10) {
-  const where = search
+export async function listClients(params?: ListQueryParams) {
+  const search = params?.search;
+  const page = params?.page ?? 1;
+  const pageSize = params?.pageSize ?? 10;
+  const status = params?.status as RecordStatus | undefined;
+
+  const searchClause = search
     ? {
         OR: [
           { code: { contains: search, mode: "insensitive" as const } },
@@ -12,14 +18,22 @@ export async function listClients(search?: string, page = 1, pageSize = 10) {
           { contactEmail: { contains: search, mode: "insensitive" as const } },
         ],
       }
-    : undefined;
+    : {};
+
+  const statusClause = status ? { status } : {};
+
+  const where = { ...searchClause, ...statusClause, deletedAt: null };
+
+  const orderBy = params?.sortField
+    ? { [params.sortField]: params.sortDir ?? "asc" }
+    : [{ name: "asc" }];
 
   const [rows, total] = await Promise.all([
     prisma.client.findMany({
       where,
       skip: (page - 1) * pageSize,
       take: pageSize,
-      orderBy: [{ name: "asc" }],
+      orderBy,
       select: {
         id: true,
         code: true,
@@ -37,8 +51,8 @@ export async function listClients(search?: string, page = 1, pageSize = 10) {
 }
 
 export async function getClientById(id: string) {
-  return prisma.client.findUnique({
-    where: { id },
+  return prisma.client.findFirst({
+    where: { id, deletedAt: null },
     select: {
       id: true,
       code: true,
@@ -53,7 +67,7 @@ export async function getClientById(id: string) {
 
 export async function listActiveClients() {
   return prisma.client.findMany({
-    where: { status: RecordStatus.ACTIVE },
+    where: { status: RecordStatus.ACTIVE, deletedAt: null },
     orderBy: [{ name: "asc" }],
     select: {
       id: true,

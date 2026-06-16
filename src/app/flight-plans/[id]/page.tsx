@@ -24,6 +24,15 @@ function formatDateInput(value: Date) {
   return value.toISOString().slice(0, 10);
 }
 
+function withCurrentOption<T extends { id: string; label: string }>(
+  options: T[],
+  current?: { id: string; label: string },
+) {
+  if (!current) return options;
+  if (options.some((item) => item.id === current.id)) return options;
+  return [current, ...options];
+}
+
 export default async function FlightPlanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   await requirePageAuth(`/flight-plans/${id}`);
@@ -50,6 +59,24 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
     const weatherData = record.geometryJson
       ? await getWeatherForecast(record.geometryJson, record.operationDate).catch(() => null)
       : null;
+
+    const clientOptionsWithCurrent = withCurrentOption(
+      clients.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.name}` : item.name })),
+      record.client ? { id: record.client.id, label: record.client.name } : undefined,
+    );
+
+    const droneOptionsWithCurrent = withCurrentOption(
+      drones.map((item) => ({ id: item.id, label: `${item.model} · ${item.serialNumber}` })),
+      record.drone ? { id: record.drone.id, label: `${record.drone.model} · ${record.drone.serialNumber}` } : undefined,
+    );
+
+    const operatorOptionsWithCurrent = withCurrentOption(
+      operators.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.fullName}` : item.fullName })),
+      record.operator ? {
+        id: record.operator.id,
+        label: record.operator.fullName,
+      } : undefined,
+    );
 
     return (
       <PageShell>
@@ -99,9 +126,9 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
                   operatorId: record.operatorId,
                 }}
                 costCenterOptions={costCenters.map((item) => ({ id: item.id, label: `${item.code} · ${item.name}` }))}
-                clientOptions={clients.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.name}` : item.name }))}
-                droneOptions={drones.map((item) => ({ id: item.id, label: `${item.model} · ${item.serialNumber}` }))}
-                operatorOptions={operators.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.fullName}` : item.fullName }))}
+                clientOptions={clientOptionsWithCurrent}
+                droneOptions={droneOptionsWithCurrent}
+                operatorOptions={operatorOptionsWithCurrent}
                 geometrySummary={record.geometryType ?? "No geometry attached yet"}
               />
 

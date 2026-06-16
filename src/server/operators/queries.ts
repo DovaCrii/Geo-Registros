@@ -1,9 +1,15 @@
 import { RecordStatus } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import type { ListQueryParams } from "@/lib/list-config/types";
 
-export async function listOperators(search?: string, page = 1, pageSize = 10) {
-  const where = search
+export async function listOperators(params?: ListQueryParams) {
+  const search = params?.search;
+  const page = params?.page ?? 1;
+  const pageSize = params?.pageSize ?? 10;
+  const status = params?.status as RecordStatus | undefined;
+
+  const searchClause = search
     ? {
         OR: [
           { code: { contains: search, mode: "insensitive" as const } },
@@ -12,14 +18,22 @@ export async function listOperators(search?: string, page = 1, pageSize = 10) {
           { licenseNumber: { contains: search, mode: "insensitive" as const } },
         ],
       }
-    : undefined;
+    : {};
+
+  const statusClause = status ? { status } : {};
+
+  const where = { ...searchClause, ...statusClause, deletedAt: null };
+
+  const orderBy = params?.sortField
+    ? { [params.sortField]: params.sortDir ?? "asc" }
+    : [{ fullName: "asc" }];
 
   const [rows, total] = await Promise.all([
     prisma.operator.findMany({
       where,
       skip: (page - 1) * pageSize,
       take: pageSize,
-      orderBy: [{ fullName: "asc" }],
+      orderBy,
       select: {
         id: true,
         code: true,
@@ -41,8 +55,8 @@ export async function listOperators(search?: string, page = 1, pageSize = 10) {
 }
 
 export async function getOperatorById(id: string) {
-  return prisma.operator.findUnique({
-    where: { id },
+  return prisma.operator.findFirst({
+    where: { id, deletedAt: null },
     select: {
       id: true,
       code: true,
@@ -53,13 +67,16 @@ export async function getOperatorById(id: string) {
       notes: true,
       status: true,
       costCenterId: true,
+      costCenter: {
+        select: { id: true, code: true, name: true },
+      },
     },
   });
 }
 
 export async function listActiveOperators() {
   return prisma.operator.findMany({
-    where: { status: RecordStatus.ACTIVE },
+    where: { status: RecordStatus.ACTIVE, deletedAt: null },
     orderBy: [{ fullName: "asc" }],
     select: {
       id: true,

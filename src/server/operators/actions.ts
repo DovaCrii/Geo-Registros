@@ -21,6 +21,19 @@ function readStatus(formData: FormData) {
   return value === RecordStatus.INACTIVE ? RecordStatus.INACTIVE : RecordStatus.ACTIVE;
 }
 
+async function requireActiveOperator(id: string) {
+  const operator = await prisma.operator.findFirst({
+    where: { id, deletedAt: null },
+    select: { id: true },
+  });
+
+  if (!operator) {
+    throw new Error("Operator not found.");
+  }
+
+  return operator;
+}
+
 export async function createOperator(formData: FormData) {
   const code = readOptionalString(formData, "code");
   const fullName = readString(formData, "fullName");
@@ -53,6 +66,8 @@ export async function createOperator(formData: FormData) {
 }
 
 export async function updateOperator(id: string, formData: FormData) {
+  await requireActiveOperator(id);
+
   const code = readOptionalString(formData, "code");
   const fullName = readString(formData, "fullName");
   const email = readOptionalString(formData, "email");
@@ -81,6 +96,20 @@ export async function updateOperator(id: string, formData: FormData) {
   });
 
   revalidatePath("/operators");
+  revalidatePath(`/operators/${id}`);
+  redirect("/operators");
+}
+
+export async function deleteOperator(id: string) {
+  await requireActiveOperator(id);
+
+  await prisma.operator.update({
+    where: { id },
+    data: { deletedAt: new Date() },
+  });
+
+  revalidatePath("/operators");
+  revalidatePath("/dashboard");
   revalidatePath(`/operators/${id}`);
   redirect("/operators");
 }

@@ -16,9 +16,9 @@ export async function getDashboardStats() {
 
       prisma.operator.count(),
 
-      prisma.client.count(),
+      prisma.client.count({ where: { deletedAt: null } }),
 
-      prisma.costCenter.count(),
+      prisma.costCenter.count({ where: { deletedAt: null } }),
 
       prisma.permissionEvent.findMany({
         where: { deletedAt: null },

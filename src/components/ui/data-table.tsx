@@ -1,9 +1,15 @@
 import { ReactNode } from "react";
 
+import { SortHeader } from "@/components/ui/sort-header";
+
 export type DataColumn<Row> = {
   key: string;
   header: string;
   render: (row: Row) => ReactNode;
+  /** Enable sorting by this column. */
+  sortable?: boolean;
+  /** Field key for sorting (defaults to key). */
+  sortField?: string;
 };
 
 export function DataTable<Row>({
@@ -31,9 +37,15 @@ export function DataTable<Row>({
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
+                  className="px-6 py-3 text-left"
                 >
-                  {column.header}
+                  {column.sortable ? (
+                    <SortHeader field={column.sortField ?? column.key} label={column.header} />
+                  ) : (
+                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      {column.header}
+                    </span>
+                  )}
                 </th>
               ))}
             </tr>

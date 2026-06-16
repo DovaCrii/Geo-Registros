@@ -34,7 +34,7 @@ export async function GET(request: Request) {
       prisma.flightPlan.count({ where: { deletedAt: null } }),
       prisma.drone.count(),
       prisma.operator.count(),
-      prisma.client.count(),
+      prisma.client.count({ where: { deletedAt: null } }),
     ]);
 
     const flightPlansByStatusRaw = await prisma.flightPlan.groupBy({

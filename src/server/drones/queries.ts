@@ -1,9 +1,15 @@
 import { RecordStatus } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import type { ListQueryParams } from "@/lib/list-config/types";
 
-export async function listDrones(search?: string, page = 1, pageSize = 10) {
-  const where = search
+export async function listDrones(params?: ListQueryParams) {
+  const search = params?.search;
+  const page = params?.page ?? 1;
+  const pageSize = params?.pageSize ?? 10;
+  const status = params?.status as RecordStatus | undefined;
+
+  const searchClause = search
     ? {
         OR: [
           { code: { contains: search, mode: "insensitive" as const } },
@@ -12,14 +18,22 @@ export async function listDrones(search?: string, page = 1, pageSize = 10) {
           { manufacturer: { contains: search, mode: "insensitive" as const } },
         ],
       }
-    : undefined;
+    : {};
+
+  const statusClause = status ? { status } : {};
+
+  const where = { ...searchClause, ...statusClause, deletedAt: null };
+
+  const orderBy = params?.sortField
+    ? { [params.sortField]: params.sortDir ?? "asc" }
+    : [{ model: "asc" }, { serialNumber: "asc" }];
 
   const [rows, total] = await Promise.all([
     prisma.drone.findMany({
       where,
       skip: (page - 1) * pageSize,
       take: pageSize,
-      orderBy: [{ model: "asc" }, { serialNumber: "asc" }],
+      orderBy,
       select: {
         id: true,
         code: true,
@@ -40,8 +54,8 @@ export async function listDrones(search?: string, page = 1, pageSize = 10) {
 }
 
 export async function getDroneById(id: string) {
-  return prisma.drone.findUnique({
-    where: { id },
+  return prisma.drone.findFirst({
+    where: { id, deletedAt: null },
     select: {
       id: true,
       code: true,
@@ -51,13 +65,16 @@ export async function getDroneById(id: string) {
       notes: true,
       status: true,
       costCenterId: true,
+      costCenter: {
+        select: { id: true, code: true, name: true },
+      },
     },
   });
 }
 
 export async function listActiveDrones() {
   return prisma.drone.findMany({
-    where: { status: RecordStatus.ACTIVE },
+    where: { status: RecordStatus.ACTIVE, deletedAt: null },
     orderBy: [{ model: "asc" }, { serialNumber: "asc" }],
     select: {
       id: true,

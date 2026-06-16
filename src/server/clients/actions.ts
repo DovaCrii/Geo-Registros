@@ -21,6 +21,19 @@ function readStatus(formData: FormData) {
   return value === RecordStatus.INACTIVE ? RecordStatus.INACTIVE : RecordStatus.ACTIVE;
 }
 
+async function requireActiveClient(id: string) {
+  const client = await prisma.client.findFirst({
+    where: { id, deletedAt: null },
+    select: { id: true },
+  });
+
+  if (!client) {
+    throw new Error("Client not found.");
+  }
+
+  return client;
+}
+
 export async function createClient(formData: FormData) {
   const code = readOptionalString(formData, "code");
   const name = readString(formData, "name");
@@ -49,6 +62,8 @@ export async function createClient(formData: FormData) {
 }
 
 export async function updateClient(id: string, formData: FormData) {
+  await requireActiveClient(id);
+
   const code = readOptionalString(formData, "code");
   const name = readString(formData, "name");
   const contactName = readOptionalString(formData, "contactName");
@@ -73,6 +88,20 @@ export async function updateClient(id: string, formData: FormData) {
   });
 
   revalidatePath("/clients");
+  revalidatePath(`/clients/${id}`);
+  redirect("/clients");
+}
+
+export async function deleteClient(id: string) {
+  await requireActiveClient(id);
+
+  await prisma.client.update({
+    where: { id },
+    data: { deletedAt: new Date() },
+  });
+
+  revalidatePath("/clients");
+  revalidatePath("/dashboard");
   revalidatePath(`/clients/${id}`);
   redirect("/clients");
 }

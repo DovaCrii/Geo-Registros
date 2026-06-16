@@ -8,8 +8,8 @@
 [![PostGIS](https://img.shields.io/badge/PostGIS-3-316192?logo=postgresql)](https://postgis.net/)
 [![MapLibre](https://img.shields.io/badge/MapLibre-4-7CB342?logo=maplibre)](https://maplibre.org/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind-3-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Development-blueviolet)](.)
+[![License](https://img.shields.io/badge/License-Commercial-red.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-success)](.)
 
 ---
 
@@ -84,19 +84,23 @@ Today, managing drone permits, flight logs, aircraft documents, operator credent
 ## Project progress
 
 | Block | Status | What it delivers |
-|---|---|---|
+|---|---|---|---|
 | **Foundation** | ✅ Done | Next.js + TypeScript + Tailwind + Prisma + Docker + folder structure |
-| **Master Data** | ✅ Done | CostCenter, Client, Drone, Operator CRUD with relations |
-| **Mission (Flight Plan)** | ✅ Done | Create, edit, list flight plans with required relations |
+| **Master Data** | ✅ Done | CostCenter, Client, Drone, Operator CRUD + soft delete + configurable list views with filters, sorting, and pagination |
+| **Mission (Flight Plan)** | ✅ Done | Create, edit, list flight plans with required relations + soft delete |
 | **Geometry boundary** | ✅ Done | GeoJSON validation, storage, type inference, edit support |
 | **Map editing** | ✅ Done | MapLibre + TerraDraw: draw points, lines, polygons interactively |
 | **KML / DXF** | 🚧 Libraries ready | Import and export infrastructure prepared |
-| **Permission workflow** | ⏳ Next | Full state machine (10 states), history log, document association |
-| **Weather integration** | ⏳ Planned | Open-Meteo API: wind, temp, precipitation on mission creation |
-| **Process helper** | ⏳ Planned | Contextual guidance: missing fields, next steps, status messages |
-| **Document management** | ⏳ Planned | Upload, link, search, download per mission |
-| **Dashboard** | ⏳ Planned | KPIs: permits by status, active drones, pending docs, alerts |
-| **Reports & export** | ⏳ Planned | Mission PDF, monthly report, cost center summary, Excel export |
+| **Permission workflow** | ✅ Done | Full state machine (10 states), history log, document association, timeline |
+| **Weather integration** | ✅ Done | Open-Meteo API: wind, temp, precipitation on mission detail |
+| **Process helper** | ✅ Done | Contextual flow guidance panel (FlowGuide) |
+| **Document management** | ✅ Done | Upload, list, remove per flight plan with storage adapter |
+| **Dashboard** | ✅ Done | KPIs: flight plans by status, active drones/operators, pending docs, weather chart |
+| **Reports & export** | ✅ Done | Mission PDF, dashboard report (PDF + Excel) |
+| **Notifications** | ✅ Done | Paginated panel + unread badge, server actions |
+| **Auth & roles** | ✅ Done | Email/password + NextAuth, 8 roles, middleware + server-side gate |
+| **Soft delete** | ✅ Done | All master entities + flight plans preserve historical links |
+| **Configurable lists** | ✅ Done | Column configs, filters, sidebar, sorting — all data-driven |
 | **Email tracking** | ⏳ Planned | Template, send log, recipients, linked documents, audit trail |
 | **Vigency control** | ⏳ Planned | Alerts for expiring insurance, licenses, permits, missing docs |
 
@@ -161,21 +165,28 @@ npm run dev
 ## Documentation index
 
 | Document | Content |
-|---|---|
+|---|---|---|
 | [`docs/00_foundation.md`](docs/00_foundation.md) | Foundational decisions |
 | [`docs/01_master_data.md`](docs/01_master_data.md) | Master data CRUD implementation |
 | [`docs/02_flightplan_foundation.md`](docs/02_flightplan_foundation.md) | Flight plan base |
+| [`docs/03_flightplan_progress.md`](docs/03_flightplan_progress.md) | Flight plan progress |
 | [`docs/04_geometry_boundary.md`](docs/04_geometry_boundary.md) | Geometry persistence boundary |
+| [`docs/05_geometry_progress.md`](docs/05_geometry_progress.md) | Geometry progress |
+| [`docs/06_map_assisted_geometry.md`](docs/06_map_assisted_geometry.md) | Map-assisted geometry |
+| [`docs/07_map_assisted_geometry_progress.md`](docs/07_map_assisted_geometry_progress.md) | Map-assisted geometry progress |
 | [`docs/08_interactive_geometry_progress.md`](docs/08_interactive_geometry_progress.md) | Interactive map editing with TerraDraw |
 | [`docs/09_kml_dxf_import_export.md`](docs/09_kml_dxf_import_export.md) | KML/DXF format interchange |
 | [`docs/10_launch_guide.md`](docs/10_launch_guide.md) | Setup and troubleshooting |
+| [`docs/11_permission_workflow.md`](docs/11_permission_workflow.md) | Permission workflow implementation |
+| [`docs/permission-workflow-guide.md`](docs/permission-workflow-guide.md) | Permission workflow operational guide |
 
 ---
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+Commercial license — see [LICENSE](LICENSE).
+Copyright © 2026 Cristobal Munoz. All rights reserved.
 
 ---
 
-<p align="center"><sub>Built with 🌎, TypeScript & drone coffee · DovaCrii © 2026</sub></p>
+<p align="center"><sub>Built with TypeScript, PostGIS & drone coffee · Cristobal Munoz © 2026</sub></p>

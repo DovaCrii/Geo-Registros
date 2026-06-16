@@ -21,6 +21,19 @@ function readStatus(formData: FormData) {
   return value === RecordStatus.INACTIVE ? RecordStatus.INACTIVE : RecordStatus.ACTIVE;
 }
 
+async function requireActiveDrone(id: string) {
+  const drone = await prisma.drone.findFirst({
+    where: { id, deletedAt: null },
+    select: { id: true },
+  });
+
+  if (!drone) {
+    throw new Error("Drone not found.");
+  }
+
+  return drone;
+}
+
 export async function createDrone(formData: FormData) {
   const code = readOptionalString(formData, "code");
   const serialNumber = readString(formData, "serialNumber");
@@ -51,6 +64,8 @@ export async function createDrone(formData: FormData) {
 }
 
 export async function updateDrone(id: string, formData: FormData) {
+  await requireActiveDrone(id);
+
   const code = readOptionalString(formData, "code");
   const serialNumber = readString(formData, "serialNumber");
   const manufacturer = readOptionalString(formData, "manufacturer");
@@ -77,6 +92,20 @@ export async function updateDrone(id: string, formData: FormData) {
   });
 
   revalidatePath("/drones");
+  revalidatePath(`/drones/${id}`);
+  redirect("/drones");
+}
+
+export async function deleteDrone(id: string) {
+  await requireActiveDrone(id);
+
+  await prisma.drone.update({
+    where: { id },
+    data: { deletedAt: new Date() },
+  });
+
+  revalidatePath("/drones");
+  revalidatePath("/dashboard");
   revalidatePath(`/drones/${id}`);
   redirect("/drones");
 }

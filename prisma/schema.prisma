@@ -95,6 +95,7 @@ model CostCenter {
   status      RecordStatus @default(ACTIVE)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
   drones      Drone[]
   operators   Operator[]
   flightPlans FlightPlan[]
@@ -110,6 +111,7 @@ model Client {
   status       RecordStatus @default(ACTIVE)
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime?
   flightPlans  FlightPlan[]
 }
 
@@ -124,6 +126,7 @@ model Drone {
   costCenterId String?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime?
   costCenter   CostCenter?  @relation(fields: [costCenterId], references: [id])
   flightPlans  FlightPlan[]
 }
@@ -140,6 +143,7 @@ model Operator {
   costCenterId  String?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+  deletedAt     DateTime?
   costCenter    CostCenter?  @relation(fields: [costCenterId], references: [id])
   flightPlans   FlightPlan[]
 }

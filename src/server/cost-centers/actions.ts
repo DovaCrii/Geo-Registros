@@ -16,6 +16,19 @@ function readStatus(formData: FormData) {
   return value === RecordStatus.INACTIVE ? RecordStatus.INACTIVE : RecordStatus.ACTIVE;
 }
 
+async function requireActiveCostCenter(id: string) {
+  const costCenter = await prisma.costCenter.findFirst({
+    where: { id, deletedAt: null },
+    select: { id: true },
+  });
+
+  if (!costCenter) {
+    throw new Error("Cost center not found.");
+  }
+
+  return costCenter;
+}
+
 export async function createCostCenter(formData: FormData) {
   const code = readString(formData, "code");
   const name = readString(formData, "name");
@@ -40,6 +53,8 @@ export async function createCostCenter(formData: FormData) {
 }
 
 export async function updateCostCenter(id: string, formData: FormData) {
+  await requireActiveCostCenter(id);
+
   const code = readString(formData, "code");
   const name = readString(formData, "name");
   const description = readString(formData, "description");
@@ -60,6 +75,20 @@ export async function updateCostCenter(id: string, formData: FormData) {
   });
 
   revalidatePath("/cost-centers");
+  revalidatePath(`/cost-centers/${id}`);
+  redirect("/cost-centers");
+}
+
+export async function deleteCostCenter(id: string) {
+  await requireActiveCostCenter(id);
+
+  await prisma.costCenter.update({
+    where: { id },
+    data: { deletedAt: new Date() },
+  });
+
+  revalidatePath("/cost-centers");
+  revalidatePath("/dashboard");
   revalidatePath(`/cost-centers/${id}`);
   redirect("/cost-centers");
 }

@@ -6,6 +6,7 @@ import { PageShell } from "@/components/ui/page-shell";
 import { StatusChip } from "@/components/ui/status-chip";
 import { requirePageAuth } from "@/lib/require-page-auth";
 import { CostCenterForm } from "@/modules/cost-centers/cost-center-form";
+import { deleteCostCenter } from "@/server/cost-centers/actions";
 import { updateCostCenter } from "@/server/cost-centers/actions";
 import { getCostCenterById } from "@/server/cost-centers/queries";
 
@@ -54,6 +55,20 @@ export default async function CostCenterDetailPage({ params }: { params: Promise
               status: record.status,
             }}
           />
+
+          <DetailPanel title="Danger zone" description="Soft delete hides this cost center from active views while preserving historical links.">
+            <form action={deleteCostCenter.bind(null, record.id)} className="space-y-3">
+              <p className="text-sm leading-6 text-slate-400">
+                This removes the cost center from lists, selectors, and dashboard counts. Related records keep their historical reference.
+              </p>
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-400/20"
+              >
+                Delete cost center
+              </button>
+            </form>
+          </DetailPanel>
         </div>
       </PageShell>
     );
