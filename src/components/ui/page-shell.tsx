@@ -12,6 +12,7 @@ const navigationItems = [
   { href: "/drones", label: "Flota RPAS" },
   { href: "/operators", label: "Operadores RPAS" },
   { href: "/flight-plans", label: "Planes de vuelo" },
+  { href: "/ayuda", label: "Ayuda DGAC" },
   { href: "/admin/users", label: "Usuarios", adminOnly: true },
   { href: "/admin/email-logs", label: "Registro de correos", adminOnly: true },
 ];

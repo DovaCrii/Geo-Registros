@@ -9,6 +9,7 @@ import { PermissionActions } from "@/modules/permissions/permission-actions";
 import { PermissionStatusBadge } from "@/modules/permissions/permission-status-badge";
 import { PermissionTimeline } from "@/modules/permissions/permission-timeline";
 import { DocumentUpload } from "@/modules/permissions/document-upload";
+import { FlightPlanChecklist } from "@/modules/dgac/flight-plan-checklist";
 import { listActiveClients } from "@/server/clients/queries";
 import { listActiveCostCenters } from "@/server/cost-centers/queries";
 import { listActiveDrones } from "@/server/drones/queries";
@@ -149,6 +150,8 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
               <DetailPanel title="Documents" description="Attach and manage operational documents for this flight plan.">
                 <DocumentUpload flightPlanId={record.id} documents={record.documents} />
               </DetailPanel>
+
+              <FlightPlanChecklist flightPlanId={record.id} />
 
               <DetailPanel
                 title="Danger zone"

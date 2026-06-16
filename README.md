@@ -183,6 +183,15 @@ npm run dev
 | [`docs/10_launch_guide.md`](docs/10_launch_guide.md) | Setup and troubleshooting |
 | [`docs/11_permission_workflow.md`](docs/11_permission_workflow.md) | Permission workflow implementation |
 | [`docs/permission-workflow-guide.md`](docs/permission-workflow-guide.md) | Permission workflow operational guide |
+| [`docs/dgac/00_indice_normativo.md`](docs/dgac/00_indice_normativo.md) | DGAC help index |
+| [`docs/dgac/01_operaciones_rpas_chile.md`](docs/dgac/01_operaciones_rpas_chile.md) | RPAS operations in Chile |
+| [`docs/dgac/02_dan_151_operaciones_rpas.md`](docs/dgac/02_dan_151_operaciones_rpas.md) | DAN 151 reference |
+| [`docs/dgac/03_dan_91_operaciones_generales.md`](docs/dgac/03_dan_91_operaciones_generales.md) | DAN 91 reference |
+| [`docs/dgac/04_aoc_ceo_sms_manual_operaciones.md`](docs/dgac/04_aoc_ceo_sms_manual_operaciones.md) | AOC / CEO / SMS / Manual |
+| [`docs/dgac/05_checklist_permiso_vuelo.md`](docs/dgac/05_checklist_permiso_vuelo.md) | Flight-permission checklist |
+| [`docs/dgac/06_documentacion_operador_dron.md`](docs/dgac/06_documentacion_operador_dron.md) | Operator / drone docs |
+| [`docs/dgac/07_fiscalizacion_multas_incumplimientos.md`](docs/dgac/07_fiscalizacion_multas_incumplimientos.md) | Fiscalization and sanctions |
+| [`docs/dgac/08_fuentes_oficiales_dgac.md`](docs/dgac/08_fuentes_oficiales_dgac.md) | Official sources |
 
 ---
 
