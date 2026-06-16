@@ -40,9 +40,11 @@ const TRANSITION_TONES: Record<string, string> = {
 export function PermissionActions({
   flightPlanId,
   currentStatus,
+  transitionBlocks,
 }: {
   flightPlanId: string;
   currentStatus: string;
+  transitionBlocks?: Partial<Record<string, string>>;
 }) {
   const router = useRouter();
   const { toast } = useToast();
@@ -93,12 +95,14 @@ export function PermissionActions({
       <div className="flex flex-wrap gap-2">
         {nextStates.map((state) => {
           const toneClass = TRANSITION_TONES[state] ?? "border-cyan-400/30 bg-cyan-500/15 text-cyan-100 hover:bg-cyan-400/20";
+          const blockedReason = transitionBlocks?.[state] ?? null;
 
           return (
             <button
               key={state}
               type="button"
-              disabled={pending === state}
+              disabled={pending === state || Boolean(blockedReason)}
+              title={blockedReason ?? undefined}
               onClick={() => handleTransition(state)}
               className={`inline-flex items-center justify-center rounded-2xl border px-3 py-1.5 text-xs font-medium transition disabled:opacity-40 ${toneClass}`}
             >

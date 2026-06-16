@@ -18,6 +18,23 @@ export const DGAC_CHECKLIST_ITEMS: DgacChecklistItem[] = [
   { id: "ready-to-send", label: "Permiso listo para revisión", hint: "Checklist completo antes del envío DGAC." },
 ];
 
+export const DGAC_AUTOMATED_CHECKLIST_ITEM_IDS = new Set<string>([
+  "drone-registered",
+  "operator-valid",
+  "client-assigned",
+  "costcenter-assigned",
+  "operation-area",
+  "date-defined",
+  "documents-attached",
+  "weather-check",
+  "ready-to-send",
+]);
+
+export const DGAC_MANUAL_CHECKLIST_ITEM_IDS = new Set<string>([
+  "population-check",
+  "restriction-check",
+]);
+
 export function normalizeChecklist(value: unknown): Record<string, boolean> {
   if (!value || typeof value !== "object" || Array.isArray(value)) return {};
 
@@ -25,6 +42,17 @@ export function normalizeChecklist(value: unknown): Record<string, boolean> {
   for (const item of DGAC_CHECKLIST_ITEMS) {
     const current = (value as Record<string, unknown>)[item.id];
     result[item.id] = current === true;
+  }
+  return result;
+}
+
+export function normalizeChecklistPatch(value: unknown): Record<string, boolean> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+
+  const result: Record<string, boolean> = {};
+  for (const item of DGAC_CHECKLIST_ITEMS) {
+    if (!(item.id in (value as Record<string, unknown>))) continue;
+    result[item.id] = (value as Record<string, unknown>)[item.id] === true;
   }
   return result;
 }
@@ -38,10 +66,18 @@ type ChecklistSource = {
     geometryJson: unknown;
     operationDate: Date;
   };
-  documents: Array<unknown>;
+  documents: ReadonlyArray<unknown>;
   drone?: { insuranceExpiry: Date | null } | null;
   operator?: { licenseNumber: string | null; licenseExpiry: Date | null } | null;
   weatherReady?: boolean;
+};
+
+type ChecklistEvaluation = {
+  canSubmit: boolean;
+  missingItemIds: string[];
+  missingItems: DgacChecklistItem[];
+  suggestedChecklist: Record<string, boolean>;
+  effectiveChecklist: Record<string, boolean>;
 };
 
 export function deriveChecklistState(source: ChecklistSource): Record<string, boolean> {
@@ -78,4 +114,38 @@ export function deriveChecklistState(source: ChecklistSource): Record<string, bo
   };
 
   return state;
+}
+
+export function evaluateChecklistSubmission(
+  source: ChecklistSource,
+  persistedChecklist: unknown,
+): ChecklistEvaluation {
+  const suggestedChecklist = deriveChecklistState(source);
+  const persisted = normalizeChecklistPatch(persistedChecklist);
+  const effectiveChecklist = { ...suggestedChecklist, ...persisted };
+  const missingItemIds: string[] = [];
+
+  for (const item of DGAC_CHECKLIST_ITEMS) {
+    const isManual = DGAC_MANUAL_CHECKLIST_ITEM_IDS.has(item.id);
+    const isAutomated = DGAC_AUTOMATED_CHECKLIST_ITEM_IDS.has(item.id);
+
+    if (isManual) {
+      if (!effectiveChecklist[item.id]) missingItemIds.push(item.id);
+      continue;
+    }
+
+    if (isAutomated && (!suggestedChecklist[item.id] || !effectiveChecklist[item.id])) {
+      missingItemIds.push(item.id);
+    }
+  }
+
+  const missingItems = DGAC_CHECKLIST_ITEMS.filter((item) => missingItemIds.includes(item.id));
+
+  return {
+    canSubmit: missingItemIds.length === 0,
+    missingItemIds,
+    missingItems,
+    suggestedChecklist,
+    effectiveChecklist,
+  };
 }

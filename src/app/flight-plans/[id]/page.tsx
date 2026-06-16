@@ -10,7 +10,7 @@ import { PermissionStatusBadge } from "@/modules/permissions/permission-status-b
 import { PermissionTimeline } from "@/modules/permissions/permission-timeline";
 import { DocumentUpload } from "@/modules/permissions/document-upload";
 import { FlightPlanChecklist } from "@/modules/dgac/flight-plan-checklist";
-import { deriveChecklistState } from "@/modules/dgac/checklist-items";
+import { deriveChecklistState, evaluateChecklistSubmission, normalizeChecklist } from "@/modules/dgac/checklist-items";
 import { listActiveClients } from "@/server/clients/queries";
 import { listActiveCostCenters } from "@/server/cost-centers/queries";
 import { listActiveDrones } from "@/server/drones/queries";
@@ -100,6 +100,8 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
 
     const currentDrone = drones.find((item) => item.id === record.droneId) ?? null;
     const currentOperator = operators.find((item) => item.id === record.operatorId) ?? null;
+    const persistedChecklist = normalizeChecklist(record.dgacChecklist);
+    const weatherReady = Boolean(weatherData && !("error" in weatherData)) || Boolean(persistedChecklist["weather-check"]);
 
     const suggestedChecklist = deriveChecklistState({
       record: {
@@ -118,8 +120,37 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
             licenseExpiry: currentOperator.licenseExpiry ?? null,
           }
         : null,
-      weatherReady: Boolean(weatherData && !("error" in weatherData)),
+      weatherReady,
     });
+
+    const checklistReview = evaluateChecklistSubmission(
+      {
+        record: {
+          clientId: record.clientId,
+          costCenterId: record.costCenterId,
+          droneId: record.droneId,
+          operatorId: record.operatorId,
+          geometryJson: record.geometryJson,
+          operationDate: record.operationDate,
+        },
+        documents,
+        drone: currentDrone ? { insuranceExpiry: currentDrone.insuranceExpiry ?? null } : null,
+        operator: currentOperator
+          ? {
+              licenseNumber: currentOperator.licenseNumber ?? null,
+              licenseExpiry: currentOperator.licenseExpiry ?? null,
+            }
+          : null,
+        weatherReady,
+      },
+      record.dgacChecklist,
+    );
+
+    const transitionBlocks = checklistReview.canSubmit
+      ? undefined
+      : {
+          SUBMITTED: `No se puede enviar todavía. Faltan: ${checklistReview.missingItems.map((item) => item.label).join(", ")}`,
+        };
 
     return (
       <PageShell>
@@ -184,7 +215,11 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
 
                   <div>
                     <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Transiciones disponibles</p>
-                    <PermissionActions flightPlanId={record.id} currentStatus={record.permissionStatus} />
+                    <PermissionActions
+                      flightPlanId={record.id}
+                      currentStatus={record.permissionStatus}
+                      transitionBlocks={transitionBlocks}
+                    />
                   </div>
                 </div>
               </DetailPanel>
