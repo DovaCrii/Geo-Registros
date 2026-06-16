@@ -159,6 +159,7 @@ model FlightPlan {
   notes            String?
   geometryJson     Json?
   geometryType     String?
+  dgacChecklist    Json?
   costCenterId     String
   clientId         String
   droneId          String

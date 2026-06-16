@@ -15,7 +15,8 @@ import { listActiveCostCenters } from "@/server/cost-centers/queries";
 import { listActiveDrones } from "@/server/drones/queries";
 import { deleteFlightPlan, updateFlightPlan } from "@/server/flight-plans/actions";
 import { listActiveOperators } from "@/server/operators/queries";
-import { getFlightPlanWithPermissions } from "@/server/permissions/queries";
+import { getFlightPlanById } from "@/server/flight-plans/queries";
+import { getPermissionDocuments, getPermissionHistory } from "@/server/permissions/queries";
 import { getWeatherForecast } from "@/server/weather/service";
 import { WeatherCard } from "@/modules/weather/weather-card";
 
@@ -34,13 +35,28 @@ function withCurrentOption<T extends { id: string; label: string }>(
   return [current, ...options];
 }
 
+function labelFromList(
+  items: Array<Record<string, unknown> & { id: string }>,
+  id: string,
+  fallback: string,
+) {
+  const found = items.find((item) => item.id === id);
+  if (!found) return fallback;
+  if (typeof found.fullName === "string") return found.fullName;
+  if (typeof found.model === "string" && typeof found.serialNumber === "string") {
+    return `${found.model} · ${found.serialNumber}`;
+  }
+  if (typeof found.code === "string" && found.code) return found.code;
+  return fallback;
+}
+
 export default async function FlightPlanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  await requirePageAuth(`/flight-plans/${id}`);
+    await requirePageAuth(`/flight-plans/${id}`);
 
-  try {
+    try {
     const [record, costCenters, clients, drones, operators] = await Promise.all([
-      getFlightPlanWithPermissions(id),
+      getFlightPlanById(id),
       listActiveCostCenters().catch(() => []),
       listActiveClients().catch(() => []),
       listActiveDrones().catch(() => []),
@@ -61,31 +77,33 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
       ? await getWeatherForecast(record.geometryJson, record.operationDate).catch(() => null)
       : null;
 
+    const [permissionEvents, documents] = await Promise.all([
+      getPermissionHistory(id),
+      getPermissionDocuments(id),
+    ]);
+
     const clientOptionsWithCurrent = withCurrentOption(
       clients.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.name}` : item.name })),
-      record.client ? { id: record.client.id, label: record.client.name } : undefined,
+      { id: record.clientId, label: labelFromList(clients, record.clientId, record.clientId) },
     );
 
     const droneOptionsWithCurrent = withCurrentOption(
       drones.map((item) => ({ id: item.id, label: `${item.model} · ${item.serialNumber}` })),
-      record.drone ? { id: record.drone.id, label: `${record.drone.model} · ${record.drone.serialNumber}` } : undefined,
+      { id: record.droneId, label: labelFromList(drones, record.droneId, record.droneId) },
     );
 
     const operatorOptionsWithCurrent = withCurrentOption(
       operators.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.fullName}` : item.fullName })),
-      record.operator ? {
-        id: record.operator.id,
-        label: record.operator.fullName,
-      } : undefined,
+      { id: record.operatorId, label: labelFromList(operators, record.operatorId, record.operatorId) },
     );
 
     return (
       <PageShell>
         <div className="space-y-6">
           <PageHeader
-            eyebrow="Permission workflow"
+            eyebrow="Flujo de permisos"
             title={record.title}
-            description="Manage the operational record, permission state, documents, and audit trail."
+            description="Gestioná el registro operativo, el estado del permiso, la documentación y la auditoría."
             actions={
               <>
                 <a
@@ -100,7 +118,7 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
                   href={`/flight-plans/${record.id}/geometry`}
                   className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20"
                 >
-                  Open geometry page
+                  Ir al área de operación
                 </Link>
                 <PermissionStatusBadge status={record.permissionStatus} />
               </>
@@ -111,8 +129,8 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
             {/* Left column: form + permission controls */}
             <div className="space-y-6">
               <FlightPlanForm
-                title="Flight plan details"
-                description="Adjust the operational identity, date, assignment links, and canonical payload."
+                title="Detalles del plan"
+                description="Ajustá identidad operativa, fecha, asignaciones y payload canónico."
                 action={updateFlightPlan.bind(null, record.id)}
                 submitLabel="Save changes"
                 initialValues={{
@@ -130,42 +148,42 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
                 clientOptions={clientOptionsWithCurrent}
                 droneOptions={droneOptionsWithCurrent}
                 operatorOptions={operatorOptionsWithCurrent}
-                geometrySummary={record.geometryType ?? "No geometry attached yet"}
+                geometrySummary={record.geometryType ?? "Sin geometría adjunta todavía"}
               />
 
-              <DetailPanel title="Permission workflow" description="Manage the permission state and transitions for this flight plan.">
+              <DetailPanel title="Flujo de permisos" description="Gestioná el estado del permiso y sus transiciones.">
                 <div className="space-y-6">
                   <div>
-                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Current status</p>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Estado actual</p>
                     <PermissionStatusBadge status={record.permissionStatus} />
                   </div>
 
                   <div>
-                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Available transitions</p>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Transiciones disponibles</p>
                     <PermissionActions flightPlanId={record.id} currentStatus={record.permissionStatus} />
                   </div>
                 </div>
               </DetailPanel>
 
-              <DetailPanel title="Documents" description="Attach and manage operational documents for this flight plan.">
-                <DocumentUpload flightPlanId={record.id} documents={record.documents} />
+              <DetailPanel title="Documentos" description="Adjuntá y gestioná los documentos operativos de este plan.">
+                <DocumentUpload flightPlanId={record.id} documents={documents} />
               </DetailPanel>
 
-              <FlightPlanChecklist flightPlanId={record.id} />
+              <FlightPlanChecklist flightPlanId={record.id} initialChecklist={record.dgacChecklist} />
 
               <DetailPanel
-                title="Danger zone"
-                description="Soft delete hides this flight plan from the app while preserving its historical record."
+                title="Zona de riesgo"
+                description="La eliminación lógica oculta este plan en la app pero preserva su historial."
               >
                 <form action={deleteFlightPlan.bind(null, record.id)} className="space-y-3">
                   <p className="text-sm leading-6 text-slate-400">
-                    This action removes the record from active views, list pages, dashboard counts, and geometry access.
+                    Esta acción lo saca de vistas activas, listados, conteos del panel y acceso a geometría.
                   </p>
                   <button
                     type="submit"
                     className="inline-flex items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-400/20"
                   >
-                    Delete flight plan
+                    Eliminar plan de vuelo
                   </button>
                 </form>
               </DetailPanel>
@@ -173,8 +191,8 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
 
             {/* Right column: timeline + weather */}
             <div className="space-y-6">
-              <DetailPanel title="Event timeline" description="Audit trail of all permission-related events.">
-                <PermissionTimeline events={record.permissionEvents} />
+              <DetailPanel title="Línea de tiempo" description="Auditoría de eventos vinculados al permiso.">
+                <PermissionTimeline events={permissionEvents} />
               </DetailPanel>
 
               <WeatherCard data={weatherData} />

@@ -103,6 +103,7 @@ Today, managing drone permits, flight logs, aircraft documents, operator credent
 | **Configurable lists** | ✅ Done | Column configs, filters, sidebar, sorting — all data-driven |
 | **Email tracking** | ✅ Done | Send log with Resend, auto-logging, admin list, detail, resend failed, linked to flight plans, sidebar |
 | **Vigency control** | ✅ Done | insuranceExpiry / licenseExpiry fields, form dates, list indicators, dashboard widget (≤30 days) |
+| **DGAC help & checklist** | ✅ Done | /ayuda help center, docs/dgac/ index, persisted checklist per flight plan |
 
 > Each block is documented in [`docs/`](docs/) with what was built, why, what was discarded, and lessons learned.
 

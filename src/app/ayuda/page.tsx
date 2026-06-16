@@ -1,5 +1,8 @@
 import Link from "next/link";
 
+import { PageShell } from "@/components/ui/page-shell";
+import { requirePageAuth } from "@/lib/require-page-auth";
+
 const sections = [
   { title: "Antes del vuelo", items: ["Registro RPA", "Credencial piloto RPAS", "Restricciones del espacio aéreo", "Clima y ventanas operativas"] },
   { title: "Durante la operación", items: ["Seguimiento del plan de vuelo", "Evidencia y bitácora", "Cambios de último momento", "Reportes operativos"] },
@@ -20,10 +23,12 @@ const docs = [
   { file: "08_fuentes_oficiales_dgac.md", title: "Fuentes oficiales DGAC" },
 ];
 
-export default function HelpPage() {
+export default async function HelpPage() {
+  await requirePageAuth("/ayuda");
+
   return (
-    <div className="min-h-screen bg-[#080f1e] text-slate-100">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <PageShell>
+      <div className="space-y-6">
         <div className="rounded-3xl border border-slate-800/80 bg-slate-950/55 p-8 shadow-2xl shadow-cyan-950/10 backdrop-blur">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Ayuda DGAC</p>
           <h1 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Centro de ayuda operativa</h1>
@@ -33,7 +38,7 @@ export default function HelpPage() {
           </p>
         </div>
 
-        <div className="mt-6 grid gap-6 xl:grid-cols-2">
+        <div className="grid gap-6 xl:grid-cols-2">
           {sections.map((section) => (
             <section key={section.title} className="rounded-3xl border border-slate-800/80 bg-slate-950/45 p-6 shadow-xl shadow-slate-950/10 backdrop-blur">
               <h2 className="text-lg font-semibold text-white">{section.title}</h2>
@@ -68,11 +73,11 @@ export default function HelpPage() {
           </div>
         </section>
 
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3">
           <Link href="/dashboard" className="inline-flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800">Volver al panel</Link>
           <Link href="/flight-plans" className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20">Ir a planes de vuelo</Link>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }

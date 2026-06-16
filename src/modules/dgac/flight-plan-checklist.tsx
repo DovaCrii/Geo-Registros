@@ -1,60 +1,53 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
+import { useToast } from "@/lib/toast-context";
+import { DGAC_CHECKLIST_ITEMS, normalizeChecklist } from "@/modules/dgac/checklist-items";
 
-type ChecklistItem = {
-  id: string;
-  label: string;
-  hint: string;
-};
-
-const DEFAULT_ITEMS: ChecklistItem[] = [
-  { id: "drone-registered", label: "Dron registrado", hint: "Verificá que el equipo esté cargado en flota." },
-  { id: "operator-valid", label: "Operador con credencial vigente", hint: "Confirmá licencia, identidad y vigencia." },
-  { id: "client-assigned", label: "Cliente asignado", hint: "Debe existir un mandante o contrato asociado." },
-  { id: "costcenter-assigned", label: "Centro de costo asignado", hint: "Usado para trazabilidad financiera y operativa." },
-  { id: "operation-area", label: "Área de operación definida", hint: "Geometría cargada o pendiente de revisión." },
-  { id: "date-defined", label: "Fecha y horario definidos", hint: "Evita ambigüedad en la autorización." },
-  { id: "population-check", label: "Zona poblada / no poblada evaluada", hint: "Clasificá el contexto antes de enviar." },
-  { id: "documents-attached", label: "Documentos adjuntos", hint: "Seguro, credencial y respaldos mínimos." },
-  { id: "weather-check", label: "Evaluación meteorológica", hint: "Revisá viento, temperatura y precipitaciones." },
-  { id: "restriction-check", label: "Restricciones evaluadas", hint: "Espacio aéreo, servidumbres, áreas sensibles." },
-  { id: "ready-to-send", label: "Permiso listo para revisión", hint: "Checklist completo antes del envío DGAC." },
-];
-
-function storageKey(flightPlanId: string) {
-  return `aeroflow.dgac.checklist.${flightPlanId}`;
-}
-
-export function FlightPlanChecklist({ flightPlanId }: { flightPlanId: string }) {
-  const items = useMemo(() => DEFAULT_ITEMS, []);
-  const [checked, setChecked] = useState<Record<string, boolean>>({});
-
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(storageKey(flightPlanId));
-      if (raw) setChecked(JSON.parse(raw) as Record<string, boolean>);
-    } catch {
-      // ignore malformed local state
-    }
-  }, [flightPlanId]);
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(storageKey(flightPlanId), JSON.stringify(checked));
-    } catch {
-      // ignore storage errors
-    }
-  }, [checked, flightPlanId]);
+export function FlightPlanChecklist({
+  flightPlanId,
+  initialChecklist,
+}: {
+  flightPlanId: string;
+  initialChecklist?: unknown;
+}) {
+  const items = useMemo(() => DGAC_CHECKLIST_ITEMS, []);
+  const { toast } = useToast();
+  const [checked, setChecked] = useState<Record<string, boolean>>(() =>
+    normalizeChecklist(initialChecklist),
+  );
+  const [saving, setSaving] = useState<string | null>(null);
 
   const done = items.filter((item) => checked[item.id]).length;
+
+  async function persist(next: Record<string, boolean>) {
+    setSaving("saving");
+    try {
+      const response = await fetch(`/api/flight-plans/${flightPlanId}/dgac-checklist`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ checked: next }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error || "No se pudo guardar la checklist.");
+      }
+
+      toast("success", "Checklist guardada", "El estado DGAC del plan quedó persistido.");
+    } catch (error) {
+      toast("error", "Error al guardar", error instanceof Error ? error.message : "Error desconocido");
+    } finally {
+      setSaving(null);
+    }
+  }
 
   return (
     <DetailPanel
       title="Checklist operativo DGAC"
-      description="Seguimiento simple por plan de vuelo. La persistencia es local por navegador en esta primera versión."
+      description="Seguimiento por plan de vuelo con persistencia real en la base."
     >
       <div className="space-y-4">
         <div className="flex items-center justify-between rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3">
@@ -80,12 +73,12 @@ export function FlightPlanChecklist({ flightPlanId }: { flightPlanId: string }) 
                 <input
                   type="checkbox"
                   checked={isChecked}
-                  onChange={(event) =>
-                    setChecked((prev) => ({
-                      ...prev,
-                      [item.id]: event.target.checked,
-                    }))
-                  }
+                  onChange={(event) => {
+                    const next = { ...checked, [item.id]: event.target.checked };
+                    setChecked(next);
+                    void persist(next);
+                  }}
+                  disabled={saving !== null}
                   className="mt-1 h-4 w-4 rounded border-slate-600 bg-slate-900 text-cyan-400 focus:ring-cyan-400/40"
                 />
                 <div className="min-w-0">
