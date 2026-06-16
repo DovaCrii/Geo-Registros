@@ -10,7 +10,12 @@ import { PermissionStatusBadge } from "@/modules/permissions/permission-status-b
 import { PermissionTimeline } from "@/modules/permissions/permission-timeline";
 import { DocumentUpload } from "@/modules/permissions/document-upload";
 import { FlightPlanChecklist } from "@/modules/dgac/flight-plan-checklist";
-import { deriveChecklistState, evaluateChecklistSubmission, normalizeChecklist } from "@/modules/dgac/checklist-items";
+import {
+  DGAC_CHECKLIST_ITEMS,
+  deriveChecklistState,
+  evaluateChecklistSubmission,
+  normalizeChecklist,
+} from "@/modules/dgac/checklist-items";
 import { listActiveClients } from "@/server/clients/queries";
 import { listActiveCostCenters } from "@/server/cost-centers/queries";
 import { listActiveDrones } from "@/server/drones/queries";
@@ -209,6 +214,29 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
 
               <DetailPanel title="Flujo de permisos" description="Gestioná el estado del permiso y sus transiciones.">
                 <div className="space-y-6">
+                  <div className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-sm font-medium text-white">Estado de preparación DGAC</p>
+                      <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${checklistReview.canSubmit ? "bg-emerald-500/15 text-emerald-200" : "bg-amber-500/15 text-amber-200"}`}>
+                        {checklistReview.canSubmit ? "Listo para envío" : "Pendiente"}
+                      </span>
+                    </div>
+
+                    <div className="mt-3 grid gap-2 md:grid-cols-2">
+                      {DGAC_CHECKLIST_ITEMS.map((item) => {
+                        const checked = Boolean(checklistReview.effectiveChecklist[item.id]);
+                        return (
+                          <div
+                            key={item.id}
+                            className={`rounded-xl border px-3 py-2 text-xs leading-5 ${checked ? "border-emerald-500/20 bg-emerald-500/[0.04] text-emerald-50" : "border-slate-800 bg-slate-900/40 text-slate-300"}`}
+                          >
+                            <span className="font-medium">{checked ? "✓" : "○"} {item.label}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
                   {!checklistReview.canSubmit ? (
                     <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3">
                       <p className="text-sm font-medium text-amber-100">Checklist DGAC incompleta</p>
