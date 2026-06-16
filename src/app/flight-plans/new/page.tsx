@@ -27,22 +27,22 @@ export default async function NewFlightPlanPage() {
     <PageShell>
       <div className="space-y-6">
         <PageHeader
-          eyebrow="Block 3 / Flight plans"
-          title="Create flight plan"
-          description="Register the operational record before introducing geometry, permits, or document-package behavior."
+          eyebrow="Bloque 3 / Planes de vuelo"
+          title="Crear plan de vuelo"
+          description="Registrá el plan operativo antes de avanzar a geometría, permisos y documentación."
         />
 
         {!hasDependencies ? (
-          <DetailPanel title="Master data required" description="At least one active cost center, client, drone, and operator is required before creating the first flight plan.">
-            <p className="text-sm text-slate-300">If the database is offline, these selectors will also remain unavailable until connectivity is restored.</p>
+          <DetailPanel title="Datos maestros requeridos" description="Necesitás al menos un centro de costo, cliente, dron y operador activo antes de crear el primer plan de vuelo.">
+            <p className="text-sm text-slate-300">Si la base de datos está offline, estos selectores también quedarán indisponibles hasta recuperar conectividad.</p>
           </DetailPanel>
         ) : null}
 
         <FlightPlanForm
-          title="Flight plan form"
-          description="Keep this first slice focused on operational identity and assignment only. Geometry comes next."
+          title="Formulario de plan de vuelo"
+          description="Este flujo prioriza la identidad operativa y la asignación. La geometría se trabaja después."
           action={createFlightPlan}
-          submitLabel="Create flight plan"
+          submitLabel="Crear plan de vuelo"
           initialValues={{
             code: "",
             title: "",
@@ -58,7 +58,7 @@ export default async function NewFlightPlanPage() {
           clientOptions={clients.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.name}` : item.name }))}
           droneOptions={drones.map((item) => ({ id: item.id, label: `${item.model} · ${item.serialNumber}` }))}
           operatorOptions={operators.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.fullName}` : item.fullName }))}
-          geometrySummary="No geometry attached yet"
+          geometrySummary="Sin geometría adjunta todavía"
         />
       </div>
     </PageShell>

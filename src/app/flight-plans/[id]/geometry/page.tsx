@@ -47,15 +47,15 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
       <PageShell>
         <div className="space-y-6">
           <PageHeader
-            eyebrow="Block 3 / Map-assisted geometry"
-            title={`${record.code} · geometry`}
-            description="Render the current GeoJSON on a real 2D map, edit it in a controlled way, and save it back to this flight plan."
+            eyebrow="Bloque 3 / Geometría asistida por mapa"
+            title={`${record.code} · área de operación`}
+            description="Mostrá el GeoJSON actual en un mapa real, editá la geometría de forma controlada y guardala en el plan de vuelo."
             actions={<StatusChip label={record.permissionStatus} tone={toneFromPermissionStatus(record.permissionStatus)} />}
           />
 
           <GeometryEditorWrapper
-            title="Geometry payload editor"
-            description="Use this page to round-trip canonical GeoJSON with a live map preview. Heavy geospatial tooling remains deferred on purpose."
+            title="Editor de área de operación"
+            description="Usá esta página para sincronizar GeoJSON canónico con un mapa vivo. Las herramientas geoespaciales pesadas quedan para una etapa posterior."
             action={updateFlightPlanGeometry.bind(null, record.id)}
             flightPlanId={record.id}
             initialPayload={record.geometryJson ? JSON.stringify(record.geometryJson, null, 2) : ""}
@@ -68,10 +68,10 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
 
     return (
       <PageShell>
-        <DetailPanel title="Geometry workspace unavailable" description="The page is wired to the real Prisma query path, but the database is not ready or reachable.">
+          <DetailPanel title="Espacio de geometría no disponible" description="La página apunta a Prisma real, pero la base no está lista o no responde.">
           <p className="text-sm text-slate-300">{message}</p>
-        </DetailPanel>
-      </PageShell>
-    );
+          </DetailPanel>
+        </PageShell>
+      );
   }
 }

@@ -8,6 +8,7 @@ import { MaplibreTerradrawControl } from "@watergis/maplibre-gl-terradraw";
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PrimaryButton } from "@/components/ui/primary-button";
 import { StatusChip } from "@/components/ui/status-chip";
+import { useToast } from "@/lib/toast-context";
 import { importKml, importDxf } from "@/lib/geo-import";
 import { exportKml, exportDxf } from "@/lib/geo-export";
 import type { ImportResult } from "@/lib/geo-import";
@@ -221,6 +222,7 @@ export function GeometryEditor({
   const [payload, setPayload] = useState(initialPayload);
   const [terraDrawReady, setTerraDrawReady] = useState(false);
   const [importing, setImporting] = useState(false);
+  const { toast } = useToast();
   const mapRef = useRef<Map | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const drawControlRef = useRef<MaplibreTerradrawControl | null>(null);
@@ -392,22 +394,24 @@ export function GeometryEditor({
         const ext = file.name.split(".").pop()?.toLowerCase();
 
         let result: ImportResult;
-        if (ext === "kml" || ext === "kmz") {
+        if (ext === "kmz") {
+          toast("info", "KMZ próximamente", "Hoy soportamos KML y DXF. KMZ requiere descompresión real y queda para la próxima iteración.");
+          return;
+        }
+
+        if (ext === "kml") {
           result = importKml(text);
         } else if (ext === "dxf") {
           result = importDxf(text);
         } else {
-          alert("Unsupported file format. Use .kml, .kmz or .dxf");
+          toast("error", "Formato no soportado", "Usá archivos .kml o .dxf.");
           return;
         }
 
         applyImport(result);
+        toast("success", "Geometría importada", result.summary);
       } catch (err) {
-        alert(
-          `Import error: ${
-            err instanceof Error ? err.message : "Unknown error"
-          }`,
-        );
+        toast("error", "Error al importar", err instanceof Error ? err.message : "Error desconocido");
       } finally {
         setImporting(false);
         if (fileInputRef.current) fileInputRef.current.value = "";
@@ -422,7 +426,7 @@ export function GeometryEditor({
       const control = drawControlRef.current;
       const fc = control?.getFeatures();
       if (!fc || fc.features.length === 0) {
-        alert("No geometry to export. Draw or load features first.");
+        toast("info", "Sin geometría", "Dibujá o cargá una geometría antes de exportar.");
         return;
       }
 
@@ -450,8 +454,9 @@ export function GeometryEditor({
       a.download = `flight-plan-geometry.${extension}`;
       a.click();
       URL.revokeObjectURL(url);
+      toast("success", `Exportado a ${format.toUpperCase()}`, `Archivo generado correctamente en formato ${format.toUpperCase()}.`);
     },
-    [],
+    [toast],
   );
 
   return (
@@ -461,11 +466,10 @@ export function GeometryEditor({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold text-white">
-                Map-assisted geometry
+                Mapa y geometría asistida
               </h2>
               <p className="mt-1 text-sm text-slate-400">
-                Draw points, lines, polygons and circles on the map. Import KML
-                or DXF files, export back to either format.
+                Dibujá puntos, líneas, polígonos o círculos sobre el mapa. Importá KML o DXF y exportá de vuelta.
               </p>
             </div>
             <StatusChip
@@ -477,11 +481,11 @@ export function GeometryEditor({
 
         <div className="relative h-[300px] sm:h-[400px] lg:h-[560px] bg-slate-950">
           <div ref={containerRef} className="h-full w-full" />
-          {!parsed.valid ? (
-            <div className="pointer-events-none absolute inset-x-4 top-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200 backdrop-blur">
-              The preview is paused until the GeoJSON becomes valid again.
-            </div>
-          ) : null}
+            {!parsed.valid ? (
+              <div className="pointer-events-none absolute inset-x-4 top-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200 backdrop-blur">
+              La vista previa se pausa hasta que el GeoJSON vuelva a ser válido.
+              </div>
+            ) : null}
         </div>
       </section>
 
@@ -491,7 +495,7 @@ export function GeometryEditor({
 
           <label className="block space-y-2">
             <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
-              Geometry payload (GeoJSON)
+              GeoJSON de la geometría
             </span>
             <textarea
               name="geometryPayload"
@@ -511,7 +515,7 @@ export function GeometryEditor({
               disabled={!parsed.valid}
               className="inline-flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Apply from textarea
+              Aplicar desde texto
             </button>
 
             {/* Import */}
@@ -528,7 +532,7 @@ export function GeometryEditor({
               onClick={() => fileInputRef.current?.click()}
               className="inline-flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {importing ? "Importing…" : "Import KML/DXF"}
+              {importing ? "Importando…" : "Importar KML/DXF"}
             </button>
 
             {/* Export dropdown-like pair */}
@@ -537,44 +541,40 @@ export function GeometryEditor({
               onClick={() => handleExport("kml")}
               className="inline-flex items-center justify-center rounded-2xl border border-emerald-700/50 bg-emerald-900/40 px-4 py-2.5 text-sm font-medium text-emerald-200 transition hover:border-emerald-600/60 hover:bg-emerald-800/50"
             >
-              Export KML
+              Exportar KML
             </button>
             <button
               type="button"
               onClick={() => handleExport("dxf")}
               className="inline-flex items-center justify-center rounded-2xl border border-emerald-700/50 bg-emerald-900/40 px-4 py-2.5 text-sm font-medium text-emerald-200 transition hover:border-emerald-600/60 hover:bg-emerald-800/50"
             >
-              Export DXF
+              Exportar DXF
             </button>
           </div>
 
           <div className="space-y-3 rounded-2xl border border-slate-800/80 bg-slate-900/70 p-4 text-sm text-slate-300">
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Current state</span>
+                <span className="text-slate-400">Estado actual</span>
               <StatusChip
-                label={parsed.valid ? "Preview active" : "Validation error"}
+                label={parsed.valid ? "Vista activa" : "Error de validación"}
                 tone={parsed.valid ? "info" : "warning"}
               />
             </div>
             <p className="leading-6 text-slate-300">
-              <strong>Draw:</strong> Use the map toolbar to draw points, lines,
-              polygons, or circles. Switch to <strong>Select</strong> mode to
-              move or delete features. Undo / Redo are also available.
+              <strong>Dibujar:</strong> Usá la barra del mapa para crear puntos, líneas, polígonos o círculos. Cambiá a <strong>Seleccionar</strong> para mover o borrar elementos. También tenés Deshacer / Rehacer.
             </p>
             <p className="leading-6 text-slate-300">
-              <strong>Import / Export:</strong> Load KML or DXF files into the
-              map, then edit freely. Export the current geometry back to KML or
-              DXF for use in CAD (AutoCAD / DraftSight / QGIS).
+              <strong>Importar / exportar:</strong> Cargá KML o DXF, editá libremente y exportá la geometría para CAD (AutoCAD / DraftSight / QGIS).
             </p>
           </div>
 
           <div className="flex items-center gap-3 pt-2">
-            <PrimaryButton type="submit">Save geometry</PrimaryButton>
+            <PrimaryButton type="submit">Guardar área de operación</PrimaryButton>
             <Link
               href={`/flight-plans/${flightPlanId}`}
               className="inline-flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800"
             >
-              Back to flight plan
+              Volver al plan de vuelo
             </Link>
           </div>
         </form>
