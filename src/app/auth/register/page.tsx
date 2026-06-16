@@ -3,6 +3,13 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { validateName, validateEmail, validatePassword } from "@/lib/validation";
+
+type FieldErrors = {
+  fullName?: string;
+  email?: string;
+  password?: string;
+};
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -10,19 +17,40 @@ export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  function validate(): FieldErrors {
+    const errs: FieldErrors = {};
+    const nameErr = validateName(fullName, "Nombre completo");
+    if (nameErr) errs.fullName = nameErr;
+    const emailErr = validateEmail(email);
+    if (emailErr) errs.email = emailErr;
+    const passErr = validatePassword(password);
+    if (passErr) errs.password = passErr;
+    return errs;
+  }
+
+  function handleField<T>(setter: (v: T) => void, field: keyof FieldErrors) {
+    return (value: T) => {
+      setter(value);
+      // Clear error on change
+      if (errors[field]) {
+        setErrors((prev) => ({ ...prev, [field]: undefined }));
+      }
+    };
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setError("");
-    setLoading(true);
+    setServerError("");
 
-    if (password.length < 8) {
-      setError("La contraseña debe tener al menos 8 caracteres.");
-      setLoading(false);
-      return;
-    }
+    const fieldErrors = validate();
+    setErrors(fieldErrors);
+    if (Object.keys(fieldErrors).length > 0) return;
+
+    setLoading(true);
 
     try {
       const res = await fetch("/api/auth/register", {
@@ -33,14 +61,14 @@ export default function RegisterPage() {
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error || "Error al registrarse.");
+        setServerError(data.error || "Error al registrarse.");
         setLoading(false);
         return;
       }
 
       router.push("/auth/login?registered=true");
     } catch {
-      setError("Error de conexión. Intentá de nuevo.");
+      setServerError("Error de conexión. Intentá de nuevo.");
       setLoading(false);
     }
   }
@@ -59,10 +87,10 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {error && (
+        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+          {serverError && (
             <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
-              {error}
+              {serverError}
             </div>
           )}
 
@@ -74,10 +102,17 @@ export default function RegisterPage() {
               type="text"
               required
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={(e) => handleField(setFullName, "fullName")(e.target.value)}
               placeholder="Tu nombre"
-              className="w-full rounded-2xl border border-slate-700/80 bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20"
+              className={`w-full rounded-2xl border bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:ring-2 focus:ring-cyan-500/20 ${
+                errors.fullName
+                  ? "border-rose-500/60 focus:border-rose-400/60"
+                  : "border-slate-700/80 focus:border-cyan-400/60"
+              }`}
             />
+            {errors.fullName && (
+              <p className="text-xs text-rose-400 pl-1">{errors.fullName}</p>
+            )}
           </label>
 
           <label className="block space-y-2">
@@ -88,10 +123,17 @@ export default function RegisterPage() {
               type="email"
               required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => handleField(setEmail, "email")(e.target.value)}
               placeholder="tu@email.com"
-              className="w-full rounded-2xl border border-slate-700/80 bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20"
+              className={`w-full rounded-2xl border bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:ring-2 focus:ring-cyan-500/20 ${
+                errors.email
+                  ? "border-rose-500/60 focus:border-rose-400/60"
+                  : "border-slate-700/80 focus:border-cyan-400/60"
+              }`}
             />
+            {errors.email && (
+              <p className="text-xs text-rose-400 pl-1">{errors.email}</p>
+            )}
           </label>
 
           <label className="block space-y-2">
@@ -102,10 +144,17 @@ export default function RegisterPage() {
               type="password"
               required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => handleField(setPassword, "password")(e.target.value)}
               placeholder="Mínimo 8 caracteres"
-              className="w-full rounded-2xl border border-slate-700/80 bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20"
+              className={`w-full rounded-2xl border bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:ring-2 focus:ring-cyan-500/20 ${
+                errors.password
+                  ? "border-rose-500/60 focus:border-rose-400/60"
+                  : "border-slate-700/80 focus:border-cyan-400/60"
+              }`}
             />
+            {errors.password && (
+              <p className="text-xs text-rose-400 pl-1">{errors.password}</p>
+            )}
           </label>
 
           <button
