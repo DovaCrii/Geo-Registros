@@ -25,8 +25,8 @@ export async function listClients(params?: ListQueryParams) {
   const where = { ...searchClause, ...statusClause, deletedAt: null };
 
   const orderBy = params?.sortField
-    ? { [params.sortField]: params.sortDir ?? "asc" }
-    : [{ name: "asc" }];
+    ? { [params.sortField]: params.sortDir ?? "asc" } as any
+    : [{ name: "asc" }] as any;
 
   const [rows, total] = await Promise.all([
     prisma.client.findMany({

@@ -3,7 +3,20 @@ import { RecordStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { ListQueryParams } from "@/lib/list-config/types";
 
-export async function listOperators(params?: ListQueryParams) {
+type OperatorRow = {
+  id: string;
+  code: string | null;
+  fullName: string;
+  email: string | null;
+  phone: string | null;
+  licenseNumber: string | null;
+  licenseExpiry: Date | null;
+  notes: string | null;
+  status: RecordStatus;
+  costCenter: { id: string; code: string; name: string } | null;
+};
+
+export async function listOperators(params?: ListQueryParams): Promise<{ rows: OperatorRow[]; total: number }> {
   const search = params?.search;
   const page = params?.page ?? 1;
   const pageSize = params?.pageSize ?? 10;
@@ -25,8 +38,8 @@ export async function listOperators(params?: ListQueryParams) {
   const where = { ...searchClause, ...statusClause, deletedAt: null };
 
   const orderBy = params?.sortField
-    ? { [params.sortField]: params.sortDir ?? "asc" }
-    : [{ fullName: "asc" }];
+    ? { [params.sortField]: params.sortDir ?? "asc" } as any
+    : [{ fullName: "asc" }] as any;
 
   const [rows, total] = await Promise.all([
     prisma.operator.findMany({
@@ -41,6 +54,7 @@ export async function listOperators(params?: ListQueryParams) {
         email: true,
         phone: true,
         licenseNumber: true,
+        licenseExpiry: true,
         notes: true,
         status: true,
         costCenter: {
@@ -64,6 +78,7 @@ export async function getOperatorById(id: string) {
       email: true,
       phone: true,
       licenseNumber: true,
+      licenseExpiry: true,
       notes: true,
       status: true,
       costCenterId: true,

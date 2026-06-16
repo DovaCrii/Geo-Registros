@@ -1,7 +1,12 @@
 import { prisma } from "@/lib/prisma";
 
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
 export async function getDashboardStats() {
-  const [flightPlans, drones, operators, clients, costCenters, recentEvents, recentDocuments] =
+  const now = new Date();
+  const thirtyDaysFromNow = new Date(now.getTime() + THIRTY_DAYS_MS);
+
+  const [flightPlans, drones, operators, clients, costCenters, recentEvents, recentDocuments, expiringItems] =
     await Promise.all([
       prisma.flightPlan.groupBy({
         by: ["permissionStatus"],
@@ -41,6 +46,33 @@ export async function getDashboardStats() {
           },
         },
       }),
+
+      // Expiring items (next 30 days or already past)
+      Promise.all([
+        prisma.drone.findMany({
+          where: {
+            deletedAt: null,
+            insuranceExpiry: { lte: thirtyDaysFromNow, not: null },
+          },
+          select: {
+            id: true,
+            code: true,
+            model: true,
+            insuranceExpiry: true,
+          },
+        }),
+        prisma.operator.findMany({
+          where: {
+            deletedAt: null,
+            licenseExpiry: { lte: thirtyDaysFromNow, not: null },
+          },
+          select: {
+            id: true,
+            fullName: true,
+            licenseExpiry: true,
+          },
+        }),
+      ]),
     ]);
 
   const totalFlightPlans = flightPlans.reduce((sum, g) => sum + g._count, 0);
@@ -68,6 +100,10 @@ export async function getDashboardStats() {
     costCenters: { total: costCenters },
     recentEvents,
     recentDocuments,
+    expiring: {
+      drones: expiringItems[0],
+      operators: expiringItems[1],
+    },
   };
 }
 

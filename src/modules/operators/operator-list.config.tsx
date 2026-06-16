@@ -11,6 +11,7 @@ type OperatorRow = {
   email: string | null;
   phone: string | null;
   licenseNumber: string | null;
+  licenseExpiry: Date | null;
   notes: string | null;
   status: RecordStatus;
   costCenter: { id: string; code: string; name: string } | null;
@@ -49,6 +50,21 @@ export const operatorColumns: ListColumn<OperatorRow>[] = [
     ),
   },
   {
+    key: "licenseExpiry",
+    header: "License expiry",
+    render: (row) => {
+      if (!row.licenseExpiry) return <span className="text-sm text-slate-500">—</span>;
+      const date = new Date(row.licenseExpiry);
+      const isExpired = date < new Date();
+      return (
+        <span className={`text-sm ${isExpired ? "text-red-400" : "text-slate-300"}`}>
+          {date.toISOString().slice(0, 10)}
+          {isExpired && <span className="ml-1.5 text-xs text-red-400">(Expired)</span>}
+        </span>
+      );
+    },
+  },
+  {
     key: "status",
     header: "Status",
     render: (row) => <StatusChip label={row.status} tone={toneFromStatus(row.status)} />,
@@ -73,9 +89,9 @@ export const operatorListConfig: ListConfig<OperatorRow> = {
     { field: "q", label: "Search", type: "search", placeholder: "Nombre, código o licencia…" },
     { field: "status", label: "Status", type: "status" },
   ],
-  actions: {
-    create: { href: "/operators/new", label: "Register operator" },
-  },
+  headerActions: [
+    { href: "/operators/new", label: "Register operator", variant: "primary" },
+  ],
   sidebar: {
     title: "Current slice boundary",
     description: "Real list/create/edit/status and soft-delete flow for operators with optional cost center assignment.",

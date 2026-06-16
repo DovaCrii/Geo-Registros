@@ -1,26 +1,27 @@
-import { ReactNode } from "react";
-
 import { DataColumn, DataTable } from "@/components/ui/data-table";
 import { DetailPanel } from "@/components/ui/detail-panel";
+import { DraggableTable } from "@/components/ui/draggable-table";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
+import { SelectableTable } from "@/components/ui/selectable-table";
 import { SelectFilter } from "@/components/ui/select-filter";
 import { StatusChip } from "@/components/ui/status-chip";
-import type { ListColumn, ListConfig, ListQueryParams, SidebarConfig } from "@/lib/list-config/types";
+import type { HeaderAction, ListColumn, ListConfig, ListQueryParams, SidebarConfig } from "@/lib/list-config/types";
 
 type FetchResult<Row> = {
   rows: Row[];
   total: number;
 };
 
-type ListPageProps<Row> = {
+type ListPageProps<Row extends { id: string }> = {
   config: ListConfig<Row>;
   fetchData: (params: ListQueryParams) => Promise<FetchResult<Row>>;
   searchParams: Record<string, string | undefined>;
-  headerActions?: ReactNode;
+  /** Server-action handlers keyed by the handler name defined in batchActions config. */
+  batchHandlers?: Record<string, (ids: string[]) => Promise<void>>;
 };
 
 function buildDataTableColumns<Row>(columns: ListColumn<Row>[]): Array<DataColumn<Row>> {
@@ -70,6 +71,20 @@ function renderFilters(filters: NonNullable<ListConfig<unknown>["filters"]>) {
   });
 }
 
+function renderActions(actions: HeaderAction[] | undefined) {
+  if (!actions || actions.length === 0) return undefined;
+  return actions.map((action) => {
+    const base = "inline-flex items-center justify-center rounded-2xl border px-4 py-2.5 text-sm font-medium transition";
+    const primary = "border-cyan-400/30 bg-cyan-500/15 text-cyan-100 hover:border-cyan-300/50 hover:bg-cyan-400/20";
+    const secondary = "border-slate-700/80 bg-slate-900/80 text-slate-200 hover:border-slate-600 hover:bg-slate-800";
+    return (
+      <a key={action.href} href={action.href} className={`${base} ${action.variant === "secondary" ? secondary : primary}`}>
+        {action.label}
+      </a>
+    );
+  });
+}
+
 function renderSidebar(sidebar: SidebarConfig, total: number) {
   return (
     <DetailPanel title={sidebar.title} description={sidebar.description}>
@@ -103,11 +118,11 @@ function renderSidebar(sidebar: SidebarConfig, total: number) {
  * All filter state lives in URL search params. The page re-renders on
  * the server when params change (RSC + dynamic rendering).
  */
-export async function ListPage<Row>({
+export async function ListPage<Row extends { id: string }>({
   config,
   fetchData,
   searchParams,
-  headerActions,
+  batchHandlers,
 }: ListPageProps<Row>) {
   const page = Number(searchParams.page) || 1;
 
@@ -130,6 +145,10 @@ export async function ListPage<Row>({
 
   const columns = buildDataTableColumns(config.columns);
   const defaultPageSize = config.pageSize ?? 10;
+  const desc =
+    rows.length > 0
+      ? `Showing ${rows.length} of ${total} records.`
+      : "No records found.";
 
   return (
     <PageShell>
@@ -138,17 +157,7 @@ export async function ListPage<Row>({
           eyebrow={config.eyebrow}
           title={config.title}
           description={config.description}
-          actions={
-            headerActions ??
-            (config.actions?.create ? (
-              <a
-                href={config.actions.create.href}
-                className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20"
-              >
-                {config.actions.create.label}
-              </a>
-            ) : undefined)
-          }
+          actions={renderActions(config.headerActions)}
         />
 
         {config.filters && config.filters.length > 0 && (
@@ -156,16 +165,32 @@ export async function ListPage<Row>({
         )}
 
         <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_360px]">
-          <DataTable
-            title={config.title}
-            description={
-              rows.length > 0
-                ? `Showing ${rows.length} of ${total} records.`
-                : "No records found."
-            }
-            columns={columns}
-            rows={rows}
-          />
+          {config.batchActions && batchHandlers ? (
+            <SelectableTable
+              title={config.title}
+              description={desc}
+              columns={columns}
+              rows={rows}
+              batchActions={config.batchActions}
+              batchHandlers={batchHandlers}
+              reorderKey={config.reorderKey}
+            />
+          ) : config.reorderKey ? (
+            <DraggableTable
+              title={config.title}
+              description={desc}
+              columns={columns}
+              rows={rows}
+              reorderKey={config.reorderKey}
+            />
+          ) : (
+            <DataTable
+              title={config.title}
+              description={desc}
+              columns={columns}
+              rows={rows}
+            />
+          )}
 
           {config.sidebar
             ? renderSidebar(config.sidebar, total)

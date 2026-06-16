@@ -168,8 +168,53 @@ export default async function DashboardPage() {
 
         {/* Main grid */}
         <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_360px]">
-          {/* Left: status distribution + recent activity */}
+          {/* Left: vigency + status + activity */}
           <div className="space-y-6">
+            {/* Vigency alerts */}
+            {stats.expiring.drones.length + stats.expiring.operators.length > 0 && (
+              <div className="rounded-3xl border border-amber-800/40 bg-amber-950/30 p-6 shadow-xl shadow-amber-950/10 backdrop-blur">
+                <h2 className="mb-4 text-lg font-semibold text-amber-200">Próximos vencimientos</h2>
+                <div className="space-y-3">
+                  {stats.expiring.drones.map((drone) => {
+                    const expiry = new Date(drone.insuranceExpiry!);
+                    const expired = expiry < new Date();
+                    return (
+                      <Link
+                        key={drone.id}
+                        href={`/drones/${drone.id}`}
+                        className="flex items-center justify-between rounded-2xl border border-amber-800/40 bg-amber-950/50 px-4 py-3 text-sm transition hover:border-amber-600/40 hover:bg-amber-900/50"
+                      >
+                        <span className="text-amber-100">
+                          Seguro · {drone.code ?? drone.model}
+                        </span>
+                        <span className={`text-xs font-medium ${expired ? "text-red-400" : "text-amber-300"}`}>
+                          {expired ? "Vencido" : expiry.toLocaleDateString("es-CL")}
+                        </span>
+                      </Link>
+                    );
+                  })}
+                  {stats.expiring.operators.map((op) => {
+                    const expiry = new Date(op.licenseExpiry!);
+                    const expired = expiry < new Date();
+                    return (
+                      <Link
+                        key={op.id}
+                        href={`/operators/${op.id}`}
+                        className="flex items-center justify-between rounded-2xl border border-amber-800/40 bg-amber-950/50 px-4 py-3 text-sm transition hover:border-amber-600/40 hover:bg-amber-900/50"
+                      >
+                        <span className="text-amber-100">
+                          Licencia · {op.fullName}
+                        </span>
+                        <span className={`text-xs font-medium ${expired ? "text-red-400" : "text-amber-300"}`}>
+                          {expired ? "Vencida" : expiry.toLocaleDateString("es-CL")}
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Status distribution */}
             <div className="rounded-3xl border border-slate-800/80 bg-slate-950/45 p-6 shadow-xl shadow-slate-950/10 backdrop-blur">
               <h2 className="mb-4 text-lg font-semibold text-white">Estado de permisos</h2>

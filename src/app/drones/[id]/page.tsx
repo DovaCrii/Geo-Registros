@@ -64,8 +64,9 @@ export default async function DroneDetailPage({ params }: { params: Promise<{ id
                 serialNumber: record.serialNumber,
                 manufacturer: record.manufacturer ?? "",
                 model: record.model,
-              notes: record.notes ?? "",
-              costCenterId: record.costCenterId ?? "",
+                insuranceExpiry: record.insuranceExpiry ? record.insuranceExpiry.toISOString().slice(0, 10) : "",
+                notes: record.notes ?? "",
+                costCenterId: record.costCenterId ?? "",
                 status: record.status,
               }}
             />

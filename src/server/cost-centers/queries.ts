@@ -2,7 +2,16 @@ import { prisma } from "@/lib/prisma";
 import { RecordStatus } from "@prisma/client";
 import type { ListQueryParams } from "@/lib/list-config/types";
 
-export async function listCostCenters(params?: ListQueryParams) {
+type CostCenterRow = {
+  id: string;
+  code: string;
+  name: string;
+  description: string | null;
+  status: RecordStatus;
+  _count: { drones: number; operators: number };
+};
+
+export async function listCostCenters(params?: ListQueryParams): Promise<{ rows: CostCenterRow[]; total: number }> {
   const search = params?.search;
   const page = params?.page ?? 1;
   const pageSize = params?.pageSize ?? 10;
@@ -22,8 +31,8 @@ export async function listCostCenters(params?: ListQueryParams) {
   const where = { ...searchClause, ...statusClause, deletedAt: null };
 
   const orderBy = params?.sortField
-    ? { [params.sortField]: params.sortDir ?? "asc" }
-    : [{ code: "asc" }];
+    ? { [params.sortField]: params.sortDir ?? "asc" } as any
+    : [{ code: "asc" }] as any;
 
   const [rows, total] = await Promise.all([
     prisma.costCenter.findMany({

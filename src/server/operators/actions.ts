@@ -40,6 +40,7 @@ export async function createOperator(formData: FormData) {
   const email = readOptionalString(formData, "email");
   const phone = readOptionalString(formData, "phone");
   const licenseNumber = readOptionalString(formData, "licenseNumber");
+  const licenseExpiry = readOptionalString(formData, "licenseExpiry");
   const notes = readOptionalString(formData, "notes");
   const costCenterId = readOptionalString(formData, "costCenterId");
   const status = readStatus(formData);
@@ -55,6 +56,7 @@ export async function createOperator(formData: FormData) {
       email,
       phone,
       licenseNumber,
+      licenseExpiry: licenseExpiry ? new Date(licenseExpiry) : null,
       notes,
       costCenterId,
       status,
@@ -73,6 +75,7 @@ export async function updateOperator(id: string, formData: FormData) {
   const email = readOptionalString(formData, "email");
   const phone = readOptionalString(formData, "phone");
   const licenseNumber = readOptionalString(formData, "licenseNumber");
+  const licenseExpiry = readOptionalString(formData, "licenseExpiry");
   const notes = readOptionalString(formData, "notes");
   const costCenterId = readOptionalString(formData, "costCenterId");
   const status = readStatus(formData);
@@ -89,6 +92,7 @@ export async function updateOperator(id: string, formData: FormData) {
       email,
       phone,
       licenseNumber,
+      licenseExpiry: licenseExpiry ? new Date(licenseExpiry) : null,
       notes,
       costCenterId,
       status,

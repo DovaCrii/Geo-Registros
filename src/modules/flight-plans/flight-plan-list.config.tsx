@@ -131,9 +131,9 @@ export const flightPlanListConfig: ListConfig<FlightPlanRow> = {
       ],
     },
   ],
-  actions: {
-    create: { href: "/flight-plans/new", label: "Create flight plan" },
-  },
+  headerActions: [
+    { href: "/flight-plans/new", label: "Create flight plan", variant: "primary" },
+  ],
   sidebar: {
     title: "Current slice scope",
     description: "Full permission workflow, geometry, documents, and weather integration.",

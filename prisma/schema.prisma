@@ -116,19 +116,20 @@ model Client {
 }
 
 model Drone {
-  id           String       @id @default(cuid())
-  code         String?      @unique
-  serialNumber String       @unique
-  manufacturer String?
-  model        String
-  notes        String?
-  status       RecordStatus @default(ACTIVE)
-  costCenterId String?
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  deletedAt    DateTime?
-  costCenter   CostCenter?  @relation(fields: [costCenterId], references: [id])
-  flightPlans  FlightPlan[]
+  id              String       @id @default(cuid())
+  code            String?      @unique
+  serialNumber    String       @unique
+  manufacturer    String?
+  model           String
+  notes           String?
+  status          RecordStatus @default(ACTIVE)
+  insuranceExpiry DateTime?
+  costCenterId    String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  deletedAt       DateTime?
+  costCenter      CostCenter?  @relation(fields: [costCenterId], references: [id])
+  flightPlans     FlightPlan[]
 }
 
 model Operator {
@@ -138,6 +139,7 @@ model Operator {
   email         String?
   phone         String?
   licenseNumber String?
+  licenseExpiry DateTime?
   notes         String?
   status        RecordStatus @default(ACTIVE)
   costCenterId  String?

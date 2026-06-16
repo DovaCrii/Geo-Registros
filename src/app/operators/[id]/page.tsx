@@ -56,9 +56,10 @@ export default async function OperatorDetailPage({ params }: { params: Promise<{
                 fullName: record.fullName,
                 email: record.email ?? "",
                 phone: record.phone ?? "",
-              licenseNumber: record.licenseNumber ?? "",
-              notes: record.notes ?? "",
-              costCenterId: record.costCenterId ?? "",
+                licenseNumber: record.licenseNumber ?? "",
+                licenseExpiry: record.licenseExpiry ? record.licenseExpiry.toISOString().slice(0, 10) : "",
+                notes: record.notes ?? "",
+                costCenterId: record.costCenterId ?? "",
                 status: record.status,
               }}
             />

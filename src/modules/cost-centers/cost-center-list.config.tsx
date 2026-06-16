@@ -68,9 +68,9 @@ export const costCenterListConfig: ListConfig<CostCenterRow> = {
     { field: "q", label: "Search", type: "search", placeholder: "Código o nombre…" },
     { field: "status", label: "Status", type: "status" },
   ],
-  actions: {
-    create: { href: "/cost-centers/new", label: "Register cost center" },
-  },
+  headerActions: [
+    { href: "/cost-centers/new", label: "Register cost center", variant: "primary" },
+  ],
   sidebar: {
     title: "Current slice boundary",
     description: "Real list/create/edit/status and soft-delete flow for cost centers.",

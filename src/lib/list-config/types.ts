@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 
 /** A single column definition for a configurable list page. */
 export interface ListColumn<Row> {
@@ -48,6 +48,26 @@ export interface SidebarConfig {
   };
 }
 
+/** A header action button rendered in the page header area. */
+export interface HeaderAction {
+  /** Link href. */
+  href: string;
+  /** Button label. */
+  label: string;
+  /** Visual variant. Defaults to "primary". */
+  variant?: "primary" | "secondary";
+}
+
+/** A batch action available when rows are selected. */
+export interface BatchAction {
+  /** Button label. */
+  label: string;
+  /** Visual variant. Defaults to "primary". */
+  variant?: "primary" | "danger" | "warning";
+  /** Handler key used to look up the server action in batchHandlers. */
+  handler: string;
+}
+
 /** Configuration for a generic list page. */
 export interface ListConfig<Row> {
   /** Page eyebrow / breadcrumb. */
@@ -60,10 +80,12 @@ export interface ListConfig<Row> {
   columns: ListColumn<Row>[];
   /** Filter definitions (rendered inside FilterBar). */
   filters?: ListFilter[];
-  /** Action links (e.g. create button). */
-  actions?: {
-    create?: { href: string; label: string };
-  };
+  /** Header action buttons (e.g. create). */
+  headerActions?: HeaderAction[];
+  /** Batch actions available when rows are selected. */
+  batchActions?: BatchAction[];
+  /** When set, columns can be reordered via drag & drop and persisted in localStorage. */
+  reorderKey?: string;
   /** Sidebar configuration (right panel). */
   sidebar?: SidebarConfig;
   /** Search input placeholder. */

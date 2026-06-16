@@ -40,6 +40,7 @@ export async function createDrone(formData: FormData) {
   const manufacturer = readOptionalString(formData, "manufacturer");
   const model = readString(formData, "model");
   const notes = readOptionalString(formData, "notes");
+  const insuranceExpiry = readOptionalString(formData, "insuranceExpiry");
   const costCenterId = readOptionalString(formData, "costCenterId");
   const status = readStatus(formData);
 
@@ -54,6 +55,7 @@ export async function createDrone(formData: FormData) {
       manufacturer,
       model,
       notes,
+      insuranceExpiry: insuranceExpiry ? new Date(insuranceExpiry) : null,
       costCenterId,
       status,
     },
@@ -71,6 +73,7 @@ export async function updateDrone(id: string, formData: FormData) {
   const manufacturer = readOptionalString(formData, "manufacturer");
   const model = readString(formData, "model");
   const notes = readOptionalString(formData, "notes");
+  const insuranceExpiry = readOptionalString(formData, "insuranceExpiry");
   const costCenterId = readOptionalString(formData, "costCenterId");
   const status = readStatus(formData);
 
@@ -86,6 +89,7 @@ export async function updateDrone(id: string, formData: FormData) {
       manufacturer,
       model,
       notes,
+      insuranceExpiry: insuranceExpiry ? new Date(insuranceExpiry) : null,
       costCenterId,
       status,
     },
@@ -108,4 +112,31 @@ export async function deleteDrone(id: string) {
   revalidatePath("/dashboard");
   revalidatePath(`/drones/${id}`);
   redirect("/drones");
+}
+
+/* ── Batch actions ─────────────────────────────────────── */
+
+export async function batchDeleteDrones(ids: string[]) {
+  await prisma.drone.updateMany({
+    where: { id: { in: ids }, deletedAt: null },
+    data: { deletedAt: new Date() },
+  });
+  revalidatePath("/drones");
+  revalidatePath("/dashboard");
+}
+
+export async function batchActivateDrones(ids: string[]) {
+  await prisma.drone.updateMany({
+    where: { id: { in: ids }, deletedAt: null },
+    data: { status: RecordStatus.ACTIVE },
+  });
+  revalidatePath("/drones");
+}
+
+export async function batchDeactivateDrones(ids: string[]) {
+  await prisma.drone.updateMany({
+    where: { id: { in: ids }, deletedAt: null },
+    data: { status: RecordStatus.INACTIVE },
+  });
+  revalidatePath("/drones");
 }

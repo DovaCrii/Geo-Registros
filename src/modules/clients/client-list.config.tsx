@@ -72,9 +72,9 @@ export const clientListConfig: ListConfig<ClientRow> = {
     { field: "q", label: "Search", type: "search", placeholder: "Código, nombre o contacto…" },
     { field: "status", label: "Status", type: "status" },
   ],
-  actions: {
-    create: { href: "/clients/new", label: "Register client" },
-  },
+  headerActions: [
+    { href: "/clients/new", label: "Register client", variant: "primary" },
+  ],
   sidebar: {
     title: "Current slice boundary",
     description: "Real list/create/edit/status and soft-delete flow for clients.",

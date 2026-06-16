@@ -34,6 +34,7 @@ export default async function NewDronePage() {
             serialNumber: "",
             manufacturer: "",
             model: "",
+            insuranceExpiry: "",
             notes: "",
             costCenterId: "",
             status: RecordStatus.ACTIVE,

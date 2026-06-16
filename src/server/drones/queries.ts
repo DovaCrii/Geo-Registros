@@ -3,7 +3,19 @@ import { RecordStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { ListQueryParams } from "@/lib/list-config/types";
 
-export async function listDrones(params?: ListQueryParams) {
+type DroneRow = {
+  id: string;
+  code: string | null;
+  serialNumber: string;
+  manufacturer: string | null;
+  model: string;
+  notes: string | null;
+  status: RecordStatus;
+  insuranceExpiry: Date | null;
+  costCenter: { id: string; code: string; name: string } | null;
+};
+
+export async function listDrones(params?: ListQueryParams): Promise<{ rows: DroneRow[]; total: number }> {
   const search = params?.search;
   const page = params?.page ?? 1;
   const pageSize = params?.pageSize ?? 10;
@@ -25,8 +37,8 @@ export async function listDrones(params?: ListQueryParams) {
   const where = { ...searchClause, ...statusClause, deletedAt: null };
 
   const orderBy = params?.sortField
-    ? { [params.sortField]: params.sortDir ?? "asc" }
-    : [{ model: "asc" }, { serialNumber: "asc" }];
+    ? { [params.sortField]: params.sortDir ?? "asc" } as any
+    : [{ model: "asc" }, { serialNumber: "asc" }] as any;
 
   const [rows, total] = await Promise.all([
     prisma.drone.findMany({
@@ -42,6 +54,7 @@ export async function listDrones(params?: ListQueryParams) {
         model: true,
         notes: true,
         status: true,
+        insuranceExpiry: true,
         costCenter: {
           select: { id: true, code: true, name: true },
         },
@@ -64,6 +77,7 @@ export async function getDroneById(id: string) {
       model: true,
       notes: true,
       status: true,
+      insuranceExpiry: true,
       costCenterId: true,
       costCenter: {
         select: { id: true, code: true, name: true },

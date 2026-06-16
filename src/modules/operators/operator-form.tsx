@@ -16,6 +16,7 @@ type OperatorFormValues = {
   email: string;
   phone: string;
   licenseNumber: string;
+  licenseExpiry: string;
   notes: string;
   costCenterId: string;
   status: RecordStatus;
@@ -64,6 +65,11 @@ export function OperatorForm({
         <label className="block space-y-2">
           <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">License number</span>
           <input type="text" name="licenseNumber" defaultValue={initialValues.licenseNumber} className="w-full rounded-2xl border border-slate-700/80 bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20" placeholder="DGAC-RPA-0001" />
+        </label>
+
+        <label className="block space-y-2">
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">License expiry</span>
+          <input type="date" name="licenseExpiry" defaultValue={initialValues.licenseExpiry} className="w-full rounded-2xl border border-slate-700/80 bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20" />
         </label>
 
         <label className="block space-y-2">

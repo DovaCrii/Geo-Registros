@@ -25,7 +25,7 @@ export default async function NewOperatorPage() {
           action={createOperator}
           submitLabel="Create operator"
           costCenterOptions={costCenterOptions}
-          initialValues={{ code: "", fullName: "", email: "", phone: "", licenseNumber: "", notes: "", costCenterId: "", status: RecordStatus.ACTIVE }}
+          initialValues={{ code: "", fullName: "", email: "", phone: "", licenseNumber: "", licenseExpiry: "", notes: "", costCenterId: "", status: RecordStatus.ACTIVE }}
         />
       </div>
     </PageShell>

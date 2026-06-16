@@ -1,6 +1,7 @@
 import { ListPage } from "@/components/ui/list-page";
 import { requirePageAuth } from "@/lib/require-page-auth";
 import { droneListConfig } from "@/modules/drones/drone-list.config";
+import { batchActivateDrones, batchDeactivateDrones, batchDeleteDrones } from "@/server/drones/actions";
 import { listDrones } from "@/server/drones/queries";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +18,18 @@ export default async function DronesPage({
   await requirePageAuth(queryParams.toString() ? `/drones?${queryParams.toString()}` : "/drones");
 
   try {
-    return <ListPage config={droneListConfig} fetchData={listDrones} searchParams={params} />;
+    return (
+      <ListPage
+        config={droneListConfig}
+        fetchData={listDrones}
+        searchParams={params}
+        batchHandlers={{
+          activate: batchActivateDrones,
+          deactivate: batchDeactivateDrones,
+          delete: batchDeleteDrones,
+        }}
+      />
+    );
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown database error.";
     return (

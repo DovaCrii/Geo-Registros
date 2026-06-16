@@ -12,6 +12,7 @@ type DroneRow = {
   model: string;
   notes: string | null;
   status: RecordStatus;
+  insuranceExpiry: Date | null;
   costCenter: { id: string; code: string; name: string } | null;
 };
 
@@ -51,6 +52,21 @@ export const droneColumns: ListColumn<DroneRow>[] = [
     ),
   },
   {
+    key: "insuranceExpiry",
+    header: "Insurance expiry",
+    render: (row) => {
+      if (!row.insuranceExpiry) return <span className="text-sm text-slate-500">—</span>;
+      const date = new Date(row.insuranceExpiry);
+      const isExpired = date < new Date();
+      return (
+        <span className={`text-sm ${isExpired ? "text-red-400" : "text-slate-300"}`}>
+          {date.toISOString().slice(0, 10)}
+          {isExpired && <span className="ml-1.5 text-xs text-red-400">(Expired)</span>}
+        </span>
+      );
+    },
+  },
+  {
     key: "status",
     header: "Status",
     sortable: true,
@@ -77,9 +93,15 @@ export const droneListConfig: ListConfig<DroneRow> = {
     { field: "q", label: "Search", type: "search", placeholder: "Código, serie, modelo…" },
     { field: "status", label: "Status", type: "status" },
   ],
-  actions: {
-    create: { href: "/drones/new", label: "Register drone" },
-  },
+  headerActions: [
+    { href: "/drones/new", label: "Register drone", variant: "primary" },
+  ],
+  batchActions: [
+    { label: "Activate", handler: "activate" },
+    { label: "Deactivate", handler: "deactivate", variant: "warning" },
+    { label: "Delete", handler: "delete", variant: "danger" },
+  ],
+  reorderKey: "drones",
   sidebar: {
     title: "Current slice boundary",
     description: "Real list/create/edit/status flow for drones with optional cost center assignment.",
