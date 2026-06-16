@@ -97,6 +97,8 @@ export async function listActiveOperators() {
       id: true,
       code: true,
       fullName: true,
+      licenseNumber: true,
+      licenseExpiry: true,
     },
   });
 }

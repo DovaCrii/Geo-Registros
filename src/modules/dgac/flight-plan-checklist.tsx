@@ -4,20 +4,26 @@ import { useMemo, useState } from "react";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { useToast } from "@/lib/toast-context";
-import { DGAC_CHECKLIST_ITEMS, normalizeChecklist } from "@/modules/dgac/checklist-items";
+import {
+  DGAC_CHECKLIST_ITEMS,
+  normalizeChecklist,
+} from "@/modules/dgac/checklist-items";
 
 export function FlightPlanChecklist({
   flightPlanId,
   initialChecklist,
+  suggestedChecklist,
 }: {
   flightPlanId: string;
   initialChecklist?: unknown;
+  suggestedChecklist?: unknown;
 }) {
   const items = useMemo(() => DGAC_CHECKLIST_ITEMS, []);
   const { toast } = useToast();
-  const [checked, setChecked] = useState<Record<string, boolean>>(() =>
-    normalizeChecklist(initialChecklist),
-  );
+  const [checked, setChecked] = useState<Record<string, boolean>>(() => ({
+    ...normalizeChecklist(suggestedChecklist),
+    ...normalizeChecklist(initialChecklist),
+  }));
   const [saving, setSaving] = useState<string | null>(null);
 
   const done = items.filter((item) => checked[item.id]).length;
@@ -56,6 +62,10 @@ export function FlightPlanChecklist({
             <p className="text-xs text-slate-500">{done} de {items.length} completados</p>
           </div>
           <div className="text-sm font-semibold text-cyan-300">{Math.round((done / items.length) * 100)}%</div>
+        </div>
+
+        <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.04] px-4 py-3 text-xs leading-5 text-cyan-100">
+          La parte superior se autocompleta con datos reales del plan. Lo manual queda guardado como override operativo.
         </div>
 
         <div className="space-y-3">

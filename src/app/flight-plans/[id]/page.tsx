@@ -10,6 +10,7 @@ import { PermissionStatusBadge } from "@/modules/permissions/permission-status-b
 import { PermissionTimeline } from "@/modules/permissions/permission-timeline";
 import { DocumentUpload } from "@/modules/permissions/document-upload";
 import { FlightPlanChecklist } from "@/modules/dgac/flight-plan-checklist";
+import { deriveChecklistState } from "@/modules/dgac/checklist-items";
 import { listActiveClients } from "@/server/clients/queries";
 import { listActiveCostCenters } from "@/server/cost-centers/queries";
 import { listActiveDrones } from "@/server/drones/queries";
@@ -97,6 +98,29 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
       { id: record.operatorId, label: labelFromList(operators, record.operatorId, record.operatorId) },
     );
 
+    const currentDrone = drones.find((item) => item.id === record.droneId) ?? null;
+    const currentOperator = operators.find((item) => item.id === record.operatorId) ?? null;
+
+    const suggestedChecklist = deriveChecklistState({
+      record: {
+        clientId: record.clientId,
+        costCenterId: record.costCenterId,
+        droneId: record.droneId,
+        operatorId: record.operatorId,
+        geometryJson: record.geometryJson,
+        operationDate: record.operationDate,
+      },
+      documents,
+      drone: currentDrone ? { insuranceExpiry: currentDrone.insuranceExpiry ?? null } : null,
+      operator: currentOperator
+        ? {
+            licenseNumber: currentOperator.licenseNumber ?? null,
+            licenseExpiry: currentOperator.licenseExpiry ?? null,
+          }
+        : null,
+      weatherReady: Boolean(weatherData && !("error" in weatherData)),
+    });
+
     return (
       <PageShell>
         <div className="space-y-6">
@@ -169,7 +193,11 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
                 <DocumentUpload flightPlanId={record.id} documents={documents} />
               </DetailPanel>
 
-              <FlightPlanChecklist flightPlanId={record.id} initialChecklist={record.dgacChecklist} />
+              <FlightPlanChecklist
+                flightPlanId={record.id}
+                initialChecklist={record.dgacChecklist}
+                suggestedChecklist={suggestedChecklist}
+              />
 
               <DetailPanel
                 title="Zona de riesgo"

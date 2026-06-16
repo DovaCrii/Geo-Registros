@@ -95,6 +95,7 @@ export async function listActiveDrones() {
       code: true,
       serialNumber: true,
       model: true,
+      insuranceExpiry: true,
     },
   });
 }

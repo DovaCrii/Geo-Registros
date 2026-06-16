@@ -28,3 +28,54 @@ export function normalizeChecklist(value: unknown): Record<string, boolean> {
   }
   return result;
 }
+
+type ChecklistSource = {
+  record: {
+    clientId: string;
+    costCenterId: string;
+    droneId: string;
+    operatorId: string;
+    geometryJson: unknown;
+    operationDate: Date;
+  };
+  documents: Array<unknown>;
+  drone?: { insuranceExpiry: Date | null } | null;
+  operator?: { licenseNumber: string | null; licenseExpiry: Date | null } | null;
+  weatherReady?: boolean;
+};
+
+export function deriveChecklistState(source: ChecklistSource): Record<string, boolean> {
+  const today = new Date();
+  const operatorValid = Boolean(
+    source.operator?.licenseNumber &&
+      source.operator?.licenseExpiry &&
+      source.operator.licenseExpiry >= today,
+  );
+  const droneValid = Boolean(source.drone?.insuranceExpiry && source.drone.insuranceExpiry >= today);
+  const hasWeather = Boolean(source.weatherReady);
+
+  const state: Record<string, boolean> = {
+    "drone-registered": Boolean(source.record.droneId && droneValid),
+    "operator-valid": Boolean(source.record.operatorId && operatorValid),
+    "client-assigned": Boolean(source.record.clientId),
+    "costcenter-assigned": Boolean(source.record.costCenterId),
+    "operation-area": Boolean(source.record.geometryJson),
+    "date-defined": Boolean(source.record.operationDate),
+    "population-check": false,
+    "documents-attached": source.documents.length > 0,
+    "weather-check": hasWeather,
+    "restriction-check": false,
+    "ready-to-send":
+      Boolean(source.record.clientId) &&
+      Boolean(source.record.costCenterId) &&
+      Boolean(source.record.droneId) &&
+      droneValid &&
+      Boolean(source.record.operatorId) &&
+      operatorValid &&
+      Boolean(source.record.geometryJson) &&
+      source.documents.length > 0 &&
+      hasWeather,
+  };
+
+  return state;
+}
