@@ -15,7 +15,7 @@ const ROLE_LABELS: Record<string, string> = {
   ESPECIALISTA_DOCUMENTAL: "Especialista Documental",
   OPERADOR_RPA: "Operador RPA",
   AUDITOR: "Auditor",
-  VIEWER: "Viewer",
+  VIEWER: "Visor",
 };
 
 type UserData = {
@@ -45,7 +45,7 @@ export function UserForm(props: UserFormProps) {
         }
         return { error: undefined };
       } catch (e) {
-        return { error: e instanceof Error ? e.message : "An error occurred." };
+        return { error: e instanceof Error ? e.message : "Ocurrió un error." };
       }
     },
     null,
@@ -64,7 +64,7 @@ export function UserForm(props: UserFormProps) {
 
       <div>
         <label htmlFor="fullName" className="mb-1.5 block text-sm font-medium text-slate-300">
-          Full name
+          Nombre completo
         </label>
         <input
           id="fullName"
@@ -78,7 +78,7 @@ export function UserForm(props: UserFormProps) {
 
       <div>
         <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-300">
-          Email
+          Correo
         </label>
         <input
           id="email"
@@ -93,7 +93,7 @@ export function UserForm(props: UserFormProps) {
 
       <div>
         <label htmlFor="role" className="mb-1.5 block text-sm font-medium text-slate-300">
-          Role
+          Rol
         </label>
         <select
           id="role"
@@ -112,7 +112,7 @@ export function UserForm(props: UserFormProps) {
 
       <div>
         <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-300">
-          {mode === "create" ? "Password" : "New password (leave blank to keep current)"}
+          {mode === "create" ? "Contraseña" : "Nueva contraseña (dejalo vacío para mantener la actual)"}
         </label>
         <input
           id="password"
@@ -126,9 +126,9 @@ export function UserForm(props: UserFormProps) {
 
       {mode === "edit" && user && (
         <div className="flex items-center gap-3 rounded-xl border border-slate-800/80 bg-slate-900/50 px-4 py-3">
-          <span className="text-sm text-slate-400">Status:</span>
+          <span className="text-sm text-slate-400">Estado:</span>
           <span className={`text-sm font-medium ${user.active ? "text-emerald-300" : "text-slate-400"}`}>
-            {user.active ? "Active" : "Inactive"}
+            {user.active ? "Activo" : "Inactivo"}
           </span>
         </div>
       )}
@@ -139,14 +139,14 @@ export function UserForm(props: UserFormProps) {
           disabled={pending}
           className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-6 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20 disabled:opacity-50"
         >
-          {pending ? "Saving…" : mode === "create" ? "Create user" : "Save changes"}
+          {pending ? "Guardando…" : mode === "create" ? "Crear usuario" : "Guardar cambios"}
         </button>
 
         <a
           href="/admin/users"
           className="inline-flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800"
         >
-          Cancel
+          Cancelar
         </a>
       </div>
     </form>

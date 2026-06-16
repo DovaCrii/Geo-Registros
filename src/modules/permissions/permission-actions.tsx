@@ -54,6 +54,22 @@ export function PermissionActions({
   const nextStates = VALID_TRANSITIONS[currentStatus] ?? [];
   const blockedButtons = nextStates.filter((state) => Boolean(transitionBlocks?.[state]));
 
+  function friendlyError(msg: string): string {
+    if (msg.includes("CSRF")) {
+      return "Error de seguridad: la sesión no coincide con el origen de la solicitud. Recargá la página e intentá de nuevo.";
+    }
+    if (msg.includes("Too many requests")) {
+      return "Demasiadas solicitudes. Esperá unos segundos e intentá de nuevo.";
+    }
+    if (msg.includes("no autorizada") || msg.includes("Unauthorized")) {
+      return "No tenés permisos para realizar esta acción. Contactá al administrador.";
+    }
+    if (msg.includes("DGAC checklist incomplete") || msg.includes("Faltan")) {
+      return `Checklist DGAC incompleto. Revisá los requisitos antes de continuar.`;
+    }
+    return "Ocurrió un error inesperado. Recargá la página e intentá de nuevo.";
+  }
+
   async function handleTransition(newStatus: string) {
     setPending(newStatus);
     setError(null);
@@ -67,15 +83,23 @@ export function PermissionActions({
 
       if (!response.ok) {
         const body = await response.text();
-        throw new Error(body || "Transition failed.");
+        let message: string;
+        try {
+          const parsed = JSON.parse(body);
+          message = parsed.error || body;
+        } catch {
+          message = body || "Transition failed.";
+        }
+        throw new Error(message);
       }
 
       toast("success", `Permiso ${TRANSITION_LABELS[newStatus]?.toLowerCase() ?? newStatus}`);
       router.refresh();
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Unexpected error.";
-      setError(msg);
-      toast("error", "Error al cambiar estado", msg);
+      const raw = err instanceof Error ? err.message : "Unexpected error.";
+      const friendly = friendlyError(raw);
+      setError(friendly);
+      toast("error", "Error al cambiar estado", friendly);
     } finally {
       setPending(null);
     }

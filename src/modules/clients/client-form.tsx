@@ -32,7 +32,7 @@ export function ClientForm({
     <DetailPanel title={title} description={description}>
       <form action={action} className="space-y-4">
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Code</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Código</span>
           <input
             type="text"
             name="code"
@@ -43,7 +43,7 @@ export function ClientForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Client name</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Nombre del cliente</span>
           <input
             type="text"
             name="name"
@@ -55,7 +55,7 @@ export function ClientForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Contact name</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Nombre de contacto</span>
           <input
             type="text"
             name="contactName"
@@ -66,7 +66,7 @@ export function ClientForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Contact email</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Correo de contacto</span>
           <input
             type="email"
             name="contactEmail"
@@ -77,7 +77,7 @@ export function ClientForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Status</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Estado</span>
           <select
             name="status"
             defaultValue={initialValues.status}
@@ -92,13 +92,13 @@ export function ClientForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Notes</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Notas</span>
           <textarea
             name="notes"
             rows={5}
             defaultValue={initialValues.notes}
             className="w-full rounded-2xl border border-slate-700/80 bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20"
-            placeholder="Commercial notes, onboarding context, or document handling guidance."
+            placeholder="Notas comerciales, contexto de onboarding o referencias."
           />
         </label>
 
@@ -108,7 +108,7 @@ export function ClientForm({
             href="/clients"
             className="inline-flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800"
           >
-            Cancel
+            Cancelar
           </Link>
         </div>
       </form>

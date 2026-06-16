@@ -143,10 +143,16 @@ function HeroSection() {
               Solicitar demo
             </Link>
             <Link
-              href="#proceso"
+              href="/auth/login"
               className="inline-flex items-center justify-center rounded-xl border border-slate-700/60 bg-slate-900/60 px-7 py-3 text-sm font-medium text-slate-300 transition hover:border-slate-600 hover:bg-slate-800/80"
             >
-              Ingresar a la plataforma
+              Iniciar sesión
+            </Link>
+            <Link
+              href="#proceso"
+              className="inline-flex items-center justify-center rounded-xl px-2 py-3 text-sm font-medium text-slate-400 transition hover:text-cyan-200"
+            >
+              Cómo funciona
             </Link>
           </div>
 
@@ -162,93 +168,121 @@ function HeroSection() {
 
         {/* ───── Hero Visual ───── */}
         <div className="relative hidden lg:block">
-          {/* Map frame */}
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-slate-700/60 bg-slate-950/80 shadow-2xl shadow-cyan-950/10">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.14),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(16,185,129,0.10),_transparent_24%)]" />
-            {/* Inner grid */}
-            <div className="geo-grid-subtle absolute inset-0" />
+          <div className="w-full overflow-hidden rounded-[2rem] border border-slate-700/60 bg-slate-950/85 shadow-2xl shadow-cyan-950/10">
+            <div className="relative bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.16),_transparent_26%),radial-gradient(circle_at_bottom_right,_rgba(16,185,129,0.10),_transparent_24%)]">
+              <div className="geo-grid-subtle absolute inset-0" />
 
-            <div className="absolute left-4 top-4 z-20 flex items-center gap-3 rounded-2xl border border-cyan-400/20 bg-slate-950/85 px-4 py-3 backdrop-blur">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-400/25 bg-cyan-500/10 text-cyan-300">
-                ⬚
+              {/* Header bar */}
+              <div className="relative z-10 flex items-center justify-between border-b border-slate-800/80 bg-slate-950/80 px-6 py-4 backdrop-blur">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/25 bg-cyan-500/10 text-cyan-300">
+                    <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+                      <circle cx="12" cy="12" r="6.5" stroke="currentColor" strokeWidth="1.5" />
+                      <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+                      <path d="M12 3.5V6M12 18v2.5M20.5 12H18M6 12H3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Panel de misión</p>
+                    <p className="text-lg font-semibold text-white">Vuelos, geometría y trazabilidad</p>
+                  </div>
+                </div>
+
+                <div className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200">
+                  En línea
+                </div>
               </div>
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-300">GCP / Vuelos registrados</p>
-                <p className="text-sm text-slate-300">Trazabilidad operativa en tiempo real</p>
+
+              {/* Content: stacked sections, no absolute overlaps */}
+              <div className="space-y-5 p-6">
+                {/* Row 1: Key metrics */}
+                <div className="grid grid-cols-4 gap-4">
+                  <div className="rounded-2xl border border-slate-700/60 bg-slate-900/75 p-5 backdrop-blur">
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Vuelos registrados</p>
+                    <p className="mt-2 text-3xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>24</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-700/60 bg-slate-900/75 p-5 backdrop-blur">
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Cobertura</p>
+                    <p className="mt-2 text-3xl font-bold text-cyan-200" style={{ fontFamily: "var(--font-mono)" }}>92%</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-700/60 bg-slate-900/75 p-5 backdrop-blur">
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Entregables</p>
+                    <p className="mt-2 text-3xl font-bold text-emerald-200" style={{ fontFamily: "var(--font-mono)" }}>18</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-700/60 bg-slate-900/75 p-5 backdrop-blur">
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Modelos activos</p>
+                    <p className="mt-2 text-3xl font-bold text-amber-200" style={{ fontFamily: "var(--font-mono)" }}>4</p>
+                  </div>
+                </div>
+
+                {/* Row 2: Map visualization — clean, no overlaps */}
+                <div className="relative h-[260px] overflow-hidden rounded-2xl border border-slate-800/80 bg-slate-950/80">
+                  <svg className="absolute inset-0 h-full w-full" viewBox="0 0 800 260" fill="none" preserveAspectRatio="xMidYMid slice">
+                    <path
+                      d="M60 200 Q 180 180 280 150 Q 400 110 500 80 Q 600 50 720 40"
+                      stroke="rgba(34,211,238,0.35)"
+                      strokeWidth="2"
+                      className="drone-path"
+                    />
+                    <circle cx="720" cy="40" r="5" fill="#22d3ee" className="pulse-dot" />
+                    <polygon
+                      points="200,120 320,80 480,100 440,180 240,170"
+                      stroke="rgba(34,211,238,0.30)"
+                      strokeWidth="1.5"
+                      fill="rgba(34,211,238,0.06)"
+                    />
+                    <circle cx="320" cy="110" r="4" fill="#22c55e" />
+                    <circle cx="400" cy="140" r="4" fill="#22c55e" />
+                    <circle cx="260" cy="150" r="4" fill="#22c55e" />
+                    <text x="310" y="98" fill="#94a3b8" fontSize="11">GCP-01</text>
+                    <text x="396" y="130" fill="#94a3b8" fontSize="11">GCP-02</text>
+                    <text x="248" y="164" fill="#94a3b8" fontSize="11">KP-03</text>
+
+                    {/* Grid lines */}
+                    <line x1="200" y1="0" x2="200" y2="260" stroke="rgba(148,163,184,0.06)" strokeWidth="1" />
+                    <line x1="400" y1="0" x2="400" y2="260" stroke="rgba(148,163,184,0.06)" strokeWidth="1" />
+                    <line x1="600" y1="0" x2="600" y2="260" stroke="rgba(148,163,184,0.06)" strokeWidth="1" />
+                    <line x1="0" y1="130" x2="800" y2="130" stroke="rgba(148,163,184,0.06)" strokeWidth="1" />
+                  </svg>
+
+                  {/* Status badge (only overlay, small and top-left) */}
+                  <div className="absolute left-4 top-4 rounded-xl border border-slate-700/60 bg-slate-950/90 px-4 py-2.5 backdrop-blur">
+                    <p className="text-xs font-medium text-slate-400">Trazabilidad operativa</p>
+                    <p className="mt-0.5 text-sm font-semibold text-white">Tiempo real · 3 capas activas</p>
+                  </div>
+
+                  {/* Bottom-right badge */}
+                  <div className="absolute bottom-4 right-4 rounded-xl border border-slate-700/60 bg-slate-950/90 px-4 py-2 backdrop-blur">
+                    <p className="text-[11px] text-slate-500">EPSG: 32719 · WGS84 / UTM</p>
+                  </div>
+                </div>
+
+                {/* Row 3: Active layers + quick summary */}
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-sm text-cyan-200">
+                      <span className="h-2 w-2 rounded-full bg-cyan-400" />
+                      Geometría activa
+                    </span>
+                    <span className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-200">
+                      <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                      DGAC validado
+                    </span>
+                    <span className="flex items-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-sm text-cyan-200">
+                      <span className="h-2 w-2 rounded-full bg-cyan-400" />
+                      Reporte listo
+                    </span>
+                  </div>
+                  <p className="text-sm text-slate-500">
+                    Cobertura validada · geometría enlazada · evidencia lista para revisión
+                  </p>
+                </div>
               </div>
-            </div>
-
-            <div className="absolute right-4 top-4 z-20 rounded-2xl border border-emerald-400/20 bg-slate-950/85 px-4 py-3 text-right backdrop-blur">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-300">Cobertura</p>
-              <p className="text-3xl font-bold text-white" style={{ fontFamily: "var(--font-mono)" }}>92%</p>
-              <p className="text-xs text-slate-400">entregables enlazados</p>
-            </div>
-
-            {/* Animated drone path */}
-            <svg className="absolute inset-0 h-full w-full" viewBox="0 0 400 300" fill="none">
-              <path
-                d="M40 240 Q 100 200 160 180 Q 220 160 250 120 Q 280 80 340 60"
-                stroke="rgba(34,211,238,0.3)"
-                strokeWidth="1.5"
-                className="drone-path"
-              />
-              <circle cx="340" cy="60" r="4" fill="#22d3ee" className="pulse-dot" />
-              {/* Polygon */}
-              <polygon
-                points="100,120 160,90 220,110 190,160 120,150"
-                stroke="rgba(34,211,238,0.2)"
-                strokeWidth="1"
-                fill="rgba(34,211,238,0.05)"
-              />
-              {/* Points */}
-              <circle cx="160" cy="105" r="2" fill="#22c55e" />
-              <circle cx="190" cy="135" r="2" fill="#22c55e" />
-              <circle cx="130" cy="135" r="2" fill="#22c55e" />
-              {/* Survey markers */}
-              <text x="158" y="100" fill="#94a3b8" fontSize="6">GCP-01</text>
-              <text x="188" y="130" fill="#94a3b8" fontSize="6">GCP-02</text>
-            </svg>
-
-            <div className="absolute left-4 bottom-4 z-20 max-w-[240px] rounded-2xl border border-slate-700/60 bg-slate-950/85 p-4 backdrop-blur">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">Resumen de vuelo</p>
-              <p className="mt-1 text-2xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>24 vuelos</p>
-              <p className="mt-1 text-sm leading-6 text-slate-300">Registro unificado con geometría, evidencias y entregables listos para revisar.</p>
-            </div>
-
-            {/* Floating metric cards */}
-            <div className="absolute left-3 top-3">
-              <MetricCard label="Vuelos registrados" value="24" color="cyan" delay={0} />
-            </div>
-            <div className="absolute right-3 top-16">
-              <MetricCard label="Entregables validados" value="18" color="emerald" delay={1} />
-            </div>
-            <div className="absolute bottom-16 left-3">
-              <MetricCard label="Cobertura levantada" value="92%" color="cyan" delay={2} />
-            </div>
-            <div className="absolute bottom-3 right-3">
-              <MetricCard label="Modelos en revisión" value="4" color="amber" delay={3} />
             </div>
           </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function MetricCard({ label, value, color, delay }: { label: string; value: string; color: "cyan" | "emerald" | "amber"; delay: number }) {
-  const borderMap = { cyan: "border-cyan-500/20", emerald: "border-emerald-500/20", amber: "border-amber-500/20" };
-  const textMap = { cyan: "text-cyan-300", emerald: "text-emerald-300", amber: "text-amber-300" };
-  const floatClass = delay === 0 ? "float-metric" : `float-metric-delay-${delay}`;
-
-  return (
-    <div className={`rounded-xl border ${borderMap[color]} bg-slate-900/90 px-4 py-3 shadow-lg backdrop-blur ${floatClass}`}>
-      <p className={`text-xs font-medium uppercase tracking-wide ${textMap[color]}`} style={{ fontFamily: "var(--font-space-grotesk)" }}>
-        {label}
-      </p>
-      <p className="text-2xl font-bold text-white" style={{ fontFamily: "var(--font-mono)" }}>
-        {value}
-      </p>
-    </div>
   );
 }
 

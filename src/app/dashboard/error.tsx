@@ -17,9 +17,9 @@ export default function DashboardError({
   return (
     <div className="flex min-h-[60vh] items-center justify-center p-8">
       <div className="max-w-md rounded-3xl border border-slate-800/80 bg-slate-950/55 p-8 text-center shadow-2xl backdrop-blur">
-        <h2 className="mb-2 text-lg font-bold text-white">Dashboard temporalmente no disponible</h2>
+        <h2 className="mb-2 text-lg font-bold text-white">No se pudo cargar el panel</h2>
         <p className="mb-6 text-sm text-slate-400">
-          No se pudieron cargar los datos del panel. Verificá la conexión a la base de datos.
+          Ocurrió un error al recuperar los datos del dashboard. Si el problema persiste, recargá la página o revisá la conexión a la base de datos.
         </p>
         <div className="flex justify-center gap-3">
           <button

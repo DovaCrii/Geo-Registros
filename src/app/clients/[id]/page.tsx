@@ -1,5 +1,6 @@
 import { RecordStatus } from "@prisma/client";
 
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
@@ -26,8 +27,8 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
     if (!record) {
       return (
         <PageShell>
-          <DetailPanel title="Client not found" description="The requested client does not exist or is no longer available.">
-            <p className="text-sm text-slate-400">Go back to the list and select a valid client record.</p>
+          <DetailPanel title="Cliente no encontrado" description="El cliente solicitado no existe o ya no está disponible.">
+            <p className="text-sm text-slate-400">Volvé al listado y seleccioná un cliente válido.</p>
           </DetailPanel>
         </PageShell>
       );
@@ -36,18 +37,26 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
     return (
       <PageShell>
         <div className="space-y-6">
+          <Breadcrumbs
+            items={[
+              { label: "Inicio", href: "/" },
+              { label: "Clientes", href: "/clients" },
+              { label: record.name },
+            ]}
+          />
+
           <PageHeader
-            eyebrow="Block 2 / Clients"
+            eyebrow="Bloque 2 / Datos maestros"
             title={record.name}
-            description="Edit the real client record without pulling in downstream contract or document rules yet."
-            actions={<StatusChip label={record.status} tone={toneFromStatus(record.status)} />}
+            description="Editá los datos del cliente."
+            actions={<StatusChip label={record.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"} tone={toneFromStatus(record.status)} />}
           />
 
           <ClientForm
-            title="Edit client"
-            description="Update the client identity, primary contact data, status, and internal notes."
+            title="Editar cliente"
+            description="Actualizá identidad, contacto principal, estado y notas internas."
             action={updateClient.bind(null, record.id)}
-            submitLabel="Save changes"
+            submitLabel="Guardar cambios"
             initialValues={{
               code: record.code ?? "",
               name: record.name,
@@ -58,29 +67,27 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
             }}
           />
 
-          <DetailPanel title="Danger zone" description="Soft delete hides this client from active views while preserving historical flight-plan records.">
+          <DetailPanel title="Zona de riesgo" description="La eliminación lógica oculta este cliente sin perder su historial.">
             <form action={deleteClient.bind(null, record.id)} className="space-y-3">
               <p className="text-sm leading-6 text-slate-400">
-                This removes the client from list pages, selectors, and dashboard counts. Flight plans already linked to the client remain intact.
+                Esta acción lo saca de listados, selectores y conteos del panel. Los planes de vuelo vinculados se conservan.
               </p>
               <button
                 type="submit"
                 className="inline-flex items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-400/20"
               >
-                Delete client
+                Eliminar cliente
               </button>
             </form>
           </DetailPanel>
         </div>
       </PageShell>
     );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown database error.";
-
+  } catch {
     return (
       <PageShell>
-        <DetailPanel title="Client unavailable" description="The page is wired to the real Prisma query path, but the database is not ready or reachable.">
-          <p className="text-sm text-slate-300">{message}</p>
+        <DetailPanel title="Cliente no disponible" description="No se pudieron cargar los datos. Verificá la conexión a la base de datos.">
+          <p className="text-sm text-slate-400">Recargá la página e intentá de nuevo.</p>
         </DetailPanel>
       </PageShell>
     );

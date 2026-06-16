@@ -21,7 +21,7 @@ const ROLE_LABELS: Record<string, string> = {
   ESPECIALISTA_DOCUMENTAL: "Especialista Documental",
   OPERADOR_RPA: "Operador RPA",
   AUDITOR: "Auditor",
-  VIEWER: "Viewer",
+  VIEWER: "Visor",
 };
 
 const ROLE_TONES: Record<string, "success" | "info" | "warning" | "neutral" | "danger"> = {
@@ -38,7 +38,7 @@ const ROLE_TONES: Record<string, "success" | "info" | "warning" | "neutral" | "d
 export const userColumns: ListColumn<UserRow>[] = [
   {
     key: "fullName",
-    header: "Name",
+    header: "Nombre",
     sortable: true,
     render: (row) => (
       <div className="space-y-1">
@@ -49,7 +49,7 @@ export const userColumns: ListColumn<UserRow>[] = [
   },
   {
     key: "role",
-    header: "Role",
+    header: "Rol",
     sortable: true,
     render: (row) => (
       <StatusChip label={ROLE_LABELS[row.role] ?? row.role} tone={ROLE_TONES[row.role] ?? "neutral"} />
@@ -57,15 +57,15 @@ export const userColumns: ListColumn<UserRow>[] = [
   },
   {
     key: "active",
-    header: "Status",
+    header: "Estado",
     sortable: true,
     render: (row) => (
-      <StatusChip label={row.active ? "Active" : "Inactive"} tone={row.active ? "success" : "neutral"} />
+      <StatusChip label={row.active ? "Activo" : "Inactivo"} tone={row.active ? "success" : "neutral"} />
     ),
   },
   {
     key: "createdAt",
-    header: "Created",
+    header: "Creado",
     sortable: true,
     render: (row) => (
       <span className="text-sm text-slate-400">{row.createdAt.toISOString().slice(0, 10)}</span>
@@ -73,10 +73,10 @@ export const userColumns: ListColumn<UserRow>[] = [
   },
   {
     key: "actions",
-    header: "Actions",
+    header: "Acciones",
     render: (row) => (
       <Link href={`/admin/users/${row.id}`} className="text-sm font-medium text-cyan-300 transition hover:text-cyan-200">
-        Edit
+        Editar
       </Link>
     ),
   },
@@ -84,35 +84,35 @@ export const userColumns: ListColumn<UserRow>[] = [
 
 export const userListConfig: ListConfig<UserRow> = {
   eyebrow: "Admin",
-  title: "Users",
-  description: "Manage user accounts, roles, and access.",
+  title: "Usuarios",
+  description: "Gestioná cuentas de usuario, roles y acceso.",
   columns: userColumns,
   filters: [
-    { field: "q", label: "Search", type: "search", placeholder: "Name or email…" },
+    { field: "q", label: "Buscar", type: "search", placeholder: "Nombre o correo…" },
     {
       field: "role",
-      label: "Role",
+      label: "Rol",
       type: "select",
-      placeholder: "All roles",
+      placeholder: "Todos los roles",
       options: Object.entries(ROLE_LABELS).map(([value, label]) => ({ value, label })),
     },
-    { field: "status", label: "Status", type: "status" },
+    { field: "status", label: "Estado", type: "status" },
   ],
   headerActions: [
-    { href: "/admin/users/new", label: "Create user", variant: "primary" },
+    { href: "/admin/users/new", label: "Crear usuario", variant: "primary" },
   ],
   batchActions: [
-    { label: "Deactivate", handler: "deactivate", variant: "warning" },
-    { label: "Reactivate", handler: "reactivate", variant: "primary" },
+    { label: "Desactivar", handler: "deactivate", variant: "warning" },
+    { label: "Reactivar", handler: "reactivate", variant: "primary" },
   ],
   sidebar: {
-    title: "User management",
-    description: "Create, edit, and manage system users and their roles.",
+    title: "Gestión de usuarios",
+    description: "Creá, editá y gestioná usuarios del sistema y sus roles.",
     items: [
-      { label: "Total users", value: "—", tone: "info" },
+      { label: "Total usuarios", value: "—", tone: "info" },
     ],
-    action: { href: "/admin/users/new", label: "Create user" },
+    action: { href: "/admin/users/new", label: "Crear usuario" },
   },
-  searchPlaceholder: "Name or email…",
+  searchPlaceholder: "Nombre o correo…",
   pageSize: 10,
 };

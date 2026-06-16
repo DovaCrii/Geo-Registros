@@ -24,34 +24,40 @@ function toneFromStatus(status: RecordStatus) {
 export const operatorColumns: ListColumn<OperatorRow>[] = [
   {
     key: "code",
-    header: "Code",
+    header: "Código",
     render: (row) => <span className="font-medium text-white">{row.code ?? "—"}</span>,
   },
   {
     key: "operator",
-    header: "Operator",
+    header: "Operador",
     render: (row) => (
       <div className="space-y-1">
         <p className="font-medium text-white">{row.fullName}</p>
-        <p className="text-xs text-slate-500">{row.licenseNumber ?? "License pending"}</p>
+        <p className="text-xs text-slate-500">{row.licenseNumber ?? "Licencia pendiente"}</p>
       </div>
     ),
   },
   {
     key: "contact",
-    header: "Contact / Cost center",
+    header: "Contacto / Grupo",
     render: (row) => (
       <div className="space-y-1 text-slate-300">
-        <p>{row.email ?? row.phone ?? "No contact"}</p>
+        <p>{row.email ?? row.phone ?? "Sin contacto"}</p>
         <p className="text-xs text-slate-500">
-          {row.costCenter ? `${row.costCenter.code} — ${row.costCenter.name}` : "Unassigned"}
+          {row.costCenter ? (
+            <Link href={`/cost-centers/${row.costCenter.id}`} className="transition hover:text-cyan-300">
+              {row.costCenter.code} — {row.costCenter.name}
+            </Link>
+          ) : (
+            "Sin asignar"
+          )}
         </p>
       </div>
     ),
   },
   {
     key: "licenseExpiry",
-    header: "License expiry",
+    header: "Vencimiento licencia",
     render: (row) => {
       if (!row.licenseExpiry) return <span className="text-sm text-slate-500">—</span>;
       const date = new Date(row.licenseExpiry);
@@ -59,48 +65,48 @@ export const operatorColumns: ListColumn<OperatorRow>[] = [
       return (
         <span className={`text-sm ${isExpired ? "text-red-400" : "text-slate-300"}`}>
           {date.toISOString().slice(0, 10)}
-          {isExpired && <span className="ml-1.5 text-xs text-red-400">(Expired)</span>}
+          {isExpired && <span className="ml-1.5 text-xs text-red-400">(Vencida)</span>}
         </span>
       );
     },
   },
   {
     key: "status",
-    header: "Status",
-    render: (row) => <StatusChip label={row.status} tone={toneFromStatus(row.status)} />,
+    header: "Estado",
+    render: (row) => <StatusChip label={row.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"} tone={toneFromStatus(row.status)} />,
   },
   {
     key: "actions",
-    header: "Actions",
+    header: "Acciones",
     render: (row) => (
       <Link href={`/operators/${row.id}`} className="text-sm font-medium text-cyan-300 transition hover:text-cyan-200">
-        Edit
+        Editar
       </Link>
     ),
   },
 ];
 
 export const operatorListConfig: ListConfig<OperatorRow> = {
-  eyebrow: "Block 2 / Master data",
-  title: "Operators",
-  description: "Fourth real CRUD slice. Personnel records are now wired to Prisma with optional cost center assignment.",
+  eyebrow: "Bloque 2 / Datos maestros",
+  title: "Operadores RPAS",
+  description: "Registro de personal operativo con licencia, contacto y grupo de trabajo asociado.",
   columns: operatorColumns,
   filters: [
-    { field: "q", label: "Search", type: "search", placeholder: "Nombre, código o licencia…" },
-    { field: "status", label: "Status", type: "status" },
+    { field: "q", label: "Buscar", type: "search", placeholder: "Nombre, código o licencia…" },
+    { field: "status", label: "Estado", type: "status" },
   ],
   headerActions: [
-    { href: "/operators/new", label: "Register operator", variant: "primary" },
+    { href: "/operators/new", label: "Registrar operador", variant: "primary" },
   ],
   sidebar: {
-    title: "Current slice boundary",
-    description: "Real list/create/edit/status and soft-delete flow for operators with optional cost center assignment.",
+    title: "Resumen del operador",
+    description: "Datos personales, licencia y grupo de trabajo del operador RPA.",
     items: [
-      { label: "Persistence", value: "Real Prisma path", tone: "success" },
-      { label: "License field", value: "Enabled", tone: "info" },
-      { label: "Advanced cert.", value: "Deferred", tone: "warning" },
+      { label: "Persistencia", value: "Base de datos real", tone: "success" },
+      { label: "Licencia", value: "Habilitada", tone: "info" },
+      { label: "Cert. avanzada", value: "Pendiente", tone: "warning" },
     ],
-    action: { href: "/operators/new", label: "Open create form" },
+    action: { href: "/operators/new", label: "Crear operador" },
   },
   searchPlaceholder: "Nombre, código o licencia…",
   pageSize: 10,

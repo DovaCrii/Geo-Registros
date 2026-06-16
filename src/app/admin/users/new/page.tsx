@@ -10,8 +10,8 @@ export default function NewUserPage() {
       <div className="space-y-6">
         <PageHeader
           eyebrow="Admin"
-          title="Create user"
-          description="Add a new user account with role and password."
+          title="Crear usuario"
+          description="Agregá una nueva cuenta de usuario con rol y contraseña."
         />
         <div className="max-w-xl">
           <UserForm mode="create" />

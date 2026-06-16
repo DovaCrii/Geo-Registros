@@ -30,6 +30,19 @@ const STATUS_TONES: Record<string, "success" | "warning" | "neutral" | "info" | 
   CANCELLED: "danger",
 };
 
+const STATUS_LABELS: Record<string, string> = {
+  DRAFT: "Borrador",
+  IN_REVIEW: "En revisión",
+  READY_FOR_SUBMISSION: "Listo para envío",
+  SUBMITTED: "Enviado",
+  AUTHORIZED: "Autorizado",
+  OBSERVED: "Observado",
+  REJECTED: "Rechazado",
+  EXPIRED: "Vencido",
+  CLOSED: "Cerrado",
+  CANCELLED: "Cancelado",
+};
+
 function permissionTone(status: PermissionStatus) {
   return STATUS_TONES[status] ?? "neutral";
 }
@@ -37,12 +50,12 @@ function permissionTone(status: PermissionStatus) {
 export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
   {
     key: "code",
-    header: "Code",
+    header: "Código",
     render: (row) => <span className="font-medium text-white">{row.code}</span>,
   },
   {
     key: "plan",
-    header: "Flight plan",
+    header: "Plan de vuelo",
     render: (row) => (
       <div className="space-y-1">
         <p className="font-medium text-white">{row.title}</p>
@@ -52,52 +65,78 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
   },
   {
     key: "assignment",
-    header: "Assignment",
+    header: "Asignación",
     render: (row) => (
       <div className="space-y-1 text-slate-300">
         <p className="text-xs">
-          {row.costCenter?.code ?? "—"} · {row.client?.name ?? "—"}
+          {row.costCenter ? (
+            <Link href={`/cost-centers/${row.costCenter.id}`} className="transition hover:text-cyan-300">
+              {row.costCenter.code}
+            </Link>
+          ) : (
+            "—"
+          )}{" "}·{" "}
+          {row.client ? (
+            <Link href={`/clients/${row.client.id}`} className="transition hover:text-cyan-300">
+              {row.client.name}
+            </Link>
+          ) : (
+            "—"
+          )}
         </p>
         <p className="text-xs text-slate-500">
-          {row.drone?.model ?? "—"} / {row.operator?.fullName ?? "—"}
+          {row.drone ? (
+            <Link href={`/drones/${row.drone.id}`} className="transition hover:text-cyan-300">
+              {row.drone.model}
+            </Link>
+          ) : (
+            "—"
+          )}{" / "}
+          {row.operator ? (
+            <Link href={`/operators/${row.operator.id}`} className="transition hover:text-cyan-300">
+              {row.operator.fullName}
+            </Link>
+          ) : (
+            "—"
+          )}
         </p>
       </div>
     ),
   },
   {
     key: "geometry",
-    header: "Geometry",
+    header: "Geometría",
     render: (row) =>
       row.geometryType ? (
         <div className="space-y-1">
-          <StatusChip label="Attached" tone="success" />
+          <StatusChip label="Adjunta" tone="success" />
           <p className="text-xs text-slate-500">{row.geometryType}</p>
         </div>
       ) : (
-        <StatusChip label="Missing" tone="neutral" />
+        <StatusChip label="Sin adjuntar" tone="neutral" />
       ),
   },
   {
     key: "permissionStatus",
-    header: "Permission",
+    header: "Permiso",
     render: (row) => (
-      <StatusChip label={row.permissionStatus.replace(/_/g, " ")} tone={permissionTone(row.permissionStatus)} />
+      <StatusChip label={STATUS_LABELS[row.permissionStatus] ?? row.permissionStatus} tone={permissionTone(row.permissionStatus)} />
     ),
   },
   {
     key: "actions",
-    header: "Actions",
+    header: "Acciones",
     render: (row) => (
       <div className="flex gap-2">
         <Link href={`/flight-plans/${row.id}`} className="text-sm font-medium text-cyan-300 transition hover:text-cyan-200">
-          Edit
+          Editar
         </Link>
         {row.geometryType && (
           <Link
             href={`/flight-plans/${row.id}/geometry`}
             className="text-sm font-medium text-emerald-300 transition hover:text-emerald-200"
           >
-            Geometry
+            Geometría
           </Link>
         )}
       </div>
@@ -106,44 +145,44 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
 ];
 
 export const flightPlanListConfig: ListConfig<FlightPlanRow> = {
-  eyebrow: "Block 1 / Core operation",
-  title: "Flight plans",
-  description: "Manage operational RPA flight records with full permission workflow, geometry capture, documents, and weather.",
+  eyebrow: "Bloque 1 / Operación principal",
+  title: "Planes de vuelo",
+  description: "Gestioná los registros operativos de vuelos RPAS con flujo de permisos, geometría, documentos y clima.",
   columns: flightPlanColumns,
   filters: [
-    { field: "q", label: "Search", type: "search", placeholder: "Código o título…" },
+    { field: "q", label: "Buscar", type: "search", placeholder: "Código o título…" },
     {
       field: "permissionStatus",
-      label: "Permission",
+      label: "Permiso",
       type: "select",
-      placeholder: "All statuses",
+      placeholder: "Todos los estados",
       options: [
-        { value: "DRAFT", label: "Draft" },
-        { value: "IN_REVIEW", label: "In review" },
-        { value: "READY_FOR_SUBMISSION", label: "Ready for submission" },
-        { value: "SUBMITTED", label: "Submitted" },
-        { value: "AUTHORIZED", label: "Authorized" },
-        { value: "OBSERVED", label: "Observed" },
-        { value: "REJECTED", label: "Rejected" },
-        { value: "EXPIRED", label: "Expired" },
-        { value: "CLOSED", label: "Closed" },
-        { value: "CANCELLED", label: "Cancelled" },
+        { value: "DRAFT", label: "Borrador" },
+        { value: "IN_REVIEW", label: "En revisión" },
+        { value: "READY_FOR_SUBMISSION", label: "Listo para envío" },
+        { value: "SUBMITTED", label: "Enviado" },
+        { value: "AUTHORIZED", label: "Autorizado" },
+        { value: "OBSERVED", label: "Observado" },
+        { value: "REJECTED", label: "Rechazado" },
+        { value: "EXPIRED", label: "Vencido" },
+        { value: "CLOSED", label: "Cerrado" },
+        { value: "CANCELLED", label: "Cancelado" },
       ],
     },
   ],
   headerActions: [
-    { href: "/flight-plans/new", label: "Create flight plan", variant: "primary" },
+    { href: "/flight-plans/new", label: "Crear plan de vuelo", variant: "primary" },
   ],
   sidebar: {
-    title: "Current slice scope",
-    description: "Full permission workflow, geometry, documents, and weather integration.",
+    title: "Cobertura del plan",
+    description: "Flujo de permisos, geometría, documentos y clima conectados.",
     items: [
-      { label: "Permission workflow", value: "Complete", tone: "success" },
-      { label: "Geometry", value: "Enabled", tone: "info" },
-      { label: "Documents", value: "Enabled", tone: "info" },
-      { label: "Soft delete", value: "Enabled", tone: "success" },
+      { label: "Flujo de permisos", value: "Completo", tone: "success" },
+      { label: "Geometría", value: "Habilitada", tone: "info" },
+      { label: "Documentos", value: "Habilitados", tone: "info" },
+      { label: "Eliminación lógica", value: "Habilitada", tone: "success" },
     ],
-    action: { href: "/flight-plans/new", label: "Open create form" },
+    action: { href: "/flight-plans/new", label: "Crear plan" },
   },
   searchPlaceholder: "Código o título…",
   pageSize: 10,

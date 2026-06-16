@@ -1,5 +1,6 @@
 import { RecordStatus } from "@prisma/client";
 
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
@@ -27,8 +28,8 @@ export default async function OperatorDetailPage({ params }: { params: Promise<{
     if (!record) {
       return (
         <PageShell>
-          <DetailPanel title="Operator not found" description="The requested operator does not exist or is no longer available.">
-            <p className="text-sm text-slate-400">Go back to the list and select a valid personnel record.</p>
+          <DetailPanel title="Operador no encontrado" description="El operador solicitado no existe o ya no está disponible.">
+            <p className="text-sm text-slate-400">Volvé al listado y seleccioná un operador válido.</p>
           </DetailPanel>
         </PageShell>
       );
@@ -37,13 +38,26 @@ export default async function OperatorDetailPage({ params }: { params: Promise<{
     return (
       <PageShell>
         <div className="space-y-6">
-          <PageHeader eyebrow="Block 2 / Operators" title={record.fullName} description="Edit the real operator record while keeping advanced certifications and scheduling out of this slice." actions={<StatusChip label={record.status} tone={toneFromStatus(record.status)} />} />
+          <Breadcrumbs
+            items={[
+              { label: "Inicio", href: "/" },
+              { label: "Operadores RPAS", href: "/operators" },
+              { label: record.fullName },
+            ]}
+          />
+
+          <PageHeader
+            eyebrow="Bloque 2 / Datos maestros"
+            title={record.fullName}
+            description="Editá los datos del operador RPA."
+            actions={<StatusChip label={record.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"} tone={toneFromStatus(record.status)} />}
+          />
 
             <OperatorForm
-              title="Edit operator"
-              description="Update operator identity, contact data, license number, optional cost center assignment, status, and notes."
+              title="Editar operador"
+              description="Actualizá identidad, contacto, licencia, grupo de trabajo opcional y estado."
               action={updateOperator.bind(null, record.id)}
-              submitLabel="Save changes"
+              submitLabel="Guardar cambios"
             costCenterOptions={
               record.costCenter
                 ? costCenterOptions.some((item) => item.id === record.costCenter!.id)
@@ -64,29 +78,27 @@ export default async function OperatorDetailPage({ params }: { params: Promise<{
               }}
             />
 
-          <DetailPanel title="Danger zone" description="Soft delete hides this operator from active views while preserving history.">
+          <DetailPanel title="Zona de riesgo" description="La eliminación lógica oculta este operador sin perder su historial.">
             <form action={deleteOperator.bind(null, record.id)} className="space-y-3">
               <p className="text-sm leading-6 text-slate-400">
-                This removes the operator from lists, selectors, and dashboard counts. Existing flight plans keep their historical link.
+                Esta acción lo saca de listados, selectores y conteos del panel. Los planes de vuelo vinculados se conservan.
               </p>
               <button
                 type="submit"
                 className="inline-flex items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-400/20"
               >
-                Delete operator
+                Eliminar operador
               </button>
             </form>
           </DetailPanel>
         </div>
       </PageShell>
     );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown database error.";
-
+  } catch {
     return (
       <PageShell>
-        <DetailPanel title="Operator unavailable" description="The page is wired to the real Prisma query path, but the database is not ready or reachable.">
-          <p className="text-sm text-slate-300">{message}</p>
+        <DetailPanel title="Operador no disponible" description="No se pudieron cargar los datos. Verificá la conexión a la base de datos.">
+          <p className="text-sm text-slate-400">Recargá la página e intentá de nuevo.</p>
         </DetailPanel>
       </PageShell>
     );

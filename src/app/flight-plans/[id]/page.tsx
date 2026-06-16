@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
@@ -72,8 +73,8 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
     if (!record) {
       return (
         <PageShell>
-          <DetailPanel title="Flight plan not found" description="The requested operational record does not exist or is no longer available.">
-            <p className="text-sm text-slate-400">Return to the flight-plan list and select a valid record.</p>
+          <DetailPanel title="Plan de vuelo no encontrado" description="El registro operativo solicitado no existe o ya no está disponible.">
+            <p className="text-sm text-slate-400">Volvé al listado de planes de vuelo y seleccioná un registro válido.</p>
           </DetailPanel>
         </PageShell>
       );
@@ -105,6 +106,8 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
 
     const currentDrone = drones.find((item) => item.id === record.droneId) ?? null;
     const currentOperator = operators.find((item) => item.id === record.operatorId) ?? null;
+    const currentCostCenter = costCenters.find((item) => item.id === record.costCenterId) ?? null;
+    const currentClient = clients.find((item) => item.id === record.clientId) ?? null;
     const persistedChecklist = normalizeChecklist(record.dgacChecklist);
     const weatherReady = Boolean(weatherData && !("error" in weatherData)) || Boolean(persistedChecklist["weather-check"]);
 
@@ -161,6 +164,14 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
     return (
       <PageShell>
         <div className="space-y-6">
+          <Breadcrumbs
+            items={[
+              { label: "Inicio", href: "/" },
+              { label: "Planes de vuelo", href: "/flight-plans" },
+              { label: record.title },
+            ]}
+          />
+
           <PageHeader
             eyebrow="Flujo de permisos"
             title={record.title}
@@ -186,6 +197,27 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
             }
           />
 
+          <DetailPanel title="Entidades relacionadas" description="Abrí los registros maestros vinculados a este plan.">
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              <Link href={`/cost-centers/${record.costCenterId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Grupo de trabajo</p>
+                <p className="mt-1 text-sm font-medium text-white">{currentCostCenter ? `${currentCostCenter.code} · ${currentCostCenter.name}` : "Sin asignar"}</p>
+              </Link>
+              <Link href={`/clients/${record.clientId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Cliente</p>
+                <p className="mt-1 text-sm font-medium text-white">{currentClient ? currentClient.name : "Sin asignar"}</p>
+              </Link>
+              <Link href={`/drones/${record.droneId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Dron</p>
+                <p className="mt-1 text-sm font-medium text-white">{currentDrone ? `${currentDrone.model} · ${currentDrone.serialNumber}` : "Sin asignar"}</p>
+              </Link>
+              <Link href={`/operators/${record.operatorId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Operador</p>
+                <p className="mt-1 text-sm font-medium text-white">{currentOperator ? currentOperator.fullName : "Sin asignar"}</p>
+              </Link>
+            </div>
+          </DetailPanel>
+
           <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_360px]">
             {/* Left column: form + permission controls */}
             <div className="space-y-6">
@@ -193,7 +225,7 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
                 title="Detalles del plan"
                 description="Ajustá identidad operativa, fecha, asignaciones y payload canónico."
                 action={updateFlightPlan.bind(null, record.id)}
-                submitLabel="Save changes"
+                submitLabel="Guardar cambios"
                 initialValues={{
                   code: record.code,
                   title: record.title,
@@ -309,13 +341,11 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
         </div>
       </PageShell>
     );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown database error.";
-
+  } catch {
     return (
       <PageShell>
-        <DetailPanel title="Flight plan unavailable" description="The page is wired to the real Prisma query path, but the database is not ready or reachable.">
-          <p className="text-sm text-slate-300">{message}</p>
+        <DetailPanel title="Plan de vuelo no disponible" description="No se pudieron cargar los datos. Verificá la conexión a la base de datos.">
+          <p className="text-sm text-slate-400">Recargá la página e intentá de nuevo.</p>
         </DetailPanel>
       </PageShell>
     );

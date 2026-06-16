@@ -23,7 +23,7 @@ export default async function EditUserPage({
     <PageShell>
       <div className="space-y-6">
         <PageHeader
-          eyebrow="Admin / Users"
+          eyebrow="Admin / Usuarios"
           title={user.fullName}
           description={`${user.email} · ${user.role}`}
         />

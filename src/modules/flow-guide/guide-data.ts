@@ -132,13 +132,13 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
   {
     pattern: /^\/cost-centers/,
     entry: {
-      title: "Centros de costo",
+      title: "Grupos de trabajo",
       icon: "📊",
       steps: [
-        "Organizá las operaciones por centro de costo.",
-        "Cada centro agrupa: drones, operadores y planes de vuelo.",
+        "Organizá las operaciones por grupo de trabajo.",
+        "Cada grupo puede agrupar drones, operadores y planes de vuelo.",
         "Útil para reportes financieros y asignación de recursos.",
-        "Código único: usá un formato como CC-001.",
+        "Código único: usá un formato como GT-001.",
       ],
     },
   },

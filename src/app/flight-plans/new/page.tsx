@@ -1,4 +1,5 @@
 import { DetailPanel } from "@/components/ui/detail-panel";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { requirePageAuth } from "@/lib/require-page-auth";
@@ -26,6 +27,8 @@ export default async function NewFlightPlanPage() {
   return (
     <PageShell>
       <div className="space-y-6">
+        <Breadcrumbs items={[{ label: "Inicio", href: "/" }, { label: "Planes de vuelo", href: "/flight-plans" }, { label: "Crear plan de vuelo" }]} />
+
         <PageHeader
           eyebrow="Bloque 3 / Planes de vuelo"
           title="Crear plan de vuelo"
@@ -33,7 +36,7 @@ export default async function NewFlightPlanPage() {
         />
 
         {!hasDependencies ? (
-          <DetailPanel title="Datos maestros requeridos" description="Necesitás al menos un centro de costo, cliente, dron y operador activo antes de crear el primer plan de vuelo.">
+          <DetailPanel title="Datos maestros requeridos" description="Necesitás al menos un grupo de trabajo, cliente, dron y operador activo antes de crear el primer plan de vuelo.">
             <p className="text-sm text-slate-300">Si la base de datos está offline, estos selectores también quedarán indisponibles hasta recuperar conectividad.</p>
           </DetailPanel>
         ) : null}

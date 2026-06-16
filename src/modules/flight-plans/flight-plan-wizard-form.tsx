@@ -191,7 +191,7 @@ export function FlightPlanWizardForm({
         </section>
 
         <section className={step === 1 ? "space-y-4" : "hidden"}>
-          <SelectField name="costCenterId" label="Centro de costo" defaultValue={initialValues.costCenterId} options={costCenterOptions} />
+          <SelectField name="costCenterId" label="Grupo de trabajo" defaultValue={initialValues.costCenterId} options={costCenterOptions} />
           <SelectField name="clientId" label="Cliente" defaultValue={initialValues.clientId} options={clientOptions} />
           <SelectField name="droneId" label="Dron" defaultValue={initialValues.droneId} options={droneOptions} />
           <SelectField name="operatorId" label="Operador" defaultValue={initialValues.operatorId} options={operatorOptions} />

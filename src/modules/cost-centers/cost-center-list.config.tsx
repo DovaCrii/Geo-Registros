@@ -20,12 +20,12 @@ function toneFromStatus(status: RecordStatus) {
 export const costCenterColumns: ListColumn<CostCenterRow>[] = [
   {
     key: "code",
-    header: "Code",
+    header: "Código",
     render: (row) => <span className="font-medium text-white">{row.code}</span>,
   },
   {
     key: "name",
-    header: "Cost center",
+    header: "Grupo de trabajo",
     render: (row) => (
       <div className="space-y-1">
         <p className="font-medium text-white">{row.name}</p>
@@ -35,50 +35,50 @@ export const costCenterColumns: ListColumn<CostCenterRow>[] = [
   },
   {
     key: "linkedRecords",
-    header: "Linked records",
+    header: "Registros vinculados",
     render: (row) => (
       <div className="space-y-1 text-slate-300">
         <p>{row._count.drones} drones</p>
-        <p className="text-xs text-slate-500">{row._count.operators} operators</p>
+        <p className="text-xs text-slate-500">{row._count.operators} operadores</p>
       </div>
     ),
   },
   {
     key: "status",
-    header: "Status",
-    render: (row) => <StatusChip label={row.status} tone={toneFromStatus(row.status)} />,
+    header: "Estado",
+    render: (row) => <StatusChip label={row.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"} tone={toneFromStatus(row.status)} />,
   },
   {
     key: "actions",
-    header: "Actions",
+    header: "Acciones",
     render: (row) => (
       <Link href={`/cost-centers/${row.id}`} className="text-sm font-medium text-cyan-300 transition hover:text-cyan-200">
-        Edit
+        Editar
       </Link>
     ),
   },
 ];
 
 export const costCenterListConfig: ListConfig<CostCenterRow> = {
-  eyebrow: "Block 2 / Master data",
-  title: "Cost centers",
-  description: "First real CRUD slice after FlightPlan. Cost centers anchor the entire operation.",
+  eyebrow: "Bloque 2 / Datos maestros",
+  title: "Grupos de trabajo",
+  description: "Administrá los equipos, áreas o centros que agrupan drones, operadores y planes de vuelo.",
   columns: costCenterColumns,
   filters: [
-    { field: "q", label: "Search", type: "search", placeholder: "Código o nombre…" },
-    { field: "status", label: "Status", type: "status" },
+    { field: "q", label: "Buscar", type: "search", placeholder: "Código o nombre…" },
+    { field: "status", label: "Estado", type: "status" },
   ],
   headerActions: [
-    { href: "/cost-centers/new", label: "Register cost center", variant: "primary" },
+    { href: "/cost-centers/new", label: "Crear grupo de trabajo", variant: "primary" },
   ],
   sidebar: {
-    title: "Current slice boundary",
-    description: "Real list/create/edit/status and soft-delete flow for cost centers.",
+    title: "Resumen del grupo",
+    description: "Cada grupo organiza drones, operadores y planes de vuelo asociados.",
     items: [
-      { label: "Persistence", value: "Real Prisma path", tone: "success" },
-      { label: "Soft delete", value: "Enabled", tone: "success" },
+      { label: "Persistencia", value: "Base de datos real", tone: "success" },
+      { label: "Eliminación lógica", value: "Habilitada", tone: "success" },
     ],
-    action: { href: "/cost-centers/new", label: "Open create form" },
+    action: { href: "/cost-centers/new", label: "Crear grupo" },
   },
   searchPlaceholder: "Código o nombre…",
   pageSize: 10,

@@ -66,9 +66,9 @@ function LoginForm() {
           )}
 
           <label className="block space-y-2">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500 dark:text-slate-500">
-              Email
-            </span>
+              <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500 dark:text-slate-500">
+                Correo
+              </span>
             <input
               type="email"
               required

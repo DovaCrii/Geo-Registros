@@ -43,7 +43,7 @@ export default async function AdminEmailLogsPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Email Log</h1>
+          <h1 className="text-2xl font-bold text-white">Registro de correos</h1>
           <p className="text-sm text-slate-400 mt-1">
             Historial de correos enviados desde la plataforma
           </p>

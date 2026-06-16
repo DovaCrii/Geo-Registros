@@ -21,13 +21,13 @@ function toneFromStatus(status: RecordStatus) {
 export const clientColumns: ListColumn<ClientRow>[] = [
   {
     key: "code",
-    header: "Code",
+    header: "Código",
     sortable: true,
     render: (row) => <span className="font-medium text-white">{row.code ?? "—"}</span>,
   },
   {
     key: "name",
-    header: "Client",
+    header: "Cliente",
     sortable: true,
     render: (row) => (
       <div className="space-y-1">
@@ -38,7 +38,7 @@ export const clientColumns: ListColumn<ClientRow>[] = [
   },
   {
     key: "contact",
-    header: "Primary contact",
+    header: "Contacto principal",
     render: (row) => (
       <div className="space-y-1 text-slate-300">
         <p>{row.contactName ?? "—"}</p>
@@ -48,42 +48,42 @@ export const clientColumns: ListColumn<ClientRow>[] = [
   },
   {
     key: "status",
-    header: "Status",
+    header: "Estado",
     sortable: true,
-    render: (row) => <StatusChip label={row.status} tone={toneFromStatus(row.status)} />,
+    render: (row) => <StatusChip label={row.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"} tone={toneFromStatus(row.status)} />,
   },
   {
     key: "actions",
-    header: "Actions",
+    header: "Acciones",
     render: (row) => (
       <Link href={`/clients/${row.id}`} className="text-sm font-medium text-cyan-300 transition hover:text-cyan-200">
-        Edit
+        Editar
       </Link>
     ),
   },
 ];
 
 export const clientListConfig: ListConfig<ClientRow> = {
-  eyebrow: "Block 2 / Master data",
-  title: "Clients",
-  description: "Second real CRUD slice. Client records are wired to Prisma with contact fields and soft-delete support.",
+  eyebrow: "Bloque 2 / Datos maestros",
+  title: "Clientes",
+  description: "Registrá y gestioná los clientes asociados a cada plan de vuelo y operación.",
   columns: clientColumns,
   filters: [
-    { field: "q", label: "Search", type: "search", placeholder: "Código, nombre o contacto…" },
-    { field: "status", label: "Status", type: "status" },
+    { field: "q", label: "Buscar", type: "search", placeholder: "Código, nombre o contacto…" },
+    { field: "status", label: "Estado", type: "status" },
   ],
   headerActions: [
-    { href: "/clients/new", label: "Register client", variant: "primary" },
+    { href: "/clients/new", label: "Registrar cliente", variant: "primary" },
   ],
   sidebar: {
-    title: "Current slice boundary",
-    description: "Real list/create/edit/status and soft-delete flow for clients.",
+    title: "Resumen del cliente",
+    description: "Datos de contacto y estado operativo del cliente.",
     items: [
-      { label: "Persistence", value: "Real Prisma path", tone: "success" },
-      { label: "Soft delete", value: "Enabled", tone: "success" },
-      { label: "Operator binding", value: "Deferred", tone: "warning" },
+      { label: "Persistencia", value: "Base de datos real", tone: "success" },
+      { label: "Eliminación lógica", value: "Habilitada", tone: "success" },
+      { label: "Vinculación operador", value: "Pendiente", tone: "warning" },
     ],
-    action: { href: "/clients/new", label: "Open create form" },
+    action: { href: "/clients/new", label: "Crear cliente" },
   },
   searchPlaceholder: "Código, nombre o contacto…",
   pageSize: 10,

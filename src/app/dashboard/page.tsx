@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { EmptyState } from "@/components/ui/empty-state";
 import { StatusChip } from "@/components/ui/status-chip";
 import { PageShell } from "@/components/ui/page-shell";
 import { requirePageAuth } from "@/lib/require-page-auth";
@@ -158,9 +159,42 @@ const STATUS_LABELS: Record<string, string> = {
 
 export default async function DashboardPage() {
   const session = await requirePageAuth("/dashboard");
-  const stats = await getDashboardStats();
+  let stats;
+  try {
+    stats = await getDashboardStats();
+  } catch {
+    stats = null;
+  }
 
   const userName = session?.user?.name ?? "Usuario";
+
+  // If dashboard stats failed to load (DB down), show error state
+  if (!stats) {
+    return (
+      <PageShell>
+        <div className="space-y-6">
+          <div className="rounded-3xl border border-slate-800/80 bg-slate-950/55 p-6 shadow-2xl shadow-cyan-950/10 backdrop-blur">
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">
+              Panel operativo
+            </p>
+            <h1 className="text-3xl font-bold tracking-tight text-white">
+              Bienvenido, {userName}
+            </h1>
+            <p className="mt-1 text-sm leading-6 text-slate-400">
+              Resumen operativo de tu plataforma AeroFlow
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-rose-800/40 bg-rose-950/30 p-6 shadow-xl backdrop-blur">
+            <h2 className="text-sm font-semibold text-rose-100">No se pudieron cargar los datos del panel</h2>
+            <p className="mt-2 text-sm leading-6 text-rose-50/80">
+              Verificá que la base de datos esté conectada y recargá la página. Si el problema persiste, revisá la configuración del servidor.
+            </p>
+          </div>
+        </div>
+      </PageShell>
+    );
+  }
 
   const pendingActions = [
     {
@@ -223,6 +257,27 @@ export default async function DashboardPage() {
           </p>
         </div>
 
+        {/* Empty state for first-time users */}
+        {stats.flightPlans.total === 0 ? (
+          <EmptyState
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
+                <path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            }
+            title="No hay actividad operativa todavía"
+            description="Este panel muestra el resumen de tus operaciones. Una vez que crees tu primer plan de vuelo, los indicadores y las acciones pendientes aparecerán automáticamente."
+            action={{ label: "Crear primer plan de vuelo", href: "/flight-plans/new" }}
+            steps={[
+              { number: 1, label: "Registrá un dron", description: "Antes de volar, necesitás tener al menos un dron activo en el sistema." },
+              { number: 2, label: "Registrá un operador", description: "Cada plan de vuelo necesita un operador RPA responsable." },
+              { number: 3, label: "Creá un plan de vuelo", description: "Completá los datos básicos y empezá a operar." },
+            ]}
+          />
+        ) : null}
+
+        {stats.flightPlans.total > 0 && (
+          <>
         {/* Pending actions */}
         <div className="rounded-3xl border border-slate-800/80 bg-slate-950/45 p-6 shadow-xl shadow-slate-950/10 backdrop-blur">
           <div className="mb-4 flex items-end justify-between gap-4">
@@ -394,7 +449,7 @@ export default async function DashboardPage() {
                   href="/cost-centers"
                   className="flex items-center justify-between rounded-2xl border border-slate-800/80 bg-slate-900/70 px-4 py-3 text-sm transition hover:border-cyan-500/30 hover:bg-slate-800/70"
                 >
-                  <span className="text-slate-300">Centros de costo</span>
+                  <span className="text-slate-300">Grupos de trabajo</span>
                   <span className="text-xs text-cyan-300">→</span>
                 </Link>
               </div>
@@ -420,6 +475,8 @@ export default async function DashboardPage() {
             </div>
           </div>
         </div>
+          </>
+        )}
       </div>
     </PageShell>
   );

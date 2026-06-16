@@ -1,5 +1,6 @@
 import { RecordStatus } from "@prisma/client";
 
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
@@ -30,8 +31,8 @@ export default async function DroneDetailPage({ params }: { params: Promise<{ id
     if (!record) {
       return (
         <PageShell>
-          <DetailPanel title="Drone not found" description="The requested drone does not exist or is no longer available.">
-            <p className="text-sm text-slate-400">Go back to the list and select a valid aircraft record.</p>
+          <DetailPanel title="Dron no encontrado" description="El dron solicitado no existe o ya no está disponible.">
+            <p className="text-sm text-slate-400">Volvé al listado y seleccioná un dron válido.</p>
           </DetailPanel>
         </PageShell>
       );
@@ -40,18 +41,26 @@ export default async function DroneDetailPage({ params }: { params: Promise<{ id
     return (
       <PageShell>
         <div className="space-y-6">
+          <Breadcrumbs
+            items={[
+              { label: "Inicio", href: "/" },
+              { label: "Flota RPAS", href: "/drones" },
+              { label: record.model },
+            ]}
+          />
+
           <PageHeader
-            eyebrow="Block 2 / Drones"
+            eyebrow="Bloque 2 / Datos maestros"
             title={record.model}
-            description="Edit the real aircraft inventory record while keeping operator assignment out of this MVP slice."
-            actions={<StatusChip label={record.status} tone={toneFromStatus(record.status)} />}
+            description="Editá los datos del dron registrado."
+            actions={<StatusChip label={record.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"} tone={toneFromStatus(record.status)} />}
           />
 
             <DroneForm
-              title="Edit drone"
-              description="Update inventory identity, manufacturer, optional cost center assignment, status, and notes."
+              title="Editar dron"
+              description="Actualizá identidad, fabricante, grupo de trabajo opcional, estado y notas."
               action={updateDrone.bind(null, record.id)}
-              submitLabel="Save changes"
+              submitLabel="Guardar cambios"
             costCenterOptions={
               record.costCenter
                 ? costCenterOptions.some((item) => item.id === record.costCenter!.id)
@@ -71,29 +80,27 @@ export default async function DroneDetailPage({ params }: { params: Promise<{ id
               }}
             />
 
-          <DetailPanel title="Danger zone" description="Soft delete hides this drone from active views while preserving history.">
+          <DetailPanel title="Zona de riesgo" description="La eliminación lógica oculta este dron sin perder su historial.">
             <form action={deleteDrone.bind(null, record.id)} className="space-y-3">
               <p className="text-sm leading-6 text-slate-400">
-                This removes the drone from lists, selectors, and dashboard counts. Existing flight plans keep their historical link.
+                Esta acción lo saca de listados, selectores y conteos del panel. Los planes de vuelo vinculados se conservan.
               </p>
               <button
                 type="submit"
                 className="inline-flex items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-400/20"
               >
-                Delete drone
+                Eliminar dron
               </button>
             </form>
           </DetailPanel>
         </div>
       </PageShell>
     );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown database error.";
-
+  } catch {
     return (
       <PageShell>
-        <DetailPanel title="Drone unavailable" description="The page is wired to the real Prisma query path, but the database is not ready or reachable.">
-          <p className="text-sm text-slate-300">{message}</p>
+        <DetailPanel title="Dron no disponible" description="No se pudieron cargar los datos. Verificá la conexión a la base de datos.">
+          <p className="text-sm text-slate-400">Recargá la página e intentá de nuevo.</p>
         </DetailPanel>
       </PageShell>
     );

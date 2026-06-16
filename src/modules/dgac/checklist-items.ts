@@ -8,7 +8,7 @@ export const DGAC_CHECKLIST_ITEMS: DgacChecklistItem[] = [
   { id: "drone-registered", label: "Dron registrado", hint: "Verificá que el equipo esté cargado en flota." },
   { id: "operator-valid", label: "Operador con credencial vigente", hint: "Confirmá licencia, identidad y vigencia." },
   { id: "client-assigned", label: "Cliente asignado", hint: "Debe existir un mandante o contrato asociado." },
-  { id: "costcenter-assigned", label: "Centro de costo asignado", hint: "Usado para trazabilidad financiera y operativa." },
+  { id: "costcenter-assigned", label: "Grupo de trabajo asignado", hint: "Usado para trazabilidad financiera y operativa." },
   { id: "operation-area", label: "Área de operación definida", hint: "Geometría cargada o pendiente de revisión." },
   { id: "date-defined", label: "Fecha y horario definidos", hint: "Evita ambigüedad en la autorización." },
   { id: "population-check", label: "Zona poblada / no poblada evaluada", hint: "Clasificá el contexto antes de enviar." },

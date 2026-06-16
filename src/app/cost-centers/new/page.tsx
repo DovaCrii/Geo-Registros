@@ -1,5 +1,6 @@
 import { RecordStatus } from "@prisma/client";
 
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { requirePageAuth } from "@/lib/require-page-auth";
@@ -12,17 +13,19 @@ export default async function NewCostCenterPage() {
   return (
     <PageShell>
       <div className="space-y-6">
+        <Breadcrumbs items={[{ label: "Inicio", href: "/" }, { label: "Grupos de trabajo", href: "/cost-centers" }, { label: "Crear grupo de trabajo" }]} />
+
         <PageHeader
-          eyebrow="Block 2 / Cost centers"
-          title="Create cost center"
-          description="Register the first real operational anchor for plans, drones, operators, and future permit flows."
+          eyebrow="Bloque 2 / Datos maestros"
+          title="Crear grupo de trabajo"
+          description="Registrá un nuevo grupo, área o centro que agrupe drones, operadores y planes de vuelo."
         />
 
         <CostCenterForm
-          title="Cost center form"
-          description="Use a stable code and a clear operational name. Keep this slice simple and auditable."
+          title="Nuevo grupo de trabajo"
+          description="Usá un código estable y un nombre operativo claro."
           action={createCostCenter}
-          submitLabel="Create cost center"
+          submitLabel="Crear grupo de trabajo"
           initialValues={{
             code: "",
             name: "",
