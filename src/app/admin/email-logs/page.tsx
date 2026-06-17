@@ -1,7 +1,12 @@
+import type { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { requirePageAuth } from "@/lib/require-page-auth";
 import { prisma } from "@/lib/prisma";
+
+type EmailLogWithFlightPlan = Prisma.EmailLogGetPayload<{
+  include: { flightPlan: { select: { id: true; code: true } } };
+}>;
 
 export const dynamic = "force-dynamic";
 
@@ -31,13 +36,18 @@ function formatDate(d: Date): string {
 export default async function AdminEmailLogsPage() {
   await requirePageAuth("/admin/email-logs");
 
-  const emails = await prisma.emailLog.findMany({
-    orderBy: { sentAt: "desc" },
-    take: 200,
-    include: {
-      flightPlan: { select: { id: true, code: true } },
-    },
-  });
+  let emails: EmailLogWithFlightPlan[] = [];
+  try {
+    emails = await prisma.emailLog.findMany({
+      orderBy: { sentAt: "desc" },
+      take: 200,
+      include: {
+        flightPlan: { select: { id: true, code: true } },
+      },
+    });
+  } catch {
+    // Fallback: empty list, error shown below
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -68,7 +78,7 @@ export default async function AdminEmailLogsPage() {
               {emails.length === 0 && (
                 <tr>
                   <td colSpan={7} className="px-4 py-12 text-center text-slate-500">
-                    No se han enviado correos todavía.
+                    No se han enviado correos todavía. Si la base de datos no está disponible, este listado quedará vacío hasta recuperar la conexión.
                   </td>
                 </tr>
               )}

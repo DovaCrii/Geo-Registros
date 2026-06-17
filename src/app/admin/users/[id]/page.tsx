@@ -13,7 +13,12 @@ export default async function EditUserPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const user = await getUserById(id);
+  let user: Awaited<ReturnType<typeof getUserById>> | null = null;
+  try {
+    user = await getUserById(id);
+  } catch {
+    // Fallback: null triggers notFound below
+  }
 
   if (!user) {
     notFound();

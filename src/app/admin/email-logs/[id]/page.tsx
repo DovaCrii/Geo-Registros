@@ -1,9 +1,14 @@
+import type { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { requirePageAuth } from "@/lib/require-page-auth";
 import { prisma } from "@/lib/prisma";
 import { resendEmail } from "@/server/email/actions";
+
+type EmailLogWithFlightPlan = Prisma.EmailLogGetPayload<{
+  include: { flightPlan: { select: { id: true; code: true; title: true } } };
+}>;
 
 export const dynamic = "force-dynamic";
 
@@ -32,12 +37,17 @@ export default async function EmailLogDetailPage({
   await requirePageAuth("/admin/email-logs");
   const { id } = await params;
 
-  const email = await prisma.emailLog.findUnique({
-    where: { id },
-    include: {
-      flightPlan: { select: { id: true, code: true, title: true } },
-    },
-  });
+  let email: EmailLogWithFlightPlan | null = null;
+  try {
+    email = await prisma.emailLog.findUnique({
+      where: { id },
+      include: {
+        flightPlan: { select: { id: true, code: true, title: true } },
+      },
+    });
+  } catch {
+    // Fallback: null triggers notFound below
+  }
 
   if (!email) notFound();
 
