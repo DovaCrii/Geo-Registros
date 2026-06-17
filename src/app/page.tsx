@@ -28,21 +28,21 @@ const pillars = [
 ] as const;
 
 const modules = [
-  { title: "GeoRegistro de Terreno", desc: "Asocia coordenadas, EPSG, capas KML/KMZ y GeoJSON a cada levantamiento." },
-  { title: "Gestión de Vuelos", desc: "Planifica, ejecuta y registra cada misión con dron. Historial completo por operador y flota." },
-  { title: "Control de Entregables", desc: "Centraliza ortomosaicos, nubes de puntos, modelos 3D y fotografías georreferenciadas." },
-  { title: "Visor Técnico 2D/3D", desc: "Visualiza modelos, mide distancias, alterna capas y navega el terreno desde el navegador." },
-  { title: "Dashboard Ejecutivo", desc: "KPIs por proyecto, avance de cobertura, entregables validados y estado de flota." },
-  { title: "Reportes Automáticos", desc: "Genera informes técnicos profesionales con un clic. Exporta a PDF listo para entregar." },
+  { title: "GeoRegistro de Terreno", desc: "Asocia coordenadas, EPSG, capas KML/KMZ y GeoJSON a cada levantamiento." , icon: "map"},
+  { title: "Gestión de Vuelos", desc: "Planifica, ejecuta y registra cada misión con dron. Historial completo por operador y flota.", icon: "flight" },
+  { title: "Control de Entregables", desc: "Centraliza ortomosaicos, nubes de puntos, modelos 3D y fotografías georreferenciadas.", icon: "deliverables" },
+  { title: "Visor Técnico 2D/3D", desc: "Visualiza modelos, mide distancias, alterna capas y navega el terreno desde el navegador.", icon: "viewer" },
+  { title: "Dashboard Ejecutivo", desc: "KPIs por proyecto, avance de cobertura, entregables validados y estado de flota.", icon: "dashboard" },
+  { title: "Reportes Automáticos", desc: "Genera informes técnicos profesionales con un clic. Exporta a PDF listo para entregar.", icon: "report" },
 ] as const;
 
 const useCases = [
-  { title: "Minería", desc: "Control de avance de extracción, monitoreo de botaderos, modelos volumétricos y estabilidad de taludes." },
-  { title: "Ingeniería y Construcción", desc: "Seguimiento de obras, cómputos de movimiento de tierra, inspección de avance y as-built." },
-  { title: "Infraestructura", desc: "Inspección de puentes, torres, líneas de transmisión, ductos y activos lineales." },
-  { title: "Medioambiente", desc: "Monitoreo de humedales, cobertura vegetal, cierres de faenas y líneas de base." },
-  { title: "Topografía y Fotogrametría", desc: "Levantamiento de precisión, curvas de nivel, modelos digitales de terreno y ortofotos." },
-  { title: "Inspección Técnica", desc: "Termografía, multiespectral, detección de anomalías, registro fotográfico georreferenciado." },
+  { title: "Minería", desc: "Control de avance de extracción, monitoreo de botaderos, modelos volumétricos y estabilidad de taludes.", icon: "mine" },
+  { title: "Ingeniería y Construcción", desc: "Seguimiento de obras, cómputos de movimiento de tierra, inspección de avance y as-built.", icon: "build" },
+  { title: "Infraestructura", desc: "Inspección de puentes, torres, líneas de transmisión, ductos y activos lineales.", icon: "infra" },
+  { title: "Medioambiente", desc: "Monitoreo de humedales, cobertura vegetal, cierres de faenas y líneas de base.", icon: "eco" },
+  { title: "Topografía y Fotogrametría", desc: "Levantamiento de precisión, curvas de nivel, modelos digitales de terreno y ortofotos.", icon: "survey" },
+  { title: "Inspección Técnica", desc: "Termografía, multiespectral, detección de anomalías, registro fotográfico georreferenciado.", icon: "inspect" },
 ] as const;
 
 const specs = [
@@ -404,6 +404,106 @@ function PainGlyph({ kind }: { kind: string }) {
   }
 }
 
+function VisualGlyph({ kind }: { kind: string }) {
+  const common = "h-5 w-5 stroke-[1.7]";
+
+  switch (kind) {
+    case "map":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M9 4.5 15 2.5v17l-6 2v-17Z" stroke="currentColor" />
+          <path d="M3 6.5 9 4.5v17l-6-2v-13Z" stroke="currentColor" opacity="0.7" />
+          <path d="M15 2.5 21 4.5v13l-6-2v-13Z" stroke="currentColor" opacity="0.7" />
+        </svg>
+      );
+    case "flight":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M3.5 12h17" stroke="currentColor" strokeLinecap="round" />
+          <path d="M13 5.5 20 12l-7 6.5-1.5-5.5H6l2-1 2-1.5 1-5Z" stroke="currentColor" strokeLinejoin="round" />
+        </svg>
+      );
+    case "deliverables":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M7 3.5h6l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" stroke="currentColor" />
+          <path d="M13 3.5V8h4" stroke="currentColor" />
+          <path d="M8.5 12h7M8.5 15h7M8.5 18h4" stroke="currentColor" strokeLinecap="round" />
+        </svg>
+      );
+    case "viewer":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M12 5.5C16.5 5.5 20 12 20 12s-3.5 6.5-8 6.5S4 12 4 12s3.5-6.5 8-6.5Z" stroke="currentColor" />
+          <circle cx="12" cy="12" r="2.25" fill="currentColor" />
+        </svg>
+      );
+    case "dashboard":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M4 18.5h16" stroke="currentColor" strokeLinecap="round" />
+          <path d="M6.5 18.5V12M12 18.5V8M17.5 18.5V10" stroke="currentColor" strokeLinecap="round" />
+        </svg>
+      );
+    case "report":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M7 3.5h7l3 3V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" stroke="currentColor" />
+          <path d="M14 3.5V7h3" stroke="currentColor" />
+          <path d="M8.5 11h7M8.5 14h7M8.5 17h4" stroke="currentColor" strokeLinecap="round" />
+        </svg>
+      );
+    case "mine":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M4 18h16" stroke="currentColor" strokeLinecap="round" />
+          <path d="M6 17l3-7 3 4 2-3 4 6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M14 6.5h4" stroke="currentColor" strokeLinecap="round" />
+        </svg>
+      );
+    case "build":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M4.5 16.5 12 9l3.5 3.5L8 20H4.5v-3.5Z" stroke="currentColor" />
+          <path d="M13.5 10.5 16 8l3 3-2.5 2.5" stroke="currentColor" strokeLinejoin="round" />
+        </svg>
+      );
+    case "infra":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M5 19.5V7l4-2 4 2v12.5" stroke="currentColor" />
+          <path d="M13 19.5V11l6-3v11.5" stroke="currentColor" />
+          <path d="M3.5 19.5h17" stroke="currentColor" strokeLinecap="round" />
+        </svg>
+      );
+    case "eco":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M5 18c6.5 0 12-5 12-12 0 0-7 0-10 3-3 3-2 9-2 9Z" stroke="currentColor" />
+          <path d="M7 16c1.5-2 4-4 8-6" stroke="currentColor" strokeLinecap="round" />
+        </svg>
+      );
+    case "survey":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <path d="M6 4.5h12v15H6z" stroke="currentColor" />
+          <path d="M8.5 9.5h7M8.5 12h5M8.5 14.5h4" stroke="currentColor" strokeLinecap="round" />
+          <circle cx="16" cy="7" r="1" fill="currentColor" />
+        </svg>
+      );
+    case "inspect":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={common}>
+          <circle cx="11" cy="11" r="5.5" stroke="currentColor" />
+          <path d="m15.5 15.5 4 4" stroke="currentColor" strokeLinecap="round" />
+          <path d="M11 8v6" stroke="currentColor" strokeLinecap="round" />
+        </svg>
+      );
+    default:
+      return <span className="text-sm">▣</span>;
+  }
+}
+
 function ModulesSection() {
   return (
     <section id="módulos" className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8">
@@ -422,10 +522,10 @@ function ModulesSection() {
         {modules.map((mod) => (
           <div
             key={mod.title}
-            className="group rounded-2xl border border-slate-800/60 bg-slate-950/40 p-6 backdrop-blur transition hover:border-cyan-500/20 hover:bg-slate-900/60"
+            className="group rounded-2xl border border-slate-800/60 bg-gradient-to-b from-slate-950/60 to-slate-900/35 p-6 backdrop-blur transition hover:border-cyan-500/20 hover:from-slate-900/80 hover:to-slate-900/50"
           >
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-500/20 bg-cyan-500/10 text-sm text-cyan-300">
-              ▣
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-300 shadow-sm shadow-cyan-500/5">
+              <VisualGlyph kind={mod.icon} />
             </div>
             <h3 className="mb-2 text-lg font-semibold text-white transition group-hover:text-cyan-200">
               {mod.title}
@@ -532,8 +632,11 @@ function UseCasesSection() {
         {useCases.map((uc) => (
           <div
             key={uc.title}
-            className="group rounded-2xl border border-slate-800/60 bg-slate-950/40 p-6 backdrop-blur transition hover:border-emerald-500/20 hover:bg-slate-900/60"
+            className="group rounded-2xl border border-slate-800/60 bg-gradient-to-b from-slate-950/60 to-slate-900/35 p-6 backdrop-blur transition hover:border-emerald-500/20 hover:from-slate-900/80 hover:to-slate-900/50"
           >
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-300 shadow-sm shadow-emerald-500/5">
+              <VisualGlyph kind={uc.icon} />
+            </div>
             <h3 className="mb-2 text-lg font-semibold text-white transition group-hover:text-emerald-200">
               {uc.title}
             </h3>
