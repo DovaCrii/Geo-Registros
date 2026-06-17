@@ -9,7 +9,7 @@ import { DetailPanel } from "@/components/ui/detail-panel";
 import { PrimaryButton } from "@/components/ui/primary-button";
 import { StatusChip } from "@/components/ui/status-chip";
 import { useToast } from "@/lib/toast-context";
-import { importKml, importDxf } from "@/lib/geo-import";
+import { importKml, importDxf, importKmz } from "@/lib/geo-import";
 import { exportKml, exportDxf } from "@/lib/geo-export";
 import type { ImportResult } from "@/lib/geo-import";
 
@@ -18,13 +18,34 @@ const emptyFeatureCollection: GeoJSON.FeatureCollection = {
   features: [],
 };
 
+type DrawMode =
+  | "point"
+  | "linestring"
+  | "polygon"
+  | "circle"
+  | "select"
+  | "delete-selection"
+  | "undo"
+  | "redo";
+
+const DRAW_MODES: { id: DrawMode; label: string; icon: string; group: "draw" | "edit" }[] = [
+  { id: "point", label: "Punto", icon: "⬤", group: "draw" },
+  { id: "linestring", label: "Línea", icon: "╱", group: "draw" },
+  { id: "polygon", label: "Polígono", icon: "⬠", group: "draw" },
+  { id: "circle", label: "Círculo", icon: "◯", group: "draw" },
+  { id: "select", label: "Seleccionar", icon: "☝", group: "edit" },
+  { id: "delete-selection", label: "Borrar", icon: "✕", group: "edit" },
+  { id: "undo", label: "Deshacer", icon: "↩", group: "edit" },
+  { id: "redo", label: "Rehacer", icon: "↪", group: "edit" },
+];
+
 function parseGeoJsonPayload(text: string) {
   const trimmed = text.trim();
 
   if (!trimmed) {
     return {
       valid: true as const,
-      summary: "No geometry attached yet",
+      summary: "Sin geometría",
       data: emptyFeatureCollection,
     };
   }
@@ -35,7 +56,7 @@ function parseGeoJsonPayload(text: string) {
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
       return {
         valid: false as const,
-        summary: "Geometry must be a GeoJSON object",
+        summary: "El GeoJSON debe ser un objeto",
         data: emptyFeatureCollection,
       };
     }
@@ -53,7 +74,7 @@ function parseGeoJsonPayload(text: string) {
   } catch {
     return {
       valid: false as const,
-      summary: "Geometry must be valid JSON",
+      summary: "El GeoJSON debe ser JSON válido",
       data: emptyFeatureCollection,
     };
   }
@@ -203,6 +224,38 @@ function featuresToTdFormat(features: any[]) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Toolbar button                                                      */
+/* ------------------------------------------------------------------ */
+
+function ToolbarButton({
+  active,
+  icon,
+  label,
+  onClick,
+}: {
+  active?: boolean;
+  icon: string;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={label}
+      className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition ${
+        active
+          ? "border-cyan-500/50 bg-cyan-500/20 text-cyan-200 shadow-sm shadow-cyan-500/10"
+          : "border-slate-700/60 bg-slate-800/60 text-slate-300 hover:border-slate-600 hover:bg-slate-700/60 hover:text-white"
+      }`}
+    >
+      <span className="text-sm">{icon}</span>
+      <span className="hidden sm:inline">{label}</span>
+    </button>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
@@ -221,6 +274,7 @@ export function GeometryEditor({
 }) {
   const [payload, setPayload] = useState(initialPayload);
   const [terraDrawReady, setTerraDrawReady] = useState(false);
+  const [activeMode, setActiveMode] = useState<DrawMode | null>(null);
   const [importing, setImporting] = useState(false);
   const { toast } = useToast();
   const mapRef = useRef<Map | null>(null);
@@ -236,7 +290,29 @@ export function GeometryEditor({
 
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: "https://demotiles.maplibre.org/style.json",
+      style: {
+        version: 8,
+        sources: {
+          satellite: {
+            type: "raster",
+            tiles: [
+              "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            ],
+            tileSize: 256,
+            attribution:
+              "Esri, Maxar, Earthstar Geographics, and the GIS User Community",
+          },
+        },
+        layers: [
+          {
+            id: "satellite-layer",
+            type: "raster",
+            source: "satellite",
+            minzoom: 0,
+            maxzoom: 19,
+          },
+        ],
+      },
       center: [-70.6693, -33.4489],
       zoom: 4,
     });
@@ -274,12 +350,16 @@ export function GeometryEditor({
     };
   }, []);
 
+  // ── Get Terra Draw instance (safe access) ─────────────────────────
+  const getTerraDraw = useCallback(() => {
+    return drawControlRef.current?.getTerraDrawInstance() ?? null;
+  }, []);
+
   // ── Load existing GeoJSON into Terra Draw (once, when ready) ─────
   useEffect(() => {
     if (!terraDrawReady || initialLoadedRef.current) return;
 
-    const control = drawControlRef.current;
-    const terraDraw = control?.getTerraDrawInstance();
+    const terraDraw = getTerraDraw();
     if (!terraDraw) return;
     if (!parsed.valid) return;
 
@@ -291,7 +371,7 @@ export function GeometryEditor({
 
     // Fit map to the loaded geometry
     fitMapToPoints(mapRef.current!, parsed.data);
-  }, [terraDrawReady, parsed.valid, parsed.data]);
+  }, [terraDrawReady, parsed.valid, parsed.data, getTerraDraw]);
 
   // ── Sync Terra Draw → textarea on mode change ────────────────────
   useEffect(() => {
@@ -347,12 +427,11 @@ export function GeometryEditor({
   const handleApplyFromTextarea = useCallback(() => {
     if (!parsed.valid) return;
 
-    const control = drawControlRef.current;
-    const terraDraw = control?.getTerraDrawInstance();
+    const terraDraw = getTerraDraw();
     if (!terraDraw) return;
 
     // Clear existing features
-    const existingFc = control?.getFeatures();
+    const existingFc = drawControlRef.current?.getFeatures();
     if (existingFc && existingFc.features.length > 0) {
       terraDraw.clear();
     }
@@ -362,13 +441,12 @@ export function GeometryEditor({
 
     terraDraw.addFeatures(featuresToTdFormat(features) as any);
     fitMapToPoints(mapRef.current!, parsed.data);
-  }, [parsed]);
+  }, [parsed, getTerraDraw]);
 
   // ── Apply imported data to Terra Draw + textarea ──────────────────
   const applyImport = useCallback(
     (result: ImportResult) => {
-      const control = drawControlRef.current;
-      const terraDraw = control?.getTerraDrawInstance();
+      const terraDraw = getTerraDraw();
       if (!terraDraw) return;
 
       terraDraw.clear();
@@ -379,7 +457,7 @@ export function GeometryEditor({
       setPayload(JSON.stringify(result.features, null, 2));
       fitMapToPoints(mapRef.current!, result.features);
     },
-    [],
+    [getTerraDraw],
   );
 
   // ── Import file handler ───────────────────────────────────────────
@@ -390,21 +468,21 @@ export function GeometryEditor({
 
       setImporting(true);
       try {
-        const text = await file.text();
         const ext = file.name.split(".").pop()?.toLowerCase();
 
         let result: ImportResult;
-        if (ext === "kmz") {
-          toast("info", "KMZ próximamente", "Hoy soportamos KML y DXF. KMZ requiere descompresión real y queda para la próxima iteración.");
-          return;
-        }
 
-        if (ext === "kml") {
+        if (ext === "kmz") {
+          const arrayBuffer = await file.arrayBuffer();
+          result = await importKmz(arrayBuffer);
+        } else if (ext === "kml") {
+          const text = await file.text();
           result = importKml(text);
         } else if (ext === "dxf") {
+          const text = await file.text();
           result = importDxf(text);
         } else {
-          toast("error", "Formato no soportado", "Usá archivos .kml o .dxf.");
+          toast("error", "Formato no soportado", "Usá archivos .kml, .kmz o .dxf.");
           return;
         }
 
@@ -417,7 +495,19 @@ export function GeometryEditor({
         if (fileInputRef.current) fileInputRef.current.value = "";
       }
     },
-    [applyImport],
+    [applyImport, toast],
+  );
+
+  // ── Set draw mode ────────────────────────────────────────────────
+  const handleSetMode = useCallback(
+    (mode: DrawMode) => {
+      const terraDraw = getTerraDraw();
+      if (!terraDraw) return;
+
+      terraDraw.setMode(mode);
+      setActiveMode(mode);
+    },
+    [getTerraDraw],
   );
 
   // ── Export handler ────────────────────────────────────────────────
@@ -462,6 +552,7 @@ export function GeometryEditor({
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_420px]">
       <section className="overflow-hidden rounded-3xl border border-slate-800/80 bg-slate-950/45 shadow-xl shadow-slate-950/10 backdrop-blur">
+        {/* Header */}
         <div className="border-b border-slate-800/80 px-6 py-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -469,7 +560,7 @@ export function GeometryEditor({
                 Mapa y geometría asistida
               </h2>
               <p className="mt-1 text-sm text-slate-400">
-                Dibujá puntos, líneas, polígonos o círculos sobre el mapa. Importá KML o DXF y exportá de vuelta.
+                Dibujá puntos, líneas, polígonos o círculos sobre el mapa satelital. Importá KMZ/KML/DXF y exportá de vuelta.
               </p>
             </div>
             <StatusChip
@@ -479,6 +570,65 @@ export function GeometryEditor({
           </div>
         </div>
 
+        {/* ── Toolbar ─────────────────────────────────────── */}
+        <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-800/80 bg-slate-950/70 px-4 py-3">
+          {/* Drawing tools */}
+          <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+            Dibujar
+          </span>
+          {DRAW_MODES.filter((m) => m.group === "draw").map((mode) => (
+            <ToolbarButton
+              key={mode.id}
+              active={activeMode === mode.id}
+              icon={mode.icon}
+              label={mode.label}
+              onClick={() => handleSetMode(mode.id)}
+            />
+          ))}
+
+          <span className="mx-2 h-6 w-px bg-slate-700/60" />
+
+          {/* Edit tools */}
+          <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+            Editar
+          </span>
+          {DRAW_MODES.filter((m) => m.group === "edit").map((mode) => (
+            <ToolbarButton
+              key={mode.id}
+              icon={mode.icon}
+              label={mode.label}
+              onClick={() => handleSetMode(mode.id)}
+            />
+          ))}
+
+          <span className="mx-2 h-6 w-px bg-slate-700/60" />
+
+          {/* Import / Export */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".kml,.kmz,.dxf"
+            className="hidden"
+            onChange={handleImportFile}
+          />
+          <ToolbarButton
+            icon="📂"
+            label={importing ? "Importando…" : "Importar"}
+            onClick={() => fileInputRef.current?.click()}
+          />
+          <ToolbarButton
+            icon="📤"
+            label="KML"
+            onClick={() => handleExport("kml")}
+          />
+          <ToolbarButton
+            icon="📤"
+            label="DXF"
+            onClick={() => handleExport("dxf")}
+          />
+        </div>
+
+        {/* Map */}
         <div className="relative h-[300px] sm:h-[400px] lg:h-[560px] bg-slate-950">
           <div ref={containerRef} className="h-full w-full" />
             {!parsed.valid ? (
@@ -517,39 +667,6 @@ export function GeometryEditor({
             >
               Aplicar desde texto
             </button>
-
-            {/* Import */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".kml,.kmz,.dxf"
-              className="hidden"
-              onChange={handleImportFile}
-            />
-            <button
-              type="button"
-              disabled={importing}
-              onClick={() => fileInputRef.current?.click()}
-              className="inline-flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {importing ? "Importando…" : "Importar KML/DXF"}
-            </button>
-
-            {/* Export dropdown-like pair */}
-            <button
-              type="button"
-              onClick={() => handleExport("kml")}
-              className="inline-flex items-center justify-center rounded-2xl border border-emerald-700/50 bg-emerald-900/40 px-4 py-2.5 text-sm font-medium text-emerald-200 transition hover:border-emerald-600/60 hover:bg-emerald-800/50"
-            >
-              Exportar KML
-            </button>
-            <button
-              type="button"
-              onClick={() => handleExport("dxf")}
-              className="inline-flex items-center justify-center rounded-2xl border border-emerald-700/50 bg-emerald-900/40 px-4 py-2.5 text-sm font-medium text-emerald-200 transition hover:border-emerald-600/60 hover:bg-emerald-800/50"
-            >
-              Exportar DXF
-            </button>
           </div>
 
           <div className="space-y-3 rounded-2xl border border-slate-800/80 bg-slate-900/70 p-4 text-sm text-slate-300">
@@ -561,10 +678,10 @@ export function GeometryEditor({
               />
             </div>
             <p className="leading-6 text-slate-300">
-              <strong>Dibujar:</strong> Usá la barra del mapa para crear puntos, líneas, polígonos o círculos. Cambiá a <strong>Seleccionar</strong> para mover o borrar elementos. También tenés Deshacer / Rehacer.
+              <strong>Dibujar:</strong> Usá la barra de herramientas para crear puntos, líneas, polígonos o círculos. Cambiá a <strong>Seleccionar</strong> para mover o borrar elementos. También tenés Deshacer / Rehacer.
             </p>
             <p className="leading-6 text-slate-300">
-              <strong>Importar / exportar:</strong> Cargá KML o DXF, editá libremente y exportá la geometría para CAD (AutoCAD / DraftSight / QGIS).
+              <strong>Importar / exportar:</strong> Cargá KMZ, KML o DXF, editá libremente y exportá la geometría para CAD (AutoCAD / DraftSight / QGIS).
             </p>
           </div>
 

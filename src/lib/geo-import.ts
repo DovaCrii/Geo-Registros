@@ -211,6 +211,38 @@ function dxfEntityToGeoJson(entity: Record<string, unknown>): GeoJSON.Feature | 
  * Supported entities: POINT, LINE, LWPOLYLINE, POLYLINE, CIRCLE, ARC.
  * All other entities are silently skipped.
  */
+/* ------------------------------------------------------------------ */
+/*  KMZ (ZIP + KML) → GeoJSON                                          */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Parse a KMZ (ZIP) file into a GeoJSON FeatureCollection.
+ *
+ * 1. Decompress the ZIP archive
+ * 2. Find the KML file inside (doc.kml preferred, fallback to first .kml)
+ * 3. Delegate to importKml()
+ */
+export async function importKmz(arrayBuffer: ArrayBuffer): Promise<ImportResult> {
+  const JSZip = (await import("jszip")).default;
+  const zip = await JSZip.loadAsync(arrayBuffer);
+
+  // First, try doc.kml (standard KMZ entry point)
+  const docEntry = zip.file(/^doc\.kml$/i)?.[0];
+
+  // Fallback: first .kml file anywhere in the archive
+  const kmlFiles = zip.file(/\.kml$/i);
+  const kmlEntry = docEntry ?? (kmlFiles.length > 0 ? kmlFiles[0] : undefined);
+
+  if (!kmlEntry) {
+    throw new Error("No se encontró ningún archivo KML dentro del KMZ.");
+  }
+
+  const text = await kmlEntry.async("string");
+  const result = importKml(text);
+  result.summary = `KMZ · ${result.summary}`;
+  return result;
+}
+
 export function importDxf(text: string): ImportResult {
   // Dynamic import so we only pay for the parser when it is actually used
   // eslint-disable-next-line @typescript-eslint/no-require-imports
