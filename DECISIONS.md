@@ -7,4 +7,4 @@
 | 2026-06-17 | Codex se limita a revisión, planificación breve, QA y auditoría | El objetivo es apoyo controlado, no orquestación principal | Reduce riesgo de cambios amplios y mantiene el flujo estable | Codex |
 | 2026-06-17 | La configuración de Codex se mantiene en workspace-write y sin red | El uso debe ser controlado y seguro | Limita efectos colaterales y evita dependencias externas | Codex |
 | 2026-06-17 | El estado detectado de Prisma se documenta como SQLite local | El esquema actual apunta a `sqlite` y al archivo local `prisma/data/aeroflow.db` | Evita confundir el estado real con el objetivo descrito en README | Codex |
-
+| 2026-06-17 | La documentacion corta sera la entrada principal para IA | Evita prompts largos y reduce consumo de contexto | Futuras sesiones deben leer `AGENTS.md`, `PROJECT_STATUS.md`, `ROADMAP.md`, `TASKS.md` y `docs/OPENCODE_HANDOFF.md` | Codex + OpenCode |

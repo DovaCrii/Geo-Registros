@@ -96,3 +96,13 @@ Prepara un handoff breve y accionable para OpenCode con objetivo, archivos proba
 
 ### Prompt de cierre de sesión
 Resume lo revisado hoy, lista decisiones o riesgos nuevos y deja una sola siguiente acción prioritaria para retomar mañana.
+
+## Contexto optimizado para sesiones futuras
+Leer primero y en este orden:
+1. `AGENTS.md`
+2. `PROJECT_STATUS.md`
+3. `ROADMAP.md`
+4. `TASKS.md`
+5. `docs/OPENCODE_HANDOFF.md`
+
+Usar `docs/00_DOCUMENTATION_INDEX.md` solo cuando se necesite ubicar documentación extendida. Evitar pegar contexto largo en prompts; si falta contexto estable, actualizar estos documentos breves en vez de duplicarlo en la conversación.
