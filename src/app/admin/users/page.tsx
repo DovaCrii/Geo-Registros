@@ -24,12 +24,12 @@ export default async function AdminUsersPage({
     const rows = JSON.parse(JSON.stringify(result.rows));
 
     return <UsersPageClient rows={rows} total={result.total} searchParams={params} />;
-  } catch {
-    return (
+    } catch {
+      return (
       <div className="p-6">
-        <div className="rounded-3xl border border-slate-800/80 bg-slate-950/50 p-6">
-          <h2 className="text-lg font-semibold text-white">Usuarios no disponible</h2>
-          <p className="mt-2 text-sm text-slate-400">No se pudo cargar la lista de usuarios. Recargá la página e intentá de nuevo.</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/50 p-6">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Usuarios no disponibles</h2>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">No se pudo cargar la lista de usuarios. Recargá la página e intentá de nuevo.</p>
         </div>
       </div>
     );

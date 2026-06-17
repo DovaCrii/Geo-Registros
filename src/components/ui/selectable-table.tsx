@@ -68,7 +68,7 @@ export function SelectableTable<Row extends { id: string }>({
         type="checkbox"
         checked={selectedIds.has(row.id)}
         onChange={() => toggleId(row.id)}
-        className="h-4 w-4 rounded border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-400/40"
+        className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-accent dark:text-cyan-500 focus:ring-accent/40 dark:focus:ring-cyan-400/40"
       />
     ),
   };
@@ -79,7 +79,7 @@ export function SelectableTable<Row extends { id: string }>({
       type="checkbox"
       checked={rows.length > 0 && selectedIds.size === rows.length}
       onChange={toggleAll}
-      className="h-4 w-4 rounded border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-400/40"
+      className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-accent dark:text-cyan-500 focus:ring-accent/40 dark:focus:ring-cyan-400/40"
     />
   );
 

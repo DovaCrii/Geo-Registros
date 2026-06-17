@@ -52,18 +52,18 @@ export function UserForm(props: UserFormProps) {
   );
 
   const baseInput =
-    "w-full rounded-xl border border-slate-700/80 bg-slate-900/70 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 transition focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/30";
+    "w-full rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-900/70 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition focus:border-accent/50 dark:focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-accent/30 dark:focus:ring-cyan-500/30";
 
   return (
     <form action={formAction} className="space-y-5">
       {state?.error && (
-        <div className="rounded-xl border border-red-800/40 bg-red-950/50 px-4 py-3 text-sm text-red-200">
+        <div className="rounded-lg border border-red-200 dark:border-red-800/40 bg-red-50 dark:bg-red-950/50 px-4 py-3 text-sm text-red-700 dark:text-red-200">
           {state.error}
         </div>
       )}
 
       <div>
-        <label htmlFor="fullName" className="mb-1.5 block text-sm font-medium text-slate-300">
+        <label htmlFor="fullName" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
           Nombre completo
         </label>
         <input
@@ -77,7 +77,7 @@ export function UserForm(props: UserFormProps) {
       </div>
 
       <div>
-        <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-300">
+        <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
           Correo
         </label>
         <input
@@ -92,7 +92,7 @@ export function UserForm(props: UserFormProps) {
       </div>
 
       <div>
-        <label htmlFor="role" className="mb-1.5 block text-sm font-medium text-slate-300">
+        <label htmlFor="role" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
           Rol
         </label>
         <select
@@ -111,7 +111,7 @@ export function UserForm(props: UserFormProps) {
       </div>
 
       <div>
-        <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-300">
+        <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
           {mode === "create" ? "Contraseña" : "Nueva contraseña (dejalo vacío para mantener la actual)"}
         </label>
         <input
@@ -125,9 +125,9 @@ export function UserForm(props: UserFormProps) {
       </div>
 
       {mode === "edit" && user && (
-        <div className="flex items-center gap-3 rounded-xl border border-slate-800/80 bg-slate-900/50 px-4 py-3">
-          <span className="text-sm text-slate-400">Estado:</span>
-          <span className={`text-sm font-medium ${user.active ? "text-emerald-300" : "text-slate-400"}`}>
+        <div className="flex items-center gap-3 rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/50 px-4 py-3">
+          <span className="text-sm text-slate-600 dark:text-slate-400">Estado:</span>
+          <span className={`text-sm font-medium ${user.active ? "text-success dark:text-emerald-300" : "text-slate-500 dark:text-slate-400"}`}>
             {user.active ? "Activo" : "Inactivo"}
           </span>
         </div>
@@ -137,14 +137,14 @@ export function UserForm(props: UserFormProps) {
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-6 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20 disabled:opacity-50"
+          className="inline-flex items-center justify-center rounded-lg border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 px-6 py-2.5 text-sm font-medium text-accent-strong dark:text-cyan-100 transition hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20 disabled:opacity-50"
         >
           {pending ? "Guardando…" : mode === "create" ? "Crear usuario" : "Guardar cambios"}
         </button>
 
         <a
           href="/admin/users"
-          className="inline-flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800"
+          className="inline-flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:border-slate-600 dark:hover:bg-slate-800"
         >
           Cancelar
         </a>

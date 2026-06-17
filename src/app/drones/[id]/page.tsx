@@ -32,7 +32,7 @@ export default async function DroneDetailPage({ params }: { params: Promise<{ id
       return (
         <PageShell>
           <DetailPanel title="Dron no encontrado" description="El dron solicitado no existe o ya no está disponible.">
-            <p className="text-sm text-slate-400">Volvé al listado y seleccioná un dron válido.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Volvé al listado y seleccioná un dron válido.</p>
           </DetailPanel>
         </PageShell>
       );
@@ -59,13 +59,13 @@ export default async function DroneDetailPage({ params }: { params: Promise<{ id
           <DetailPanel title="Planes de vuelo vinculados" description="Planes donde este dron está asignado.">
             <div className="space-y-2">
               {record.flightPlans.length > 0 ? record.flightPlans.map((flightPlan) => (
-                <a key={flightPlan.id} href={`/flight-plans/${flightPlan.id}`} className="block rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                <a key={flightPlan.id} href={`/flight-plans/${flightPlan.id}`} className="block rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 px-4 py-3 transition hover:bg-slate-50 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-medium text-white">{flightPlan.code} · {flightPlan.title}</p>
+                      <p className="text-sm font-medium text-slate-800 dark:text-white">{flightPlan.code} · {flightPlan.title}</p>
                       <p className="mt-1 text-xs text-slate-500">{flightPlan.operationDate.toISOString().slice(0, 10)}</p>
                     </div>
-                    <span className="text-xs text-slate-500">{flightPlan.permissionStatus}</span>
+                    <span className="text-xs text-slate-400">{flightPlan.permissionStatus}</span>
                   </div>
                 </a>
               )) : <p className="text-sm text-slate-500">Este dron todavía no tiene planes de vuelo vinculados.</p>}
@@ -98,12 +98,12 @@ export default async function DroneDetailPage({ params }: { params: Promise<{ id
 
           <DetailPanel title="Zona de riesgo" description="La eliminación lógica oculta este dron sin perder su historial.">
             <form action={deleteDrone.bind(null, record.id)} className="space-y-3">
-              <p className="text-sm leading-6 text-slate-400">
+              <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
                 Esta acción lo saca de listados, selectores y conteos del panel. Los planes de vuelo vinculados se conservan.
               </p>
               <button
                 type="submit"
-                className="inline-flex items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-400/20"
+                className="inline-flex items-center justify-center rounded-lg border border-status-danger/30 dark:border-rose-500/30 bg-status-danger/10 dark:bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-status-danger dark:text-rose-200 transition hover:border-status-danger/50 dark:hover:border-rose-400/50 hover:bg-status-danger/15 dark:hover:bg-rose-400/20"
               >
                 Eliminar dron
               </button>
@@ -116,7 +116,7 @@ export default async function DroneDetailPage({ params }: { params: Promise<{ id
     return (
       <PageShell>
         <DetailPanel title="Dron no disponible" description="No se pudieron cargar los datos. Verificá la conexión a la base de datos.">
-          <p className="text-sm text-slate-400">Recargá la página e intentá de nuevo.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Recargá la página e intentá de nuevo.</p>
         </DetailPanel>
       </PageShell>
     );

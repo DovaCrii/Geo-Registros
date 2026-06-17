@@ -9,6 +9,9 @@ type PaginationProps = {
   pageSize: number;
 };
 
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900";
+
 export function Pagination({ total, page, pageSize }: PaginationProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -30,8 +33,8 @@ export function Pagination({ total, page, pageSize }: PaginationProps) {
   if (totalPages <= 1) return null;
 
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3">
-      <p className="text-xs text-slate-500">
+    <div className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 px-4 py-3">
+      <p className="text-xs text-slate-500 dark:text-slate-400">
         {total} registro{(total !== 1) ? "s" : ""}
       </p>
 
@@ -39,7 +42,7 @@ export function Pagination({ total, page, pageSize }: PaginationProps) {
         <button
           disabled={page <= 1}
           onClick={() => goTo(page - 1)}
-          className="rounded-xl border border-slate-700/80 bg-slate-900/80 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-slate-600 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+          className={`rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-900/80 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 transition hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed ${focusRing}`}
         >
           ← Anterior
         </button>
@@ -49,7 +52,7 @@ export function Pagination({ total, page, pageSize }: PaginationProps) {
         <button
           disabled={page >= totalPages}
           onClick={() => goTo(page + 1)}
-          className="rounded-xl border border-slate-700/80 bg-slate-900/80 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-slate-600 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+          className={`rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-900/80 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 transition hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed ${focusRing}`}
         >
           Siguiente →
         </button>
@@ -79,18 +82,18 @@ function renderPageNumbers(
 
   return pages.map((p, idx) =>
     p === "..." ? (
-      <span key={`ellipsis-${idx}`} className="px-1 text-xs text-slate-600">
+      <span key={`ellipsis-${idx}`} className="px-1 text-xs text-slate-400 dark:text-slate-500">
         …
       </span>
     ) : (
       <button
         key={p}
         onClick={() => goTo(p)}
-        className={`min-w-[28px] rounded-xl px-2 py-1.5 text-xs font-medium transition ${
+        className={`min-w-[28px] rounded-lg px-2 py-1.5 text-xs font-medium transition ${
           p === current
-            ? "bg-cyan-500/20 text-cyan-300 border border-cyan-400/30"
-            : "text-slate-400 hover:text-slate-200 border border-transparent"
-        }`}
+            ? "bg-accent/20 text-accent-strong dark:text-cyan-300 border border-accent/30 dark:border-cyan-400/30"
+            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 border border-transparent"
+        } ${focusRing}`}
       >
         {p}
       </button>

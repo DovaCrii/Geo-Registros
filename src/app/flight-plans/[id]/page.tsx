@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AlertCard } from "@/components/ui/alert-card";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
@@ -100,7 +101,7 @@ export default async function FlightPlanDetailPage({
       return (
         <PageShell>
           <DetailPanel title="Plan de vuelo no encontrado" description="El registro operativo solicitado no existe o ya no está disponible.">
-            <p className="text-sm text-slate-400">Volvé al listado de planes de vuelo y seleccioná un registro válido.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Volvé al listado de planes de vuelo y seleccioná un registro válido.</p>
           </DetailPanel>
         </PageShell>
       );
@@ -208,15 +209,15 @@ export default async function FlightPlanDetailPage({
               <>
                 <a
                   href={`/api/reports/flight-plan/${record.id}`}
-                  className="inline-flex items-center gap-2 rounded-2xl border border-emerald-400/30 bg-emerald-500/15 px-4 py-2.5 text-sm font-medium text-emerald-100 transition hover:border-emerald-300/50 hover:bg-emerald-400/20"
+                  className="inline-flex items-center gap-2 rounded-lg border border-success/20 dark:border-emerald-400/30 bg-success/5 dark:bg-emerald-500/15 px-4 py-2.5 text-sm font-medium text-success dark:text-emerald-100 transition hover:border-success/30 dark:hover:border-emerald-300/50 hover:bg-success/10 dark:hover:bg-emerald-400/20"
                   download
                 >
-                  <span>⬇</span>
+                  <span aria-hidden="true">⬇</span>
                   Reporte PDF
                 </a>
                 <Link
                   href={`/flight-plans/${record.id}/geometry`}
-                  className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20"
+                  className="inline-flex items-center justify-center rounded-lg border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-accent-strong dark:text-cyan-100 transition hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20"
                 >
                   Ir al área de operación
                 </Link>
@@ -225,7 +226,7 @@ export default async function FlightPlanDetailPage({
             }
           />
 
-          <div className="rounded-3xl border border-slate-800/80 bg-slate-950/55 p-3 shadow-xl shadow-slate-950/10 backdrop-blur">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/55 p-3 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
             <div className="grid gap-2 md:grid-cols-3 xl:grid-cols-6">
               {STEP_META.map((step) => {
                 const active = activeTab === step.tab;
@@ -233,19 +234,19 @@ export default async function FlightPlanDetailPage({
                   <Link
                     key={step.tab}
                     href={stepHref(step.tab)}
-                    className={`rounded-2xl border px-4 py-3 text-left transition ${
+                    className={`rounded-lg border px-4 py-3 text-left transition ${
                       active
-                        ? "border-cyan-400/40 bg-cyan-500/15 text-cyan-100"
-                        : "border-slate-800/80 bg-slate-950/45 text-slate-400 hover:border-cyan-500/30 hover:bg-cyan-500/5 hover:text-slate-200"
+                        ? "border-accent/40 dark:border-cyan-400/40 bg-accent/10 dark:bg-cyan-500/15 text-accent-strong dark:text-cyan-100"
+                        : "border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/45 text-slate-500 dark:text-slate-400 hover:border-accent/30 dark:hover:border-cyan-500/30 hover:bg-accent/5 dark:hover:bg-cyan-500/5 hover:text-accent-strong dark:hover:text-slate-200"
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <span className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${active ? "bg-cyan-400/20 text-cyan-100" : "bg-slate-800 text-slate-400"}`}>
+                      <span className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${active ? "bg-accent/20 dark:bg-cyan-400/20 text-accent-strong dark:text-cyan-100" : "bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400"}`}>
                         {step.tab}
                       </span>
                       <div>
                         <p className="text-sm font-semibold">{step.label}</p>
-                        <p className="text-xs text-slate-500">{step.description}</p>
+                        <p className="text-xs text-slate-400 dark:text-slate-500">{step.description}</p>
                       </div>
                     </div>
                   </Link>
@@ -258,21 +259,21 @@ export default async function FlightPlanDetailPage({
             <div className="space-y-6">
               <DetailPanel title="Entidades relacionadas" description="Abrí los registros maestros vinculados a este plan.">
                 <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-                  <Link href={`/cost-centers/${record.costCenterId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                  <Link href={`/cost-centers/${record.costCenterId}`} className="rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 px-4 py-3 transition hover:bg-slate-50 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Grupo de trabajo</p>
-                    <p className="mt-1 text-sm font-medium text-white">{currentCostCenter ? `${currentCostCenter.code} · ${currentCostCenter.name}` : "Sin asignar"}</p>
+                    <p className="mt-1 text-sm font-medium text-slate-800 dark:text-white">{currentCostCenter ? `${currentCostCenter.code} · ${currentCostCenter.name}` : "Sin asignar"}</p>
                   </Link>
-                  <Link href={`/clients/${record.clientId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                  <Link href={`/clients/${record.clientId}`} className="rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 px-4 py-3 transition hover:bg-slate-50 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Cliente</p>
-                    <p className="mt-1 text-sm font-medium text-white">{currentClient ? currentClient.name : "Sin asignar"}</p>
+                    <p className="mt-1 text-sm font-medium text-slate-800 dark:text-white">{currentClient ? currentClient.name : "Sin asignar"}</p>
                   </Link>
-                  <Link href={`/drones/${record.droneId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                  <Link href={`/drones/${record.droneId}`} className="rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 px-4 py-3 transition hover:bg-slate-50 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Dron</p>
-                    <p className="mt-1 text-sm font-medium text-white">{currentDrone ? `${currentDrone.model} · ${currentDrone.serialNumber}` : "Sin asignar"}</p>
+                    <p className="mt-1 text-sm font-medium text-slate-800 dark:text-white">{currentDrone ? `${currentDrone.model} · ${currentDrone.serialNumber}` : "Sin asignar"}</p>
                   </Link>
-                  <Link href={`/operators/${record.operatorId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                  <Link href={`/operators/${record.operatorId}`} className="rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 px-4 py-3 transition hover:bg-slate-50 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Operador</p>
-                    <p className="mt-1 text-sm font-medium text-white">{currentOperator ? currentOperator.fullName : "Sin asignar"}</p>
+                    <p className="mt-1 text-sm font-medium text-slate-800 dark:text-white">{currentOperator ? currentOperator.fullName : "Sin asignar"}</p>
                   </Link>
                 </div>
               </DetailPanel>
@@ -306,15 +307,15 @@ export default async function FlightPlanDetailPage({
             <div className="space-y-6">
               <DetailPanel title="Geometría" description="Revisá el área de operación y abrí el editor satelital.">
                 <div className="space-y-4">
-                  <div className="rounded-2xl border border-slate-800/80 bg-slate-950/45 p-4">
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Estado actual</p>
-                    <p className="mt-2 text-sm text-slate-200">{record.geometryType ?? "Sin geometría adjunta todavía"}</p>
+                    <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">{record.geometryType ?? "Sin geometría adjunta todavía"}</p>
                   </div>
                   <div className="flex flex-wrap gap-3">
-                    <Link href={`/flight-plans/${record.id}/geometry`} className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20">
+                    <Link href={`/flight-plans/${record.id}/geometry`} className="inline-flex items-center justify-center rounded-lg border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-accent-strong dark:text-cyan-100 transition hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20">
                       Abrir editor satelital
                     </Link>
-                    <Link href={`/flight-plans/${record.id}/geometry`} className="inline-flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800">
+                    <Link href={`/flight-plans/${record.id}/geometry`} className="inline-flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:border-slate-600 dark:hover:bg-slate-800">
                       Ver área de operación
                     </Link>
                   </div>
@@ -344,10 +345,10 @@ export default async function FlightPlanDetailPage({
             <div className="space-y-6">
               <DetailPanel title="Flujo de permisos" description="Gestioná el estado del permiso y sus transiciones.">
                 <div className="space-y-6">
-                  <div className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3">
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 px-4 py-3">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-medium text-white">Estado de preparación DGAC</p>
-                      <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${checklistReview.canSubmit ? "bg-emerald-500/15 text-emerald-200" : "bg-amber-500/15 text-amber-200"}`}>
+                      <p className="text-sm font-medium text-slate-800 dark:text-white">Estado de preparación DGAC</p>
+                      <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${checklistReview.canSubmit ? "bg-success/10 dark:bg-emerald-500/15 text-success dark:text-emerald-200" : "bg-status-warning/10 dark:bg-amber-500/15 text-status-warning dark:text-amber-200"}`}>
                         {checklistReview.canSubmit ? "Listo para envío" : "Pendiente"}
                       </span>
                     </div>
@@ -358,7 +359,7 @@ export default async function FlightPlanDetailPage({
                         return (
                           <div
                             key={item.id}
-                            className={`rounded-xl border px-3 py-2 text-xs leading-5 ${checked ? "border-emerald-500/20 bg-emerald-500/[0.04] text-emerald-50" : "border-slate-800 bg-slate-900/40 text-slate-300"}`}
+                            className={`rounded-lg border px-3 py-2 text-xs leading-5 ${checked ? "border-success/20 dark:border-emerald-500/20 bg-success/5 dark:bg-emerald-500/[0.04] text-success dark:text-emerald-50" : "border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-300"}`}
                           >
                             <span className="font-medium">{checked ? "✓" : "○"} {item.label}</span>
                           </div>
@@ -368,19 +369,11 @@ export default async function FlightPlanDetailPage({
                   </div>
 
                   {!checklistReview.canSubmit ? (
-                    <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3">
-                      <p className="text-sm font-medium text-amber-100">Checklist DGAC incompleta</p>
-                      <ul className="mt-2 space-y-1 text-xs leading-5 text-amber-50/90">
-                        {checklistReview.missingItems.map((item) => (
-                          <li key={item.id} className="flex gap-2">
-                            <span>•</span>
-                            <span>
-                              <strong>{item.label}</strong> — {item.hint}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    <AlertCard
+                      severity="warning"
+                      title="Checklist DGAC incompleta"
+                      message={checklistReview.missingItems.map((item) => `${item.label} — ${item.hint}`).join(". ")}
+                    />
                   ) : null}
 
                   <div>
@@ -414,19 +407,19 @@ export default async function FlightPlanDetailPage({
                 <div className="space-y-4">
                   <a
                     href={`/api/reports/flight-plan/${record.id}`}
-                    className="inline-flex items-center gap-2 rounded-2xl border border-emerald-400/30 bg-emerald-500/15 px-4 py-2.5 text-sm font-medium text-emerald-100 transition hover:border-emerald-300/50 hover:bg-emerald-400/20"
+                    className="inline-flex items-center gap-2 rounded-lg border border-success/20 dark:border-emerald-400/30 bg-success/5 dark:bg-emerald-500/15 px-4 py-2.5 text-sm font-medium text-success dark:text-emerald-100 transition hover:border-success/30 dark:hover:border-emerald-300/50 hover:bg-success/10 dark:hover:bg-emerald-400/20"
                     download
                   >
-                    <span>⬇</span>
+                    <span aria-hidden="true">⬇</span>
                     Reporte PDF
                   </a>
                   <form action={deleteFlightPlan.bind(null, record.id)} className="space-y-3">
-                    <p className="text-sm leading-6 text-slate-400">
+                    <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
                       Esta acción lo saca de vistas activas, listados, conteos del panel y acceso a geometría.
                     </p>
                     <button
                       type="submit"
-                      className="inline-flex items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-400/20"
+                      className="inline-flex items-center justify-center rounded-lg border border-status-danger/30 dark:border-rose-500/30 bg-status-danger/10 dark:bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-status-danger dark:text-rose-200 transition hover:border-status-danger/50 dark:hover:border-rose-400/50 hover:bg-status-danger/15 dark:hover:bg-rose-400/20"
                     >
                       Eliminar plan de vuelo
                     </button>
@@ -442,7 +435,7 @@ export default async function FlightPlanDetailPage({
     return (
       <PageShell>
         <DetailPanel title="Plan de vuelo no disponible" description="No se pudieron cargar los datos. Verificá la conexión a la base de datos.">
-          <p className="text-sm text-slate-400">Recargá la página e intentá de nuevo.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Recargá la página e intentá de nuevo.</p>
         </DetailPanel>
       </PageShell>
     );

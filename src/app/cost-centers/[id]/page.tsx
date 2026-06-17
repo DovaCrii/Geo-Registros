@@ -28,7 +28,7 @@ export default async function CostCenterDetailPage({ params }: { params: Promise
       return (
         <PageShell>
           <DetailPanel title="Grupo no encontrado" description="El grupo de trabajo solicitado no existe o ya no está disponible.">
-            <p className="text-sm text-slate-400">Volvé al listado y seleccioná un grupo válido.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Volvé al listado y seleccioná un grupo válido.</p>
           </DetailPanel>
         </PageShell>
       );
@@ -54,11 +54,11 @@ export default async function CostCenterDetailPage({ params }: { params: Promise
 
           <DetailPanel title="Relaciones vinculadas" description="Drones, operadores y planes de vuelo que dependen de este grupo.">
             <div className="grid gap-4 xl:grid-cols-3">
-              <div className="rounded-2xl border border-slate-800/80 bg-slate-950/45 p-4">
+              <div className="rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Drones</p>
                 <div className="mt-3 space-y-2">
                   {record.drones.length > 0 ? record.drones.map((drone) => (
-                    <a key={drone.id} href={`/drones/${drone.id}`} className="block rounded-xl border border-slate-800/80 bg-slate-900/70 px-3 py-2 text-sm text-white transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                    <a key={drone.id} href={`/drones/${drone.id}`} className="block rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/70 px-3 py-2 text-sm text-slate-800 dark:text-white transition hover:bg-slate-100 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
                       {drone.code ?? "—"} · {drone.model}
                       <span className="block text-xs text-slate-500">{drone.serialNumber}</span>
                     </a>
@@ -66,11 +66,11 @@ export default async function CostCenterDetailPage({ params }: { params: Promise
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-slate-800/80 bg-slate-950/45 p-4">
+              <div className="rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Operadores</p>
                 <div className="mt-3 space-y-2">
                   {record.operators.length > 0 ? record.operators.map((operator) => (
-                    <a key={operator.id} href={`/operators/${operator.id}`} className="block rounded-xl border border-slate-800/80 bg-slate-900/70 px-3 py-2 text-sm text-white transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                    <a key={operator.id} href={`/operators/${operator.id}`} className="block rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/70 px-3 py-2 text-sm text-slate-800 dark:text-white transition hover:bg-slate-100 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
                       {operator.code ?? "—"} · {operator.fullName}
                       <span className="block text-xs text-slate-500">{operator.licenseNumber ?? "Licencia pendiente"}</span>
                     </a>
@@ -78,11 +78,11 @@ export default async function CostCenterDetailPage({ params }: { params: Promise
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-slate-800/80 bg-slate-950/45 p-4">
+              <div className="rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Planes de vuelo</p>
                 <div className="mt-3 space-y-2">
                   {record.flightPlans.length > 0 ? record.flightPlans.map((flightPlan) => (
-                    <a key={flightPlan.id} href={`/flight-plans/${flightPlan.id}`} className="block rounded-xl border border-slate-800/80 bg-slate-900/70 px-3 py-2 text-sm text-white transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                    <a key={flightPlan.id} href={`/flight-plans/${flightPlan.id}`} className="block rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/70 px-3 py-2 text-sm text-slate-800 dark:text-white transition hover:bg-slate-100 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
                       {flightPlan.code} · {flightPlan.title}
                       <span className="block text-xs text-slate-500">{flightPlan.operationDate.toISOString().slice(0, 10)}</span>
                     </a>
@@ -107,12 +107,12 @@ export default async function CostCenterDetailPage({ params }: { params: Promise
 
           <DetailPanel title="Zona de riesgo" description="La eliminación lógica oculta este grupo sin perder su historial.">
             <form action={deleteCostCenter.bind(null, record.id)} className="space-y-3">
-              <p className="text-sm leading-6 text-slate-400">
+              <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
                 Esta acción lo saca de listados, selectores y conteos del panel. Los registros vinculados conservan su referencia histórica.
               </p>
               <button
                 type="submit"
-                className="inline-flex items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-400/20"
+                className="inline-flex items-center justify-center rounded-lg border border-status-danger/30 dark:border-rose-500/30 bg-status-danger/10 dark:bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-status-danger dark:text-rose-200 transition hover:border-status-danger/50 dark:hover:border-rose-400/50 hover:bg-status-danger/15 dark:hover:bg-rose-400/20"
               >
                 Eliminar grupo de trabajo
               </button>
@@ -125,7 +125,7 @@ export default async function CostCenterDetailPage({ params }: { params: Promise
     return (
       <PageShell>
         <DetailPanel title="Grupo no disponible" description="No se pudieron cargar los datos. Verificá la conexión a la base de datos.">
-          <p className="text-sm text-slate-400">Recargá la página e intentá de nuevo.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Recargá la página e intentá de nuevo.</p>
         </DetailPanel>
       </PageShell>
     );

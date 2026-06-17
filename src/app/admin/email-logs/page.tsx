@@ -11,9 +11,9 @@ type EmailLogWithFlightPlan = Prisma.EmailLogGetPayload<{
 export const dynamic = "force-dynamic";
 
 const STATUS_COLORS: Record<string, string> = {
-  sent: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20",
-  failed: "text-red-400 bg-red-400/10 border-red-400/20",
-  bounced: "text-amber-400 bg-amber-400/10 border-amber-400/20",
+  sent: "text-success dark:text-emerald-300 bg-success/10 dark:bg-emerald-500/10 border-success/20 dark:border-emerald-400/20",
+  failed: "text-danger dark:text-red-300 bg-danger/10 dark:bg-red-500/10 border-danger/20 dark:border-red-400/20",
+  bounced: "text-status-warning dark:text-amber-300 bg-status-warning/10 dark:bg-amber-500/10 border-status-warning/20 dark:border-amber-400/20",
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -53,31 +53,31 @@ export default async function AdminEmailLogsPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Registro de correos</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Registro de correos</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Historial de correos enviados desde la plataforma
           </p>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-3xl border border-slate-800/80 bg-slate-950/50">
+      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/50 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-800/80">
-                <th className="text-left px-4 py-3 font-medium text-slate-400">Para</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-400">Asunto</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-400">Tipo</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-400">Estado</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-400">Enviado</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-400">Vuelo</th>
-                <th className="text-right px-4 py-3 font-medium text-slate-400">Acción</th>
+              <tr className="border-b border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/70">
+                <th className="text-left px-4 py-3 font-medium text-slate-500">Para</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-500">Asunto</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-500">Tipo</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-500">Estado</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-500">Enviado</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-500">Vuelo</th>
+                <th className="text-right px-4 py-3 font-medium text-slate-500">Acción</th>
               </tr>
             </thead>
             <tbody>
               {emails.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-slate-500">
+                  <td colSpan={7} className="px-4 py-12 text-center text-slate-500 dark:text-slate-400">
                     No se han enviado correos todavía. Si la base de datos no está disponible, este listado quedará vacío hasta recuperar la conexión.
                   </td>
                 </tr>
@@ -85,16 +85,16 @@ export default async function AdminEmailLogsPage() {
               {emails.map((email) => (
                 <tr
                   key={email.id}
-                  className="border-b border-slate-800/40 hover:bg-slate-800/30 transition-colors"
+                  className="border-b border-slate-200 dark:border-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors"
                 >
-                  <td className="px-4 py-3 text-slate-300 max-w-[200px] truncate">
+                  <td className="px-4 py-3 text-slate-700 dark:text-slate-300 max-w-[200px] truncate">
                     {email.to}
                   </td>
-                  <td className="px-4 py-3 text-slate-200 font-medium max-w-[300px] truncate">
+                  <td className="px-4 py-3 text-slate-900 dark:text-slate-200 font-medium max-w-[300px] truncate">
                     {email.subject}
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-slate-500 dark:text-slate-400">
                       {TYPE_LABELS[email.type] ?? email.type}
                     </span>
                   </td>
@@ -107,25 +107,25 @@ export default async function AdminEmailLogsPage() {
                       {email.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-slate-400 text-xs whitespace-nowrap">
+                  <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap">
                     {formatDate(email.sentAt)}
                   </td>
                   <td className="px-4 py-3">
                     {email.flightPlan ? (
                       <Link
                         href={`/flight-plans/${email.flightPlan.id}`}
-                        className="text-cyan-400 hover:text-cyan-300 text-xs underline underline-offset-2"
+                        className="text-accent dark:text-cyan-300 hover:text-accent-strong dark:hover:text-cyan-200 text-xs underline underline-offset-2"
                       >
                         {email.flightPlan.code}
                       </Link>
                     ) : (
-                      <span className="text-slate-600 text-xs">—</span>
+                      <span className="text-slate-500 dark:text-slate-600 text-xs">—</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/admin/email-logs/${email.id}`}
-                      className="text-xs text-slate-400 hover:text-white transition-colors"
+                      className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                     >
                       Ver →
                     </Link>

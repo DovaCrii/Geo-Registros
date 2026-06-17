@@ -65,9 +65,9 @@ function renderFilters(filters: NonNullable<ListConfig<unknown>["filters"]>) {
 function renderActions(actions: HeaderAction[] | undefined) {
   if (!actions || actions.length === 0) return undefined;
   return actions.map((action) => {
-    const base = "inline-flex items-center justify-center rounded-2xl border px-4 py-2.5 text-sm font-medium transition";
-    const primary = "border-cyan-400/30 bg-cyan-500/15 text-cyan-100 hover:border-cyan-300/50 hover:bg-cyan-400/20";
-    const secondary = "border-slate-700/80 bg-slate-900/80 text-slate-200 hover:border-slate-600 hover:bg-slate-800";
+    const base = "inline-flex items-center justify-center rounded-lg border px-4 py-2.5 text-sm font-medium transition";
+    const primary = "border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 text-accent-strong dark:text-cyan-100 hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20";
+    const secondary = "border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:border-slate-600 dark:hover:bg-slate-800";
     return (
       <a key={action.href} href={action.href} className={`${base} ${action.variant === "secondary" ? secondary : primary}`}>
         {action.label}
@@ -80,10 +80,10 @@ function renderSidebar(sidebar: SidebarConfig, total: number) {
   return (
     <DetailPanel title={sidebar.title} description={sidebar.description}>
       {sidebar.items && sidebar.items.length > 0 && (
-        <div className="space-y-3 rounded-2xl border border-slate-800/80 bg-slate-900/70 p-4">
+        <div className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/70 p-4">
           {sidebar.items.map((item) => (
             <div key={item.label} className="flex items-center justify-between">
-              <span className="text-sm text-slate-400">{item.label}</span>
+              <span className="text-sm text-slate-600 dark:text-slate-400">{item.label}</span>
               <StatusChip label={item.value} tone={item.tone ?? "neutral"} />
             </div>
           ))}
@@ -93,7 +93,7 @@ function renderSidebar(sidebar: SidebarConfig, total: number) {
       {sidebar.action && (
         <a
           href={sidebar.action.href}
-          className="inline-flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800"
+          className="inline-flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:border-slate-600 dark:hover:bg-slate-800"
         >
           {sidebar.action.label}
         </a>
@@ -197,10 +197,10 @@ export function ListPageClient<Row extends { id: string }>({
               ? renderSidebar(config.sidebar, total)
               : (
                 <DetailPanel title="Listado" description="Vista de lista configurable.">
-                  <div className="space-y-3 rounded-2xl border border-slate-800/80 bg-slate-900/70 p-4">
+                  <div className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/70 p-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-400">Total de registros</span>
-                      <span className="text-sm font-medium text-white">{total}</span>
+                      <span className="text-sm text-slate-600 dark:text-slate-400">Total de registros</span>
+                      <span className="text-sm font-medium text-slate-800 dark:text-white">{total}</span>
                     </div>
                   </div>
                 </DetailPanel>

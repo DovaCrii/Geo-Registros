@@ -13,6 +13,29 @@
 
 ---
 
+## Current snapshot
+
+| Product state | Current focus | Branches to review |
+|---|---|---|
+| Functional platform with operational modules live | UX clarity, visual consistency, and shorter AI handoff context | `ux-dgac-login-fix`, `codex/docs-dashboard-clean` |
+
+### Current highlights
+
+- Operational dashboard evolving from KPI screen into a clearer command center.
+- Short-context documentation added for OpenCode and Codex collaboration.
+- UX and design-system planning now documented in-repo for future execution.
+- GitHub review path reduced to a few key files instead of long prompts.
+
+### Review this first
+
+1. [`CHANGELOG.md`](CHANGELOG.md)
+2. [`PROJECT_STATUS.md`](PROJECT_STATUS.md)
+3. [`ROADMAP.md`](ROADMAP.md)
+4. [`TASKS.md`](TASKS.md)
+5. [`docs/OPENCODE_HANDOFF.md`](docs/OPENCODE_HANDOFF.md)
+
+---
+
 ## Concept
 
 > **AeroFlow centralizes RPA/drone flight operations into a single platform — from mission planning and interactive mapping to document tracking, permission workflows, and operational history.**
@@ -33,30 +56,31 @@ Today, managing drone permits, flight logs, aircraft documents, operator credent
 
 ## Entity model
 
+```mermaid
+flowchart TD
+  CC[CostCenter\n(cost center)]
+  DR[Drone\n(fleet)]
+  CL[Client\n(customer)]
+  OP[Operator\n(pilot / RPA)]
+
+  MS[Mission / FlightPlan\n(operational workflow)]
+  GE[Geometry\n(GeoJSON)]
+  DO[Documents\n(permits, checklists, files)]
+  WE[Weather\n(Open-Meteo)]
+  HS[Status history\n(audit trail)]
+
+  CC --> MS
+  DR --> MS
+  CL --> MS
+  OP --> MS
+
+  MS --> GE
+  MS --> DO
+  MS --> WE
+  MS --> HS
 ```
-┌────────────┐       ┌──────────┐       ┌──────────┐
-│ CostCenter │──────▸│  Drone   │       │  Client  │
-│ (cost      │       │ (fleet)  │       │(customer)│
-│  center)   │       └──────────┘       └──────────┘
-└────────────┘              │                  │
-       │                    │                  │
-       │           ┌────────▼──────────────────▼──┐
-       │           │         Mission              │
-       │           │   (flight plan / permiso)    │
-       ├──────────▸│                              │
-       │           │  ┌──────────────────────┐    │
-       │           │  │  geometry (GeoJSON)  │    │
-       │           │  │  documents           │    │
-       │           │  │  weather data        │    │
-       │           │  │  status history      │    │
-       │           │  └──────────────────────┘    │
-       │           └──────────────────────────────┘
-       │
-┌──────▼──────┐
-│  Operator   │
-│ (pilot/RPA) │
-└─────────────┘
-```
+
+> Central idea: one mission ties together the operational context, geometry, documents, weather, and audit history.
 
 ---
 
@@ -107,6 +131,17 @@ Today, managing drone permits, flight logs, aircraft documents, operator credent
 | **UI polish & navigation consistency** | ✅ Done | Spanish UI pass, shared breadcrumbs, contextual entity links, honest error states, shell/navigation consistency |
 
 > Each block is documented in [`docs/`](docs/) with what was built, why, what was discarded, and lessons learned.
+
+---
+
+## Recent progress
+
+| Area | Progress | Next move |
+|---|---|---|
+| Documentation | Source-of-truth docs for AI sessions, roadmap, project status, and handoff are now in the repo | Keep `PROJECT_STATUS.md`, `TASKS.md`, and `docs/AI_PROGRESS_LOG.md` current |
+| Dashboard UX | The operational dashboard was reshaped toward clearer next actions and more premium visual hierarchy | Extend the same language into shared UI components |
+| Design system | Base visual direction and component plan are now documented | Execute `T-011` with small, validated UI tasks |
+| GitHub reviewability | The repo now exposes a short review path for product, docs, and workflow context | Open and merge the clean docs PR first |
 
 ---
 
@@ -199,6 +234,16 @@ If you are reviewing this repository from GitHub, start here:
 2. [`PROJECT_STATUS.md`](PROJECT_STATUS.md)
 3. [`docs/00_DOCUMENTATION_INDEX.md`](docs/00_DOCUMENTATION_INDEX.md)
 4. [`docs/OPENCODE_HANDOFF.md`](docs/OPENCODE_HANDOFF.md)
+
+### Planning and design docs
+
+| Document | Purpose |
+|---|---|
+| [`PROJECT_STATUS.md`](PROJECT_STATUS.md) | Master state of product, stack, risks, and current direction |
+| [`ROADMAP.md`](ROADMAP.md) | Phased execution path for docs, UX, design system, workflow, and commercialization |
+| [`docs/UX_WORKFLOW_MASTER_PLAN.md`](docs/UX_WORKFLOW_MASTER_PLAN.md) | Ideal operator workflow and UX priorities |
+| [`docs/DESIGN_SYSTEM_PLAN.md`](docs/DESIGN_SYSTEM_PLAN.md) | Visual system plan, component priorities, and rollout strategy |
+| [`docs/COMPETITOR_BENCHMARK.md`](docs/COMPETITOR_BENCHMARK.md) | Product references and principles to borrow without copying |
 
 | Document | Content |
 |---|---|---|
