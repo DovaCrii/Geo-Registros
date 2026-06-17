@@ -160,6 +160,36 @@ npm run dev
 
 ## Documentation index
 
+### AI / execution context
+
+For future OpenCode and Codex sessions, start with:
+
+1. [`AGENTS.md`](AGENTS.md)
+2. [`PROJECT_STATUS.md`](PROJECT_STATUS.md)
+3. [`ROADMAP.md`](ROADMAP.md)
+4. [`TASKS.md`](TASKS.md)
+5. [`docs/OPENCODE_HANDOFF.md`](docs/OPENCODE_HANDOFF.md)
+
+The complete documentation map is available in [`docs/00_DOCUMENTATION_INDEX.md`](docs/00_DOCUMENTATION_INDEX.md).
+
+### What changed recently
+
+| Area | Update | Where to review |
+|---|---|---|
+| Documentation | New short-context operating docs for OpenCode and Codex | [`AGENTS.md`](AGENTS.md), [`PROJECT_STATUS.md`](PROJECT_STATUS.md), [`ROADMAP.md`](ROADMAP.md) |
+| Planning | Task tracking and handoff flow prepared for future sessions | [`TASKS.md`](TASKS.md), [`docs/OPENCODE_HANDOFF.md`](docs/OPENCODE_HANDOFF.md) |
+| UX direction | Product workflow and design-system plans documented | [`docs/UX_WORKFLOW_MASTER_PLAN.md`](docs/UX_WORKFLOW_MASTER_PLAN.md), [`docs/DESIGN_SYSTEM_PLAN.md`](docs/DESIGN_SYSTEM_PLAN.md) |
+| Visual optimization | Dashboard evolved toward a clearer, more premium operational experience | [`CHANGELOG.md`](CHANGELOG.md), [`docs/AI_PROGRESS_LOG.md`](docs/AI_PROGRESS_LOG.md) |
+
+### GitHub review path
+
+If you are reviewing this repository from GitHub, start here:
+
+1. [`CHANGELOG.md`](CHANGELOG.md)
+2. [`PROJECT_STATUS.md`](PROJECT_STATUS.md)
+3. [`docs/00_DOCUMENTATION_INDEX.md`](docs/00_DOCUMENTATION_INDEX.md)
+4. [`docs/OPENCODE_HANDOFF.md`](docs/OPENCODE_HANDOFF.md)
+
 | Document | Content |
 |---|---|
 | [`docs/00_foundation.md`](docs/00_foundation.md) | Foundational decisions |
