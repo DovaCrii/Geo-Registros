@@ -84,7 +84,7 @@ function ActivityTimeline({
     id: string;
     eventType: string;
     createdAt: Date;
-    flightPlan: { code: string; title: string };
+    flightPlan: { id: string; code: string; title: string };
     description?: string | null;
   }>;
 }) {
@@ -107,7 +107,7 @@ function ActivityTimeline({
           {/* Content */}
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium text-white">
-              <Link href={`/flight-plans/${event.flightPlan.code}`} className="hover:text-cyan-300">
+              <Link href={`/flight-plans/${event.flightPlan.id}`} className="hover:text-cyan-300">
                 {event.flightPlan.code}
               </Link>
               <span className="ml-2 text-xs font-normal text-slate-500">
@@ -159,42 +159,9 @@ const STATUS_LABELS: Record<string, string> = {
 
 export default async function DashboardPage() {
   const session = await requirePageAuth("/dashboard");
-  let stats;
-  try {
-    stats = await getDashboardStats();
-  } catch {
-    stats = null;
-  }
+  const stats = await getDashboardStats();
 
   const userName = session?.user?.name ?? "Usuario";
-
-  // If dashboard stats failed to load (DB down), show error state
-  if (!stats) {
-    return (
-      <PageShell>
-        <div className="space-y-6">
-          <div className="rounded-3xl border border-slate-800/80 bg-slate-950/55 p-6 shadow-2xl shadow-cyan-950/10 backdrop-blur">
-            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">
-              Panel operativo
-            </p>
-            <h1 className="text-3xl font-bold tracking-tight text-white">
-              Bienvenido, {userName}
-            </h1>
-            <p className="mt-1 text-sm leading-6 text-slate-400">
-              Resumen operativo de tu plataforma AeroFlow
-            </p>
-          </div>
-
-          <div className="rounded-3xl border border-rose-800/40 bg-rose-950/30 p-6 shadow-xl backdrop-blur">
-            <h2 className="text-sm font-semibold text-rose-100">No se pudieron cargar los datos del panel</h2>
-            <p className="mt-2 text-sm leading-6 text-rose-50/80">
-              Verificá que la base de datos esté conectada y recargá la página. Si el problema persiste, revisá la configuración del servidor.
-            </p>
-          </div>
-        </div>
-      </PageShell>
-    );
-  }
 
   const pendingActions = [
     {
@@ -256,6 +223,23 @@ export default async function DashboardPage() {
             Resumen operativo de tu plataforma AeroFlow
           </p>
         </div>
+
+        {stats.issues.length > 0 ? (
+          <div className="rounded-3xl border border-amber-800/40 bg-amber-950/25 p-6 shadow-xl shadow-amber-950/10 backdrop-blur">
+            <h2 className="text-sm font-semibold text-amber-100">Carga parcial de datos</h2>
+            <p className="mt-2 text-sm leading-6 text-amber-50/80">
+              Algunas fuentes no respondieron. Igual te mostramos el panel en cero para no romper el flujo.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link href="/dashboard" className="rounded-2xl border border-amber-400/30 bg-amber-500/10 px-4 py-2.5 text-sm font-medium text-amber-100 transition hover:border-amber-300/50 hover:bg-amber-400/20">
+                Reintentar
+              </Link>
+              <Link href="/flight-plans/new" className="rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800">
+                Seguir al flujo correcto
+              </Link>
+            </div>
+          </div>
+        ) : null}
 
         {/* Empty state for first-time users */}
         {stats.flightPlans.total === 0 ? (
