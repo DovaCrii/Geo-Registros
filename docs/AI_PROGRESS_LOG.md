@@ -334,3 +334,16 @@
 - **Próximos pasos recomendados**:
   1. Ahora sí, preparar un corte limpio para git.
   2. Después volver a dashboard/listas con una pieza pequeña por vez.
+
+## 2026-06-17 — Sesión — Documentation alignment after visual rollout (OpenCode)
+
+- **Objetivo**: Alinear el estado maestro, roadmap y tareas con el avance real del sistema visual base.
+- **Archivos modificados**:
+  - `PROJECT_STATUS.md` — se marca el sistema visual base como aplicado de forma gradual.
+  - `ROADMAP.md` — Fase 3 ahora habla de aplicación gradual del sistema visual.
+  - `TASKS.md` — T-011 se renombra a “Definir y aplicar sistema visual base”.
+- **Decisión**: Mantener la documentación honesta y sincronizada con lo ya implementado.
+- **Validación**: Revisión documental manual.
+- **Próximos pasos recomendados**:
+  1. Preparar un commit separado de documentación.
+  2. Luego volver a dashboard/listas con una pieza pequeña por vez.

@@ -18,11 +18,12 @@ AeroFlow / Geo-Registros es una plataforma Next.js para operaciones RPA/drones: 
 - Base funcional avanzada y documentada.
 - UX del dashboard en mejora hacia centro operativo mas claro.
 - Documentacion historica existe en `docs/`; esta capa nueva resume la direccion futura.
+- Sistema visual base ya aplicado de forma gradual en componentes compartidos, auth, ayuda y pantallas admin.
 
 ## Riesgos activos
 - README aun describe PostgreSQL/PostGIS como arquitectura objetivo, mientras Prisma local apunta a SQLite.
 - `prisma/data/` aparece como dato local no versionado.
-- Falta consolidar una direccion visual consistente en todo el producto.
+- Quedan pantallas heredadas puntuales por refinar, pero la direccion visual base ya esta consolidada.
 
 ## Fuente de verdad para IA
 - OpenCode ejecuta implementacion.

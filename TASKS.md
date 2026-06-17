@@ -12,5 +12,5 @@
 | T-008 | Revisar arquitectura y riesgos del repo | Media | Codex | `src/`, `prisma/`, `docs/` | Se identifican riesgos y dependencias críticas | Informe de revisión |
 | T-009 | Consolidar contexto corto para IA | Alta | Codex | `PROJECT_STATUS.md`, `ROADMAP.md`, `docs/OPENCODE_HANDOFF.md` | Las sesiones futuras pueden arrancar leyendo 5 archivos | Revisión manual |
 | T-010 | Planificar rediseño gradual del flujo de misión | Alta | OpenCode | `docs/UX_WORKFLOW_MASTER_PLAN.md`, `src/app/flight-plans/` | Existe una tarea pequeña para mejorar el wizard sin refactor global | Handoff aprobado |
-| T-011 | Definir sistema visual base | Alta | OpenCode | `docs/DESIGN_SYSTEM_PLAN.md`, `src/app/globals.css`, `src/components/ui/` | Tokens y patrones visuales quedan definidos antes de rediseñar pantallas | `npm run typecheck` |
+| T-011 | Definir y aplicar sistema visual base | Alta | OpenCode | `docs/DESIGN_SYSTEM_PLAN.md`, `src/app/globals.css`, `src/components/ui/` | Tokens y patrones visuales quedan definidos y aplicados de forma gradual antes de rediseñar pantallas | `npm run typecheck` |
 | T-012 | Actualizar bitácora de avance IA | Media | Codex | `docs/AI_PROGRESS_LOG.md` | Cada sesión deja objetivo, cambios, decisiones y próxima tarea | Revisión manual |
