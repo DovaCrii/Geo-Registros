@@ -29,6 +29,23 @@ import { WeatherCard } from "@/modules/weather/weather-card";
 
 export const dynamic = "force-dynamic";
 
+const STEP_META = [
+  { tab: 1, label: "Datos del plan", description: "Identidad, asignaciones y payload" },
+  { tab: 2, label: "Geometría", description: "Área de operación y mapa" },
+  { tab: 3, label: "Documentos", description: "Adjuntos operativos" },
+  { tab: 4, label: "Checklist DGAC", description: "Validación previa al envío" },
+  { tab: 5, label: "Permisos", description: "Estado y transiciones" },
+  { tab: 6, label: "Cierre", description: "Clima, PDF y riesgo" },
+] as const;
+
+type StepTab = (typeof STEP_META)[number]["tab"];
+
+function parseTab(value: string | undefined): StepTab {
+  const parsed = Number(value);
+  if (parsed >= 1 && parsed <= 6) return parsed as StepTab;
+  return 1;
+}
+
 function formatDateInput(value: Date) {
   return value.toISOString().slice(0, 10);
 }
@@ -57,11 +74,20 @@ function labelFromList(
   return fallback;
 }
 
-export default async function FlightPlanDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function FlightPlanDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   const { id } = await params;
-    await requirePageAuth(`/flight-plans/${id}`);
+  const query = await searchParams;
+  const activeTab = parseTab(query.tab);
 
-    try {
+  await requirePageAuth(`/flight-plans/${id}`);
+
+  try {
     const [record, costCenters, clients, drones, operators] = await Promise.all([
       getFlightPlanById(id),
       listActiveCostCenters().catch(() => []),
@@ -161,6 +187,8 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
           SUBMITTED: `No se puede enviar todavía. Faltan: ${checklistReview.missingItems.map((item) => item.label).join(", ")}`,
         };
 
+    const stepHref = (tab: StepTab) => `/flight-plans/${record.id}?tab=${tab}`;
+
     return (
       <PageShell>
         <div className="space-y-6">
@@ -197,32 +225,60 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
             }
           />
 
-          <DetailPanel title="Entidades relacionadas" description="Abrí los registros maestros vinculados a este plan.">
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              <Link href={`/cost-centers/${record.costCenterId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Grupo de trabajo</p>
-                <p className="mt-1 text-sm font-medium text-white">{currentCostCenter ? `${currentCostCenter.code} · ${currentCostCenter.name}` : "Sin asignar"}</p>
-              </Link>
-              <Link href={`/clients/${record.clientId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Cliente</p>
-                <p className="mt-1 text-sm font-medium text-white">{currentClient ? currentClient.name : "Sin asignar"}</p>
-              </Link>
-              <Link href={`/drones/${record.droneId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Dron</p>
-                <p className="mt-1 text-sm font-medium text-white">{currentDrone ? `${currentDrone.model} · ${currentDrone.serialNumber}` : "Sin asignar"}</p>
-              </Link>
-              <Link href={`/operators/${record.operatorId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Operador</p>
-                <p className="mt-1 text-sm font-medium text-white">{currentOperator ? currentOperator.fullName : "Sin asignar"}</p>
-              </Link>
+          <div className="rounded-3xl border border-slate-800/80 bg-slate-950/55 p-3 shadow-xl shadow-slate-950/10 backdrop-blur">
+            <div className="grid gap-2 md:grid-cols-3 xl:grid-cols-6">
+              {STEP_META.map((step) => {
+                const active = activeTab === step.tab;
+                return (
+                  <Link
+                    key={step.tab}
+                    href={stepHref(step.tab)}
+                    className={`rounded-2xl border px-4 py-3 text-left transition ${
+                      active
+                        ? "border-cyan-400/40 bg-cyan-500/15 text-cyan-100"
+                        : "border-slate-800/80 bg-slate-950/45 text-slate-400 hover:border-cyan-500/30 hover:bg-cyan-500/5 hover:text-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${active ? "bg-cyan-400/20 text-cyan-100" : "bg-slate-800 text-slate-400"}`}>
+                        {step.tab}
+                      </span>
+                      <div>
+                        <p className="text-sm font-semibold">{step.label}</p>
+                        <p className="text-xs text-slate-500">{step.description}</p>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
-          </DetailPanel>
+          </div>
 
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_360px]">
-            {/* Left column: form + permission controls */}
+          {activeTab === 1 && (
             <div className="space-y-6">
+              <DetailPanel title="Entidades relacionadas" description="Abrí los registros maestros vinculados a este plan.">
+                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                  <Link href={`/cost-centers/${record.costCenterId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Grupo de trabajo</p>
+                    <p className="mt-1 text-sm font-medium text-white">{currentCostCenter ? `${currentCostCenter.code} · ${currentCostCenter.name}` : "Sin asignar"}</p>
+                  </Link>
+                  <Link href={`/clients/${record.clientId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Cliente</p>
+                    <p className="mt-1 text-sm font-medium text-white">{currentClient ? currentClient.name : "Sin asignar"}</p>
+                  </Link>
+                  <Link href={`/drones/${record.droneId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Dron</p>
+                    <p className="mt-1 text-sm font-medium text-white">{currentDrone ? `${currentDrone.model} · ${currentDrone.serialNumber}` : "Sin asignar"}</p>
+                  </Link>
+                  <Link href={`/operators/${record.operatorId}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Operador</p>
+                    <p className="mt-1 text-sm font-medium text-white">{currentOperator ? currentOperator.fullName : "Sin asignar"}</p>
+                  </Link>
+                </div>
+              </DetailPanel>
+
               <FlightPlanForm
-                title="Detalles del plan"
+                title="Datos del plan"
                 description="Ajustá identidad operativa, fecha, asignaciones y payload canónico."
                 action={updateFlightPlan.bind(null, record.id)}
                 submitLabel="Guardar cambios"
@@ -243,7 +299,49 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
                 operatorOptions={operatorOptionsWithCurrent}
                 geometrySummary={record.geometryType ?? "Sin geometría adjunta todavía"}
               />
+            </div>
+          )}
 
+          {activeTab === 2 && (
+            <div className="space-y-6">
+              <DetailPanel title="Geometría" description="Revisá el área de operación y abrí el editor satelital.">
+                <div className="space-y-4">
+                  <div className="rounded-2xl border border-slate-800/80 bg-slate-950/45 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Estado actual</p>
+                    <p className="mt-2 text-sm text-slate-200">{record.geometryType ?? "Sin geometría adjunta todavía"}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    <Link href={`/flight-plans/${record.id}/geometry`} className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20">
+                      Abrir editor satelital
+                    </Link>
+                    <Link href={`/flight-plans/${record.id}/geometry`} className="inline-flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800">
+                      Ver área de operación
+                    </Link>
+                  </div>
+                </div>
+              </DetailPanel>
+            </div>
+          )}
+
+          {activeTab === 3 && (
+            <DetailPanel title="Documentos" description="Adjuntá y gestioná los documentos operativos de este plan.">
+              <DocumentUpload flightPlanId={record.id} documents={documents} />
+            </DetailPanel>
+          )}
+
+          {activeTab === 4 && (
+            <div className="space-y-6">
+              <FlightPlanChecklist
+                flightPlanId={record.id}
+                initialChecklist={record.dgacChecklist}
+                suggestedChecklist={suggestedChecklist}
+                geometryLink={record.geometryJson ? `/flight-plans/${record.id}/geometry` : undefined}
+              />
+            </div>
+          )}
+
+          {activeTab === 5 && (
+            <div className="space-y-6">
               <DetailPanel title="Flujo de permisos" description="Gestioná el estado del permiso y sus transiciones.">
                 <div className="space-y-6">
                   <div className="rounded-2xl border border-slate-800/80 bg-slate-950/45 px-4 py-3">
@@ -300,45 +398,43 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
                   </div>
                 </div>
               </DetailPanel>
-
-              <DetailPanel title="Documentos" description="Adjuntá y gestioná los documentos operativos de este plan.">
-                <DocumentUpload flightPlanId={record.id} documents={documents} />
-              </DetailPanel>
-
-              <FlightPlanChecklist
-                flightPlanId={record.id}
-                initialChecklist={record.dgacChecklist}
-                suggestedChecklist={suggestedChecklist}
-                geometryLink={record.geometryJson ? `/flight-plans/${record.id}/geometry` : undefined}
-              />
-
-              <DetailPanel
-                title="Zona de riesgo"
-                description="La eliminación lógica oculta este plan en la app pero preserva su historial."
-              >
-                <form action={deleteFlightPlan.bind(null, record.id)} className="space-y-3">
-                  <p className="text-sm leading-6 text-slate-400">
-                    Esta acción lo saca de vistas activas, listados, conteos del panel y acceso a geometría.
-                  </p>
-                  <button
-                    type="submit"
-                    className="inline-flex items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-400/20"
-                  >
-                    Eliminar plan de vuelo
-                  </button>
-                </form>
-              </DetailPanel>
-            </div>
-
-            {/* Right column: timeline + weather */}
-            <div className="space-y-6">
               <DetailPanel title="Línea de tiempo" description="Auditoría de eventos vinculados al permiso.">
                 <PermissionTimeline events={permissionEvents} />
               </DetailPanel>
-
-              <WeatherCard data={weatherData} />
             </div>
-          </div>
+          )}
+
+          {activeTab === 6 && (
+            <div className="space-y-6">
+              <WeatherCard data={weatherData} />
+              <DetailPanel
+                title="Cierre y riesgo"
+                description="Reporte final, eliminación lógica y revisión de salida."
+              >
+                <div className="space-y-4">
+                  <a
+                    href={`/api/reports/flight-plan/${record.id}`}
+                    className="inline-flex items-center gap-2 rounded-2xl border border-emerald-400/30 bg-emerald-500/15 px-4 py-2.5 text-sm font-medium text-emerald-100 transition hover:border-emerald-300/50 hover:bg-emerald-400/20"
+                    download
+                  >
+                    <span>⬇</span>
+                    Reporte PDF
+                  </a>
+                  <form action={deleteFlightPlan.bind(null, record.id)} className="space-y-3">
+                    <p className="text-sm leading-6 text-slate-400">
+                      Esta acción lo saca de vistas activas, listados, conteos del panel y acceso a geometría.
+                    </p>
+                    <button
+                      type="submit"
+                      className="inline-flex items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-medium text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-400/20"
+                    >
+                      Eliminar plan de vuelo
+                    </button>
+                  </form>
+                </div>
+              </DetailPanel>
+            </div>
+          )}
         </div>
       </PageShell>
     );
