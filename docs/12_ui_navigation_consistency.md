@@ -14,6 +14,7 @@ Se cerró la pasada de consistencia visual y navegación operativa:
 - Links contextuales entre entidades maestras y planes de vuelo
 - Bloques de relaciones cruzadas en fichas maestras con acceso directo a planes de vuelo vinculados
 - Listados genéricos con empty states y filtros por defecto también localizados en español
+- Dashboard resiliente: muestra ceros cuando no hay datos y un aviso de reparación cuando la fuente falla
 - Ajustes de accesibilidad y microcopy en componentes compartidos
 
 ## Decisiones técnicas clave
