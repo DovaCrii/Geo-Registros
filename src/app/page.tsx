@@ -93,6 +93,12 @@ function NavBar() {
             </Link>
           ))}
           <Link
+            href="/auth/login"
+            className="text-sm font-medium text-slate-300 transition hover:text-white"
+          >
+            Iniciar sesión
+          </Link>
+          <Link
             href="#demo"
             className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-5 py-2.5 text-sm font-medium text-cyan-200 shadow-sm shadow-cyan-500/5 transition hover:border-cyan-400/50 hover:bg-cyan-500/20"
           >
@@ -100,12 +106,20 @@ function NavBar() {
           </Link>
         </div>
 
-        <Link
-          href="#demo"
-          className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-5 py-2.5 text-sm font-medium text-cyan-200 transition hover:border-cyan-400/50 hover:bg-cyan-500/20 md:hidden"
-        >
-          Demo
-        </Link>
+        <div className="flex items-center gap-3 md:hidden">
+          <Link
+            href="/auth/login"
+            className="text-sm font-medium text-slate-300 transition hover:text-white"
+          >
+            Ingresar
+          </Link>
+          <Link
+            href="#demo"
+            className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-200 transition hover:border-cyan-400/50 hover:bg-cyan-500/20"
+          >
+            Demo
+          </Link>
+        </div>
       </div>
     </nav>
   );
