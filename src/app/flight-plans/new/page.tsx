@@ -22,7 +22,12 @@ export default async function NewFlightPlanPage() {
     listActiveOperators().catch(() => []),
   ]);
 
-  const hasDependencies = costCenters.length > 0 && clients.length > 0 && drones.length > 0 && operators.length > 0;
+  const missingDependencies = [
+    { label: "Grupos de trabajo", count: costCenters.length, href: "/cost-centers/new" },
+    { label: "Clientes", count: clients.length, href: "/clients/new" },
+    { label: "Drones", count: drones.length, href: "/drones/new" },
+    { label: "Operadores", count: operators.length, href: "/operators/new" },
+  ].filter((item) => item.count === 0);
 
   return (
     <PageShell>
@@ -35,9 +40,26 @@ export default async function NewFlightPlanPage() {
           description="Registrá el plan operativo antes de avanzar a geometría, permisos y documentación."
         />
 
-        {!hasDependencies ? (
-          <DetailPanel title="Datos maestros requeridos" description="Necesitás al menos un grupo de trabajo, cliente, dron y operador activo antes de crear el primer plan de vuelo.">
-            <p className="text-sm text-slate-300">Si la base de datos está offline, estos selectores también quedarán indisponibles hasta recuperar conectividad.</p>
+        {missingDependencies.length > 0 ? (
+          <DetailPanel title="Datos maestros requeridos" description="Antes de crear el plan necesitás completar los registros base del flujo.">
+            <div className="space-y-4">
+              <p className="text-sm text-slate-300">
+                Faltan datos en: {missingDependencies.map((item) => item.label).join(", ")}.
+                Si la base de datos está offline, los selectores también quedarán indisponibles hasta recuperar conectividad.
+              </p>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {missingDependencies.map((item) => (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20"
+                  >
+                    Crear {item.label.toLowerCase()}
+                  </a>
+                ))}
+              </div>
+            </div>
           </DetailPanel>
         ) : null}
 
