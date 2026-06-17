@@ -49,10 +49,10 @@ function renderFilters(filters: NonNullable<ListConfig<unknown>["filters"]>) {
             key={filter.field}
             label={filter.label}
             paramName={filter.field}
-            placeholder={filter.placeholder ?? "All statuses"}
+            placeholder={filter.placeholder ?? "Todos los estados"}
             options={[
-              { value: "ACTIVE", label: "Active" },
-              { value: "INACTIVE", label: "Inactive" },
+              { value: "ACTIVE", label: "Activo" },
+              { value: "INACTIVE", label: "Inactivo" },
             ]}
           />
         );
@@ -62,7 +62,7 @@ function renderFilters(filters: NonNullable<ListConfig<unknown>["filters"]>) {
             key={filter.field}
             label={filter.label}
             paramName={filter.field}
-            placeholder={filter.placeholder ?? "All"}
+            placeholder={filter.placeholder ?? "Todos"}
             options={filter.options ?? []}
           />
         );
@@ -148,7 +148,7 @@ export async function ListPage<Row extends { id: string }>({
   const defaultPageSize = config.pageSize ?? 10;
   const desc =
     rows.length > 0
-      ? `Showing ${rows.length} of ${total} records.`
+      ? `Mostrando ${rows.length} de ${total} registros.`
       : "No hay registros todavía.";
 
   return (
@@ -213,10 +213,10 @@ export async function ListPage<Row extends { id: string }>({
             {config.sidebar
               ? renderSidebar(config.sidebar, total)
               : (
-                <DetailPanel title="List" description="Configurable list view.">
+                <DetailPanel title="Listado" description="Vista de lista configurable.">
                   <div className="space-y-3 rounded-2xl border border-slate-800/80 bg-slate-900/70 p-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-400">Total records</span>
+                      <span className="text-sm text-slate-400">Total de registros</span>
                       <span className="text-sm font-medium text-white">{total}</span>
                     </div>
                   </div>

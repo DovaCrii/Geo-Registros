@@ -13,7 +13,7 @@ type SelectFilterProps = {
 /**
  * URL-driven select filter with immediate navigation.
  */
-export function SelectFilter({ label, paramName, placeholder = "All", options }: SelectFilterProps) {
+export function SelectFilter({ label, paramName, placeholder = "Todos", options }: SelectFilterProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const current = searchParams.get(paramName) ?? "";
