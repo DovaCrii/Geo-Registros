@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ReactNode, useState } from "react";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { FlowGuide } from "@/modules/flow-guide/flow-guide";
@@ -19,28 +20,40 @@ const navigationItems = [
   { href: "/admin/email-logs", label: "Registro de correos", adminOnly: true },
 ];
 
-function NavLinks({ onClick }: { onClick?: () => void }) {
+function NavLinks({ pathname, onClick }: { pathname?: string; onClick?: () => void }) {
+  function isActive(href: string): boolean {
+    if (!pathname) return false;
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  }
+
   return (
     <nav className="space-y-2">
-        {navigationItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onClick}
-            className={`flex items-center justify-center rounded-2xl border px-4 py-3 text-sm font-medium transition ${
-              item.primary
-                ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-200 hover:border-cyan-400/50 hover:bg-cyan-500/15"
-                : "border-transparent text-slate-300 hover:border-cyan-500/30 hover:bg-cyan-500/5 hover:text-cyan-200"
-            }`}
-          >
-            {item.label}
-          </Link>
-        ))}
+        {navigationItems.map((item) => {
+          const active = isActive(item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onClick}
+              className={`flex items-center justify-center rounded-2xl border px-4 py-3 text-sm font-medium transition ${
+                item.primary
+                  ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-200 hover:border-cyan-400/50 hover:bg-cyan-500/15"
+                  : active
+                    ? "border-cyan-500/40 bg-cyan-500/15 text-cyan-100 shadow-sm shadow-cyan-500/5"
+                    : "border-transparent text-slate-300 hover:border-cyan-500/30 hover:bg-cyan-500/5 hover:text-cyan-200"
+              }`}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
     </nav>
   );
 }
 
 export function PageShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
@@ -92,7 +105,7 @@ export function PageShell({ children }: { children: ReactNode }) {
             </p>
         </div>
 
-        <NavLinks onClick={() => setMobileNavOpen(false)} />
+        <NavLinks pathname={pathname} onClick={() => setMobileNavOpen(false)} />
       </aside>
 
       {/* ── Main content ───────────────────────────────── */}
@@ -107,7 +120,7 @@ export function PageShell({ children }: { children: ReactNode }) {
                 Base de datos maestra para operaciones de vuelo, documentos y flujos geoespaciales.
               </p>
             </div>
-            <NavLinks />
+            <NavLinks pathname={pathname} />
           </div>
         </aside>
 
