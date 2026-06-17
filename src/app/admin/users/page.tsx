@@ -1,7 +1,5 @@
-import { ListPage } from "@/components/ui/list-page";
-import { userListConfig } from "@/modules/users/user-list.config";
-import { batchDeactivateUsers, batchReactivateUsers } from "@/server/users/actions";
 import { listUsers } from "@/server/users/queries";
+import { UsersPageClient } from "./users-page-client";
 
 export const dynamic = "force-dynamic";
 
@@ -13,17 +11,19 @@ export default async function AdminUsersPage({
   const params = await searchParams;
 
   try {
-    return (
-      <ListPage
-        config={userListConfig}
-        fetchData={listUsers}
-        searchParams={params}
-        batchHandlers={{
-          deactivate: batchDeactivateUsers,
-          reactivate: batchReactivateUsers,
-        }}
-      />
-    );
+    const result = await listUsers({
+      search: params.q || params.search,
+      page: Number(params.page) || 1,
+      pageSize: 10,
+      sortField: params.sort,
+      sortDir: (params.dir as "asc" | "desc") ?? undefined,
+      status: params.status,
+    });
+
+    // Serialize for client boundary
+    const rows = JSON.parse(JSON.stringify(result.rows));
+
+    return <UsersPageClient rows={rows} total={result.total} searchParams={params} />;
   } catch {
     return (
       <div className="p-6">

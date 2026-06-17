@@ -1,8 +1,6 @@
-import { ListPage } from "@/components/ui/list-page";
 import { requirePageAuth } from "@/lib/require-page-auth";
-import { droneListConfig } from "@/modules/drones/drone-list.config";
-import { batchActivateDrones, batchDeactivateDrones, batchDeleteDrones } from "@/server/drones/actions";
 import { listDrones } from "@/server/drones/queries";
+import { DronesPageClient } from "./drones-page-client";
 
 export const dynamic = "force-dynamic";
 
@@ -18,17 +16,20 @@ export default async function DronesPage({
   await requirePageAuth(queryParams.toString() ? `/drones?${queryParams.toString()}` : "/drones");
 
   try {
+    const result = await listDrones({
+      search: params.q || params.search,
+      page: Number(params.page) || 1,
+      pageSize: 10,
+      sortField: params.sort,
+      sortDir: (params.dir as "asc" | "desc") ?? undefined,
+      status: params.status,
+    });
+
+    // Serialize for client boundary (strip Dates, etc.)
+    const rows = JSON.parse(JSON.stringify(result.rows));
+
     return (
-      <ListPage
-        config={droneListConfig}
-        fetchData={listDrones}
-        searchParams={params}
-        batchHandlers={{
-          activate: batchActivateDrones,
-          deactivate: batchDeactivateDrones,
-          delete: batchDeleteDrones,
-        }}
-      />
+      <DronesPageClient rows={rows} total={result.total} searchParams={params} />
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : "Error de base de datos desconocido.";
