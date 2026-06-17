@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode, useState } from "react";
+import { useSession } from "next-auth/react";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { FlowGuide } from "@/modules/flow-guide/flow-guide";
 import { NotificationPanel } from "@/modules/notifications/notification-panel";
 
-const navigationItems = [
+const ALL_NAV_ITEMS = [
   { href: "/", label: "Inicio", primary: true },
   { href: "/dashboard", label: "Panel operativo" },
   { href: "/cost-centers", label: "Grupos de trabajo" },
@@ -21,6 +22,14 @@ const navigationItems = [
 ];
 
 function NavLinks({ pathname, onClick }: { pathname?: string; onClick?: () => void }) {
+  const { data: session, status } = useSession();
+  const isAdmin = status === "authenticated" && session?.user?.role === "ADMIN";
+
+  const visibleItems = ALL_NAV_ITEMS.filter((item) => {
+    if (item.adminOnly) return isAdmin;
+    return true;
+  });
+
   function isActive(href: string): boolean {
     if (!pathname) return false;
     if (href === "/") return pathname === "/";
@@ -29,7 +38,7 @@ function NavLinks({ pathname, onClick }: { pathname?: string; onClick?: () => vo
 
   return (
     <nav className="space-y-2">
-        {navigationItems.map((item) => {
+        {visibleItems.map((item) => {
           const active = isActive(item.href);
           return (
             <Link

@@ -5,8 +5,16 @@ import { Role } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { validateEmail, validateName, validatePassword } from "@/lib/validation";
+
+async function requireAdmin() {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "ADMIN") {
+    throw new Error("Acceso denegado. Se requiere rol ADMIN.");
+  }
+}
 
 function readString(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -19,6 +27,7 @@ function readOptionalString(formData: FormData, key: string) {
 }
 
 export async function createUser(formData: FormData) {
+  await requireAdmin();
   const email = readString(formData, "email").toLowerCase();
   const fullName = readString(formData, "fullName");
   const password = readString(formData, "password");
@@ -57,6 +66,7 @@ export async function createUser(formData: FormData) {
 }
 
 export async function updateUser(id: string, formData: FormData) {
+  await requireAdmin();
   const fullName = readString(formData, "fullName");
   const role = readString(formData, "role") as Role;
   const password = readOptionalString(formData, "password");
@@ -89,6 +99,7 @@ export async function updateUser(id: string, formData: FormData) {
 }
 
 export async function deactivateUser(id: string) {
+  await requireAdmin();
   await prisma.user.update({
     where: { id },
     data: { active: false },
@@ -98,6 +109,7 @@ export async function deactivateUser(id: string) {
 }
 
 export async function reactivateUser(id: string) {
+  await requireAdmin();
   await prisma.user.update({
     where: { id },
     data: { active: true },
@@ -109,6 +121,7 @@ export async function reactivateUser(id: string) {
 /* ── Batch actions ─────────────────────────────────────── */
 
 export async function batchDeactivateUsers(ids: string[]) {
+  await requireAdmin();
   await prisma.user.updateMany({
     where: { id: { in: ids }, active: true },
     data: { active: false },
@@ -117,6 +130,7 @@ export async function batchDeactivateUsers(ids: string[]) {
 }
 
 export async function batchReactivateUsers(ids: string[]) {
+  await requireAdmin();
   await prisma.user.updateMany({
     where: { id: { in: ids }, active: false },
     data: { active: true },

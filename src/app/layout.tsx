@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import { SessionWrapper } from "@/components/ui/session-wrapper";
 import { ToastProvider } from "@/lib/toast-context";
 
 const inter = Inter({
@@ -42,7 +43,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         }}
       >
         <ThemeProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <SessionWrapper>
+            <ToastProvider>{children}</ToastProvider>
+          </SessionWrapper>
         </ThemeProvider>
       </body>
     </html>

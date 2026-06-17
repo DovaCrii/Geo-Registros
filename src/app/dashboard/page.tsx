@@ -157,9 +157,14 @@ const STATUS_LABELS: Record<string, string> = {
 
 // ─── Page ─────────────────────────────────────────────────────
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   const session = await requirePageAuth("/dashboard");
   const stats = await getDashboardStats();
+  const params = await searchParams;
 
   const userName = session?.user?.name ?? "Usuario";
 
@@ -223,6 +228,16 @@ export default async function DashboardPage() {
             Resumen operativo de tu plataforma AeroFlow
           </p>
         </div>
+
+        {/* Access denied banner */}
+        {params.error === "access-denied" && (
+          <div className="rounded-3xl border border-red-800/40 bg-red-950/25 p-6 shadow-xl shadow-red-950/10 backdrop-blur">
+            <h2 className="text-sm font-semibold text-red-100">Acceso denegado</h2>
+            <p className="mt-2 text-sm leading-6 text-red-50/80">
+              No tenés permisos suficientes para acceder a esa sección. Si creés que esto es un error, contactá al administrador.
+            </p>
+          </div>
+        )}
 
         {stats.issues.length > 0 ? (
           <div className="rounded-3xl border border-amber-800/40 bg-amber-950/25 p-6 shadow-xl shadow-amber-950/10 backdrop-blur">
