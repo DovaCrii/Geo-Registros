@@ -157,12 +157,6 @@ function HeroSection() {
               Solicitar demo
             </Link>
             <Link
-              href="/auth/login"
-              className="inline-flex items-center justify-center rounded-xl border border-slate-700/60 bg-slate-900/60 px-7 py-3 text-sm font-medium text-slate-300 transition hover:border-slate-600 hover:bg-slate-800/80"
-            >
-              Iniciar sesión
-            </Link>
-            <Link
               href="#proceso"
               className="inline-flex items-center justify-center rounded-xl px-2 py-3 text-sm font-medium text-slate-400 transition hover:text-cyan-200"
             >
