@@ -20,6 +20,7 @@ const TYPE_ICONS: Record<string, string> = {
   DOCUMENT_ATTACHED: "📎",
   DOCUMENT_REMOVED: "🗑",
   NOTE_ADDED: "📝",
+  EXPIRY_ALERT: "⏰",
 };
 
 function timeAgo(dateStr: string): string {
