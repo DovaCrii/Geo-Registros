@@ -19,6 +19,7 @@ const ALL_NAV_ITEMS = [
   { href: "/ayuda", label: "Ayuda DGAC" },
   { href: "/admin/users", label: "Usuarios", adminOnly: true },
   { href: "/admin/email-logs", label: "Registro de correos", adminOnly: true },
+  { href: "/admin/help-docs", label: "Documentación DGAC", adminOnly: true },
 ];
 
 function NavLinks({ pathname, onClick }: { pathname?: string; onClick?: () => void }) {

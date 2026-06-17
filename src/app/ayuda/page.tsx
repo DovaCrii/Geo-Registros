@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { PageShell } from "@/components/ui/page-shell";
 import { requirePageAuth } from "@/lib/require-page-auth";
+import { listHelpDocs } from "@/server/help-docs/storage";
 
 const sections = [
   { title: "Antes del vuelo", items: ["Registro RPA", "Credencial piloto RPAS", "Restricciones del espacio aéreo", "Clima y ventanas operativas"] },
@@ -11,20 +12,14 @@ const sections = [
   { title: "Gestión operativa", items: ["AOC / CEO", "SMS", "Manual de Operaciones", "SIGO / NEO / OIRS DGAC"] },
 ];
 
-const docs = [
-  { file: "00_indice_normativo.md", title: "Índice normativo" },
-  { file: "01_operaciones_rpas_chile.md", title: "Operaciones RPAS en Chile" },
-  { file: "02_dan_151_operaciones_rpas.md", title: "DAN 151" },
-  { file: "03_dan_91_operaciones_generales.md", title: "DAN 91" },
-  { file: "04_aoc_ceo_sms_manual_operaciones.md", title: "AOC / CEO / SMS / Manual" },
-  { file: "05_checklist_permiso_vuelo.md", title: "Checklist de permiso de vuelo" },
-  { file: "06_documentacion_operador_dron.md", title: "Documentación operador / dron" },
-  { file: "07_fiscalizacion_multas_incumplimientos.md", title: "Fiscalización y sanciones" },
-  { file: "08_fuentes_oficiales_dgac.md", title: "Fuentes oficiales DGAC" },
-];
-
 export default async function HelpPage() {
   await requirePageAuth("/ayuda");
+  const docs = await listHelpDocs();
+  const docsByCategory = docs.reduce<Record<string, typeof docs>>((acc, doc) => {
+    acc[doc.category] ??= [];
+    acc[doc.category].push(doc);
+    return acc;
+  }, {});
 
   return (
     <PageShell>
@@ -63,13 +58,24 @@ export default async function HelpPage() {
 
         <section className="mt-6 rounded-3xl border border-slate-800/80 bg-slate-950/45 p-6 shadow-xl shadow-slate-950/10 backdrop-blur">
           <h2 className="text-lg font-semibold text-white">Documentación interna</h2>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {docs.map((doc) => (
-              <div key={doc.file} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 p-4">
-                <p className="text-sm font-medium text-white">{doc.title}</p>
-                <p className="mt-1 text-xs text-slate-500">{doc.file}</p>
-              </div>
-            ))}
+          <div className="mt-4 space-y-6">
+            {docs.length === 0 ? (
+              <p className="text-sm text-slate-500">Todavía no hay documentos cargados.</p>
+            ) : (
+              Object.entries(docsByCategory).map(([category, items]) => (
+                <div key={category} className="space-y-3">
+                  <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">{category}</h3>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {items.map((doc) => (
+                      <Link key={doc.id} href={`/api/help-docs/${doc.id}`} className="rounded-2xl border border-slate-800/80 bg-slate-950/45 p-4 transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+                        <p className="text-sm font-medium text-white">{doc.title}</p>
+                        <p className="mt-1 text-xs text-slate-500">{doc.fileName}</p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </section>
 
