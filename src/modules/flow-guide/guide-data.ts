@@ -16,14 +16,14 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
       title: "Centro de comando",
       icon: "◉",
       steps: [
-        "Este es tu panel principal — acá ves el resumen de todas las operaciones.",
+        "Este es tu panel principal — arriba ves la siguiente acción recomendada para no perder tiempo.",
         "Los indicadores te muestran: planes de vuelo, drones activos, operadores y clientes.",
         "La sección de acciones pendientes te marca qué requiere atención hoy.",
         "La línea de tiempo muestra la actividad reciente de permisos y documentos.",
-        "Usá los accesos rápidos a la derecha para crear un plan de vuelo o revisar flota.",
+        "Usá la tarjeta de siguiente acción y los accesos rápidos para seguir el flujo correcto.",
         "¿Primera vez? Creá un plan de vuelo para empezar a operar.",
       ],
-      tip: "Tip: Los badges de distribución de permisos te ayudan a detectar rápidamente si hay autorizaciones vencidas o pendientes.",
+      tip: "Tip: La tarjeta de siguiente acción prioriza el paso más útil según el estado operativo actual.",
     },
   },
   {
