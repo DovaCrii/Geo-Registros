@@ -13,10 +13,13 @@ export function FlightPlanChecklist({
   flightPlanId,
   initialChecklist,
   suggestedChecklist,
+  geometryLink,
 }: {
   flightPlanId: string;
   initialChecklist?: unknown;
   suggestedChecklist?: unknown;
+  /** When set, shows a link to the geometry page for the "operation-area" item. */
+  geometryLink?: string;
 }) {
   const items = useMemo(() => DGAC_CHECKLIST_ITEMS, []);
   const { toast } = useToast();
@@ -91,9 +94,20 @@ export function FlightPlanChecklist({
                   disabled={saving !== null}
                   className="mt-1 h-4 w-4 rounded border-slate-600 bg-slate-900 text-cyan-400 focus:ring-cyan-400/40"
                 />
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-white">{item.label}</p>
                   <p className="mt-1 text-xs leading-5 text-slate-500">{item.hint}</p>
+                  {item.id === "operation-area" && geometryLink && (
+                    <a
+                      href={geometryLink}
+                      className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-cyan-300 transition hover:text-cyan-200"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5">
+                        <path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      Ver área de operación
+                    </a>
+                  )}
                 </div>
               </label>
             );

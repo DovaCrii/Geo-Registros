@@ -309,6 +309,7 @@ export default async function FlightPlanDetailPage({ params }: { params: Promise
                 flightPlanId={record.id}
                 initialChecklist={record.dgacChecklist}
                 suggestedChecklist={suggestedChecklist}
+                geometryLink={record.geometryJson ? `/flight-plans/${record.id}/geometry` : undefined}
               />
 
               <DetailPanel
