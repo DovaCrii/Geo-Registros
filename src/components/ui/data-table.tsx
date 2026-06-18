@@ -33,7 +33,7 @@ export function DataTable<Row>({
 
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800/80 text-sm">
-          <thead className="bg-slate-50 dark:bg-slate-900/80">
+          <thead className="bg-slate-50 dark:bg-slate-950/80">
             <tr>
               {columns.map((column) => (
                 <th

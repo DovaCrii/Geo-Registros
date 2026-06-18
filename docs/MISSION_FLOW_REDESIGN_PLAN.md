@@ -35,10 +35,11 @@ Esto obliga al usuario a: crear → guardar → navegar al detalle → buscar el
   - `updateFlightPlan` → se queda en `/flight-plans/{id}` en vez de volver al listado ✅
 - El detail page se vuelve el centro operativo real
 
-### Etapa 4 — Barra de progreso en detalle
-- Agregar indicador visual en el detail: "Pasos completados: X/6"
-- El tab activo se resalta en la navegación
-- Tooltip o mini-alerta en cada tab si falta algo
+### Etapa 4 — Barra de progreso en detalle ✅
+- Agregar indicador visual en el detail: "Pasos completados: X/6" ✅
+- Barra de progreso con gradiente cyan→emerald ✅
+- Tabs completados muestran checkmark y fondo verde ✅
+- Criterio de completitud por tab basado en datos reales ✅
 
 ## Archivos a modificar (por etapa)
 

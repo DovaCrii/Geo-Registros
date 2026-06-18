@@ -248,7 +248,7 @@ function WorkflowStrip({ stages }: { stages: WorkflowStage[] }) {
               ? "border-accent/30 dark:border-cyan-300 bg-accent/5 dark:bg-cyan-50/90 text-accent-strong dark:text-cyan-950 shadow-sm shadow-accent/10 dark:shadow-cyan-100"
               : stage.state === "done"
                 ? "border-success/30 dark:border-emerald-200 bg-success/5 dark:bg-emerald-50/80 text-success dark:text-emerald-950"
-                : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300";
+                : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/70 text-slate-700 dark:text-slate-300";
           const dotClasses =
             stage.state === "active" ? "bg-accent dark:bg-cyan-500" : stage.state === "done" ? "bg-success dark:bg-emerald-500" : "bg-slate-300 dark:bg-slate-600";
           return (
@@ -274,7 +274,7 @@ function WorkflowStrip({ stages }: { stages: WorkflowStage[] }) {
 
 function PriorityCard({ item }: { item: PriorityItem }) {
   const toneMap = {
-    neutral: "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/70 text-slate-900 dark:text-slate-200",
+    neutral: "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950/70 text-slate-900 dark:text-slate-200",
     info: "border-accent/30 dark:border-cyan-200 bg-accent/5 dark:bg-cyan-50/90 text-accent-strong dark:text-cyan-950",
     warning: "border-status-warning/30 dark:border-amber-200 bg-status-warning/5 dark:bg-amber-50/90 text-status-warning dark:text-amber-950",
     danger: "border-status-danger/30 dark:border-rose-200 bg-status-danger/5 dark:bg-rose-50/90 text-status-danger dark:text-rose-950",
@@ -480,19 +480,19 @@ export default async function DashboardPage({
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-6 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
                   <h2 className="mb-4 font-heading text-lg font-semibold text-slate-900 dark:text-white">Acceso rápido</h2>
                   <div className="space-y-3">
-                    <Link href="/flight-plans/new" className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/70 px-4 py-3 text-sm transition hover:bg-slate-100 dark:hover:border-accent/30 dark:hover:bg-slate-800/70">
+                    <Link href="/flight-plans/new" className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/70 px-4 py-3 text-sm transition hover:bg-slate-100 dark:hover:border-accent/30 dark:hover:bg-slate-800/70">
                       <span className="text-slate-700 dark:text-slate-300">Crear plan de vuelo</span>
                       <span className="text-xs text-accent dark:text-cyan-300">+</span>
                     </Link>
-                    <Link href="/drones" className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/70 px-4 py-3 text-sm transition hover:bg-slate-100 dark:hover:border-accent/30 dark:hover:bg-slate-800/70">
+                    <Link href="/drones" className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/70 px-4 py-3 text-sm transition hover:bg-slate-100 dark:hover:border-accent/30 dark:hover:bg-slate-800/70">
                       <span className="text-slate-700 dark:text-slate-300">Gestionar flota</span>
                       <span className="text-xs text-accent dark:text-cyan-300">→</span>
                     </Link>
-                    <Link href="/operators" className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/70 px-4 py-3 text-sm transition hover:bg-slate-100 dark:hover:border-accent/30 dark:hover:bg-slate-800/70">
+                    <Link href="/operators" className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/70 px-4 py-3 text-sm transition hover:bg-slate-100 dark:hover:border-accent/30 dark:hover:bg-slate-800/70">
                       <span className="text-slate-700 dark:text-slate-300">Operadores</span>
                       <span className="text-xs text-accent dark:text-cyan-300">→</span>
                     </Link>
-                    <Link href="/cost-centers" className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/70 px-4 py-3 text-sm transition hover:bg-slate-100 dark:hover:border-accent/30 dark:hover:bg-slate-800/70">
+                    <Link href="/cost-centers" className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/70 px-4 py-3 text-sm transition hover:bg-slate-100 dark:hover:border-accent/30 dark:hover:bg-slate-800/70">
                       <span className="text-slate-700 dark:text-slate-300">Grupos de trabajo</span>
                       <span className="text-xs text-accent dark:text-cyan-300">→</span>
                     </Link>
@@ -505,7 +505,7 @@ export default async function DashboardPage({
                   {stats.recentDocuments.length > 0 ? (
                     <div className="space-y-3">
                       {stats.recentDocuments.map((doc) => (
-                        <div key={doc.id} className="rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/70 px-4 py-3">
+                        <div key={doc.id} className="rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/70 px-4 py-3">
                           <p className="text-sm text-slate-700 dark:text-slate-300">{doc.fileName}</p>
                           <p className="text-xs text-slate-400 dark:text-slate-500">{doc.flightPlan.code} · {doc.createdAt.toLocaleDateString("es-CL")}</p>
                         </div>

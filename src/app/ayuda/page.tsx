@@ -39,7 +39,7 @@ export default async function HelpPage() {
               <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{section.title}</h2>
               <ul className="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-400">
                 {section.items.map((item) => (
-                  <li key={item} className="flex gap-3 rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/60 px-4 py-3">
+                  <li key={item} className="flex gap-3 rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/60 px-4 py-3">
                     <span className="mt-1 h-2 w-2 rounded-full bg-accent dark:bg-cyan-400" />
                     <span>{item}</span>
                   </li>
@@ -80,7 +80,7 @@ export default async function HelpPage() {
         </section>
 
         <div className="flex flex-wrap gap-3">
-          <Link href="/dashboard" className="inline-flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:border-slate-600 dark:hover:bg-slate-800">Volver al panel</Link>
+          <Link href="/dashboard" className="inline-flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-950/80 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:border-slate-600 dark:hover:bg-slate-800">Volver al panel</Link>
           <Link href="/flight-plans" className="inline-flex items-center justify-center rounded-lg border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-accent-strong dark:text-cyan-100 transition hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20">Ir a planes de vuelo</Link>
         </div>
       </div>

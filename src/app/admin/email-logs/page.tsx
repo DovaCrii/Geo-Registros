@@ -65,7 +65,7 @@ export default async function AdminEmailLogsPage() {
           <table className="w-full text-sm">
             <caption className="sr-only">Registro de correos enviados desde la plataforma</caption>
             <thead>
-              <tr className="border-b border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/70">
+              <tr className="border-b border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/70">
                 <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Para</th>
                 <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Asunto</th>
                 <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Tipo</th>

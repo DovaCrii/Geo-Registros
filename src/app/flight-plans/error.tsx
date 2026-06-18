@@ -30,7 +30,7 @@ export default function FlightPlansError({
           </button>
           <Link
             href="/dashboard"
-            className="rounded-2xl border border-slate-200 bg-white/90 px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900/70 dark:text-slate-300 dark:hover:border-slate-600"
+            className="rounded-2xl border border-slate-200 bg-white/90 px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 dark:border-slate-800 dark:bg-slate-950/70 dark:text-slate-300 dark:hover:border-slate-600"
           >
             Volver al dashboard
           </Link>

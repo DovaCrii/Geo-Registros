@@ -124,7 +124,7 @@ export default async function EmailLogDetailPage({
         {/* Body */}
         <div className="lg:col-span-2">
           <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/50 overflow-hidden shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
-            <div className="px-5 py-3 border-b border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/70">
+            <div className="px-5 py-3 border-b border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/70">
               <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Contenido</p>
             </div>
             <div

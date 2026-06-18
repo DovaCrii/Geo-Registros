@@ -92,7 +92,7 @@ export function FlightPlanChecklist({
                     void persist(next);
                   }}
                   disabled={saving !== null}
-                  className="mt-1 h-4 w-4 rounded border-slate-300 bg-white text-cyan-500 focus:ring-cyan-400/40 dark:border-slate-600 dark:bg-slate-900 dark:text-cyan-400"
+                  className="mt-1 h-4 w-4 rounded border-slate-300 bg-white text-cyan-500 focus:ring-cyan-400/40 dark:border-slate-600 dark:bg-slate-950 dark:text-cyan-400"
                 />
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-slate-900 dark:text-white">{item.label}</p>

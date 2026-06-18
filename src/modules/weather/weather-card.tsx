@@ -13,7 +13,7 @@ function WeatherDisplay({ data }: { data: WeatherData }) {
   return (
     <div className="space-y-4">
       {/* Temperature */}
-      <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white/90 px-4 py-3 dark:border-slate-700/60 dark:bg-slate-900/50">
+      <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white/90 px-4 py-3 dark:border-slate-700/60 dark:bg-slate-950/50">
         <span className="text-sm text-slate-600 dark:text-slate-400">Temperatura</span>
         <span className="text-base font-semibold text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-mono)" }}>
           {data.temperatureMin !== null ? `${Math.round(data.temperatureMin)}${tempUnit}` : "--"}{" "}
@@ -29,7 +29,7 @@ function WeatherDisplay({ data }: { data: WeatherData }) {
       </div>
 
       {/* Wind */}
-      <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white/90 px-4 py-3 dark:border-slate-700/60 dark:bg-slate-900/50">
+      <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white/90 px-4 py-3 dark:border-slate-700/60 dark:bg-slate-950/50">
         <span className="text-sm text-slate-600 dark:text-slate-400">Viento máx</span>
         <span className="text-base font-semibold text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-mono)" }}>
           {data.windSpeedMax !== null ? `${Math.round(data.windSpeedMax)} ${windUnit}` : "--"}
@@ -38,7 +38,7 @@ function WeatherDisplay({ data }: { data: WeatherData }) {
 
       {/* Wind direction */}
       {data.windDirection !== null && (
-        <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white/90 px-4 py-3 dark:border-slate-700/60 dark:bg-slate-900/50">
+        <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white/90 px-4 py-3 dark:border-slate-700/60 dark:bg-slate-950/50">
           <span className="text-sm text-slate-600 dark:text-slate-400">Dirección</span>
           <span className="text-base font-semibold text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-mono)" }}>
             {windDirectionLabel(data.windDirection)} ({data.windDirection}°)

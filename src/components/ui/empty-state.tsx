@@ -19,7 +19,7 @@ export function EmptyState({ icon, title, description, action, steps }: EmptySta
   return (
     <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-8 text-center shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
       {icon && (
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-accent dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-cyan-300">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-accent dark:border-slate-700/60 dark:bg-slate-950/70 dark:text-cyan-300">
           {icon}
         </div>
       )}

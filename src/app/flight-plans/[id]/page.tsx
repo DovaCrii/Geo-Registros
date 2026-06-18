@@ -356,7 +356,7 @@ export default async function FlightPlanDetailPage({
                     <Link href={`/flight-plans/${record.id}/geometry`} className="inline-flex items-center justify-center rounded-lg border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-accent-strong dark:text-cyan-100 transition hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20">
                       Abrir editor satelital
                     </Link>
-                    <Link href={`/flight-plans/${record.id}/geometry`} className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-700/80 dark:bg-slate-900/80 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800">
+                    <Link href={`/flight-plans/${record.id}/geometry`} className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-700/80 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800">
                       Ver área de operación
                     </Link>
                   </div>
@@ -400,7 +400,7 @@ export default async function FlightPlanDetailPage({
                         return (
                           <div
                             key={item.id}
-                            className={`rounded-lg border px-3 py-2 text-xs leading-5 ${checked ? "border-success/20 dark:border-emerald-500/20 bg-success/5 dark:bg-emerald-500/[0.04] text-success dark:text-emerald-50" : "border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-300"}`}
+                            className={`rounded-lg border px-3 py-2 text-xs leading-5 ${checked ? "border-success/20 dark:border-emerald-500/20 bg-success/5 dark:bg-emerald-500/[0.04] text-success dark:text-emerald-50" : "border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 text-slate-600 dark:text-slate-300"}`}
                           >
                             <span className="font-medium">{checked ? "✓" : "○"} {item.label}</span>
                           </div>

@@ -165,7 +165,7 @@ export function DocumentUpload({
           <div className="space-y-2">
             {documents.map((doc) => (
               <div key={doc.id} className="relative">
-                <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 dark:border-slate-800/80 dark:bg-slate-900/70">
+                <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 dark:border-slate-800/80 dark:bg-slate-950/70">
                   <div className="min-w-0 flex-1 space-y-0.5">
                     <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-200">{doc.fileName}</p>
                     <p className="text-xs text-slate-600 dark:text-slate-500">
@@ -196,7 +196,7 @@ export function DocumentUpload({
                         <button
                           type="button"
                           onClick={() => setConfirmRemove(null)}
-                          className="rounded-xl border border-slate-200 bg-white/90 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-700/80 dark:bg-slate-900/80 dark:text-slate-300 dark:hover:bg-slate-800"
+                          className="rounded-xl border border-slate-200 bg-white/90 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-700/80 dark:bg-slate-950/80 dark:text-slate-300 dark:hover:bg-slate-800"
                         >
                           Cancelar
                         </button>

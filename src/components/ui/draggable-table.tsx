@@ -135,7 +135,7 @@ export function DraggableTable<Row>({
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-200 text-sm dark:divide-slate-800/80">
           <caption className="sr-only">{title}</caption>
-          <thead className="bg-slate-50 dark:bg-slate-900/80">
+          <thead className="bg-slate-50 dark:bg-slate-950/80">
             <tr>
               {orderedColumns.map((column, idx) => (
                 <th key={column.key} scope="col" className="px-6 py-3 text-left">

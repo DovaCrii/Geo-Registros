@@ -69,7 +69,7 @@ export function SelectableTable<Row extends { id: string }>({
         checked={selectedIds.has(row.id)}
         onChange={() => toggleId(row.id)}
         aria-label={`Seleccionar fila ${row.id}`}
-        className="h-4 w-4 rounded border-slate-300 bg-white text-accent focus:ring-accent/40 dark:border-slate-700 dark:bg-slate-900 dark:text-cyan-500 dark:focus:ring-cyan-400/40"
+        className="h-4 w-4 rounded border-slate-300 bg-white text-accent focus:ring-accent/40 dark:border-slate-700 dark:bg-slate-950 dark:text-cyan-500 dark:focus:ring-cyan-400/40"
       />
     ),
   };
@@ -81,7 +81,7 @@ export function SelectableTable<Row extends { id: string }>({
       checked={rows.length > 0 && selectedIds.size === rows.length}
       onChange={toggleAll}
       aria-label="Seleccionar todas las filas"
-      className="h-4 w-4 rounded border-slate-300 bg-white text-accent focus:ring-accent/40 dark:border-slate-700 dark:bg-slate-900 dark:text-cyan-500 dark:focus:ring-cyan-400/40"
+      className="h-4 w-4 rounded border-slate-300 bg-white text-accent focus:ring-accent/40 dark:border-slate-700 dark:bg-slate-950 dark:text-cyan-500 dark:focus:ring-cyan-400/40"
     />
   );
 

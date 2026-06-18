@@ -105,7 +105,7 @@ export default function RegisterPage() {
               value={fullName}
               onChange={(e) => handleField(setFullName, "fullName")(e.target.value)}
               placeholder="Tu nombre"
-              className={`w-full rounded-lg border bg-white dark:bg-slate-900/90 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-accent/20 dark:focus:ring-cyan-500/20 ${
+              className={`w-full rounded-lg border bg-white dark:bg-slate-950/90 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-accent/20 dark:focus:ring-cyan-500/20 ${
                 errors.fullName
                   ? "border-red-300 dark:border-rose-500/60 focus:border-danger dark:focus:border-rose-400/60"
                   : "border-slate-300 dark:border-slate-700/80 focus:border-accent/60 dark:focus:border-cyan-400/60"
@@ -127,7 +127,7 @@ export default function RegisterPage() {
               value={email}
               onChange={(e) => handleField(setEmail, "email")(e.target.value)}
               placeholder="tu@email.com"
-              className={`w-full rounded-lg border bg-white dark:bg-slate-900/90 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-accent/20 dark:focus:ring-cyan-500/20 ${
+              className={`w-full rounded-lg border bg-white dark:bg-slate-950/90 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-accent/20 dark:focus:ring-cyan-500/20 ${
                 errors.email
                   ? "border-red-300 dark:border-rose-500/60 focus:border-danger dark:focus:border-rose-400/60"
                   : "border-slate-300 dark:border-slate-700/80 focus:border-accent/60 dark:focus:border-cyan-400/60"
@@ -149,7 +149,7 @@ export default function RegisterPage() {
               value={password}
               onChange={(e) => handleField(setPassword, "password")(e.target.value)}
               placeholder="Mínimo 8 caracteres"
-              className={`w-full rounded-lg border bg-white dark:bg-slate-900/90 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-accent/20 dark:focus:ring-cyan-500/20 ${
+              className={`w-full rounded-lg border bg-white dark:bg-slate-950/90 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-accent/20 dark:focus:ring-cyan-500/20 ${
                 errors.password
                   ? "border-red-300 dark:border-rose-500/60 focus:border-danger dark:focus:border-rose-400/60"
                   : "border-slate-300 dark:border-slate-700/80 focus:border-accent/60 dark:focus:border-cyan-400/60"

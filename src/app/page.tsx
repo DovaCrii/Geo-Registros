@@ -205,19 +205,19 @@ function HeroSection() {
               <div className="space-y-5 p-6">
                 {/* Row 1: Key metrics */}
                 <div className="grid grid-cols-4 gap-4">
-                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/75">
+                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/75">
                       <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">Vuelos registrados</p>
                       <p className="mt-2 text-3xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>24</p>
                     </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/75">
+                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/75">
                       <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">Cobertura</p>
                       <p className="mt-2 text-3xl font-bold text-cyan-700 dark:text-cyan-200" style={{ fontFamily: "var(--font-mono)" }}>92%</p>
                     </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/75">
+                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/75">
                       <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">Entregables</p>
                       <p className="mt-2 text-3xl font-bold text-emerald-700 dark:text-emerald-200" style={{ fontFamily: "var(--font-mono)" }}>18</p>
                     </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/75">
+                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/75">
                       <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">Modelos activos</p>
                       <p className="mt-2 text-3xl font-bold text-amber-700 dark:text-amber-200" style={{ fontFamily: "var(--font-mono)" }}>4</p>
                     </div>
@@ -547,7 +547,7 @@ function DashboardPreview() {
         </div>
 
         {/* Mockup */}
-        <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-cyan-950/5 dark:border-slate-700/60 dark:bg-slate-900">
+        <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-cyan-950/5 dark:border-slate-700/60 dark:bg-slate-950">
           {/* Browser chrome */}
           <div className="flex items-center gap-2 border-b border-slate-200 px-5 py-3 dark:border-slate-700/40">
             <span className="h-3 w-3 rounded-full bg-rose-500/60" />
@@ -596,11 +596,11 @@ function DashboardPreview() {
 
               {/* Map placeholder */}
               <div className="geo-grid-subtle relative h-44 rounded-xl border border-slate-200 bg-slate-50/90 dark:border-slate-700/40 dark:bg-slate-800/60">
-                <div className="absolute left-3 top-3 rounded-lg border border-slate-200 bg-white/90 px-3 py-2 dark:border-slate-700/40 dark:bg-slate-900/80">
+                <div className="absolute left-3 top-3 rounded-lg border border-slate-200 bg-white/90 px-3 py-2 dark:border-slate-700/40 dark:bg-slate-950/80">
                   <div className="h-2 w-16 rounded bg-cyan-500/30" />
                   <div className="mt-1 h-2 w-24 rounded bg-slate-200 dark:bg-slate-700/30" />
                 </div>
-                <div className="absolute bottom-3 right-3 rounded-lg border border-slate-200 bg-white/90 px-3 py-2 text-xs text-slate-600 dark:border-slate-700/40 dark:bg-slate-900/80 dark:text-slate-500">
+                <div className="absolute bottom-3 right-3 rounded-lg border border-slate-200 bg-white/90 px-3 py-2 text-xs text-slate-600 dark:border-slate-700/40 dark:bg-slate-950/80 dark:text-slate-500">
                   EPSG: 32719 · WGS84 / UTM
                 </div>
               </div>
@@ -657,7 +657,7 @@ function TechnicalSection() {
           {specs.map((spec) => (
             <div
               key={spec}
-            className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/90 px-5 py-3 transition hover:border-amber-500/20 dark:border-slate-800/50 dark:bg-slate-900/40"
+            className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/90 px-5 py-3 transition hover:border-amber-500/20 dark:border-slate-800/50 dark:bg-slate-950/40"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-amber-500/70" />
               <span className="text-sm text-slate-700 dark:text-slate-300">{spec}</span>
