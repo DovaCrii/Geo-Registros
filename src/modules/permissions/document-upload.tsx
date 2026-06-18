@@ -145,7 +145,7 @@ export function DocumentUpload({
         <input
           type="file"
           name="file"
-          className="w-full text-sm text-slate-600 file:mr-3 file:rounded-2xl file:border file:border-slate-200 file:bg-white file:px-4 file:py-2 file:text-sm file:text-slate-700 file:transition hover:file:border-slate-300 dark:text-slate-400 dark:file:border-slate-800 dark:file:bg-slate-900/80 dark:file:text-slate-200 dark:hover:file:border-slate-600"
+          className="w-full text-sm text-slate-600 file:mr-3 file:rounded-2xl file:border file:border-slate-200 file:bg-white file:px-4 file:py-2 file:text-sm file:text-slate-700 file:transition hover:file:border-slate-300 dark:text-slate-400 dark:file:border-slate-800 dark:file:bg-slate-950/90 dark:file:text-slate-200 dark:hover:file:border-slate-600"
         />
 
         <button

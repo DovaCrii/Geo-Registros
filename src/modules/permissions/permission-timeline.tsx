@@ -1,14 +1,14 @@
 const EVENT_LABELS: Record<string, string> = {
-  CREATED: "Flight plan created",
-  STATUS_CHANGED: "Status changed",
-  DOCUMENT_ATTACHED: "Document attached",
-  DOCUMENT_REMOVED: "Document removed",
-  NOTE_ADDED: "Note added",
-  EMAIL_REGISTERED: "Email registered",
+  CREATED: "Plan de vuelo creado",
+  STATUS_CHANGED: "Estado cambiado",
+  DOCUMENT_ATTACHED: "Documento adjuntado",
+  DOCUMENT_REMOVED: "Documento eliminado",
+  NOTE_ADDED: "Nota agregada",
+  EMAIL_REGISTERED: "Correo registrado",
 };
 
 function formatter(date: Date) {
-  return new Intl.DateTimeFormat("en-CA", {
+  return new Intl.DateTimeFormat("es-CL", {
     year: "numeric",
     month: "short",
     day: "2-digit",
@@ -30,7 +30,7 @@ export function PermissionTimeline({
   }>;
 }) {
   if (events.length === 0) {
-    return <p className="text-sm text-slate-600 dark:text-slate-500">No events recorded yet.</p>;
+    return <p className="text-sm text-slate-600 dark:text-slate-500">Todavía no hay eventos registrados.</p>;
   }
 
   return (
