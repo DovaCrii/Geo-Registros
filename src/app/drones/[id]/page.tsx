@@ -72,18 +72,18 @@ export default async function DroneDetailPage({ params }: { params: Promise<{ id
             </div>
           </DetailPanel>
 
-            <DroneForm
+          <DroneForm
               title="Editar dron"
               description="Actualizá identidad, fabricante, grupo de trabajo opcional, estado y notas."
               action={updateDrone.bind(null, record.id)}
               submitLabel="Guardar cambios"
-            costCenterOptions={
-              record.costCenter
-                ? costCenterOptions.some((item) => item.id === record.costCenter!.id)
-                  ? costCenterOptions
-                  : [{ id: record.costCenter.id, code: record.costCenter.code ?? "", name: record.costCenter.name }, ...costCenterOptions]
-                : costCenterOptions
-            }
+              costCenterOptions={
+                record.costCenter
+                  ? costCenterOptions.some((item) => item.id === record.costCenter!.id)
+                    ? costCenterOptions
+                    : [{ id: record.costCenter.id, code: record.costCenter.code ?? "", name: record.costCenter.name }, ...costCenterOptions]
+                  : costCenterOptions
+              }
               initialValues={{
                 code: record.code ?? "",
                 serialNumber: record.serialNumber,

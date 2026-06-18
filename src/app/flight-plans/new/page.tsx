@@ -43,7 +43,7 @@ export default async function NewFlightPlanPage() {
         {missingDependencies.length > 0 ? (
           <DetailPanel title="Datos maestros requeridos" description="Antes de crear el plan necesitás completar los registros base del flujo.">
             <div className="space-y-4">
-              <p className="text-sm text-slate-300">
+              <p className="text-sm text-slate-600 dark:text-slate-300">
                 Faltan datos en: {missingDependencies.map((item) => item.label).join(", ")}.
                 Si la base de datos está offline, los selectores también quedarán indisponibles hasta recuperar conectividad.
               </p>
@@ -53,7 +53,7 @@ export default async function NewFlightPlanPage() {
                   <a
                     key={item.label}
                     href={item.href}
-                    className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20"
+                    className="inline-flex items-center justify-center rounded-2xl border border-cyan-500/30 bg-cyan-50 px-4 py-2.5 text-sm font-medium text-cyan-700 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-400/20"
                   >
                     Crear {item.label.toLowerCase()}
                   </a>

@@ -13,12 +13,14 @@
 ## Fase 3 - Sistema visual
 - Definir tokens base, jerarquia tipografica, estados, botones y cards.
 - Adoptar tema claro como experiencia primaria y dark mode como secundario.
-- Aplicar gradualmente el sistema visual a dashboard, listas, formularios y flujo de mision.
+- Aplicar gradualmente el sistema visual a dashboard, listas, formularios, ayuda, admin, maestros y flujo de mision.
+- Cerrar los restos heredados con cambios chicos, validacion continua y documentacion actualizada.
 
 ## Fase 4 - Workflow DGAC y trazabilidad
 - Pulir checklist documental.
 - Mejorar timeline de permisos.
 - Reforzar mensajes de ayuda contextual.
+- Alinear la experiencia de permisos, documentos y geometria con el nuevo sistema visual.
 
 ## Fase 5 - Comercializacion y entrega
 - Ajustar README y home para explicar valor comercial.

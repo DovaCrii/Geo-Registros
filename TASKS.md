@@ -14,3 +14,8 @@
 | T-010 | Planificar rediseño gradual del flujo de misión | Alta | OpenCode | `docs/UX_WORKFLOW_MASTER_PLAN.md`, `src/app/flight-plans/` | Existe una tarea pequeña para mejorar el wizard sin refactor global | Handoff aprobado |
 | T-011 | Definir y aplicar sistema visual base | Alta | OpenCode | `docs/DESIGN_SYSTEM_PLAN.md`, `src/app/globals.css`, `src/components/ui/` | Tokens y patrones visuales quedan definidos y aplicados de forma gradual antes de rediseñar pantallas | `npm run typecheck` |
 | T-012 | Actualizar bitácora de avance IA | Media | Codex | `docs/AI_PROGRESS_LOG.md` | Cada sesión deja objetivo, cambios, decisiones y próxima tarea | Revisión manual |
+
+## Estado de seguimiento
+
+- T-011 ya quedó aplicado de forma amplia en componentes compartidos, auth, admin, maestros, dashboard, ayudas, detalles y flujo de planes de vuelo.
+- Lo que resta es peinar pantallas heredadas puntuales y cerrar el seguimiento documental antes de abrir otra linea de trabajo.

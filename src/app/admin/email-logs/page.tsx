@@ -60,18 +60,19 @@ export default async function AdminEmailLogsPage() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/50 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
+        <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/50 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
+            <caption className="sr-only">Registro de correos enviados desde la plataforma</caption>
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/70">
-                <th className="text-left px-4 py-3 font-medium text-slate-500">Para</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-500">Asunto</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-500">Tipo</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-500">Estado</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-500">Enviado</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-500">Vuelo</th>
-                <th className="text-right px-4 py-3 font-medium text-slate-500">Acción</th>
+                <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Para</th>
+                <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Asunto</th>
+                <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Tipo</th>
+                <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Estado</th>
+                <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Enviado</th>
+                <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Vuelo</th>
+                <th scope="col" className="text-right px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Acción</th>
               </tr>
             </thead>
             <tbody>
@@ -101,7 +102,7 @@ export default async function AdminEmailLogsPage() {
                   <td className="px-4 py-3">
                     <span
                       className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${
-                        STATUS_COLORS[email.status] ?? "text-slate-400 bg-slate-400/10 border-slate-400/20"
+                        STATUS_COLORS[email.status] ?? "text-slate-600 bg-slate-100 border-slate-300 dark:text-slate-400 dark:bg-slate-400/10 dark:border-slate-400/20"
                       }`}
                     >
                       {email.status}

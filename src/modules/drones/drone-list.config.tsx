@@ -25,15 +25,15 @@ export const droneColumns: ListColumn<DroneRow>[] = [
     key: "code",
     header: "Código",
     sortable: true,
-    render: (row) => <span className="font-medium text-white">{row.code ?? "—"}</span>,
+    render: (row) => <span className="font-medium text-slate-900 dark:text-white">{row.code ?? "—"}</span>,
   },
   {
     key: "aircraft",
     header: "Aeronave",
     render: (row) => (
       <div className="space-y-1">
-        <p className="font-medium text-white">{row.model}</p>
-        <p className="text-xs text-slate-500">{row.manufacturer ?? "Fabricante pendiente"}</p>
+        <p className="font-medium text-slate-900 dark:text-white">{row.model}</p>
+        <p className="text-xs text-slate-600 dark:text-slate-500">{row.manufacturer ?? "Fabricante pendiente"}</p>
       </div>
     ),
   },
@@ -43,11 +43,11 @@ export const droneColumns: ListColumn<DroneRow>[] = [
     sortable: true,
     sortField: "serialNumber",
     render: (row) => (
-      <div className="space-y-1 text-slate-300">
+      <div className="space-y-1 text-slate-700 dark:text-slate-300">
         <p>{row.serialNumber}</p>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-600 dark:text-slate-500">
           {row.costCenter ? (
-            <Link href={`/cost-centers/${row.costCenter.id}`} className="transition hover:text-cyan-300">
+            <Link href={`/cost-centers/${row.costCenter.id}`} className="transition hover:text-cyan-600 dark:hover:text-cyan-300">
               {row.costCenter.code} — {row.costCenter.name}
             </Link>
           ) : (
@@ -64,10 +64,10 @@ export const droneColumns: ListColumn<DroneRow>[] = [
       if (!row.insuranceExpiry) return <span className="text-sm text-slate-500">—</span>;
       const date = new Date(row.insuranceExpiry);
       const isExpired = date < new Date();
-      return (
-        <span className={`text-sm ${isExpired ? "text-red-400" : "text-slate-300"}`}>
+        return (
+        <span className={`text-sm ${isExpired ? "text-red-600 dark:text-red-400" : "text-slate-700 dark:text-slate-300"}`}>
           {date.toISOString().slice(0, 10)}
-          {isExpired && <span className="ml-1.5 text-xs text-red-400">(Vencido)</span>}
+          {isExpired && <span className="ml-1.5 text-xs text-red-600 dark:text-red-400">(Vencido)</span>}
         </span>
       );
     },
@@ -82,7 +82,7 @@ export const droneColumns: ListColumn<DroneRow>[] = [
     key: "actions",
     header: "Acciones",
     render: (row) => (
-      <Link href={`/drones/${row.id}`} className="text-sm font-medium text-cyan-300 transition hover:text-cyan-200">
+      <Link href={`/drones/${row.id}`} className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200">
         Editar
       </Link>
     ),

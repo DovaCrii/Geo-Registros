@@ -23,7 +23,7 @@ export const clientColumns: ListColumn<ClientRow>[] = [
     key: "code",
     header: "Código",
     sortable: true,
-    render: (row) => <span className="font-medium text-white">{row.code ?? "—"}</span>,
+    render: (row) => <span className="font-medium text-slate-900 dark:text-white">{row.code ?? "—"}</span>,
   },
   {
     key: "name",
@@ -31,8 +31,8 @@ export const clientColumns: ListColumn<ClientRow>[] = [
     sortable: true,
     render: (row) => (
       <div className="space-y-1">
-        <p className="font-medium text-white">{row.name}</p>
-        {row.notes && <p className="text-xs text-slate-500">{row.notes}</p>}
+        <p className="font-medium text-slate-900 dark:text-white">{row.name}</p>
+        {row.notes && <p className="text-xs text-slate-600 dark:text-slate-500">{row.notes}</p>}
       </div>
     ),
   },
@@ -40,9 +40,9 @@ export const clientColumns: ListColumn<ClientRow>[] = [
     key: "contact",
     header: "Contacto principal",
     render: (row) => (
-      <div className="space-y-1 text-slate-300">
+      <div className="space-y-1 text-slate-700 dark:text-slate-300">
         <p>{row.contactName ?? "—"}</p>
-        {row.contactEmail && <p className="text-xs text-slate-500">{row.contactEmail}</p>}
+        {row.contactEmail && <p className="text-xs text-slate-600 dark:text-slate-500">{row.contactEmail}</p>}
       </div>
     ),
   },
@@ -56,7 +56,7 @@ export const clientColumns: ListColumn<ClientRow>[] = [
     key: "actions",
     header: "Acciones",
     render: (row) => (
-      <Link href={`/clients/${row.id}`} className="text-sm font-medium text-cyan-300 transition hover:text-cyan-200">
+      <Link href={`/clients/${row.id}`} className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200">
         Editar
       </Link>
     ),

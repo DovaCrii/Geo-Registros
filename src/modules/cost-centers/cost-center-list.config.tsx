@@ -21,15 +21,15 @@ export const costCenterColumns: ListColumn<CostCenterRow>[] = [
   {
     key: "code",
     header: "Código",
-    render: (row) => <span className="font-medium text-white">{row.code}</span>,
+    render: (row) => <span className="font-medium text-slate-900 dark:text-white">{row.code}</span>,
   },
   {
     key: "name",
     header: "Grupo de trabajo",
     render: (row) => (
       <div className="space-y-1">
-        <p className="font-medium text-white">{row.name}</p>
-        {row.description && <p className="text-xs text-slate-500">{row.description}</p>}
+        <p className="font-medium text-slate-900 dark:text-white">{row.name}</p>
+        {row.description && <p className="text-xs text-slate-600 dark:text-slate-500">{row.description}</p>}
       </div>
     ),
   },
@@ -37,9 +37,9 @@ export const costCenterColumns: ListColumn<CostCenterRow>[] = [
     key: "linkedRecords",
     header: "Registros vinculados",
     render: (row) => (
-      <div className="space-y-1 text-slate-300">
+      <div className="space-y-1 text-slate-700 dark:text-slate-300">
         <p>{row._count.drones} drones</p>
-        <p className="text-xs text-slate-500">{row._count.operators} operadores</p>
+        <p className="text-xs text-slate-600 dark:text-slate-500">{row._count.operators} operadores</p>
       </div>
     ),
   },
@@ -52,7 +52,7 @@ export const costCenterColumns: ListColumn<CostCenterRow>[] = [
     key: "actions",
     header: "Acciones",
     render: (row) => (
-      <Link href={`/cost-centers/${row.id}`} className="text-sm font-medium text-cyan-300 transition hover:text-cyan-200">
+      <Link href={`/cost-centers/${row.id}`} className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200">
         Editar
       </Link>
     ),

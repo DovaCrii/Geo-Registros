@@ -347,3 +347,28 @@
 - **Próximos pasos recomendados**:
   1. Preparar un commit separado de documentación.
   2. Luego volver a dashboard/listas con una pieza pequeña por vez.
+
+## 2026-06-17 — Sesión — Visual rollout closeout and docs update (OpenCode)
+
+- **Objetivo**: Dejar documentado el avance real del rollout visual y del seguimiento.
+- **Archivos modificados**:
+  - `PROJECT_STATUS.md` — se ajusta el estado para reflejar cobertura en auth, admin, maestros y planes de vuelo.
+  - `ROADMAP.md` — la Fase 3/Fase 4 quedan alineadas con el avance real y el cierre gradual de restos heredados.
+  - `docs/AI_PROGRESS_LOG.md` — esta entrada.
+- **Decisión**: Mantener el plan vivo y honesto; documentar avance antes de abrir cualquier siguiente bloque.
+- **Validación**: Revisión documental manual.
+- **Próximos pasos recomendados**:
+  1. Revisar si `TASKS.md` necesita un ajuste mínimo de contexto para T-011/T-012.
+  2. Preparar el corte final para GitHub con el estado ya reflejado en docs.
+
+## 2026-06-18 — Sesión — Design system plan restored (OpenCode)
+
+- **Objetivo**: Resolver la ausencia de `docs/DESIGN_SYSTEM_PLAN.md` y dejar el plan visual consistente con el estado real.
+- **Archivos modificados**:
+  - `docs/DESIGN_SYSTEM_PLAN.md` — creado con la dirección light-first, tokens actuales y reglas de uso.
+  - `docs/AI_PROGRESS_LOG.md` — esta entrada.
+- **Decisión**: El plan visual no queda solo implícito en `globals.css` y `tailwind.config.ts`; también debe vivir como documento de referencia.
+- **Validación**: Revisión documental manual.
+- **Próximos pasos recomendados**:
+  1. Mantener el handoff y el changelog alineados con este plan.
+  2. Si aparecen restos visuales, tratarlos como ajustes puntuales, no como un nuevo rediseño.

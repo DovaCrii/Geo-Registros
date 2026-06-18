@@ -36,7 +36,7 @@ export function SelectFilter({ label, paramName, placeholder = "Todos", options 
 
   return (
     <label className="space-y-2">
-      <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">{label}</span>
+      <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">{label}</span>
       <select
         value={current}
         onChange={handleChange}

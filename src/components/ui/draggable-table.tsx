@@ -126,35 +126,38 @@ export function DraggableTable<Row>({
   }, []);
 
   return (
-    <section className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
-      <div className="border-b border-slate-200 dark:border-slate-800/80 px-6 py-5">
+    <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800/80 dark:bg-slate-950/45 dark:shadow-xl dark:shadow-slate-950/10">
+      <div className="border-b border-slate-200 px-6 py-5 dark:border-slate-800/80">
         <h2 className="font-heading text-lg font-semibold text-slate-900 dark:text-white">{title}</h2>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{description}</p>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800/80 text-sm">
+        <table className="min-w-full divide-y divide-slate-200 text-sm dark:divide-slate-800/80">
+          <caption className="sr-only">{title}</caption>
           <thead className="bg-slate-50 dark:bg-slate-900/80">
             <tr>
               {orderedColumns.map((column, idx) => (
-                <th key={column.key} className="px-6 py-3 text-left">
-                  {column.key === "__select__" ? (
+                <th key={column.key} scope="col" className="px-6 py-3 text-left">
+                  {column.headerContent ?? (column.key === "__select__" ? (
                     <span className="inline-flex items-center">{column.header}</span>
                   ) : reorderKey ? (
                     <button
                       type="button"
                       draggable
+                      aria-label={`Reordenar columna ${column.header}`}
+                      title={`Reordenar columna ${column.header}`}
                       onDragStart={(e) => handleDragStart(e, idx)}
                       onDragOver={handleDragOver}
                       onDrop={(e) => handleDrop(e, idx)}
                       onDragEnd={handleDragEnd}
-                      className="inline-flex w-full cursor-grab items-center gap-2 text-left active:cursor-grabbing"
+                      className="group inline-flex w-full cursor-grab items-center gap-2 text-left active:cursor-grabbing"
                     >
-                      <span className="text-slate-400 dark:text-slate-600 transition group-hover:text-slate-500 dark:group-hover:text-slate-400">⠿</span>
+                      <span className="text-slate-400 transition group-hover:text-slate-500 dark:text-slate-600 dark:group-hover:text-slate-400">⠿</span>
                       {column.sortable ? (
                         <SortHeader field={column.sortField ?? column.key} label={column.header} />
                       ) : (
-                        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
                           {column.header}
                         </span>
                       )}
@@ -162,10 +165,10 @@ export function DraggableTable<Row>({
                   ) : column.sortable ? (
                     <SortHeader field={column.sortField ?? column.key} label={column.header} />
                   ) : (
-                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
                       {column.header}
                     </span>
-                  )}
+                  ))}
                 </th>
               ))}
             </tr>

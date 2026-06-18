@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 export function FilterBar({ children }: { children: ReactNode }) {
   return (
-    <section className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-5 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
+    <section aria-label="Filtros" className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-5 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{children}</div>
     </section>
   );
@@ -11,7 +11,7 @@ export function FilterBar({ children }: { children: ReactNode }) {
 export function FilterField({ label, placeholder }: { label: string; placeholder: string }) {
   return (
     <label className="space-y-2">
-      <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">{label}</span>
+      <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">{label}</span>
       <input
         type="text"
         placeholder={placeholder}

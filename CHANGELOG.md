@@ -12,6 +12,11 @@
 - La experiencia visual pasa a una direccion mas premium y menos CRUD en la capa de presentacion.
 - La ayuda contextual del dashboard queda alineada con el flujo operativo.
 
+### Visual rollout closeout and docs alignment
+- El rollout light-first se extiende a auth, admin, maestros, detalles, permisos, geometria y pantalla principal.
+- `PROJECT_STATUS.md`, `ROADMAP.md`, `TASKS.md` y `docs/AI_PROGRESS_LOG.md` quedan sincronizados con el avance real.
+- `docs/OPENCODE_HANDOFF.md` se actualiza para reflejar el cierre de T-011 y el siguiente corte limpio.
+
 ### Design system (T-011)
 - Se expande `docs/DESIGN_SYSTEM_PLAN.md` con plan visual completo: tema, tipografía, espaciado, componentes base, layouts de pantalla, accesibilidad y errores a evitar.
 - Se agregan tokens de diseño a `src/app/globals.css`: font-size, spacing, shadows y border-radius en `:root` y `.dark`.

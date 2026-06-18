@@ -245,8 +245,8 @@ function ToolbarButton({
       title={label}
       className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition ${
         active
-          ? "border-cyan-500/50 bg-cyan-500/20 text-cyan-200 shadow-sm shadow-cyan-500/10"
-          : "border-slate-700/60 bg-slate-800/60 text-slate-300 hover:border-slate-600 hover:bg-slate-700/60 hover:text-white"
+          ? "border-cyan-500/30 bg-cyan-50 text-cyan-700 shadow-sm shadow-cyan-500/10 dark:border-cyan-500/50 dark:bg-cyan-500/20 dark:text-cyan-200"
+          : "border-slate-200 bg-white/90 text-slate-700 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700/60 dark:bg-slate-800/60 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-700/60 dark:hover:text-white"
       }`}
     >
       <span className="text-sm">{icon}</span>
@@ -551,15 +551,15 @@ export function GeometryEditor({
 
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_420px]">
-      <section className="overflow-hidden rounded-3xl border border-slate-800/80 bg-slate-950/45 shadow-xl shadow-slate-950/10 backdrop-blur">
+      <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white/95 shadow-xl shadow-slate-950/10 backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/45">
         {/* Header */}
-        <div className="border-b border-slate-800/80 px-6 py-5">
+        <div className="border-b border-slate-200 px-6 py-5 dark:border-slate-800/80">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                 Mapa y geometría asistida
               </h2>
-              <p className="mt-1 text-sm text-slate-400">
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
                 Dibujá puntos, líneas, polígonos o círculos sobre el mapa satelital. Importá KMZ/KML/DXF y exportá de vuelta.
               </p>
             </div>
@@ -571,9 +571,9 @@ export function GeometryEditor({
         </div>
 
         {/* ── Toolbar ─────────────────────────────────────── */}
-        <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-800/80 bg-slate-950/70 px-4 py-3">
+        <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800/80 dark:bg-slate-950/70">
           {/* Drawing tools */}
-          <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+          <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-500">
             Dibujar
           </span>
           {DRAW_MODES.filter((m) => m.group === "draw").map((mode) => (
@@ -586,10 +586,10 @@ export function GeometryEditor({
             />
           ))}
 
-          <span className="mx-2 h-6 w-px bg-slate-700/60" />
+          <span className="mx-2 h-6 w-px bg-slate-200 dark:bg-slate-700/60" />
 
           {/* Edit tools */}
-          <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+          <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-500">
             Editar
           </span>
           {DRAW_MODES.filter((m) => m.group === "edit").map((mode) => (
@@ -601,7 +601,7 @@ export function GeometryEditor({
             />
           ))}
 
-          <span className="mx-2 h-6 w-px bg-slate-700/60" />
+          <span className="mx-2 h-6 w-px bg-slate-200 dark:bg-slate-700/60" />
 
           {/* Import / Export */}
           <input
@@ -629,13 +629,13 @@ export function GeometryEditor({
         </div>
 
         {/* Map */}
-        <div className="relative h-[300px] sm:h-[400px] lg:h-[560px] bg-slate-950">
+        <div className="relative h-[300px] sm:h-[400px] lg:h-[560px] bg-slate-100 dark:bg-slate-950">
           <div ref={containerRef} className="h-full w-full" />
-            {!parsed.valid ? (
-              <div className="pointer-events-none absolute inset-x-4 top-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200 backdrop-blur">
+          {!parsed.valid ? (
+            <div className="pointer-events-none absolute inset-x-4 top-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 backdrop-blur dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
               La vista previa se pausa hasta que el GeoJSON vuelva a ser válido.
-              </div>
-            ) : null}
+            </div>
+          ) : null}
         </div>
       </section>
 
@@ -644,7 +644,7 @@ export function GeometryEditor({
           <input type="hidden" name="flightPlanId" value={flightPlanId} />
 
           <label className="block space-y-2">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
               GeoJSON de la geometría
             </span>
             <textarea
@@ -653,7 +653,7 @@ export function GeometryEditor({
               value={payload}
               onChange={(event) => setPayload(event.target.value)}
               placeholder='{"type":"Feature","geometry":{"type":"Polygon","coordinates":[...]},"properties":{}}'
-              className="w-full rounded-2xl border border-slate-700/80 bg-slate-950/90 px-4 py-3 font-mono text-xs leading-6 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20"
+              className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 font-mono text-xs leading-6 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/90 dark:text-slate-100 dark:placeholder:text-slate-500"
             />
           </label>
 
@@ -663,24 +663,24 @@ export function GeometryEditor({
               type="button"
               onClick={handleApplyFromTextarea}
               disabled={!parsed.valid}
-              className="inline-flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
             >
               Aplicar desde texto
             </button>
           </div>
 
-          <div className="space-y-3 rounded-2xl border border-slate-800/80 bg-slate-900/70 p-4 text-sm text-slate-300">
+          <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 dark:border-slate-800/80 dark:bg-slate-900/70 dark:text-slate-300">
             <div className="flex items-center justify-between">
-                <span className="text-slate-400">Estado actual</span>
+              <span className="text-slate-600 dark:text-slate-400">Estado actual</span>
               <StatusChip
                 label={parsed.valid ? "Vista activa" : "Error de validación"}
                 tone={parsed.valid ? "info" : "warning"}
               />
             </div>
-            <p className="leading-6 text-slate-300">
+            <p className="leading-6 text-slate-700 dark:text-slate-300">
               <strong>Dibujar:</strong> Usá la barra de herramientas para crear puntos, líneas, polígonos o círculos. Cambiá a <strong>Seleccionar</strong> para mover o borrar elementos. También tenés Deshacer / Rehacer.
             </p>
-            <p className="leading-6 text-slate-300">
+            <p className="leading-6 text-slate-700 dark:text-slate-300">
               <strong>Importar / exportar:</strong> Cargá KMZ, KML o DXF, editá libremente y exportá la geometría para CAD (AutoCAD / DraftSight / QGIS).
             </p>
           </div>
@@ -689,7 +689,7 @@ export function GeometryEditor({
             <PrimaryButton type="submit">Guardar área de operación</PrimaryButton>
             <Link
               href={`/flight-plans/${flightPlanId}`}
-              className="inline-flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/80 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800"
+              className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
             >
               Volver al plan de vuelo
             </Link>

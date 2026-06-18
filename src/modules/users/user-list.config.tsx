@@ -42,8 +42,8 @@ export const userColumns: ListColumn<UserRow>[] = [
     sortable: true,
     render: (row) => (
       <div className="space-y-1">
-        <p className="font-medium text-white">{row.fullName}</p>
-        <p className="text-xs text-slate-500">{row.email}</p>
+        <p className="font-medium text-slate-900 dark:text-white">{row.fullName}</p>
+        <p className="text-xs text-slate-600 dark:text-slate-500">{row.email}</p>
       </div>
     ),
   },
@@ -68,14 +68,14 @@ export const userColumns: ListColumn<UserRow>[] = [
     header: "Creado",
     sortable: true,
     render: (row) => (
-      <span className="text-sm text-slate-400">{row.createdAt.toISOString().slice(0, 10)}</span>
+      <span className="text-sm text-slate-600 dark:text-slate-400">{row.createdAt.toISOString().slice(0, 10)}</span>
     ),
   },
   {
     key: "actions",
     header: "Acciones",
     render: (row) => (
-      <Link href={`/admin/users/${row.id}`} className="text-sm font-medium text-cyan-300 transition hover:text-cyan-200">
+      <Link href={`/admin/users/${row.id}`} className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200">
         Editar
       </Link>
     ),

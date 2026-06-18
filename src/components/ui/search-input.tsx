@@ -55,7 +55,7 @@ export function SearchInput({
 
   return (
     <label className="space-y-2">
-      <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+      <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
         Búsqueda
       </span>
       <div className="relative">
@@ -68,6 +68,7 @@ export function SearchInput({
         />
         {value && (
           <button
+            type="button"
             onClick={handleClear}
             className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-slate-400 dark:text-slate-500 transition hover:text-slate-600 dark:hover:text-slate-300"
             aria-label="Limpiar búsqueda"

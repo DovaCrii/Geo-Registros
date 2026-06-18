@@ -74,10 +74,10 @@ const beforeAfter = {
 
 function NavBar() {
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-slate-800/50 bg-[#080f1e]/90 backdrop-blur-2xl">
+    <nav className="fixed top-0 z-50 w-full border-b border-slate-200 bg-white/90 backdrop-blur-2xl dark:border-slate-800/50 dark:bg-[#080f1e]/90">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold tracking-tight text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>
+          <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>
             AeroFlow
           </span>
         </Link>
@@ -87,20 +87,20 @@ function NavBar() {
             <Link
               key={item}
               href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
-              className="text-sm text-slate-400 transition hover:text-white"
+              className="text-sm text-slate-600 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             >
               {item}
             </Link>
           ))}
           <Link
             href="/auth/login"
-            className="text-sm font-medium text-slate-300 transition hover:text-white"
+            className="text-sm font-medium text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
           >
             Iniciar sesión
           </Link>
           <Link
             href="#demo"
-            className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-5 py-2.5 text-sm font-medium text-cyan-200 shadow-sm shadow-cyan-500/5 transition hover:border-cyan-400/50 hover:bg-cyan-500/20"
+            className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-50 px-5 py-2.5 text-sm font-medium text-cyan-700 shadow-sm shadow-cyan-500/5 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-cyan-500/10 dark:text-cyan-200 dark:hover:bg-cyan-500/20"
           >
             Solicitar demo
           </Link>
@@ -109,13 +109,13 @@ function NavBar() {
         <div className="flex items-center gap-3 md:hidden">
           <Link
             href="/auth/login"
-            className="text-sm font-medium text-slate-300 transition hover:text-white"
+            className="text-sm font-medium text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
           >
             Ingresar
           </Link>
           <Link
             href="#demo"
-            className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-200 transition hover:border-cyan-400/50 hover:bg-cyan-500/20"
+            className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-50 px-4 py-2 text-sm font-medium text-cyan-700 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-cyan-500/10 dark:text-cyan-200 dark:hover:bg-cyan-500/20"
           >
             Demo
           </Link>
@@ -127,7 +127,7 @@ function NavBar() {
 
 function HeroSection() {
   return (
-    <section className="geo-grid relative flex min-h-screen items-center overflow-hidden pt-24">
+    <section className="geo-grid relative flex min-h-screen items-center overflow-hidden bg-slate-50 pt-24 text-slate-900 dark:bg-transparent dark:text-slate-100">
       {/* Ornamental glow */}
       <div className="pointer-events-none absolute -left-48 top-1/3 h-96 w-96 rounded-full bg-cyan-500/5 blur-[120px]" />
       <div className="pointer-events-none absolute -right-48 bottom-1/4 h-72 w-72 rounded-full bg-emerald-500/5 blur-[100px]" />
@@ -135,30 +135,30 @@ function HeroSection() {
       <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-16 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
         {/* ───── Texto ───── */}
         <div className="space-y-6">
-          <p className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-cyan-300">
+          <p className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-50 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-cyan-700 dark:bg-cyan-500/5 dark:text-cyan-300">
             <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 pulse-dot" />
             Inteligencia geoespacial aplicada
           </p>
-          <h1 className="text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl">
             Transformá el terreno en{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-emerald-400">
               decisiones técnicas
             </span>
           </h1>
-          <p className="max-w-lg text-base leading-7 text-slate-400">
+          <p className="max-w-lg text-base leading-7 text-slate-600 dark:text-slate-400">
             Gestioná vuelos, georegistros, modelos 2D/3D, entregables e informes técnicos desde una
             plataforma diseñada para ingeniería, minería, topografía e infraestructura.
           </p>
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <Link
               href="#demo"
-              className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-gradient-to-b from-cyan-500/20 to-cyan-600/10 px-7 py-3 text-sm font-medium text-cyan-100 shadow-lg shadow-cyan-500/5 transition hover:from-cyan-500/30 hover:to-cyan-600/20"
+                className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-50 px-7 py-3 text-sm font-medium text-cyan-700 shadow-lg shadow-cyan-500/5 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-gradient-to-b dark:from-cyan-500/20 dark:to-cyan-600/10 dark:text-cyan-100 dark:hover:from-cyan-500/30 dark:hover:to-cyan-600/20"
             >
               Solicitar demo
             </Link>
             <Link
               href="#proceso"
-              className="inline-flex items-center justify-center rounded-xl px-2 py-3 text-sm font-medium text-slate-400 transition hover:text-cyan-200"
+              className="inline-flex items-center justify-center rounded-xl px-2 py-3 text-sm font-medium text-slate-600 transition hover:text-cyan-700 dark:text-slate-400 dark:hover:text-cyan-200"
             >
               Cómo funciona
             </Link>
@@ -166,9 +166,9 @@ function HeroSection() {
 
           <div className="grid gap-3 pt-4 sm:grid-cols-3">
             {pillars.map((pillar) => (
-              <div key={pillar.title} className="rounded-2xl border border-slate-800/60 bg-slate-950/45 p-4 backdrop-blur">
-                <p className="text-sm font-semibold text-white">{pillar.title}</p>
-                <p className="mt-2 text-sm leading-6 text-slate-400">{pillar.desc}</p>
+              <div key={pillar.title} className="rounded-2xl border border-slate-200 bg-white/90 p-4 backdrop-blur dark:border-slate-800/60 dark:bg-slate-950/45">
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">{pillar.title}</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">{pillar.desc}</p>
               </div>
             ))}
           </div>
@@ -176,14 +176,14 @@ function HeroSection() {
 
         {/* ───── Hero Visual ───── */}
         <div className="relative hidden lg:block">
-          <div className="w-full overflow-hidden rounded-[2rem] border border-slate-700/60 bg-slate-950/85 shadow-2xl shadow-cyan-950/10">
+            <div className="w-full overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-2xl shadow-cyan-950/10 dark:border-slate-700/60 dark:bg-slate-950/85">
             <div className="relative bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.16),_transparent_26%),radial-gradient(circle_at_bottom_right,_rgba(16,185,129,0.10),_transparent_24%)]">
               <div className="geo-grid-subtle absolute inset-0" />
 
               {/* Header bar */}
-              <div className="relative z-10 flex items-center justify-between border-b border-slate-800/80 bg-slate-950/80 px-6 py-4 backdrop-blur">
+              <div className="relative z-10 flex items-center justify-between border-b border-slate-200 bg-white/80 px-6 py-4 backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/80">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/25 bg-cyan-500/10 text-cyan-300">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/25 bg-cyan-50 text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-300">
                     <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
                       <circle cx="12" cy="12" r="6.5" stroke="currentColor" strokeWidth="1.5" />
                       <circle cx="12" cy="12" r="1.5" fill="currentColor" />
@@ -191,12 +191,12 @@ function HeroSection() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Panel de misión</p>
-                    <p className="text-lg font-semibold text-white">Vuelos, geometría y trazabilidad</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700 dark:text-cyan-300">Panel de misión</p>
+                    <p className="text-lg font-semibold text-slate-900 dark:text-white">Vuelos, geometría y trazabilidad</p>
                   </div>
                 </div>
 
-                <div className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200">
+                <div className="rounded-full border border-emerald-400/20 bg-emerald-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-200">
                   En línea
                 </div>
               </div>
@@ -205,26 +205,26 @@ function HeroSection() {
               <div className="space-y-5 p-6">
                 {/* Row 1: Key metrics */}
                 <div className="grid grid-cols-4 gap-4">
-                  <div className="rounded-2xl border border-slate-700/60 bg-slate-900/75 p-5 backdrop-blur">
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Vuelos registrados</p>
-                    <p className="mt-2 text-3xl font-bold text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>24</p>
-                  </div>
-                  <div className="rounded-2xl border border-slate-700/60 bg-slate-900/75 p-5 backdrop-blur">
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Cobertura</p>
-                    <p className="mt-2 text-3xl font-bold text-cyan-200" style={{ fontFamily: "var(--font-mono)" }}>92%</p>
-                  </div>
-                  <div className="rounded-2xl border border-slate-700/60 bg-slate-900/75 p-5 backdrop-blur">
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Entregables</p>
-                    <p className="mt-2 text-3xl font-bold text-emerald-200" style={{ fontFamily: "var(--font-mono)" }}>18</p>
-                  </div>
-                  <div className="rounded-2xl border border-slate-700/60 bg-slate-900/75 p-5 backdrop-blur">
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Modelos activos</p>
-                    <p className="mt-2 text-3xl font-bold text-amber-200" style={{ fontFamily: "var(--font-mono)" }}>4</p>
-                  </div>
+                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/75">
+                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">Vuelos registrados</p>
+                      <p className="mt-2 text-3xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>24</p>
+                    </div>
+                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/75">
+                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">Cobertura</p>
+                      <p className="mt-2 text-3xl font-bold text-cyan-700 dark:text-cyan-200" style={{ fontFamily: "var(--font-mono)" }}>92%</p>
+                    </div>
+                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/75">
+                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">Entregables</p>
+                      <p className="mt-2 text-3xl font-bold text-emerald-700 dark:text-emerald-200" style={{ fontFamily: "var(--font-mono)" }}>18</p>
+                    </div>
+                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-900/75">
+                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">Modelos activos</p>
+                      <p className="mt-2 text-3xl font-bold text-amber-700 dark:text-amber-200" style={{ fontFamily: "var(--font-mono)" }}>4</p>
+                    </div>
                 </div>
 
                 {/* Row 2: Map visualization — clean, no overlaps */}
-                <div className="relative h-[260px] overflow-hidden rounded-2xl border border-slate-800/80 bg-slate-950/80">
+                <div className="relative h-[260px] overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/90 dark:border-slate-800/80 dark:bg-slate-950/80">
                   <svg className="absolute inset-0 h-full w-full" viewBox="0 0 800 260" fill="none" preserveAspectRatio="xMidYMid slice">
                     <path
                       d="M60 200 Q 180 180 280 150 Q 400 110 500 80 Q 600 50 720 40"
@@ -254,34 +254,34 @@ function HeroSection() {
                   </svg>
 
                   {/* Status badge (only overlay, small and top-left) */}
-                  <div className="absolute left-4 top-4 rounded-xl border border-slate-700/60 bg-slate-950/90 px-4 py-2.5 backdrop-blur">
-                    <p className="text-xs font-medium text-slate-400">Trazabilidad operativa</p>
-                    <p className="mt-0.5 text-sm font-semibold text-white">Tiempo real · 3 capas activas</p>
+                  <div className="absolute left-4 top-4 rounded-xl border border-slate-200 bg-white/90 px-4 py-2.5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/90">
+                    <p className="text-xs font-medium text-slate-600 dark:text-slate-400">Trazabilidad operativa</p>
+                    <p className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-white">Tiempo real · 3 capas activas</p>
                   </div>
 
                   {/* Bottom-right badge */}
-                  <div className="absolute bottom-4 right-4 rounded-xl border border-slate-700/60 bg-slate-950/90 px-4 py-2 backdrop-blur">
-                    <p className="text-[11px] text-slate-500">EPSG: 32719 · WGS84 / UTM</p>
+                  <div className="absolute bottom-4 right-4 rounded-xl border border-slate-200 bg-white/90 px-4 py-2 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/90">
+                    <p className="text-[11px] text-slate-600 dark:text-slate-500">EPSG: 32719 · WGS84 / UTM</p>
                   </div>
                 </div>
 
                 {/* Row 3: Active layers + quick summary */}
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-sm text-cyan-200">
-                      <span className="h-2 w-2 rounded-full bg-cyan-400" />
+                    <span className="flex items-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-50 px-4 py-2 text-sm text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-200">
+                      <span className="h-2 w-2 rounded-full bg-cyan-500" />
                       Geometría activa
                     </span>
-                    <span className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-200">
-                      <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                    <span className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-50 px-4 py-2 text-sm text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-200">
+                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
                       DGAC validado
                     </span>
-                    <span className="flex items-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-sm text-cyan-200">
-                      <span className="h-2 w-2 rounded-full bg-cyan-400" />
+                    <span className="flex items-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-50 px-4 py-2 text-sm text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-200">
+                      <span className="h-2 w-2 rounded-full bg-cyan-500" />
                       Reporte listo
                     </span>
                   </div>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-slate-600 dark:text-slate-500">
                     Cobertura validada · geometría enlazada · evidencia lista para revisión
                   </p>
                 </div>
@@ -296,13 +296,13 @@ function HeroSection() {
 
 function ProblemSection() {
   return (
-    <section id="plataforma" className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8">
+    <section id="plataforma" className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8 bg-slate-50 dark:bg-transparent">
       <div className="mx-auto mb-16 max-w-2xl text-center">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">El problema</p>
-        <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">El problema</p>
+        <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
           La información de terreno no debería perderse entre carpetas, correos y planillas
         </h2>
-        <p className="text-base leading-7 text-slate-400">
+        <p className="text-base leading-7 text-slate-600 dark:text-slate-400">
           En proyectos técnicos, cada vuelo, imagen, coordenada y modelo debe quedar trazado.
             AeroFlow centraliza la información para que los equipos puedan consultar, controlar y
           reportar con claridad.
@@ -313,13 +313,13 @@ function ProblemSection() {
         {pains.map((pain) => (
           <div
             key={pain.title}
-            className="group rounded-2xl border border-slate-800/60 bg-slate-950/40 p-6 backdrop-blur transition hover:border-rose-500/20 hover:bg-slate-900/60"
+            className="group rounded-2xl border border-slate-200 bg-white/90 p-6 backdrop-blur transition hover:border-rose-500/20 hover:bg-slate-50 dark:border-slate-800/60 dark:bg-slate-950/40 dark:hover:bg-slate-900/60"
           >
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-500/10 text-rose-300">
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
               <PainGlyph kind={pain.icon} />
             </div>
-            <h3 className="mb-2 text-lg font-semibold text-white">{pain.title}</h3>
-            <p className="text-base leading-7 text-slate-400">{pain.desc}</p>
+            <h3 className="mb-2 text-lg font-semibold text-slate-900 dark:text-white">{pain.title}</h3>
+            <p className="text-base leading-7 text-slate-600 dark:text-slate-400">{pain.desc}</p>
           </div>
         ))}
       </div>
@@ -329,28 +329,28 @@ function ProblemSection() {
 
 function SolutionSection() {
   return (
-    <section id="proceso" className="border-t border-slate-800/40 bg-slate-950/30 py-28">
+    <section id="proceso" className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-16 max-w-2xl text-center">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-300">La solución</p>
-          <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-700 dark:text-emerald-300">La solución</p>
+          <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
             Del vuelo al informe técnico en un solo flujo
           </h2>
         </div>
 
           <div className="relative grid gap-4 md:grid-cols-2 xl:grid-cols-7">
             {processSteps.map((s, i) => (
-            <div key={s.step} className="rounded-2xl border border-slate-800/60 bg-slate-950/45 p-5 backdrop-blur">
+            <div key={s.step} className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-800/60 dark:bg-slate-950/45">
               <div className="mb-3 flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-cyan-500/20 bg-cyan-500/10 text-lg font-bold text-cyan-300" style={{ fontFamily: "var(--font-mono)" }}>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-cyan-500/20 bg-cyan-50 text-lg font-bold text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-300" style={{ fontFamily: "var(--font-mono)" }}>
                   {s.step}
                 </div>
                 <div>
-                  <p className="text-base font-semibold text-white">{s.label}</p>
-                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Etapa {i + 1}</p>
+                  <p className="text-base font-semibold text-slate-900 dark:text-white">{s.label}</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Etapa {i + 1}</p>
                 </div>
               </div>
-              <p className="text-base leading-7 text-slate-300">{s.desc}</p>
+              <p className="text-base leading-7 text-slate-700 dark:text-slate-300">{s.desc}</p>
             </div>
             ))}
           </div>
@@ -500,13 +500,13 @@ function VisualGlyph({ kind }: { kind: string }) {
 
 function ModulesSection() {
   return (
-    <section id="módulos" className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8">
+    <section id="módulos" className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8 bg-slate-50 dark:bg-transparent">
       <div className="mx-auto mb-16 max-w-2xl text-center">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Módulos</p>
-        <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">Módulos</p>
+          <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
           Una plataforma, todas las herramientas
         </h2>
-        <p className="text-base leading-7 text-slate-400">
+        <p className="text-base leading-7 text-slate-600 dark:text-slate-400">
           Cada módulo está diseñado para una etapa del flujo técnico, desde la captura hasta el
           informe final.
         </p>
@@ -516,15 +516,15 @@ function ModulesSection() {
         {modules.map((mod) => (
           <div
             key={mod.title}
-            className="group rounded-2xl border border-slate-800/60 bg-gradient-to-b from-slate-950/60 to-slate-900/35 p-6 backdrop-blur transition hover:border-cyan-500/20 hover:from-slate-900/80 hover:to-slate-900/50"
+            className="group rounded-2xl border border-slate-200 bg-white/90 p-6 backdrop-blur transition hover:border-cyan-500/20 hover:bg-slate-50 dark:border-slate-800/60 dark:bg-gradient-to-b dark:from-slate-950/60 dark:to-slate-900/35 dark:hover:from-slate-900/80 dark:hover:to-slate-900/50"
           >
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-cyan-500/20 bg-cyan-500/10 text-cyan-300 shadow-sm shadow-cyan-500/5">
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-cyan-500/20 bg-cyan-50 text-cyan-700 shadow-sm shadow-cyan-500/5 dark:bg-cyan-500/10 dark:text-cyan-300">
               <VisualGlyph kind={mod.icon} />
             </div>
-            <h3 className="mb-2 text-lg font-semibold text-white transition group-hover:text-cyan-200">
+            <h3 className="mb-2 text-lg font-semibold text-slate-900 transition group-hover:text-cyan-700 dark:text-white dark:group-hover:text-cyan-200">
               {mod.title}
             </h3>
-            <p className="text-sm leading-6 text-slate-400">{mod.desc}</p>
+            <p className="text-sm leading-6 text-slate-600 dark:text-slate-400">{mod.desc}</p>
           </div>
         ))}
       </div>
@@ -534,26 +534,26 @@ function ModulesSection() {
 
 function DashboardPreview() {
   return (
-    <section id="casos-de-uso" className="border-t border-slate-800/40 bg-slate-950/30 py-28">
+    <section id="casos-de-uso" className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-16 max-w-2xl text-center">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Dashboard</p>
-          <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">Dashboard</p>
+          <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
             Visualizá el estado operativo completo
           </h2>
-          <p className="text-base leading-7 text-slate-400">
+          <p className="text-base leading-7 text-slate-600 dark:text-slate-400">
             Mapa central, panel operativo, capas activas e indicadores de avance en tiempo real.
           </p>
         </div>
 
         {/* Mockup */}
-        <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-slate-700/60 bg-slate-900 shadow-2xl shadow-cyan-950/5">
+        <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-cyan-950/5 dark:border-slate-700/60 dark:bg-slate-900">
           {/* Browser chrome */}
-          <div className="flex items-center gap-2 border-b border-slate-700/40 px-5 py-3">
+          <div className="flex items-center gap-2 border-b border-slate-200 px-5 py-3 dark:border-slate-700/40">
             <span className="h-3 w-3 rounded-full bg-rose-500/60" />
             <span className="h-3 w-3 rounded-full bg-amber-500/60" />
             <span className="h-3 w-3 rounded-full bg-emerald-500/60" />
-            <span className="ml-4 rounded-md border border-slate-700/40 bg-slate-800/60 px-4 py-1 text-xs text-slate-500">
+            <span className="ml-4 rounded-md border border-slate-200 bg-slate-50 px-4 py-1 text-xs text-slate-600 dark:border-slate-700/40 dark:bg-slate-800/60 dark:text-slate-500">
               app.aeroflow.io/panel-operativo
             </span>
           </div>
@@ -561,13 +561,13 @@ function DashboardPreview() {
           {/* Dashboard layout */}
           <div className="flex min-h-[420px]">
             {/* Sidebar */}
-            <div className="hidden w-56 border-r border-slate-700/40 p-4 sm:block">
+            <div className="hidden w-56 border-r border-slate-200 p-4 sm:block dark:border-slate-700/40">
               <div className="mb-6 space-y-1">
-                <div className="h-2 w-24 rounded bg-slate-700/60" />
+                <div className="h-2 w-24 rounded bg-slate-200 dark:bg-slate-700/60" />
               </div>
               {["Panel", "Vuelos", "Entregables", "Modelos", "Reportes"].map((item) => (
-                <div key={item} className="mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-400 transition hover:bg-slate-800/60 hover:text-white">
-                  <span className="h-2 w-2 rounded-full bg-slate-600" />
+                <div key={item} className="mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-white">
+                  <span className="h-2 w-2 rounded-full bg-slate-400 dark:bg-slate-600" />
                   {item}
                 </div>
               ))}
@@ -577,30 +577,30 @@ function DashboardPreview() {
             <div className="flex-1 p-5">
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <div className="h-4 w-32 rounded bg-slate-700/40" />
-                  <div className="mt-1 h-3 w-48 rounded bg-slate-700/20" />
+                    <div className="h-4 w-32 rounded bg-slate-200 dark:bg-slate-700/40" />
+                    <div className="mt-1 h-3 w-48 rounded bg-slate-100 dark:bg-slate-700/20" />
                 </div>
                 <div className="flex gap-2">
-                  <div className="h-8 w-24 rounded-lg border border-cyan-500/20 bg-cyan-500/10" />
+                  <div className="h-8 w-24 rounded-lg border border-cyan-500/20 bg-cyan-50 dark:bg-cyan-500/10" />
                 </div>
               </div>
 
               <div className="mb-5 grid grid-cols-4 gap-3">
                 {["12 planes", "86% avance", "24 vuelos", "18 entregables"].map((m) => (
-                  <div key={m} className="rounded-xl border border-slate-700/40 bg-slate-800/40 p-3">
-                    <div className="h-2 w-16 rounded bg-slate-700/40" />
-                    <div className="mt-2 h-5 w-20 rounded bg-cyan-500/20" />
-                  </div>
+                    <div key={m} className="rounded-xl border border-slate-200 bg-white/90 p-3 dark:border-slate-700/40 dark:bg-slate-800/40">
+                      <div className="h-2 w-16 rounded bg-slate-200 dark:bg-slate-700/40" />
+                      <div className="mt-2 h-5 w-20 rounded bg-cyan-100 dark:bg-cyan-500/20" />
+                    </div>
                 ))}
               </div>
 
               {/* Map placeholder */}
-              <div className="geo-grid-subtle relative h-44 rounded-xl border border-slate-700/40 bg-slate-800/60">
-                <div className="absolute left-3 top-3 rounded-lg border border-slate-700/40 bg-slate-900/80 px-3 py-2">
+              <div className="geo-grid-subtle relative h-44 rounded-xl border border-slate-200 bg-slate-50/90 dark:border-slate-700/40 dark:bg-slate-800/60">
+                <div className="absolute left-3 top-3 rounded-lg border border-slate-200 bg-white/90 px-3 py-2 dark:border-slate-700/40 dark:bg-slate-900/80">
                   <div className="h-2 w-16 rounded bg-cyan-500/30" />
-                  <div className="mt-1 h-2 w-24 rounded bg-slate-700/30" />
+                  <div className="mt-1 h-2 w-24 rounded bg-slate-200 dark:bg-slate-700/30" />
                 </div>
-                <div className="absolute bottom-3 right-3 rounded-lg border border-slate-700/40 bg-slate-900/80 px-3 py-2 text-xs text-slate-500">
+                <div className="absolute bottom-3 right-3 rounded-lg border border-slate-200 bg-white/90 px-3 py-2 text-xs text-slate-600 dark:border-slate-700/40 dark:bg-slate-900/80 dark:text-slate-500">
                   EPSG: 32719 · WGS84 / UTM
                 </div>
               </div>
@@ -614,10 +614,10 @@ function DashboardPreview() {
 
 function UseCasesSection() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8 bg-slate-50 dark:bg-transparent">
       <div className="mx-auto mb-16 max-w-2xl text-center">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-300">Casos de uso</p>
-        <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-700 dark:text-emerald-300">Casos de uso</p>
+          <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
             Industrias que ya confían en el georegistro técnico
         </h2>
       </div>
@@ -626,15 +626,15 @@ function UseCasesSection() {
         {useCases.map((uc) => (
           <div
             key={uc.title}
-            className="group rounded-2xl border border-slate-800/60 bg-gradient-to-b from-slate-950/60 to-slate-900/35 p-6 backdrop-blur transition hover:border-emerald-500/20 hover:from-slate-900/80 hover:to-slate-900/50"
+            className="group rounded-2xl border border-slate-200 bg-white/90 p-6 backdrop-blur transition hover:border-emerald-500/20 hover:bg-slate-50 dark:border-slate-800/60 dark:bg-gradient-to-b dark:from-slate-950/60 dark:to-slate-900/35 dark:hover:from-slate-900/80 dark:hover:to-slate-900/50"
           >
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-300 shadow-sm shadow-emerald-500/5">
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-50 text-emerald-700 shadow-sm shadow-emerald-500/5 dark:bg-emerald-500/10 dark:text-emerald-300">
               <VisualGlyph kind={uc.icon} />
             </div>
-            <h3 className="mb-2 text-lg font-semibold text-white transition group-hover:text-emerald-200">
+            <h3 className="mb-2 text-lg font-semibold text-slate-900 transition group-hover:text-emerald-700 dark:text-white dark:group-hover:text-emerald-200">
               {uc.title}
             </h3>
-            <p className="text-sm leading-6 text-slate-400">{uc.desc}</p>
+            <p className="text-sm leading-6 text-slate-600 dark:text-slate-400">{uc.desc}</p>
           </div>
         ))}
       </div>
@@ -644,11 +644,11 @@ function UseCasesSection() {
 
 function TechnicalSection() {
   return (
-    <section id="tecnología" className="border-t border-slate-800/40 bg-slate-950/30 py-28">
+    <section id="tecnología" className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-16 max-w-2xl text-center">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-amber-300">Tecnología</p>
-          <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-amber-700 dark:text-amber-300">Tecnología</p>
+          <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
             Precisión técnica sin complejidad operativa
           </h2>
         </div>
@@ -657,10 +657,10 @@ function TechnicalSection() {
           {specs.map((spec) => (
             <div
               key={spec}
-              className="flex items-center gap-3 rounded-xl border border-slate-800/50 bg-slate-900/40 px-5 py-3 transition hover:border-amber-500/20"
+            className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/90 px-5 py-3 transition hover:border-amber-500/20 dark:border-slate-800/50 dark:bg-slate-900/40"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400/60" />
-              <span className="text-sm text-slate-300">{spec}</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-500/70" />
+              <span className="text-sm text-slate-700 dark:text-slate-300">{spec}</span>
             </div>
           ))}
         </div>
@@ -671,22 +671,22 @@ function TechnicalSection() {
 
 function BeforeAfterSection() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8 bg-slate-50 dark:bg-transparent">
       <div className="mx-auto mb-16 max-w-2xl text-center">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">El cambio</p>
-        <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">El cambio</p>
+          <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
             Antes y después de AeroFlow
         </h2>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Before */}
-        <div className="rounded-2xl border border-rose-500/15 bg-rose-500/[0.03] p-8">
-          <h3 className="mb-6 text-lg font-semibold text-rose-300">Antes</h3>
+        <div className="rounded-2xl border border-rose-500/15 bg-rose-50 p-8 dark:bg-rose-500/[0.03]">
+          <h3 className="mb-6 text-lg font-semibold text-rose-700 dark:text-rose-300">Antes</h3>
           <ul className="space-y-4">
             {beforeAfter.before.map((item) => (
-              <li key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-400">
-                <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-rose-500/20 bg-rose-500/10 text-xs text-rose-300">✕</span>
+                <li key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-600 dark:text-slate-400">
+                  <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-rose-500/20 bg-rose-100 text-xs text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">✕</span>
                 {item}
               </li>
             ))}
@@ -694,12 +694,12 @@ function BeforeAfterSection() {
         </div>
 
         {/* After */}
-        <div className="rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.03] p-8">
-          <h3 className="mb-6 text-lg font-semibold text-emerald-300">Con AeroFlow</h3>
+        <div className="rounded-2xl border border-emerald-500/15 bg-emerald-50 p-8 dark:bg-emerald-500/[0.03]">
+          <h3 className="mb-6 text-lg font-semibold text-emerald-700 dark:text-emerald-300">Con AeroFlow</h3>
           <ul className="space-y-4">
             {beforeAfter.after.map((item) => (
-              <li key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-300">
-                <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/10 text-xs text-emerald-300">✓</span>
+                <li key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-700 dark:text-slate-300">
+                  <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-100 text-xs text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">✓</span>
                 {item}
               </li>
             ))}
@@ -712,20 +712,20 @@ function BeforeAfterSection() {
 
 function CtaSection() {
   return (
-    <section id="demo" className="border-t border-slate-800/40 bg-slate-950/30 py-28">
+    <section id="demo" className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl rounded-3xl border border-slate-800/60 bg-gradient-to-b from-slate-900/80 to-slate-950/60 p-12 text-center shadow-2xl shadow-cyan-950/5 backdrop-blur">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Demo</p>
-          <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-white/95 p-12 text-center shadow-2xl shadow-cyan-950/5 backdrop-blur dark:border-slate-800/60 dark:bg-gradient-to-b dark:from-slate-900/80 dark:to-slate-950/60">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">Demo</p>
+          <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
             Convertí tus levantamientos en información accionable
           </h2>
-          <p className="mx-auto mb-10 max-w-lg text-base leading-7 text-slate-400">
+          <p className="mx-auto mb-10 max-w-lg text-base leading-7 text-slate-600 dark:text-slate-400">
             Agendá una demo y descubrí cómo AeroFlow puede ordenar tus vuelos, registros, modelos y
             entregables técnicos.
           </p>
           <Link
             href="/dashboard"
-            className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-gradient-to-b from-cyan-500/20 to-cyan-600/10 px-8 py-3.5 text-base font-medium text-cyan-100 shadow-lg shadow-cyan-500/5 transition hover:from-cyan-500/30 hover:to-cyan-600/20"
+            className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-50 px-8 py-3.5 text-base font-medium text-cyan-700 shadow-lg shadow-cyan-500/5 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-gradient-to-b dark:from-cyan-500/20 dark:to-cyan-600/10 dark:text-cyan-100 dark:hover:from-cyan-500/30 dark:hover:to-cyan-600/20"
           >
             Ingresar a AeroFlow
           </Link>
@@ -737,20 +737,20 @@ function CtaSection() {
 
 function Footer() {
   return (
-    <footer className="border-t border-slate-800/40">
+    <footer className="border-t border-slate-200 dark:border-slate-800/40">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 py-10 sm:flex-row sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
-          <span className="text-base font-bold tracking-tight text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>
+            <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>
             AeroFlow
           </span>
         </div>
-        <div className="flex gap-8 text-sm text-slate-500">
-          <Link href="#plataforma" className="transition hover:text-slate-300">Plataforma</Link>
-          <Link href="#módulos" className="transition hover:text-slate-300">Módulos</Link>
-          <Link href="#casos-de-uso" className="transition hover:text-slate-300">Casos de uso</Link>
-          <Link href="#tecnología" className="transition hover:text-slate-300">Tecnología</Link>
+        <div className="flex gap-8 text-sm text-slate-600 dark:text-slate-500">
+          <Link href="#plataforma" className="transition hover:text-slate-900 dark:hover:text-slate-300">Plataforma</Link>
+          <Link href="#módulos" className="transition hover:text-slate-900 dark:hover:text-slate-300">Módulos</Link>
+          <Link href="#casos-de-uso" className="transition hover:text-slate-900 dark:hover:text-slate-300">Casos de uso</Link>
+          <Link href="#tecnología" className="transition hover:text-slate-900 dark:hover:text-slate-300">Tecnología</Link>
         </div>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-500">
            © {new Date().getFullYear()} AeroFlow. Todos los derechos reservados.
         </p>
       </div>
@@ -764,7 +764,7 @@ function Footer() {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#080f1e] text-slate-100">
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-[#080f1e] dark:text-slate-100">
       <NavBar />
       <HeroSection />
       <ProblemSection />

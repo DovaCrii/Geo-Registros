@@ -36,8 +36,8 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
     if (!record) {
       return (
         <PageShell>
-          <DetailPanel title="Flight plan not found" description="The geometry workspace needs a valid operational record before it can load canonical GeoJSON.">
-            <p className="text-sm text-slate-400">Return to the list and select an existing flight plan.</p>
+          <DetailPanel title="Plan de vuelo no encontrado" description="El espacio de geometría necesita un registro operativo válido antes de cargar el GeoJSON canónico.">
+            <p className="text-sm text-slate-600 dark:text-slate-400">Volvé al listado y elegí un plan de vuelo existente.</p>
           </DetailPanel>
         </PageShell>
       );
@@ -68,10 +68,12 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
 
     return (
       <PageShell>
-          <DetailPanel title="Espacio de geometría no disponible" description="La página apunta a Prisma real, pero la base no está lista o no responde.">
-          <p className="text-sm text-slate-300">{message}</p>
-          </DetailPanel>
-        </PageShell>
-      );
+        <DetailPanel title="Espacio de geometría no disponible" description="La página apunta a Prisma real, pero la base no está lista o no responde.">
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            {message}
+          </p>
+        </DetailPanel>
+      </PageShell>
+    );
   }
 }

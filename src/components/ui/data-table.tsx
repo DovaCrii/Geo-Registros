@@ -5,6 +5,7 @@ import { SortHeader } from "@/components/ui/sort-header";
 export type DataColumn<Row> = {
   key: string;
   header: string;
+  headerContent?: ReactNode;
   render: (row: Row) => ReactNode;
   /** Enable sorting by this column. */
   sortable?: boolean;
@@ -39,13 +40,13 @@ export function DataTable<Row>({
                   key={column.key}
                   className="px-6 py-3 text-left"
                 >
-                  {column.sortable ? (
+                  {column.headerContent ?? (column.sortable ? (
                     <SortHeader field={column.sortField ?? column.key} label={column.header} />
                   ) : (
                     <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                       {column.header}
                     </span>
-                  )}
+                  ))}
                 </th>
               ))}
             </tr>

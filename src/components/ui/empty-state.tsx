@@ -19,7 +19,7 @@ export function EmptyState({ icon, title, description, action, steps }: EmptySta
   return (
     <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-8 text-center shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
       {icon && (
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700/60 bg-slate-50 dark:bg-slate-900/70 text-accent dark:text-cyan-300">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-accent dark:border-slate-700/60 dark:bg-slate-900/70 dark:text-cyan-300">
           {icon}
         </div>
       )}
@@ -38,7 +38,7 @@ export function EmptyState({ icon, title, description, action, steps }: EmptySta
 
       {steps && steps.length > 0 && (
         <div className="mt-6 space-y-3 text-left">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Pasos para empezar</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">Pasos para empezar</p>
           {steps.map((step) => (
             <div key={step.number} className="flex items-start gap-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/10 text-xs font-semibold text-accent-strong dark:text-cyan-300">

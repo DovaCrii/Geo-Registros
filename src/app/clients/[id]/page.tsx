@@ -55,13 +55,13 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
           <DetailPanel title="Planes de vuelo vinculados" description="Planes operativos donde este cliente ya está asociado.">
             <div className="space-y-2">
               {record.flightPlans.length > 0 ? record.flightPlans.map((flightPlan) => (
-                <a key={flightPlan.id} href={`/flight-plans/${flightPlan.id}`} className="block rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 px-4 py-3 transition hover:bg-slate-50 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
+                <a key={flightPlan.id} href={`/flight-plans/${flightPlan.id}`} className="block rounded-lg border border-slate-200 bg-white px-4 py-3 transition hover:bg-slate-50 dark:border-slate-800/80 dark:bg-slate-950/45 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-medium text-slate-800 dark:text-white">{flightPlan.code} · {flightPlan.title}</p>
-                      <p className="mt-1 text-xs text-slate-500">{flightPlan.operationDate.toISOString().slice(0, 10)}</p>
+                      <p className="mt-1 text-xs text-slate-600 dark:text-slate-500">{flightPlan.operationDate.toISOString().slice(0, 10)}</p>
                     </div>
-                    <span className="text-xs text-slate-400">{flightPlan.permissionStatus}</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-400">{flightPlan.permissionStatus}</span>
                   </div>
                 </a>
               )) : <p className="text-sm text-slate-500">Este cliente todavía no tiene planes de vuelo vinculados.</p>}

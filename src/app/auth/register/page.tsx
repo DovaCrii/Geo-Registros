@@ -75,7 +75,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 dark:bg-[#080f1e]">
-      <div className="w-full max-w-md rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/55 p-8 shadow-sm dark:shadow-2xl dark:shadow-cyan-950/10">
+      <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800/80 dark:bg-slate-950/55 dark:shadow-2xl dark:shadow-cyan-950/10">
         <div className="mb-8 text-center">
           <Link href="/" className="inline-block">
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
@@ -89,18 +89,19 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           {serverError && (
-            <div className="rounded-lg border border-red-200 dark:border-rose-500/30 bg-red-50 dark:bg-rose-500/10 px-4 py-3 text-sm text-danger dark:text-rose-300">
+            <div role="alert" aria-live="polite" className="rounded-lg border border-red-200 dark:border-rose-500/30 bg-red-50 dark:bg-rose-500/10 px-4 py-3 text-sm text-danger dark:text-rose-300">
               {serverError}
             </div>
           )}
 
           <label className="block space-y-2">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
               Nombre completo
             </span>
             <input
               type="text"
               required
+              autoComplete="name"
               value={fullName}
               onChange={(e) => handleField(setFullName, "fullName")(e.target.value)}
               placeholder="Tu nombre"
@@ -116,12 +117,13 @@ export default function RegisterPage() {
           </label>
 
           <label className="block space-y-2">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
               Email
             </span>
             <input
               type="email"
               required
+              autoComplete="email"
               value={email}
               onChange={(e) => handleField(setEmail, "email")(e.target.value)}
               placeholder="tu@email.com"
@@ -137,12 +139,13 @@ export default function RegisterPage() {
           </label>
 
           <label className="block space-y-2">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
               Contraseña
             </span>
             <input
               type="password"
               required
+              autoComplete="new-password"
               value={password}
               onChange={(e) => handleField(setPassword, "password")(e.target.value)}
               placeholder="Mínimo 8 caracteres"

@@ -51,15 +51,15 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
   {
     key: "code",
     header: "Código",
-    render: (row) => <span className="font-medium text-white">{row.code}</span>,
+    render: (row) => <span className="font-medium text-slate-900 dark:text-white">{row.code}</span>,
   },
   {
     key: "plan",
     header: "Plan de vuelo",
     render: (row) => (
       <div className="space-y-1">
-        <p className="font-medium text-white">{row.title}</p>
-        <p className="text-xs text-slate-500">{row.operationDate.toISOString().slice(0, 10)}</p>
+        <p className="font-medium text-slate-900 dark:text-white">{row.title}</p>
+        <p className="text-xs text-slate-600 dark:text-slate-500">{row.operationDate.toISOString().slice(0, 10)}</p>
       </div>
     ),
   },
@@ -67,33 +67,33 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
     key: "assignment",
     header: "Asignación",
     render: (row) => (
-      <div className="space-y-1 text-slate-300">
-        <p className="text-xs">
+      <div className="space-y-1 text-slate-700 dark:text-slate-300">
+        <p className="text-xs text-slate-700 dark:text-slate-300">
           {row.costCenter ? (
-            <Link href={`/cost-centers/${row.costCenter.id}`} className="transition hover:text-cyan-300">
+              <Link href={`/cost-centers/${row.costCenter.id}`} className="transition hover:text-cyan-600 dark:hover:text-cyan-300">
               {row.costCenter.code}
             </Link>
           ) : (
             "—"
           )}{" "}·{" "}
           {row.client ? (
-            <Link href={`/clients/${row.client.id}`} className="transition hover:text-cyan-300">
+              <Link href={`/clients/${row.client.id}`} className="transition hover:text-cyan-600 dark:hover:text-cyan-300">
               {row.client.name}
             </Link>
           ) : (
             "—"
           )}
         </p>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-600 dark:text-slate-500">
           {row.drone ? (
-            <Link href={`/drones/${row.drone.id}`} className="transition hover:text-cyan-300">
+              <Link href={`/drones/${row.drone.id}`} className="transition hover:text-cyan-600 dark:hover:text-cyan-300">
               {row.drone.model}
             </Link>
           ) : (
             "—"
           )}{" / "}
           {row.operator ? (
-            <Link href={`/operators/${row.operator.id}`} className="transition hover:text-cyan-300">
+              <Link href={`/operators/${row.operator.id}`} className="transition hover:text-cyan-600 dark:hover:text-cyan-300">
               {row.operator.fullName}
             </Link>
           ) : (
@@ -110,7 +110,7 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
       row.geometryType ? (
         <div className="space-y-1">
           <StatusChip label="Adjunta" tone="success" />
-          <p className="text-xs text-slate-500">{row.geometryType}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-500">{row.geometryType}</p>
         </div>
       ) : (
         <StatusChip label="Sin adjuntar" tone="neutral" />
@@ -128,13 +128,13 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
     header: "Acciones",
     render: (row) => (
       <div className="flex gap-2">
-        <Link href={`/flight-plans/${row.id}`} className="text-sm font-medium text-cyan-300 transition hover:text-cyan-200">
+        <Link href={`/flight-plans/${row.id}`} className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200">
           Editar
         </Link>
         {row.geometryType && (
           <Link
             href={`/flight-plans/${row.id}/geometry`}
-            className="text-sm font-medium text-emerald-300 transition hover:text-emerald-200"
+            className="text-sm font-medium text-emerald-700 transition hover:text-emerald-600 dark:text-emerald-300 dark:hover:text-emerald-200"
           >
             Geometría
           </Link>

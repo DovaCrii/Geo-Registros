@@ -23,50 +23,50 @@ const statusConfig: Record<
   planned: {
     label: "Planificado",
     dot: "bg-accent",
-    bg: "bg-accent/10",
-    text: "text-accent",
+    bg: "bg-accent/10 dark:bg-accent/15",
+    text: "text-accent dark:text-cyan-300",
   },
   "in-review": {
     label: "En revisión",
     dot: "bg-status-warning",
-    bg: "bg-status-warning/10",
-    text: "text-status-warning",
+    bg: "bg-status-warning/10 dark:bg-status-warning/15",
+    text: "text-status-warning dark:text-amber-300",
   },
   approved: {
     label: "Aprobado",
     dot: "bg-status-success",
-    bg: "bg-status-success/10",
-    text: "text-status-success",
+    bg: "bg-status-success/10 dark:bg-status-success/15",
+    text: "text-status-success dark:text-emerald-300",
   },
   rejected: {
     label: "Rechazado",
     dot: "bg-status-danger",
-    bg: "bg-status-danger/10",
-    text: "text-status-danger",
+    bg: "bg-status-danger/10 dark:bg-status-danger/15",
+    text: "text-status-danger dark:text-rose-300",
   },
   "in-execution": {
     label: "En ejecución",
     dot: "bg-accent",
-    bg: "bg-accent/10",
-    text: "text-accent",
+    bg: "bg-accent/10 dark:bg-accent/15",
+    text: "text-accent dark:text-cyan-300",
   },
   completed: {
     label: "Completado",
     dot: "bg-status-success",
-    bg: "bg-status-success/10",
-    text: "text-status-success",
+    bg: "bg-status-success/10 dark:bg-status-success/15",
+    text: "text-status-success dark:text-emerald-300",
   },
   cancelled: {
     label: "Cancelado",
     dot: "bg-slate-400 dark:bg-slate-500",
-    bg: "bg-slate-400/10 dark:bg-slate-500/10",
-    text: "text-slate-500 dark:text-slate-400",
+    bg: "bg-slate-100 dark:bg-slate-500/10",
+    text: "text-slate-600 dark:text-slate-400",
   },
   expired: {
     label: "Vencido",
     dot: "bg-status-danger",
-    bg: "bg-status-danger/10",
-    text: "text-status-danger",
+    bg: "bg-status-danger/10 dark:bg-status-danger/15",
+    text: "text-status-danger dark:text-rose-300",
   },
 };
 
@@ -108,5 +108,5 @@ export function StatusIcon({ status }: { status: OperationalStatus }): ReactNode
     cancelled: "Slash",
     expired: "AlertTriangle",
   };
-  return <span className="text-xs text-slate-400">{iconMap[status]}</span>;
+  return <span className="text-xs text-slate-500 dark:text-slate-400">{iconMap[status]}</span>;
 }

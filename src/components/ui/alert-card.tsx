@@ -19,22 +19,22 @@ const severityConfig: Record<
   info: {
     border: "border-l-accent",
     icon: "\u2139\uFE0F",
-    bg: "bg-accent/5",
+    bg: "bg-accent/5 dark:bg-accent/10",
   },
   warning: {
     border: "border-l-status-warning",
     icon: "\u26A0\uFE0F",
-    bg: "bg-status-warning/5",
+    bg: "bg-status-warning/5 dark:bg-status-warning/10",
   },
   error: {
     border: "border-l-status-danger",
     icon: "\u2716\uFE0F",
-    bg: "bg-status-danger/5",
+    bg: "bg-status-danger/5 dark:bg-status-danger/10",
   },
   success: {
     border: "border-l-status-success",
     icon: "\u2714\uFE0F",
-    bg: "bg-status-success/5",
+    bg: "bg-status-success/5 dark:bg-status-success/10",
   },
 };
 
