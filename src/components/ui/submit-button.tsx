@@ -17,7 +17,7 @@ export function SubmitButton({
     <button
       type="submit"
       disabled={pending}
-      className={`inline-flex items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-6 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg border border-accent/30 bg-accent/10 px-6 py-2.5 text-sm font-medium text-accent-strong dark:text-cyan-100 transition hover:border-accent/50 hover:bg-accent/15 dark:hover:border-cyan-300/50 dark:hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 ${className}`}
     >
       {pending ? (
         <>

@@ -18,6 +18,7 @@ function readString(formData: FormData, key: string) {
 export async function sendEmail(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Not authenticated.");
+  if (session.user.role !== "ADMIN") throw new Error("Acceso denegado. Se requiere rol ADMIN.");
 
   const to = readString(formData, "to");
   const subject = readString(formData, "subject");
@@ -91,6 +92,7 @@ export async function sendEmail(formData: FormData) {
 export async function resendEmail(emailId: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Not authenticated.");
+  if (session.user.role !== "ADMIN") throw new Error("Acceso denegado. Se requiere rol ADMIN.");
 
   const email = await prisma.emailLog.findUnique({ where: { id: emailId } });
   if (!email) throw new Error("Email not found.");

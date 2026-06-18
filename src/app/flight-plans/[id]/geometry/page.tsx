@@ -36,8 +36,8 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
     if (!record) {
       return (
         <PageShell>
-          <DetailPanel title="Flight plan not found" description="The geometry workspace needs a valid operational record before it can load canonical GeoJSON.">
-            <p className="text-sm text-slate-400">Return to the list and select an existing flight plan.</p>
+          <DetailPanel title="Plan de vuelo no encontrado" description="El espacio de geometría necesita un registro operativo válido antes de cargar el GeoJSON canónico.">
+            <p className="text-sm text-slate-600 dark:text-slate-400">Volvé al listado y elegí un plan de vuelo existente.</p>
           </DetailPanel>
         </PageShell>
       );
@@ -47,15 +47,15 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
       <PageShell>
         <div className="space-y-6">
           <PageHeader
-            eyebrow="Block 3 / Map-assisted geometry"
-            title={`${record.code} · geometry`}
-            description="Render the current GeoJSON on a real 2D map, edit it in a controlled way, and save it back to this flight plan."
+            eyebrow="Bloque 3 / Editor satelital"
+            title={`${record.code} · mapa de operación`}
+            description="Dibujá el área de vuelo directamente sobre el mapa, controlá capas visibles y guardá la geometría operacional del plan."
             actions={<StatusChip label={record.permissionStatus} tone={toneFromPermissionStatus(record.permissionStatus)} />}
           />
 
           <GeometryEditorWrapper
-            title="Geometry payload editor"
-            description="Use this page to round-trip canonical GeoJSON with a live map preview. Heavy geospatial tooling remains deferred on purpose."
+            title="Control de operación"
+            description="La geometría se guarda como dato interno, pero el trabajo principal se realiza desde el mapa."
             action={updateFlightPlanGeometry.bind(null, record.id)}
             flightPlanId={record.id}
             initialPayload={record.geometryJson ? JSON.stringify(record.geometryJson, null, 2) : ""}
@@ -68,8 +68,10 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
 
     return (
       <PageShell>
-        <DetailPanel title="Geometry workspace unavailable" description="The page is wired to the real Prisma query path, but the database is not ready or reachable.">
-          <p className="text-sm text-slate-300">{message}</p>
+        <DetailPanel title="Espacio de geometría no disponible" description="La página apunta a Prisma real, pero la base no está lista o no responde.">
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            {message}
+          </p>
         </DetailPanel>
       </PageShell>
     );

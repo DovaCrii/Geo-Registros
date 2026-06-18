@@ -1,8 +1,6 @@
-import { ListPage } from "@/components/ui/list-page";
 import { requirePageAuth } from "@/lib/require-page-auth";
-import { droneListConfig } from "@/modules/drones/drone-list.config";
-import { batchActivateDrones, batchDeactivateDrones, batchDeleteDrones } from "@/server/drones/actions";
 import { listDrones } from "@/server/drones/queries";
+import { DronesPageClient } from "./drones-page-client";
 
 export const dynamic = "force-dynamic";
 
@@ -18,26 +16,29 @@ export default async function DronesPage({
   await requirePageAuth(queryParams.toString() ? `/drones?${queryParams.toString()}` : "/drones");
 
   try {
+    const result = await listDrones({
+      search: params.q || params.search,
+      page: Number(params.page) || 1,
+      pageSize: 10,
+      sortField: params.sort,
+      sortDir: (params.dir as "asc" | "desc") ?? undefined,
+      status: params.status,
+    });
+
+    // Serialize for client boundary (strip Dates, etc.)
+    const rows = JSON.parse(JSON.stringify(result.rows));
+
     return (
-      <ListPage
-        config={droneListConfig}
-        fetchData={listDrones}
-        searchParams={params}
-        batchHandlers={{
-          activate: batchActivateDrones,
-          deactivate: batchDeactivateDrones,
-          delete: batchDeleteDrones,
-        }}
-      />
+      <DronesPageClient rows={rows} total={result.total} searchParams={params} />
     );
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown database error.";
+    const message = error instanceof Error ? error.message : "Error de base de datos desconocido.";
     return (
       <div className="p-6">
-        <div className="rounded-3xl border border-slate-800/80 bg-slate-950/50 p-6">
-          <h2 className="text-lg font-semibold text-white">Drones unavailable</h2>
-          <p className="mt-2 text-sm text-slate-400">The database is not reachable.</p>
-          <p className="mt-1 text-sm text-slate-300">{message}</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/50 p-6">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Drones no disponibles</h2>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">La base de datos no está disponible.</p>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{message}</p>
         </div>
       </div>
     );

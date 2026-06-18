@@ -8,6 +8,8 @@ coverage/
 .env.test.local
 .env.production.local
 prisma/dev.db
+prisma/data/
+.worktrees/
 storage/documents/*
 !storage/documents/.gitkeep
 npm-debug.log*

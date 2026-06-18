@@ -85,6 +85,11 @@ export async function getOperatorById(id: string) {
       costCenter: {
         select: { id: true, code: true, name: true },
       },
+      flightPlans: {
+        select: { id: true, code: true, title: true, operationDate: true, permissionStatus: true },
+        orderBy: { operationDate: "desc" },
+        take: 8,
+      },
     },
   });
 }
@@ -97,6 +102,8 @@ export async function listActiveOperators() {
       id: true,
       code: true,
       fullName: true,
+      licenseNumber: true,
+      licenseExpiry: true,
     },
   });
 }

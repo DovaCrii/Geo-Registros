@@ -18,31 +18,33 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
 };
 
 const TRANSITION_LABELS: Record<string, string> = {
-  IN_REVIEW: "Send to review",
-  READY_FOR_SUBMISSION: "Mark ready",
-  SUBMITTED: "Submit",
-  AUTHORIZED: "Authorize",
-  OBSERVED: "Return with observations",
-  REJECTED: "Reject",
-  EXPIRED: "Mark expired",
-  CLOSED: "Close",
-  DRAFT: "Send back to draft",
-  CANCELLED: "Cancel",
+  IN_REVIEW: "Enviar a revisión",
+  READY_FOR_SUBMISSION: "Marcar listo",
+  SUBMITTED: "Enviar",
+  AUTHORIZED: "Autorizar",
+  OBSERVED: "Devolver con observaciones",
+  REJECTED: "Rechazar",
+  EXPIRED: "Marcar vencido",
+  CLOSED: "Cerrar",
+  DRAFT: "Volver a borrador",
+  CANCELLED: "Cancelar",
 };
 
 const TRANSITION_TONES: Record<string, string> = {
-  AUTHORIZED: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20",
-  REJECTED: "border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20",
-  CANCELLED: "border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20",
-  CLOSED: "border-slate-600 bg-slate-700/50 text-slate-200 hover:bg-slate-600/50",
+  AUTHORIZED: "border-emerald-500/30 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:hover:bg-emerald-500/20",
+  REJECTED: "border-rose-500/30 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-300 dark:hover:bg-rose-500/20",
+  CANCELLED: "border-rose-500/30 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-300 dark:hover:bg-rose-500/20",
+  CLOSED: "border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 dark:border-slate-600 dark:bg-slate-950/60 dark:text-slate-200 dark:hover:bg-slate-800",
 };
 
 export function PermissionActions({
   flightPlanId,
   currentStatus,
+  transitionBlocks,
 }: {
   flightPlanId: string;
   currentStatus: string;
+  transitionBlocks?: Partial<Record<string, string>>;
 }) {
   const router = useRouter();
   const { toast } = useToast();
@@ -50,6 +52,23 @@ export function PermissionActions({
   const [error, setError] = useState<string | null>(null);
 
   const nextStates = VALID_TRANSITIONS[currentStatus] ?? [];
+  const blockedButtons = nextStates.filter((state) => Boolean(transitionBlocks?.[state]));
+
+  function friendlyError(msg: string): string {
+    if (msg.includes("CSRF")) {
+      return "Error de seguridad: la sesión no coincide con el origen de la solicitud. Recargá la página e intentá de nuevo.";
+    }
+    if (msg.includes("Too many requests")) {
+      return "Demasiadas solicitudes. Esperá unos segundos e intentá de nuevo.";
+    }
+    if (msg.includes("no autorizada") || msg.includes("Unauthorized")) {
+      return "No tenés permisos para realizar esta acción. Contactá al administrador.";
+    }
+    if (msg.includes("DGAC checklist incomplete") || msg.includes("Faltan")) {
+      return `Checklist DGAC incompleto. Revisá los requisitos antes de continuar.`;
+    }
+    return "Ocurrió un error inesperado. Recargá la página e intentá de nuevo.";
+  }
 
   async function handleTransition(newStatus: string) {
     setPending(newStatus);
@@ -64,45 +83,63 @@ export function PermissionActions({
 
       if (!response.ok) {
         const body = await response.text();
-        throw new Error(body || "Transition failed.");
+        let message: string;
+        try {
+          const parsed = JSON.parse(body);
+          message = parsed.error || body;
+        } catch {
+          message = body || "Transition failed.";
+        }
+        throw new Error(message);
       }
 
       toast("success", `Permiso ${TRANSITION_LABELS[newStatus]?.toLowerCase() ?? newStatus}`);
       router.refresh();
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Unexpected error.";
-      setError(msg);
-      toast("error", "Error al cambiar estado", msg);
+      const raw = err instanceof Error ? err.message : "Unexpected error.";
+      const friendly = friendlyError(raw);
+      setError(friendly);
+      toast("error", "Error al cambiar estado", friendly);
     } finally {
       setPending(null);
     }
   }
 
   if (nextStates.length === 0) {
-    return <p className="text-xs text-slate-500">No transitions available (terminal state).</p>;
+    return <p className="text-xs text-slate-600 dark:text-slate-500">No hay transiciones disponibles (estado terminal).</p>;
   }
 
   return (
     <div className="space-y-3">
       {error ? (
-        <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2">
-          <p className="text-xs text-rose-300">{error}</p>
+        <div className="rounded-2xl border border-rose-500/30 bg-rose-50 px-4 py-2 dark:bg-rose-500/10">
+          <p className="text-xs text-rose-700 dark:text-rose-300">{error}</p>
+        </div>
+      ) : null}
+
+      {blockedButtons.length > 0 ? (
+        <div className="rounded-2xl border border-amber-500/30 bg-amber-50 px-4 py-2 dark:bg-amber-500/10">
+          <p className="text-xs text-amber-700 dark:text-amber-100">
+            Flujo bloqueado por checklist DGAC para: {blockedButtons.join(", ")}
+          </p>
         </div>
       ) : null}
 
       <div className="flex flex-wrap gap-2">
         {nextStates.map((state) => {
           const toneClass = TRANSITION_TONES[state] ?? "border-cyan-400/30 bg-cyan-500/15 text-cyan-100 hover:bg-cyan-400/20";
+          const blockedReason = transitionBlocks?.[state] ?? null;
 
           return (
             <button
               key={state}
               type="button"
-              disabled={pending === state}
+              disabled={pending === state || Boolean(blockedReason)}
+              title={blockedReason ?? undefined}
               onClick={() => handleTransition(state)}
               className={`inline-flex items-center justify-center rounded-2xl border px-3 py-1.5 text-xs font-medium transition disabled:opacity-40 ${toneClass}`}
             >
-              {pending === state ? "Processing..." : TRANSITION_LABELS[state] ?? state}
+              {pending === state ? "Procesando..." : TRANSITION_LABELS[state] ?? state}
             </button>
           );
         })}

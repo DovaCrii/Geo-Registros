@@ -5,20 +5,20 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/lib/toast-context";
 
 const DOC_TYPE_LABELS: Record<string, string> = {
-  DGAC_REGISTRY: "DGAC Registry",
-  INSURANCE: "Insurance",
-  JAC_RESOLUTION: "JAC Resolution",
-  OPERATOR_LICENSE: "Operator License",
-  SIGO_AUTHORIZATION: "SIGO Authorization",
+  DGAC_REGISTRY: "Registro DGAC",
+  INSURANCE: "Seguro",
+  JAC_RESOLUTION: "Resolución JAC",
+  OPERATOR_LICENSE: "Licencia del operador",
+  SIGO_AUTHORIZATION: "Autorización SIGO",
   KMZ_KML: "KMZ/KML",
-  MAP_IMAGE: "Map Image",
-  FLIGHT_LOG: "Flight Log",
-  RPA_CHECKLIST: "RPA Checklist",
-  DRONE_INSPECTION: "Drone Inspection",
-  CLIENT_AUTHORIZATION: "Client Authorization",
-  RPA_PROCEDURE: "RPA Procedure",
-  INCIDENT_REPORT: "Incident Report",
-  OTHER: "Other",
+  MAP_IMAGE: "Imagen del mapa",
+  FLIGHT_LOG: "Bitácora de vuelo",
+  RPA_CHECKLIST: "Checklist RPA",
+  DRONE_INSPECTION: "Inspección del dron",
+  CLIENT_AUTHORIZATION: "Autorización del cliente",
+  RPA_PROCEDURE: "Procedimiento RPA",
+  INCIDENT_REPORT: "Reporte de incidente",
+  OTHER: "Otro",
 };
 
 export function DocumentUpload({
@@ -55,13 +55,13 @@ export function DocumentUpload({
 
       if (!response.ok) {
         const body = await response.text();
-        throw new Error(body || "Failed to remove document.");
+        throw new Error(body || "No se pudo eliminar el documento.");
       }
 
       toast("success", "Documento eliminado");
       router.refresh();
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Unexpected error.";
+      const msg = err instanceof Error ? err.message : "Error inesperado.";
       setError(msg);
       toast("error", "Error al eliminar documento", msg);
     } finally {
@@ -74,7 +74,7 @@ export function DocumentUpload({
     setError(null);
 
     if (!selectedType) {
-      setError("Select a document type.");
+      setError("Seleccioná un tipo de documento.");
       return;
     }
 
@@ -83,7 +83,7 @@ export function DocumentUpload({
     const file = fileInput.files?.[0];
 
     if (!file) {
-      setError("Select a file to upload.");
+      setError("Seleccioná un archivo para subir.");
       return;
     }
 
@@ -100,7 +100,7 @@ export function DocumentUpload({
 
       if (!response.ok) {
         const body = await response.text();
-        throw new Error(body || "Upload failed.");
+        throw new Error(body || "La carga falló.");
       }
 
       toast("success", "Documento subido");
@@ -108,7 +108,7 @@ export function DocumentUpload({
       fileInput.value = "";
       router.refresh();
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Unexpected error.";
+      const msg = err instanceof Error ? err.message : "Error inesperado.";
       setError(msg);
       toast("error", "Error al subir documento", msg);
     }
@@ -117,23 +117,23 @@ export function DocumentUpload({
   return (
     <div className="space-y-4">
       {error ? (
-        <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-2">
-          <p className="text-xs text-rose-300">{error}</p>
+        <div className="rounded-2xl border border-rose-500/30 bg-rose-50 px-4 py-2 dark:bg-rose-500/10">
+          <p className="text-xs text-rose-700 dark:text-rose-300">{error}</p>
         </div>
       ) : null}
 
       {/* Upload form */}
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="space-y-2">
-          <label className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
-            Document type
+          <label className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
+            Tipo de documento
           </label>
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="w-full rounded-2xl border border-slate-700/80 bg-slate-900/90 px-4 py-2.5 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20"
+            className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/90 dark:text-slate-100"
           >
-            <option value="">Select type...</option>
+            <option value="">Seleccioná un tipo...</option>
             {Object.entries(DOC_TYPE_LABELS).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
@@ -145,30 +145,30 @@ export function DocumentUpload({
         <input
           type="file"
           name="file"
-          className="w-full text-sm text-slate-400 file:mr-3 file:rounded-2xl file:border file:border-slate-700/80 file:bg-slate-900/80 file:px-4 file:py-2 file:text-sm file:text-slate-200 file:transition hover:file:border-slate-600"
+          className="w-full text-sm text-slate-600 file:mr-3 file:rounded-2xl file:border file:border-slate-200 file:bg-white file:px-4 file:py-2 file:text-sm file:text-slate-700 file:transition hover:file:border-slate-300 dark:text-slate-400 dark:file:border-slate-800 dark:file:bg-slate-950/90 dark:file:text-slate-200 dark:hover:file:border-slate-600"
         />
 
         <button
           type="submit"
-          className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-4 py-2 text-xs font-medium text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20"
+          className="inline-flex items-center justify-center rounded-2xl border border-cyan-500/30 bg-cyan-50 px-4 py-2 text-xs font-medium text-cyan-700 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-400/20"
         >
-          Upload document
+          Subir documento
         </button>
       </form>
 
       {/* Document list */}
       {documents.length > 0 ? (
         <div className="space-y-2">
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
-            Attached documents ({documents.length})
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
+            Documentos adjuntos ({documents.length})
           </p>
           <div className="space-y-2">
             {documents.map((doc) => (
               <div key={doc.id} className="relative">
-                <div className="flex items-center justify-between rounded-2xl border border-slate-800/80 bg-slate-900/70 px-4 py-2.5">
+                <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 dark:border-slate-800/80 dark:bg-slate-950/70">
                   <div className="min-w-0 flex-1 space-y-0.5">
-                    <p className="truncate text-sm font-medium text-slate-200">{doc.fileName}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-200">{doc.fileName}</p>
+                    <p className="text-xs text-slate-600 dark:text-slate-500">
                       {DOC_TYPE_LABELS[doc.docType] ?? doc.docType}
                     </p>
                   </div>
@@ -176,34 +176,34 @@ export function DocumentUpload({
                     type="button"
                     disabled={pendingRemove === doc.id}
                     onClick={() => setConfirmRemove(doc.id)}
-                    className="ml-3 shrink-0 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-1 text-xs font-medium text-rose-300 transition hover:bg-rose-500/20 disabled:opacity-40"
+                    className="ml-3 shrink-0 rounded-xl border border-rose-500/30 bg-rose-50 px-3 py-1 text-xs font-medium text-rose-700 transition hover:bg-rose-100 disabled:opacity-40 dark:bg-rose-500/10 dark:text-rose-300 dark:hover:bg-rose-500/20"
                   >
-                    {pendingRemove === doc.id ? "..." : "Remove"}
+                    {pendingRemove === doc.id ? "..." : "Quitar"}
                   </button>
                 </div>
 
                 {/* Confirmation overlay */}
                 {confirmRemove === doc.id && (
-                  <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-slate-950/90 backdrop-blur-sm">
+                  <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-slate-950/80 backdrop-blur-sm dark:bg-slate-950/90">
                     <div className="text-center">
                       <p className="mb-2 text-sm font-medium text-white">
                         ¿Eliminar "{doc.fileName}"?
                       </p>
-                      <p className="mb-3 text-xs text-slate-400">
+                      <p className="mb-3 text-xs text-slate-300">
                         Esta acción no se puede deshacer.
                       </p>
                       <div className="flex justify-center gap-2">
                         <button
                           type="button"
                           onClick={() => setConfirmRemove(null)}
-                          className="rounded-xl border border-slate-700/80 bg-slate-900/80 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:bg-slate-800"
+                          className="rounded-xl border border-slate-200 bg-white/90 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-700/80 dark:bg-slate-950/80 dark:text-slate-300 dark:hover:bg-slate-800"
                         >
                           Cancelar
                         </button>
                         <button
                           type="button"
                           onClick={() => handleRemove(doc.id)}
-                          className="rounded-xl border border-rose-500/40 bg-rose-500/20 px-3 py-1.5 text-xs font-medium text-rose-200 transition hover:bg-rose-500/30"
+                          className="rounded-xl border border-rose-500/40 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-700 transition hover:bg-rose-100 dark:bg-rose-500/20 dark:text-rose-200 dark:hover:bg-rose-500/30"
                         >
                           Eliminar
                         </button>
@@ -216,7 +216,7 @@ export function DocumentUpload({
           </div>
         </div>
       ) : (
-        <p className="text-xs text-slate-500">No documents attached yet.</p>
+        <p className="text-xs text-slate-600 dark:text-slate-500">Todavía no hay documentos adjuntos.</p>
       )}
     </div>
   );

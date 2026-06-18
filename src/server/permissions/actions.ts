@@ -7,6 +7,12 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { broadcastNotification } from "@/server/notifications/service";
 import { requirePermission } from "@/lib/authorize";
+import { getDroneById } from "@/server/drones/queries";
+import { getFlightPlanById } from "@/server/flight-plans/queries";
+import { getOperatorById } from "@/server/operators/queries";
+import { getPermissionDocuments } from "@/server/permissions/queries";
+import { getWeatherForecast } from "@/server/weather/service";
+import { evaluateChecklistSubmission, normalizeChecklist } from "@/modules/dgac/checklist-items";
 import {
   isTerminalState,
   isValidTransition,
@@ -23,16 +29,55 @@ export async function transitionPermission(
   const session = await auth();
   const userId = session?.user?.id;
 
-  const flightPlan = await prisma.flightPlan.findUnique({
-    where: { id: flightPlanId },
-    select: { permissionStatus: true, code: true, deletedAt: true },
-  });
+  const flightPlan = await getFlightPlanById(flightPlanId);
 
-  if (!flightPlan || flightPlan.deletedAt) {
+  if (!flightPlan) {
     throw new Error("Flight plan not found.");
   }
 
   const currentStatus = flightPlan.permissionStatus;
+
+  if (newStatus === "READY_FOR_SUBMISSION" || newStatus === "SUBMITTED") {
+    const [documents, drone, operator, persistedChecklist] = await Promise.all([
+      getPermissionDocuments(flightPlanId),
+      flightPlan.droneId ? getDroneById(flightPlan.droneId) : Promise.resolve(null),
+      flightPlan.operatorId ? getOperatorById(flightPlan.operatorId) : Promise.resolve(null),
+      Promise.resolve(normalizeChecklist(flightPlan.dgacChecklist)),
+    ]);
+    const weatherData = flightPlan.geometryJson
+      ? await getWeatherForecast(flightPlan.geometryJson, flightPlan.operationDate).catch(() => null)
+      : null;
+    const weatherReady = Boolean(weatherData && !("error" in weatherData)) || Boolean(persistedChecklist["weather-check"]);
+
+    const readiness = evaluateChecklistSubmission(
+      {
+        record: {
+          clientId: flightPlan.clientId,
+          costCenterId: flightPlan.costCenterId,
+          droneId: flightPlan.droneId,
+          operatorId: flightPlan.operatorId,
+          geometryJson: flightPlan.geometryJson,
+          operationDate: flightPlan.operationDate,
+        },
+        documents,
+        drone: drone ? { insuranceExpiry: drone.insuranceExpiry ?? null } : null,
+        operator: operator
+          ? {
+              licenseNumber: operator.licenseNumber ?? null,
+              licenseExpiry: operator.licenseExpiry ?? null,
+            }
+          : null,
+        weatherReady,
+      },
+      flightPlan.dgacChecklist,
+    );
+
+    if (!readiness.canSubmit) {
+      throw new Error(
+        `DGAC checklist incomplete. Missing: ${readiness.missingItems.map((item) => item.label).join(", ")}`,
+      );
+    }
+  }
 
   // Pure validation — no DB needed
   const validationError = validateTransition(currentStatus, newStatus);

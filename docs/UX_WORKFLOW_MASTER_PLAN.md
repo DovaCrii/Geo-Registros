@@ -24,5 +24,7 @@ AeroFlow debe sentirse como un centro operativo para misiones RPA, no como una c
 ## Proximas mejoras UX
 - Pulir dashboard como centro de comando.
 - Simplificar wizard de mision.
-- Mejorar detalle de plan de vuelo con pasos y estados.
+- Mejorar detalle de plan de vuelo con pasos, estados y CTA directo a mapa.
+- Convertir geometria en workspace mapa-first con herramientas y capas visibles.
+- Eliminar GeoJSON del flujo normal; mantenerlo solo como opcion tecnica avanzada.
 - Consolidar timeline de permiso y documentos.

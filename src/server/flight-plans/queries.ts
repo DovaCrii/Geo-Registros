@@ -87,6 +87,7 @@ export async function getFlightPlanById(id: string) {
       notes: true,
       geometryJson: true,
       geometryType: true,
+      dgacChecklist: true,
       costCenterId: true,
       clientId: true,
       droneId: true,

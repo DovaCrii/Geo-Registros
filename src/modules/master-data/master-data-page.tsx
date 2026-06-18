@@ -10,12 +10,12 @@ import { MasterDataModuleConfig, MasterDataRow } from "@/modules/master-data/cat
 const columns: Array<DataColumn<MasterDataRow>> = [
   {
     key: "code",
-    header: "Code",
+    header: "Código",
     render: (row) => <span className="font-medium text-white">{row.code}</span>,
   },
   {
     key: "name",
-    header: "Record",
+    header: "Registro",
     render: (row) => (
       <div className="space-y-1">
         <p className="font-medium text-white">{row.name}</p>
@@ -25,12 +25,12 @@ const columns: Array<DataColumn<MasterDataRow>> = [
   },
   {
     key: "owner",
-    header: "Operational owner",
+    header: "Responsable operativo",
     render: (row) => <span className="text-slate-300">{row.owner}</span>,
   },
   {
     key: "status",
-    header: "Status",
+    header: "Estado",
     render: (row) => <StatusChip label={row.status} tone={row.tone} />,
   },
 ];
@@ -43,20 +43,20 @@ export function MasterDataPage({ config }: { config: MasterDataModuleConfig }) {
           eyebrow={config.eyebrow}
           title={config.title}
           description={config.description}
-          actions={<PrimaryButton>Create record</PrimaryButton>}
+          actions={<PrimaryButton>Crear registro</PrimaryButton>}
         />
 
         <FilterBar>
-          <FilterField label="Search" placeholder={config.searchPlaceholder} />
-          <FilterField label={config.filterLabel} placeholder="Filter active scope" />
-          <FilterField label={config.ownerLabel} placeholder="Filter responsible party" />
-          <FilterField label="Status" placeholder="Filter by state" />
+          <FilterField label="Buscar" placeholder={config.searchPlaceholder} />
+          <FilterField label={config.filterLabel} placeholder="Filtrar por alcance" />
+          <FilterField label={config.ownerLabel} placeholder="Filtrar por responsable" />
+          <FilterField label="Estado" placeholder="Filtrar por estado" />
         </FilterBar>
 
         <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_360px]">
           <DataTable
-            title={`${config.title} workspace`}
-            description="Visual base only. Real CRUD, persistence, and side-panel editing come in the next implementation slice."
+            title={config.title}
+            description="Base visual solamente. El CRUD real, persistencia y edición en panel lateral llegan en el próximo slice de implementación."
             columns={columns}
             rows={config.rows}
           />

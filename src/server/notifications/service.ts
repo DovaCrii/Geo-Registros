@@ -5,7 +5,8 @@ export type NotificationType =
   | "PERMISSION_TRANSITION"
   | "DOCUMENT_ATTACHED"
   | "DOCUMENT_REMOVED"
-  | "NOTE_ADDED";
+  | "NOTE_ADDED"
+  | "EXPIRY_ALERT";
 
 type CreateNotificationParams = {
   userId: string;

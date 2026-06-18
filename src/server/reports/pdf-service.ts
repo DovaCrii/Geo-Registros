@@ -140,7 +140,7 @@ export function generateFlightPlanReport(data: FlightPlanReportData): Promise<Bu
       .moveDown(0.2);
 
     const assignRows = [
-      ["Centro de costo", `${data.costCenter.code} · ${data.costCenter.name}`],
+      ["Grupo de trabajo", `${data.costCenter.code} · ${data.costCenter.name}`],
       ["Cliente", data.client.name],
       ["Dron", `${data.drone.model} · ${data.drone.serialNumber}`],
       ["Operador", data.operator.fullName],

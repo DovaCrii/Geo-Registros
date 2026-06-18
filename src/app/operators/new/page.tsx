@@ -1,5 +1,6 @@
 import { RecordStatus } from "@prisma/client";
 
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { requirePageAuth } from "@/lib/require-page-auth";
@@ -17,13 +18,19 @@ export default async function NewOperatorPage() {
   return (
     <PageShell>
       <div className="space-y-6">
-        <PageHeader eyebrow="Block 2 / Operators" title="Register operator" description="Create the first real personnel slice with identity, license, and optional cost center assignment." />
+        <Breadcrumbs items={[{ label: "Inicio", href: "/" }, { label: "Operadores RPAS", href: "/operators" }, { label: "Registrar operador" }]} />
+
+        <PageHeader
+          eyebrow="Bloque 2 / Datos maestros"
+          title="Registrar operador"
+          description="Agregá un nuevo operador RPA con datos personales, licencia y grupo de trabajo."
+        />
 
         <OperatorForm
-          title="Operator form"
-          description="Keep this slice stable: identity, contact data, license number, optional cost center, and status."
+          title="Nuevo operador"
+          description="Completá identidad, contacto, número de licencia y grupo de trabajo opcional."
           action={createOperator}
-          submitLabel="Create operator"
+          submitLabel="Registrar operador"
           costCenterOptions={costCenterOptions}
           initialValues={{ code: "", fullName: "", email: "", phone: "", licenseNumber: "", licenseExpiry: "", notes: "", costCenterId: "", status: RecordStatus.ACTIVE }}
         />

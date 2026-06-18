@@ -39,16 +39,19 @@ export function SortHeader({ field, label }: SortHeaderProps) {
 
   return (
     <button
+      type="button"
       onClick={handleClick}
-      className="group inline-flex items-center gap-1.5 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 transition hover:text-slate-300"
+      aria-label={`Ordenar por ${label}`}
+      aria-pressed={isActive}
+      className="group inline-flex items-center gap-1.5 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 transition hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
     >
       <span>{label}</span>
       <span className="flex flex-col leading-none opacity-0 transition group-hover:opacity-100">
-        <span className={`text-[8px] ${isActive && currentDir === "asc" ? "text-cyan-300" : "text-slate-600"}`}>▲</span>
-        <span className={`text-[8px] ${isActive && currentDir === "desc" ? "text-cyan-300" : "text-slate-600"}`}>▼</span>
+        <span className={`text-[8px] ${isActive && currentDir === "asc" ? "text-accent dark:text-cyan-300" : "text-slate-400 dark:text-slate-500"}`}>▲</span>
+        <span className={`text-[8px] ${isActive && currentDir === "desc" ? "text-accent dark:text-cyan-300" : "text-slate-400 dark:text-slate-500"}`}>▼</span>
       </span>
       {isActive && (
-        <span className="text-[10px] text-cyan-300">
+        <span className="text-[10px] text-accent dark:text-cyan-300">
           {currentDir === "asc" ? "↑" : "↓"}
         </span>
       )}

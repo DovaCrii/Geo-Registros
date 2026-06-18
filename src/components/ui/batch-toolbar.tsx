@@ -28,19 +28,19 @@ export function BatchToolbar({ selectedCount, actions, onAction, onClear }: Batc
   if (selectedCount === 0) return null;
 
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-cyan-800/40 bg-cyan-950/60 px-4 py-3 backdrop-blur">
-      <span className="text-sm font-medium text-cyan-200">
-        {selectedCount} selected
+    <div className="flex items-center gap-3 rounded-lg border border-cyan-200 bg-cyan-50 px-4 py-3 dark:border-cyan-800/40 dark:bg-cyan-950/60">
+      <span className="text-sm font-medium text-cyan-700 dark:text-cyan-200">
+        {selectedCount} seleccionados
       </span>
 
       <div className="flex items-center gap-2">
         {actions.map((action) => {
           const base =
-            "inline-flex items-center justify-center rounded-xl border px-3 py-1.5 text-xs font-medium transition";
+            "inline-flex items-center justify-center rounded-lg border px-3 py-1.5 text-xs font-medium transition";
           const variants: Record<string, string> = {
-            primary: "border-cyan-400/30 bg-cyan-500/15 text-cyan-100 hover:border-cyan-300/50 hover:bg-cyan-400/20",
-            danger: "border-red-400/30 bg-red-500/15 text-red-200 hover:border-red-300/50 hover:bg-red-400/20",
-            warning: "border-amber-400/30 bg-amber-500/15 text-amber-200 hover:border-amber-300/50 hover:bg-amber-400/20",
+            primary: "border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 text-accent-strong dark:text-cyan-100 hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20",
+            danger: "border-red-300 bg-red-50 text-red-700 hover:border-red-400 hover:bg-red-100 dark:border-red-400/30 dark:bg-red-500/15 dark:text-red-200 dark:hover:border-red-300/50 dark:hover:bg-red-400/20",
+            warning: "border-amber-300 bg-amber-50 text-amber-700 hover:border-amber-400 hover:bg-amber-100 dark:border-amber-400/30 dark:bg-amber-500/15 dark:text-amber-200 dark:hover:border-amber-300/50 dark:hover:bg-amber-400/20",
           };
           const variant = variants[action.variant ?? "primary"] ?? variants.primary;
           const isBusy = loading === action.handler;
@@ -53,7 +53,7 @@ export function BatchToolbar({ selectedCount, actions, onAction, onClear }: Batc
               onClick={() => handleAction(action.handler)}
               className={`${base} ${variant} disabled:opacity-50`}
             >
-              {isBusy ? "Processing…" : action.label}
+              {isBusy ? "Procesando…" : action.label}
             </button>
           );
         })}
@@ -62,9 +62,9 @@ export function BatchToolbar({ selectedCount, actions, onAction, onClear }: Batc
       <button
         type="button"
         onClick={onClear}
-        className="ml-auto text-xs text-slate-500 underline transition hover:text-slate-300"
+        className="ml-auto text-xs text-slate-600 underline transition hover:text-slate-800 dark:text-slate-500 dark:hover:text-slate-300"
       >
-        Clear selection
+        Limpiar selección
       </button>
     </div>
   );

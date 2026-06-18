@@ -1,11 +1,11 @@
 # AeroFlow
 
-**Drone & RPA flight operations platform — mission planning, permissions, documents, geo-spatial tracking.**
+**Platform for drone/RPA flight operations, geo-registration, technical deliverables, and operational compliance — from mission planning to report delivery in a single traceable workflow.**
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=next.js)](https://nextjs.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma)](https://www.prisma.io/)
-[![PostGIS](https://img.shields.io/badge/PostGIS-3-316192?logo=postgresql)](https://postgis.net/)
+[![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite)](https://www.sqlite.org/)
 [![MapLibre](https://img.shields.io/badge/MapLibre-4-7CB342?logo=maplibre)](https://maplibre.org/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind-3-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-Commercial-red.svg)](LICENSE)
@@ -16,15 +16,17 @@
 ## Current snapshot
 
 | Product state | Current focus | Branches to review |
-|---|---|---|
-| Functional platform with operational modules live | UX clarity, visual consistency, and shorter AI handoff context | `ux-dgac-login-fix`, `codex/docs-dashboard-clean` |
+|---|---|---|---|
+| Production-ready platform with operational modules, visual system, and contextual guidance | Commercial polish, map-first geometry workflow, and GitHub-ready documentation | `ux-dgac-login-fix` |
 
 ### Current highlights
 
-- Operational dashboard evolving from KPI screen into a clearer command center.
-- Short-context documentation added for OpenCode and Codex collaboration.
-- UX and design-system planning now documented in-repo for future execution.
-- GitHub review path reduced to a few key files instead of long prompts.
+- Visual system fully applied (light-first, dark mode secondary) — all components, modules, and pages normalized to `slate-950` dark surfaces.
+- Mission flow redesigned: wizard pruned from 6 to 4 actionable steps, creation redirects to detail with progress bar.
+- Permissions, documents, geometry, and checklist modules aligned with the design system and fully localized to Spanish.
+- Contextual help (FlowGuide) covers 16 routes with step-by-step guidance and operational tips.
+- Commercial landing page with industry use cases (mining, construction, infrastructure, environment, surveying, inspection) and before/after comparison.
+- Map-first geometry experience in progress: the normal user flow prioritizes drawing, layers, and saving from the map while GeoJSON remains internal/advanced.
 
 ### Review this first
 
@@ -56,30 +58,31 @@ Today, managing drone permits, flight logs, aircraft documents, operator credent
 
 ## Entity model
 
+```mermaid
+flowchart TD
+  CC[CostCenter\n(cost center)]
+  DR[Drone\n(fleet)]
+  CL[Client\n(customer)]
+  OP[Operator\n(pilot / RPA)]
+
+  MS[Mission / FlightPlan\n(operational workflow)]
+  GE[Geometry\n(GeoJSON)]
+  DO[Documents\n(permits, checklists, files)]
+  WE[Weather\n(Open-Meteo)]
+  HS[Status history\n(audit trail)]
+
+  CC --> MS
+  DR --> MS
+  CL --> MS
+  OP --> MS
+
+  MS --> GE
+  MS --> DO
+  MS --> WE
+  MS --> HS
 ```
-┌────────────┐       ┌──────────┐       ┌──────────┐
-│ CostCenter │──────▸│  Drone   │       │  Client  │
-│ (cost      │       │ (fleet)  │       │(customer)│
-│  center)   │       └──────────┘       └──────────┘
-└────────────┘              │                  │
-       │                    │                  │
-       │           ┌────────▼──────────────────▼──┐
-       │           │         Mission              │
-       │           │   (flight plan / permiso)    │
-       ├──────────▸│                              │
-       │           │  ┌──────────────────────┐    │
-       │           │  │  geometry (GeoJSON)  │    │
-       │           │  │  documents           │    │
-       │           │  │  weather data        │    │
-       │           │  │  status history      │    │
-       │           │  └──────────────────────┘    │
-       │           └──────────────────────────────┘
-       │
-┌──────▼──────┐
-│  Operator   │
-│ (pilot/RPA) │
-└─────────────┘
-```
+
+> Central idea: one mission ties together the operational context, geometry, documents, weather, and audit history.
 
 ---
 
@@ -90,7 +93,7 @@ Today, managing drone permits, flight logs, aircraft documents, operator credent
 | **Frontend** | Next.js 15 (App Router) + React 19 | SSR, server actions, file-based routing, full-stack monorepo |
 | **Styling** | TailwindCSS 3 + shadcn/ui (planned) | Utility-first, consistent design system, dark theme native |
 | **Backend** | Next.js server actions + route handlers | Monorepo without premature backend separation |
-| **Database** | PostgreSQL 16 + PostGIS 3.4 | Spatial queries, geometry indexes, GeoJSON native |
+| **Database** | SQLite (dev) · PostgreSQL 16 + PostGIS 3.4 (prod, planned) | SQLite para desarrollo local sin dependencias; PostGIS para consultas espaciales en producción |
 | **ORM** | Prisma 6 | Type-safe queries, schema-first, migration pipeline |
 | **Map** | MapLibre GL JS 4 | Open-source, no API keys, WebGL rendering |
 | **Drawing** | TerraDraw via @watergis/maplibre-gl-terradraw | Point, polygon, line, circle, select — interactive editing |
@@ -99,7 +102,7 @@ Today, managing drone permits, flight logs, aircraft documents, operator credent
 | **Weather** | Open-Meteo API (free, no key) | Wind, temperature, precipitation for mission planning |
 | **PDF** | react-pdf / pdf-lib (planned) | Export mission sheets, reports, permit packages |
 | **Storage** | Local-first (MinIO/S3 future) | Document uploads with prepared adapter |
-| **Local dev** | Docker Compose | PostgreSQL + PostGIS in one command |
+| **Local dev** | SQLite directo (default) · Docker Compose (PostgreSQL opcional) | Sin Docker para el día a día; `docker compose up -d` cuando se necesita PostGIS |
 | **Auth** | Scaffolded roles (8 roles) — full auth planned | Ready for credential-based or OIDC login |
 
 ---
@@ -126,6 +129,8 @@ Today, managing drone permits, flight logs, aircraft documents, operator credent
 | **Configurable lists** | ✅ Done | Column configs, filters, sidebar, sorting — all data-driven |
 | **Email tracking** | ✅ Done | Send log with Resend, auto-logging, admin list, detail, resend failed, linked to flight plans, sidebar |
 | **Vigency control** | ✅ Done | insuranceExpiry / licenseExpiry fields, form dates, list indicators, dashboard widget (≤30 days) |
+| **DGAC help & checklist** | ✅ Done | /ayuda help center, docs/dgac/ index, persisted checklist per flight plan |
+| **UI polish & navigation consistency** | ✅ Done | Spanish UI pass, shared breadcrumbs, contextual entity links, honest error states, shell/navigation consistency |
 
 > Each block is documented in [`docs/`](docs/) with what was built, why, what was discarded, and lessons learned.
 
@@ -134,11 +139,12 @@ Today, managing drone permits, flight logs, aircraft documents, operator credent
 ## Recent progress
 
 | Area | Progress | Next move |
-|---|---|---|
-| Documentation | Source-of-truth docs for AI sessions, roadmap, project status, and handoff are now in the repo | Keep `PROJECT_STATUS.md`, `TASKS.md`, and `docs/AI_PROGRESS_LOG.md` current |
-| Dashboard UX | The operational dashboard was reshaped toward clearer next actions and more premium visual hierarchy | Extend the same language into shared UI components |
-| Design system | Base visual direction and component plan are now documented | Execute `T-011` with small, validated UI tasks |
-| GitHub reviewability | The repo now exposes a short review path for product, docs, and workflow context | Open and merge the clean docs PR first |
+|---|---|---|---|
+| Visual system | Light-first migration complete, design tokens normalized across all surfaces, 62 files updated | Mantener consistencia en nuevas pantallas |
+| Mission flow (T-010) | Wizard podado, redirects creation→detail, progress bar con X/6 y gradiente | Etapa 2 (mapa preview en wizard) pendiente |
+| Fase 4 DGAC alignment | Permissions, documents, geometry, checklist — tokens aligned, timeline localized, FlowGuide expanded to 16 routes | Próximo: Fase 5 comercialización |
+| Commercial readiness | Landing page en polish premium con foco mapa-first, permisos y trazabilidad | QA visual y demo data después |
+| Geometry workflow | GeoJSON sale del flujo normal; editor satelital pasa a workspace con capas | Validar dibujo/guardado/import/export |
 
 ---
 
@@ -147,8 +153,8 @@ Today, managing drone permits, flight logs, aircraft documents, operator credent
 ### Conscious choices
 
 | Decision | Discarded alternative | Reason |
-|---|---|---|
-| **PostGIS** over plain `lat/lng` | MongoDB, SQLite | Real spatial queries (intersection, distance, area) |
+|---|---|---|---|
+| **PostGIS (planned) / SQLite (current)** over plain `lat/lng` | MongoDB | SQLite permite desarrollo local liviano sin dependencias; PostGIS se adopta en producción para consultas espaciales reales (intersección, distancia, área). El schema de Prisma está preparado para migrar de SQLite a PostgreSQL sin cambios de modelo. |
 | **MapLibre** over Google Maps | Leaflet, Google Maps SDK | No API keys, no usage limits, open-source stack |
 | **GeoJSON as canonical** over KML/DXF | KML as internal format | GeoJSON is the web standard; KML/DXF are interchange formats |
 | **Next.js full-stack** over separate backend | Express + React SPA | No premature separation; split when scaling demands it |
@@ -179,20 +185,25 @@ cd Geo-Registros
 # 2. Environment
 cp .env.example .env
 
-# 3. Database (requires Docker Desktop)
-docker compose up -d
-
-# 4. Dependencies & migrations
+# 3. Dependencies & database
 npm install
 npx prisma generate
 npx prisma migrate dev --name init
 
-# 5. Dev server
+# 3b. Optional: create a development admin user
+# Set SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD / SEED_ADMIN_FULL_NAME in .env
+npm run seed:dev
+
+# 4. Dev server
 npm run dev
 # → http://localhost:3000
 ```
 
-> Detailed launch guide with troubleshooting in [`docs/10_launch_guide.md`](docs/10_launch_guide.md).
+> **Nota:** El proyecto usa SQLite por defecto para desarrollo local. No requiere Docker ni PostgreSQL.
+> Si necesitás PostGIS para pruebas espaciales, levantá el contenedor con `docker compose up -d`
+> y cambiá `DATABASE_URL` en `.env` a la URL de PostgreSQL (ver `.env.example`).
+
+> Guía detallada de lanzamiento con troubleshooting en [`docs/10_launch_guide.md`](docs/10_launch_guide.md).
 
 ---
 
@@ -213,11 +224,11 @@ The complete documentation map is available in [`docs/00_DOCUMENTATION_INDEX.md`
 ### What changed recently
 
 | Area | Update | Where to review |
-|---|---|---|
-| Documentation | New short-context operating docs for OpenCode and Codex | [`AGENTS.md`](AGENTS.md), [`PROJECT_STATUS.md`](PROJECT_STATUS.md), [`ROADMAP.md`](ROADMAP.md) |
-| Planning | Task tracking and handoff flow prepared for future sessions | [`TASKS.md`](TASKS.md), [`docs/OPENCODE_HANDOFF.md`](docs/OPENCODE_HANDOFF.md) |
-| UX direction | Product workflow and design-system plans documented | [`docs/UX_WORKFLOW_MASTER_PLAN.md`](docs/UX_WORKFLOW_MASTER_PLAN.md), [`docs/DESIGN_SYSTEM_PLAN.md`](docs/DESIGN_SYSTEM_PLAN.md) |
-| Visual optimization | Dashboard evolved toward a clearer, more premium operational experience | [`CHANGELOG.md`](CHANGELOG.md), [`docs/AI_PROGRESS_LOG.md`](docs/AI_PROGRESS_LOG.md) |
+|---|---|---|---|
+| Documentación | Docs de contexto corto para OpenCode y Codex | [`AGENTS.md`](AGENTS.md), [`PROJECT_STATUS.md`](PROJECT_STATUS.md), [`ROADMAP.md`](ROADMAP.md) |
+| Sistema visual | Migración light-first completada (T-011), fix tablas seleccionables, localización ES, accesibilidad | [`CHANGELOG.md`](CHANGELOG.md), [`docs/AI_PROGRESS_LOG.md`](docs/AI_PROGRESS_LOG.md) |
+| Stack real | Sincronizado README con SQLite como DB default, PostgreSQL como opcional para producción | [`README.md`](README.md), [`.env.example`](.env.example) |
+| Planificación | Task tracking y handoff preparados para sesiones futuras | [`TASKS.md`](TASKS.md), [`docs/OPENCODE_HANDOFF.md`](docs/OPENCODE_HANDOFF.md) |
 
 ### GitHub review path
 
@@ -252,7 +263,17 @@ If you are reviewing this repository from GitHub, start here:
 | [`docs/09_kml_dxf_import_export.md`](docs/09_kml_dxf_import_export.md) | KML/DXF format interchange |
 | [`docs/10_launch_guide.md`](docs/10_launch_guide.md) | Setup and troubleshooting |
 | [`docs/11_permission_workflow.md`](docs/11_permission_workflow.md) | Permission workflow implementation |
+| [`docs/12_ui_navigation_consistency.md`](docs/12_ui_navigation_consistency.md) | UI polish, breadcrumbs, and contextual navigation |
 | [`docs/permission-workflow-guide.md`](docs/permission-workflow-guide.md) | Permission workflow operational guide |
+| [`docs/dgac/00_indice_normativo.md`](docs/dgac/00_indice_normativo.md) | DGAC help index |
+| [`docs/dgac/01_operaciones_rpas_chile.md`](docs/dgac/01_operaciones_rpas_chile.md) | RPAS operations in Chile |
+| [`docs/dgac/02_dan_151_operaciones_rpas.md`](docs/dgac/02_dan_151_operaciones_rpas.md) | DAN 151 reference |
+| [`docs/dgac/03_dan_91_operaciones_generales.md`](docs/dgac/03_dan_91_operaciones_generales.md) | DAN 91 reference |
+| [`docs/dgac/04_aoc_ceo_sms_manual_operaciones.md`](docs/dgac/04_aoc_ceo_sms_manual_operaciones.md) | AOC / CEO / SMS / Manual |
+| [`docs/dgac/05_checklist_permiso_vuelo.md`](docs/dgac/05_checklist_permiso_vuelo.md) | Flight-permission checklist |
+| [`docs/dgac/06_documentacion_operador_dron.md`](docs/dgac/06_documentacion_operador_dron.md) | Operator / drone docs |
+| [`docs/dgac/07_fiscalizacion_multas_incumplimientos.md`](docs/dgac/07_fiscalizacion_multas_incumplimientos.md) | Fiscalization and sanctions |
+| [`docs/dgac/08_fuentes_oficiales_dgac.md`](docs/dgac/08_fuentes_oficiales_dgac.md) | Official sources |
 
 ---
 
@@ -263,4 +284,4 @@ Copyright © 2026 Cristobal Munoz. All rights reserved.
 
 ---
 
-<p align="center"><sub>Built with TypeScript, PostGIS & drone coffee · Cristobal Munoz © 2026</sub></p>
+<p align="center"><sub>Built with TypeScript, SQLite & drone coffee · Cristobal Munoz © 2026</sub></p>

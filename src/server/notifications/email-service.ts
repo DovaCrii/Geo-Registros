@@ -12,6 +12,7 @@ const TYPE_LABELS: Record<string, string> = {
   DOCUMENT_ATTACHED: "Documento adjuntado",
   DOCUMENT_REMOVED: "Documento eliminado",
   NOTE_ADDED: "Nota agregada",
+  EXPIRY_ALERT: "Alerta de vencimiento",
 };
 
 const TYPE_ICONS: Record<string, string> = {
@@ -19,6 +20,7 @@ const TYPE_ICONS: Record<string, string> = {
   DOCUMENT_ATTACHED: "📎",
   DOCUMENT_REMOVED: "🗑",
   NOTE_ADDED: "📝",
+  EXPIRY_ALERT: "⏰",
 };
 
 /**

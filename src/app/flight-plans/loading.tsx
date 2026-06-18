@@ -6,7 +6,7 @@ export default function FlightPlansLoading() {
     <PageShell>
       <div className="space-y-6">
         {/* Header skeleton */}
-        <div className="rounded-3xl border border-slate-800/80 bg-slate-950/55 p-6">
+        <div className="rounded-3xl border border-slate-200 bg-white/90 p-6 dark:border-slate-800/80 dark:bg-slate-950/55">
           <SkeletonBar className="mb-1 h-3 w-1/6" />
           <SkeletonBar className="mb-1 h-8 w-1/3" />
           <SkeletonBar className="h-4 w-1/2" />
@@ -20,10 +20,10 @@ export default function FlightPlansLoading() {
         </div>
 
         {/* Table skeleton */}
-        <div className="rounded-3xl border border-slate-800/80 bg-slate-950/45 p-6">
+        <div className="rounded-3xl border border-slate-200 bg-white/80 p-6 dark:border-slate-800/80 dark:bg-slate-950/45">
           <div className="space-y-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-4 rounded-2xl bg-slate-900/70 px-4 py-3">
+              <div key={i} className="flex items-center gap-4 rounded-2xl bg-slate-50 px-4 py-3 dark:bg-slate-950/70">
                 <SkeletonBar className="h-4 w-1/5" />
                 <SkeletonBar className="h-4 w-1/4" />
                 <SkeletonBar className="h-4 w-1/6" />

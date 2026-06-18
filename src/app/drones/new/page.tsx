@@ -1,5 +1,6 @@
 import { RecordStatus } from "@prisma/client";
 
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { requirePageAuth } from "@/lib/require-page-auth";
@@ -17,17 +18,19 @@ export default async function NewDronePage() {
   return (
     <PageShell>
       <div className="space-y-6">
+        <Breadcrumbs items={[{ label: "Inicio", href: "/" }, { label: "Flota RPAS", href: "/drones" }, { label: "Registrar dron" }]} />
+
         <PageHeader
-          eyebrow="Block 2 / Drones"
-          title="Register drone"
-          description="Create the first real aircraft inventory slice without prematurely binding a drone to an operator."
+          eyebrow="Bloque 2 / Datos maestros"
+          title="Registrar dron"
+          description="Agregá una nueva aeronave no tripulada al inventario de flota."
         />
 
         <DroneForm
-          title="Drone form"
-          description="Keep this slice stable: identity, manufacturer, model, optional cost center assignment, and status."
+          title="Nuevo dron"
+          description="Completá los datos de identidad, fabricante, modelo y grupo de trabajo opcional."
           action={createDrone}
-          submitLabel="Create drone"
+          submitLabel="Registrar dron"
           costCenterOptions={costCenterOptions}
           initialValues={{
             code: "",
