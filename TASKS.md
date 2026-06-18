@@ -23,6 +23,8 @@
 | T-019 | Centro de Conocimiento — buscador + flujo 7 pasos + preview docs | Alta ✅ | OpenCode | `src/app/ayuda/page.tsx`, `src/components/help-center/` | /ayuda se convierte en centro interactivo con buscador en vivo, mapa del flujo operacional y vista previa de documentos | `npm run build` ✅ |
 | T-020 | Roadmap y tracking sincronizados con fase comercial | Alta ✅ | Codex | `ROADMAP.md`, `TASKS.md`, `PROJECT_STATUS.md`, `docs/OPENCODE_HANDOFF.md` | Documentos de seguimiento reflejan la fase comercial actual y el Centro de Conocimiento planificado | Revisión manual |
 | T-021 | Fase 7 — Mapa operacional workspace | Alta ✅ | OpenCode | `src/modules/flight-plans/geometry-editor.tsx`, `src/app/flight-plans/[id]/geometry/page.tsx` | Workspace visual con mapa amplio, mediciones en vivo, hint contextual, GeoJSON como formato avanzado | `npm run build` ✅ |
+| T-022 | RBAC y perfiles de revisión | Alta | Codex | `src/lib/authorize.ts`, `src/lib/require-page-auth.ts`, `src/server/**`, `src/components/**` | Perfiles de revisión/lectura no pueden editar, borrar ni transicionar permisos; la UI oculta o deshabilita acciones según rol | `npm run build`, revisión de permisos |
+| T-023 | UX/UI refinada y mapa avanzado | Alta | OpenCode | `src/app/**`, `src/components/ui/**`, `src/modules/flight-plans/geometry-editor.tsx` | Tipografía/alineación centradas, navegación clara, panel operativo persistente, sidebar del mapa más ordenado y capas contextuales adicionales | `npm run build`, revisión visual |
 
 ## Estado de seguimiento
 
@@ -42,3 +44,5 @@
 - ✅ T-018 — README premium — concepto en español, demo data, current snapshot actualizado
 - ✅ T-019 — Centro de Conocimiento — buscador en vivo, flujo 7 pasos, preview modal
 - ✅ **Fase 7 — Mapa operacional** — workspace visual, mediciones en vivo, hint contextual, mapa amplio (720px)
+- 🔜 T-022 — RBAC y perfiles de revisión
+- 🔜 T-023 — UX/UI refinada y mapa avanzado

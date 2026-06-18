@@ -52,3 +52,20 @@
 - GeoJSON oculto en sección "Intercambio técnico" como formato avanzado. ✅
 - Import/export KML, KMZ, DXF funcional. ✅
 - Indicador de área/perímetro flotante sobre el mapa. ✅
+
+## Fase 8 - RBAC y perfiles de revisión 🔜 NUEVA
+- Separar perfiles operativos de perfiles de revisión/lectura.
+- Bloquear edición, borrado y transición de permisos según rol.
+- Dejar admin con control total y revisores con acceso limitado y auditable.
+- Reflejar permisos también en la UI: botones, menús y acciones invisibles o deshabilitadas.
+- Revisar `requirePermission`, `requirePageAuth` y acciones de server para aplicar el contrato de forma consistente.
+
+## Fase 9 - UX/UI refinada y mapa avanzado 🔜 NUEVA
+- Centrar y alinear mejor la información, tipografía y bloques de contenido.
+- Unificar colores de secciones/etapas con semántica útil, no decorativa.
+- Mantener el panel operativo siempre destacado, aunque cambie la sección activa.
+- Agregar navegación clara para volver a inicio/panel donde corresponda.
+- Rediseñar el mapa como workspace integrado con panel lateral más ordenado y herramientas más intuitivas.
+- Incorporar capas adicionales del contexto geográfico (ciudades, referencias, apoyo visual) sin saturar al operador.
+- Mantener GeoJSON fuera del flujo normal y consolidar la barra lateral de intercambio técnico.
+- Revisar errores de guardado/acciones sin uso y distribución de controles.
