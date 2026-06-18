@@ -19,16 +19,16 @@
 
 | Product state | Current focus | Branches to review |
 |---|---|---|---|
-| Production-ready platform with DGAC workflow complete, 136 tests, and commercial landing | Seed demo data, README premium, landing polish, Centro de Conocimiento | `ux-dgac-login-fix` |
+| Production-ready platform with DGAC workflow complete, 136 tests, Centro de Conocimiento, and premium landing | Mapa operacional workspace | `ux-dgac-login-fix` |
 
 ### Current highlights
 
-- **Fase DGAC completa**: permisos, documentos, geometría, checklist, HelpDocs migrados a Prisma DB, 136 tests pasando.
-- **Sistema visual aplicado** (light-first, dark mode secondary) — todos los componentes y páginas normalizados con tokens `slate-950`.
+- **Centro de Conocimiento** (/ayuda): buscador en vivo, flujo operacional de 7 etapas, preview inline de documentos, secciones normativas.
+- **Fase DGAC completa**: permisos, documentos, geometría, checklist, HelpDocs Prisma, 136 tests.
+- **Landing premium**: hero con CTA gradiente, proof points concretos, stats con datos reales de la plataforma.
+- **Seed demo** (`SEED_DEMO=true`): demo user auto-creado, 4 planes de vuelo (DRAFT/IN_REVIEW/AUTHORIZED/CLOSED), 17 eventos, 5 HelpDocs, 3 notificaciones.
+- **Sistema visual aplicado**: light-first, dark mode secondary, tokens `slate-950` normalizados.
 - **Flujo de misión rediseñado**: wizard de 4 pasos, redirects creation→detail con barra de progreso.
-- **Centro de ayuda operativa** (/ayuda) con documentación DGAC integrada y checklist persistido por plan de vuelo.
-- **Landing comercial** con 7 secciones: hero, pains, flujo de 7 etapas, 6 módulos, 6 casos de uso, antes/después, CTA.
-- **Seed demo** con `SEED_DEMO=true`: crea 3 equipos, 3 clientes, 3 drones, 3 operadores, 3 planes con eventos y documentos.
 - **Mapa operacional planificado**: editor geometría con capas y workspace visual como fase futura.
 
 ### Review this first
@@ -43,19 +43,19 @@
 
 ## Concept
 
-> **AeroFlow centralizes RPA/drone flight operations into a single platform — from mission planning and interactive mapping to document tracking, permission workflows, and operational history.**
+> **AeroFlow centraliza operaciones RPA/drone en una plataforma profesional — desde la planificación de la misión y el mapeo interactivo hasta la gestión documental, los flujos de permiso DGAC/SIGO y la trazabilidad operativa completa.**
 
-Today, managing drone permits, flight logs, aircraft documents, operator credentials, and mission geometry often means juggling emails, spreadsheets, PDFs, KML files, and shared folders. AeroFlow replaces that fragmentation with a structured, visual, and traceable platform.
+Hoy, gestionar permisos de drones, registros de vuelo, documentos de aeronaves, credenciales de operadores y geometría de misión significa lidiar con correos, planillas, PDFs, archivos KML y carpetas compartidas. AeroFlow reemplaza esa fragmentación con una plataforma estructurada, visual y trazable.
 
-**What makes AeroFlow different:**
+**Lo que hace diferente a AeroFlow:**
 
-- **Permission-first workflow** — Full state machine for DGAC/SIGO approvals (draft → review → sent → authorized → rejected → closed)
-- **Map as a tool, not a decoration** — Draw zones, measure areas, mark no-fly zones, save GeoJSON directly from the browser
-- **Weather-aware planning** — Automatic wind, temperature, and precipitation data via free APIs (Open-Meteo)
-- **Process guidance** — Built-in helper that tells you what's missing, what's next, and how to complete each step
-- **Document-centric** — Every mission carries its document package: permits, insurance, checklists, logbooks, KMZ files
-- **Audit trail** — Every state change, document upload, and communication is logged with who, when, and why
-- **Learning journey** — The project itself is documented as it grows, with decisions, trade-offs, and lessons learned alongside the code
+- **Workflow de permisos DGAC/SIGO** — Máquina de estados completa (borrador → revisión → enviado → autorizado → rechazado → cerrado)
+- **Mapa como herramienta, no decoración** — Dibujá zonas, medí áreas, marcá zonas restringidas, guardá GeoJSON desde el navegador
+- **Planificación con datos meteorológicos** — Viento, temperatura y precipitación vía Open-Meteo (API gratuita, sin API key)
+- **Guía de proceso integrada** — FlowGuide te dice qué falta, qué sigue y cómo completar cada paso
+- **Documentos por misión** — Cada plan de vuelo lleva su paquete documental: permisos, seguros, checklists, bitácoras, archivos KMZ
+- **Traza de auditoría** — Cada cambio de estado, carga de documento y comunicación queda registrado con quién, cuándo y por qué
+- **Demo lista para probar** — `SEED_DEMO=true` crea datos de ejemplo: 4 planes, 17 eventos, 5 HelpDocs, 3 notificaciones
 
 ---
 
@@ -145,8 +145,8 @@ flowchart TD
 |---|---|---|---|
 | Visual system | Light-first migration complete, design tokens normalized across all surfaces, 62 files updated | Mantener consistencia en nuevas pantallas |
 | Fase 4 DGAC | Completa: permisos, documentos, geometría, checklist, HelpDocs Prisma, FlowGuide 16 rutas, 136 tests | ✅ Cerrada |
-| Fase 5 Comercial | Landind premium con hero + 7 secciones; seed demo funcional con SEED_DEMO=true | Seed refinado, README premium, landing polish |
-| Fase 6 Centro Conocimiento | Planificado: buscador en vivo, flujo 7 pasos, preview docs | 🔜 Pendiente de diseño |
+| Fase 5 Comercial | Landing premium (hero gradiente, stats, proof points); Seed demo con SEED_DEMO=true; README actualizado | ✅ Fase completa |
+| Fase 6 Centro Conocimiento | Buscador en vivo, flujo 7 etapas, preview inline, secciones normativas | ✅ Implementado |
 | Geometry workflow | GeoJSON sale del flujo normal; editor pasa a workspace con capas (planificado) | Fase 7 — Mapa operacional |
 
 ---
@@ -208,28 +208,27 @@ npm run dev
 
 ### Demo data
 
-Para ver la plataforma con datos de ejemplo:
+Para probar la plataforma con datos de ejemplo:
 
 ```powershell
-# En .env, configura:
-SEED_ADMIN_EMAIL=demo@aeroflow.io
-SEED_ADMIN_PASSWORD=demo1234
-SEED_ADMIN_FULL_NAME="Demo AeroFlow"
+# Configura en .env:
 SEED_DEMO=true
 
-# Ejecutá el seed (puede ejecutarse múltiples veces con upsert):
+# Ejecutá el seed (sin env vars extras — usa credenciales por defecto):
 npm run seed:dev
 ```
 
-Esto crea:
-- **1 admin** (`demo@aeroflow.io` / `demo1234`)
+Esto crea automáticamente:
+- **1 admin**: `demo@aeroflow.io` / `demo1234` (no requiere env vars)
 - **3 equipos de trabajo** (Minería Norte, Construcción Santiago Sur, Topografía y Fotogrametría)
 - **3 clientes** (Minera Los Pelambres, Constructora Vial SA, Municipalidad de Providencia)
 - **3 drones** (Matrice 350 RTK, Mavic 3 Enterprise, EVO II Pro V3)
 - **3 operadores** con licencias vigentes
-- **3 planes de vuelo** en distintos estados: DRAFT, IN_REVIEW, AUTHORIZED
-- **10 eventos** de línea de tiempo de permisos
-- **5 documentos** asociados (seguro, checklist, resolución DGAC, KMZ)
+- **4 planes de vuelo**: DRAFT (levantamiento norte), IN_REVIEW (puente), AUTHORIZED (humedal), CLOSED (fotogrametría completa)
+- **17 eventos** de línea de tiempo de permisos — incluyendo el flujo completo hasta CLOSED
+- **5 documentos** asociados (seguro, checklist, resolución DGAC, KMZ, plano)
+- **5 HelpDocs** en el Centro de Conocimiento
+- **3 notificaciones** (2 sin leer) para probar el panel
 
 > Guía detallada de lanzamiento con troubleshooting en [`docs/10_launch_guide.md`](docs/10_launch_guide.md).
 

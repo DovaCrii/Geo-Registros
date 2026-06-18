@@ -19,7 +19,7 @@
 | T-015 | Editor de geometría mapa-first con capas | Alta ✅ | OpenCode | `src/app/flight-plans/[id]/geometry/page.tsx`, `src/modules/flight-plans/geometry-editor.tsx` | Mapa ocupa el centro, capas son visibles y GeoJSON queda avanzado | `npm run typecheck`, `npm run build`, smoke dibujo ✅ |
 | T-016 | Seed demo refinado con SEED_DEMO=true | Alta ✅ | OpenCode | `prisma/seed.cjs` | Demo user auto-creado, 4 FP (DRAFT/IN_REVIEW/AUTHORIZED/CLOSED), HelpDocs, notificaciones | `npm run build`, seed ejecutado ✅ |
 | T-017 | Landing premium — CTA, proof points, hero polish | Alta ✅ | OpenCode | `src/app/page.tsx` | Hero con CTA gradiente "Probar demo", proof points concretos (4 planes, 100% trazabilidad), stats section con datos reales de plataforma | `npm run build` ✅ |
-| T-018 | README premium con posicionamiento comercial | Media | OpenCode | `README.md` | README refleja stack real y valor comercial: mapa, permisos, trazabilidad | Revisión manual |
+| T-018 | README premium con posicionamiento comercial | Media ✅ | OpenCode | `README.md` | README en español, concepto premium, demo data detallada, current snapshot actualizado | Revisión manual ✅ |
 | T-019 | Centro de Conocimiento — buscador + flujo 7 pasos + preview docs | Alta ✅ | OpenCode | `src/app/ayuda/page.tsx`, `src/components/help-center/` | /ayuda se convierte en centro interactivo con buscador en vivo, mapa del flujo operacional y vista previa de documentos | `npm run build` ✅ |
 | T-020 | Roadmap y tracking sincronizados con fase comercial | Alta ✅ | Codex | `ROADMAP.md`, `TASKS.md`, `PROJECT_STATUS.md`, `docs/OPENCODE_HANDOFF.md` | Documentos de seguimiento reflejan la fase comercial actual y el Centro de Conocimiento planificado | Revisión manual |
 
@@ -38,5 +38,5 @@
 - ✅ Testing infra: jsdom, @testing-library/react, @vitejs/plugin-react
 - ✅ T-016 — Seed demo refinado — demo user auto-creado, 4 planes (DRAFT/IN_REVIEW/AUTHORIZED/CLOSED), HelpDocs, notificaciones
 - ✅ T-017 — Landing premium — hero gradiente, proof points concretos, stats section
-- 🔜 T-018 — README premium
+- ✅ T-018 — README premium — concepto en español, demo data, current snapshot actualizado
 - ✅ T-019 — Centro de Conocimiento — buscador en vivo, flujo 7 pasos, preview modal
