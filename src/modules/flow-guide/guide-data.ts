@@ -226,6 +226,21 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
     },
   },
   {
+    pattern: /^\/master-data/,
+    entry: {
+      title: "Datos maestros",
+      icon: "📊",
+      steps: [
+        "Vista consolidada de todas las entidades base del sistema.",
+        "Cada tarjeta muestra el total de registros y cuántos están activos.",
+        "Hacé clic en una tarjeta para ir al listado completo de esa entidad.",
+        "Usá 'Nuevo' para crear un registro directamente desde acá.",
+        "Los datos se cargan en tiempo real desde la base de datos.",
+      ],
+      tip: "Los registros inactivos no aparecen en los selectores de creación de planes de vuelo.",
+    },
+  },
+  {
     pattern: /^\/admin\/email-logs\/([^/]+)$/,
     entry: {
       title: "Detalle del correo",
