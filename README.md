@@ -5,7 +5,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=next.js)](https://nextjs.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma)](https://www.prisma.io/)
-[![PostGIS](https://img.shields.io/badge/PostGIS-3-316192?logo=postgresql)](https://postgis.net/)
+[![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite)](https://www.sqlite.org/)
 [![MapLibre](https://img.shields.io/badge/MapLibre-4-7CB342?logo=maplibre)](https://maplibre.org/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind-3-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-Commercial-red.svg)](LICENSE)
@@ -21,9 +21,9 @@
 
 ### Current highlights
 
+- Design system visual base fully applied (light-first, dark mode secondary) across all shared components, modules, and pages.
 - Operational dashboard evolving from KPI screen into a clearer command center.
-- Short-context documentation added for OpenCode and Codex collaboration.
-- UX and design-system planning now documented in-repo for future execution.
+- Short-context documentation maintained for OpenCode and Codex collaboration.
 - GitHub review path reduced to a few key files instead of long prompts.
 
 ### Review this first
@@ -91,7 +91,7 @@ flowchart TD
 | **Frontend** | Next.js 15 (App Router) + React 19 | SSR, server actions, file-based routing, full-stack monorepo |
 | **Styling** | TailwindCSS 3 + shadcn/ui (planned) | Utility-first, consistent design system, dark theme native |
 | **Backend** | Next.js server actions + route handlers | Monorepo without premature backend separation |
-| **Database** | PostgreSQL 16 + PostGIS 3.4 | Spatial queries, geometry indexes, GeoJSON native |
+| **Database** | SQLite (dev) · PostgreSQL 16 + PostGIS 3.4 (prod, planned) | SQLite para desarrollo local sin dependencias; PostGIS para consultas espaciales en producción |
 | **ORM** | Prisma 6 | Type-safe queries, schema-first, migration pipeline |
 | **Map** | MapLibre GL JS 4 | Open-source, no API keys, WebGL rendering |
 | **Drawing** | TerraDraw via @watergis/maplibre-gl-terradraw | Point, polygon, line, circle, select — interactive editing |
@@ -100,7 +100,7 @@ flowchart TD
 | **Weather** | Open-Meteo API (free, no key) | Wind, temperature, precipitation for mission planning |
 | **PDF** | react-pdf / pdf-lib (planned) | Export mission sheets, reports, permit packages |
 | **Storage** | Local-first (MinIO/S3 future) | Document uploads with prepared adapter |
-| **Local dev** | Docker Compose | PostgreSQL + PostGIS in one command |
+| **Local dev** | SQLite directo (default) · Docker Compose (PostgreSQL opcional) | Sin Docker para el día a día; `docker compose up -d` cuando se necesita PostGIS |
 | **Auth** | Scaffolded roles (8 roles) — full auth planned | Ready for credential-based or OIDC login |
 
 ---
@@ -138,10 +138,10 @@ flowchart TD
 
 | Area | Progress | Next move |
 |---|---|---|
-| Documentation | Source-of-truth docs for AI sessions, roadmap, project status, and handoff are now in the repo | Keep `PROJECT_STATUS.md`, `TASKS.md`, and `docs/AI_PROGRESS_LOG.md` current |
-| Dashboard UX | The operational dashboard was reshaped toward clearer next actions and more premium visual hierarchy | Extend the same language into shared UI components |
-| Design system | Base visual direction and component plan are now documented | Execute `T-011` with small, validated UI tasks |
-| GitHub reviewability | The repo now exposes a short review path for product, docs, and workflow context | Open and merge the clean docs PR first |
+| Documentation | Source-of-truth docs for AI sessions, roadmap, project status, and handoff are in the repo | Keep status docs current with each change |
+| Design system | Sistema visual base aplicado (light-first, 55 archivos, commit `136c0b6`) | Siguiente: sincronizar README con stack real o arrancar Fase 2/4 |
+| Dashboard UX | El dashboard operativo fue reformulado hacia jerarquía visual más clara | Extender el mismo lenguaje visual a nuevas pantallas |
+| GitHub reviewability | Short review path disponible para contexto de producto, docs y workflow | Mantener alineado con el estado real del repo |
 
 ---
 
@@ -150,8 +150,8 @@ flowchart TD
 ### Conscious choices
 
 | Decision | Discarded alternative | Reason |
-|---|---|---|
-| **PostGIS** over plain `lat/lng` | MongoDB, SQLite | Real spatial queries (intersection, distance, area) |
+|---|---|---|---|
+| **PostGIS (planned) / SQLite (current)** over plain `lat/lng` | MongoDB | SQLite permite desarrollo local liviano sin dependencias; PostGIS se adopta en producción para consultas espaciales reales (intersección, distancia, área). El schema de Prisma está preparado para migrar de SQLite a PostgreSQL sin cambios de modelo. |
 | **MapLibre** over Google Maps | Leaflet, Google Maps SDK | No API keys, no usage limits, open-source stack |
 | **GeoJSON as canonical** over KML/DXF | KML as internal format | GeoJSON is the web standard; KML/DXF are interchange formats |
 | **Next.js full-stack** over separate backend | Express + React SPA | No premature separation; split when scaling demands it |
@@ -182,24 +182,25 @@ cd Geo-Registros
 # 2. Environment
 cp .env.example .env
 
-# 3. Database (requires Docker Desktop)
-docker compose up -d
-
-# 4. Dependencies & migrations
+# 3. Dependencies & database
 npm install
 npx prisma generate
 npx prisma migrate dev --name init
 
-# 4b. Optional: create a development admin user
+# 3b. Optional: create a development admin user
 # Set SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD / SEED_ADMIN_FULL_NAME in .env
 npm run seed:dev
 
-# 5. Dev server
+# 4. Dev server
 npm run dev
 # → http://localhost:3000
 ```
 
-> Detailed launch guide with troubleshooting in [`docs/10_launch_guide.md`](docs/10_launch_guide.md).
+> **Nota:** El proyecto usa SQLite por defecto para desarrollo local. No requiere Docker ni PostgreSQL.
+> Si necesitás PostGIS para pruebas espaciales, levantá el contenedor con `docker compose up -d`
+> y cambiá `DATABASE_URL` en `.env` a la URL de PostgreSQL (ver `.env.example`).
+
+> Guía detallada de lanzamiento con troubleshooting en [`docs/10_launch_guide.md`](docs/10_launch_guide.md).
 
 ---
 
@@ -220,11 +221,11 @@ The complete documentation map is available in [`docs/00_DOCUMENTATION_INDEX.md`
 ### What changed recently
 
 | Area | Update | Where to review |
-|---|---|---|
-| Documentation | New short-context operating docs for OpenCode and Codex | [`AGENTS.md`](AGENTS.md), [`PROJECT_STATUS.md`](PROJECT_STATUS.md), [`ROADMAP.md`](ROADMAP.md) |
-| Planning | Task tracking and handoff flow prepared for future sessions | [`TASKS.md`](TASKS.md), [`docs/OPENCODE_HANDOFF.md`](docs/OPENCODE_HANDOFF.md) |
-| UX direction | Product workflow and design-system plans documented | [`docs/UX_WORKFLOW_MASTER_PLAN.md`](docs/UX_WORKFLOW_MASTER_PLAN.md), [`docs/DESIGN_SYSTEM_PLAN.md`](docs/DESIGN_SYSTEM_PLAN.md) |
-| Visual optimization | Dashboard evolved toward a clearer, more premium operational experience | [`CHANGELOG.md`](CHANGELOG.md), [`docs/AI_PROGRESS_LOG.md`](docs/AI_PROGRESS_LOG.md) |
+|---|---|---|---|
+| Documentación | Docs de contexto corto para OpenCode y Codex | [`AGENTS.md`](AGENTS.md), [`PROJECT_STATUS.md`](PROJECT_STATUS.md), [`ROADMAP.md`](ROADMAP.md) |
+| Sistema visual | Migración light-first completada (T-011), fix tablas seleccionables, localización ES, accesibilidad | [`CHANGELOG.md`](CHANGELOG.md), [`docs/AI_PROGRESS_LOG.md`](docs/AI_PROGRESS_LOG.md) |
+| Stack real | Sincronizado README con SQLite como DB default, PostgreSQL como opcional para producción | [`README.md`](README.md), [`.env.example`](.env.example) |
+| Planificación | Task tracking y handoff preparados para sesiones futuras | [`TASKS.md`](TASKS.md), [`docs/OPENCODE_HANDOFF.md`](docs/OPENCODE_HANDOFF.md) |
 
 ### GitHub review path
 
@@ -280,4 +281,4 @@ Copyright © 2026 Cristobal Munoz. All rights reserved.
 
 ---
 
-<p align="center"><sub>Built with TypeScript, PostGIS & drone coffee · Cristobal Munoz © 2026</sub></p>
+<p align="center"><sub>Built with TypeScript, SQLite & drone coffee · Cristobal Munoz © 2026</sub></p>
