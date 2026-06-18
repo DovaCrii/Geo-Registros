@@ -116,6 +116,19 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
     },
   },
   {
+    pattern: /^\/operators\/([^/]+)$/,
+    entry: {
+      title: "Detalle del operador",
+      icon: "👨‍✈️",
+      steps: [
+        "Acá ves la información completa del operador.",
+        "Podés editar nombre, contacto, licencia y datos personales.",
+        "El vencimiento de licencia se muestra como alerta si está próximo.",
+        "Los cambios se persisten en base de datos con actualización inmediata.",
+      ],
+    },
+  },
+  {
     pattern: /^\/operators/,
     entry: {
       title: "Operadores RPA",
@@ -139,6 +152,76 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
         "Cada grupo puede agrupar drones, operadores y planes de vuelo.",
         "Útil para reportes financieros y asignación de recursos.",
         "Código único: usá un formato como GT-001.",
+      ],
+    },
+  },
+  {
+    pattern: /^\/ayuda/,
+    entry: {
+      title: "Centro de ayuda",
+      icon: "❓",
+      steps: [
+        "Secciones organizadas por etapa operativa: antes, durante y después del vuelo.",
+        "Cada sección agrupa temas DGAC y operativos relevantes.",
+        "La checklist DGAC te guía en los requisitos por plan de vuelo.",
+        "La documentación interna carga archivos de referencia del equipo.",
+        "Usá el botón flotante de ayuda (?) desde cualquier página para tips contextuales.",
+      ],
+      tip: "Tip: Este centro es material de apoyo interno. No reemplaza normativa DGAC oficial ni asesoría legal especializada.",
+    },
+  },
+  {
+    pattern: /^\/clients\/new$/,
+    entry: {
+      title: "Nuevo cliente",
+      icon: "🤝",
+      steps: [
+        "Completá los datos del cliente o mandante de la operación.",
+        "Código: opcional, útil para integración con sistemas externos.",
+        "Nombre: obligatorio, identifica al cliente en los listados.",
+        "Contacto: nombre, email y notas complementarias.",
+        "El cliente se crea como activo por defecto.",
+      ],
+    },
+  },
+  {
+    pattern: /^\/clients\/([^/]+)$/,
+    entry: {
+      title: "Detalle del cliente",
+      icon: "🤝",
+      steps: [
+        "Acá ves la información completa del cliente.",
+        "Podés editar código, nombre, contacto y notas.",
+        "Los cambios se persisten en base de datos con actualización inmediata.",
+        "El estado activo/inactivo controla disponibilidad en los formularios de asignación.",
+      ],
+    },
+  },
+  {
+    pattern: /^\/operators\/new$/,
+    entry: {
+      title: "Nuevo operador",
+      icon: "👨‍✈️",
+      steps: [
+        "Registrá un nuevo operador RPA en el sistema.",
+        "Nombre completo: obligatorio para identificación.",
+        "Licencia y vencimiento: datos clave para la documentación DGAC.",
+        "Centro de costo: asignación opcional a un grupo de trabajo.",
+        "El operador se crea como activo por defecto.",
+      ],
+      tip: "Tip: Mantené la licencia al día — sin licencia vigente no se puede operar.",
+    },
+  },
+  {
+    pattern: /^\/cost-centers\/new$/,
+    entry: {
+      title: "Nuevo grupo de trabajo",
+      icon: "📊",
+      steps: [
+        "Creá un nuevo centro de costo o grupo de trabajo.",
+        "Código: único, formato sugerido GT-001.",
+        "Nombre y descripción ayudan a identificar el grupo.",
+        "Los grupos agrupan drones, operadores y planes de vuelo.",
       ],
     },
   },
