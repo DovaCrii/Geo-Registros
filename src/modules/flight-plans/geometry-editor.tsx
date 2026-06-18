@@ -276,6 +276,11 @@ export function GeometryEditor({
   const [terraDrawReady, setTerraDrawReady] = useState(false);
   const [activeMode, setActiveMode] = useState<DrawMode | null>(null);
   const [importing, setImporting] = useState(false);
+  const [layers, setLayers] = useState({
+    satellite: true,
+    operationArea: true,
+    importedReferences: true,
+  });
   const { toast } = useToast();
   const mapRef = useRef<Map | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -355,6 +360,19 @@ export function GeometryEditor({
     return drawControlRef.current?.getTerraDrawInstance() ?? null;
   }, []);
 
+  const syncPayloadFromMap = useCallback(() => {
+    const fc = drawControlRef.current?.getFeatures();
+    if (!fc) return;
+
+    if (fc.features.length === 0) {
+      setPayload("");
+      return;
+    }
+
+    const cleaned = featuresToCleanGeoJson(fc.features as GeoJSON.Feature[]);
+    setPayload(JSON.stringify(cleaned, null, 2));
+  }, []);
+
   // ── Load existing GeoJSON into Terra Draw (once, when ready) ─────
   useEffect(() => {
     if (!terraDrawReady || initialLoadedRef.current) return;
@@ -373,55 +391,33 @@ export function GeometryEditor({
     fitMapToPoints(mapRef.current!, parsed.data);
   }, [terraDrawReady, parsed.valid, parsed.data, getTerraDraw]);
 
-  // ── Sync Terra Draw → textarea on mode change ────────────────────
+  // ── Sync Terra Draw → hidden GeoJSON payload after draw/edit/delete ─
   useEffect(() => {
     const control = drawControlRef.current;
     if (!control) return;
 
-    const handleModeChange = () => {
-      const fc = control.getFeatures();
-      if (!fc) return;
+    const eventNames = [
+      "mode-changed",
+      "finish",
+      "change",
+      "feature-created",
+      "feature-updated",
+      "feature-deleted",
+      "selection-changed",
+    ];
 
-      if (fc.features.length > 0) {
-        const cleaned = featuresToCleanGeoJson(
-          fc.features as GeoJSON.Feature[],
-        );
-        setPayload(JSON.stringify(cleaned, null, 2));
-      }
-    };
+    const controlWithEvents = control as any;
 
-    control.on("mode-changed", handleModeChange);
-
-    return () => {
-      control.off("mode-changed", handleModeChange);
-    };
-  }, [terraDrawReady]);
-
-  // ── Sync Terra Draw → textarea also on feature delete ────────────
-  useEffect(() => {
-    const control = drawControlRef.current;
-    if (!control) return;
-
-    const handleDelete = () => {
-      const fc = control.getFeatures();
-      if (!fc) return;
-
-      if (fc.features.length > 0) {
-        const cleaned = featuresToCleanGeoJson(
-          fc.features as GeoJSON.Feature[],
-        );
-        setPayload(JSON.stringify(cleaned, null, 2));
-      } else {
-        setPayload("");
-      }
-    };
-
-    control.on("feature-deleted", handleDelete);
+    for (const eventName of eventNames) {
+      controlWithEvents.on?.(eventName, syncPayloadFromMap);
+    }
 
     return () => {
-      control.off("feature-deleted", handleDelete);
+      for (const eventName of eventNames) {
+        controlWithEvents.off?.(eventName, syncPayloadFromMap);
+      }
     };
-  }, [terraDrawReady]);
+  }, [terraDrawReady, syncPayloadFromMap]);
 
   // ── Apply textarea content to map ─────────────────────────────────
   const handleApplyFromTextarea = useCallback(() => {
@@ -506,9 +502,26 @@ export function GeometryEditor({
 
       terraDraw.setMode(mode);
       setActiveMode(mode);
+      window.setTimeout(syncPayloadFromMap, 0);
     },
-    [getTerraDraw],
+    [getTerraDraw, syncPayloadFromMap],
   );
+
+  const handleLayerToggle = useCallback((layer: keyof typeof layers) => {
+    setLayers((prev) => {
+      const next = { ...prev, [layer]: !prev[layer] };
+
+      if (layer === "satellite" && mapRef.current?.getLayer("satellite-layer")) {
+        mapRef.current.setLayoutProperty(
+          "satellite-layer",
+          "visibility",
+          next.satellite ? "visible" : "none",
+        );
+      }
+
+      return next;
+    });
+  }, []);
 
   // ── Export handler ────────────────────────────────────────────────
   const handleExport = useCallback(
@@ -550,152 +563,222 @@ export function GeometryEditor({
   );
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_420px]">
-      <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white/95 shadow-xl shadow-slate-950/10 backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/45">
-        {/* Header */}
-        <div className="border-b border-slate-200 px-6 py-5 dark:border-slate-800/80">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-                Mapa y geometría asistida
-              </h2>
-              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                Dibujá puntos, líneas, polígonos o círculos sobre el mapa satelital. Importá KMZ/KML/DXF y exportá de vuelta.
+    <form action={action} className="space-y-6">
+      <input type="hidden" name="flightPlanId" value={flightPlanId} />
+      <input type="hidden" name="geometryPayload" value={payload} />
+
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white/95 shadow-xl shadow-slate-950/10 backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/45">
+          <div className="border-b border-slate-200 bg-white/95 px-6 py-5 dark:border-slate-800/80 dark:bg-slate-950/75">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700 dark:text-cyan-300">
+                  Editor satelital
+                </p>
+                <h2 className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">
+                  Mapa de operación y áreas de vuelo
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
+                  Dibujá el polígono de vuelo, activá capas de referencia y guardá el área sin trabajar con JSON manual.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <StatusChip
+                  label={payload.trim() ? "Área en edición" : "Sin área"}
+                  tone={payload.trim() ? "info" : "neutral"}
+                />
+                <StatusChip
+                  label={parsed.valid ? "Mapa listo" : "Revisar dato"}
+                  tone={parsed.valid ? "success" : "warning"}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 bg-slate-50/90 px-4 py-3 dark:border-slate-800/80 dark:bg-slate-950/70">
+            <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-500">
+              Dibujar
+            </span>
+            {DRAW_MODES.filter((m) => m.group === "draw").map((mode) => (
+              <ToolbarButton
+                key={mode.id}
+                active={activeMode === mode.id}
+                icon={mode.icon}
+                label={mode.label}
+                onClick={() => handleSetMode(mode.id)}
+              />
+            ))}
+
+            <span className="mx-2 hidden h-6 w-px bg-slate-200 dark:bg-slate-700/60 sm:inline-block" />
+
+            <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-500">
+              Editar
+            </span>
+            {DRAW_MODES.filter((m) => m.group === "edit").map((mode) => (
+              <ToolbarButton
+                key={mode.id}
+                active={activeMode === mode.id}
+                icon={mode.icon}
+                label={mode.label}
+                onClick={() => handleSetMode(mode.id)}
+              />
+            ))}
+
+            <span className="mx-2 hidden h-6 w-px bg-slate-200 dark:bg-slate-700/60 sm:inline-block" />
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".kml,.kmz,.dxf"
+              className="hidden"
+              onChange={handleImportFile}
+            />
+            <ToolbarButton
+              icon="📂"
+              label={importing ? "Importando..." : "Importar"}
+              onClick={() => fileInputRef.current?.click()}
+            />
+          </div>
+
+          <div className="relative h-[420px] bg-slate-100 dark:bg-slate-950 sm:h-[560px] xl:h-[680px]">
+            <div ref={containerRef} className="h-full w-full" />
+            <div className="pointer-events-none absolute left-4 top-4 max-w-xs rounded-2xl border border-white/70 bg-white/90 px-4 py-3 text-sm text-slate-700 shadow-lg shadow-slate-950/10 backdrop-blur dark:border-slate-800/70 dark:bg-slate-950/85 dark:text-slate-200">
+              <p className="font-semibold text-slate-950 dark:text-white">Siguiente acción</p>
+              <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">
+                Elegí Polígono, marcá la zona de operación y guardá el área.
               </p>
             </div>
-            <StatusChip
-              label={parsed.summary}
-              tone={parsed.valid ? "info" : "warning"}
-            />
+            {!parsed.valid ? (
+              <div className="pointer-events-none absolute inset-x-4 bottom-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 backdrop-blur dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+                La geometría interna necesita revisión antes de guardar.
+              </div>
+            ) : null}
           </div>
-        </div>
+        </section>
 
-        {/* ── Toolbar ─────────────────────────────────────── */}
-        <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800/80 dark:bg-slate-950/70">
-          {/* Drawing tools */}
-          <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-500">
-            Dibujar
-          </span>
-          {DRAW_MODES.filter((m) => m.group === "draw").map((mode) => (
-            <ToolbarButton
-              key={mode.id}
-              active={activeMode === mode.id}
-              icon={mode.icon}
-              label={mode.label}
-              onClick={() => handleSetMode(mode.id)}
-            />
-          ))}
+        <aside className="space-y-4">
+          <DetailPanel title={title} description={description}>
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 text-sm leading-6 text-cyan-900 dark:bg-cyan-500/[0.06] dark:text-cyan-100">
+                <p className="font-semibold">Workflow recomendado</p>
+                <p className="mt-1 text-cyan-800/80 dark:text-cyan-200/80">
+                  1. Dibujar área. 2. Revisar capas. 3. Guardar. 4. Volver al permiso.
+                </p>
+              </div>
 
-          <span className="mx-2 h-6 w-px bg-slate-200 dark:bg-slate-700/60" />
+              <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800/80 dark:bg-slate-950/70">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-slate-950 dark:text-white">Capas y áreas</p>
+                  <span className="text-xs text-slate-500 dark:text-slate-500">Vista operacional</span>
+                </div>
 
-          {/* Edit tools */}
-          <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-500">
-            Editar
-          </span>
-          {DRAW_MODES.filter((m) => m.group === "edit").map((mode) => (
-            <ToolbarButton
-              key={mode.id}
-              icon={mode.icon}
-              label={mode.label}
-              onClick={() => handleSetMode(mode.id)}
-            />
-          ))}
+                {[
+                  { key: "satellite" as const, label: "Base satelital", desc: "Mapa de referencia visual" },
+                  { key: "operationArea" as const, label: "Área de operación", desc: "Figuras activas del plan" },
+                  { key: "importedReferences" as const, label: "Referencias importadas", desc: "KML, KMZ o DXF cargados" },
+                ].map((item) => (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => handleLayerToggle(item.key)}
+                    className="flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-left transition hover:border-cyan-500/30 hover:bg-white dark:border-slate-800 dark:bg-slate-950/80 dark:hover:border-cyan-500/30"
+                  >
+                    <span>
+                      <span className="block text-sm font-medium text-slate-900 dark:text-white">{item.label}</span>
+                      <span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-500">{item.desc}</span>
+                    </span>
+                    <span
+                      className={`relative h-6 w-11 rounded-full transition ${
+                        layers[item.key] ? "bg-cyan-500" : "bg-slate-300 dark:bg-slate-700"
+                      }`}
+                      aria-hidden="true"
+                    >
+                      <span
+                        className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow transition ${
+                          layers[item.key] ? "left-6" : "left-1"
+                        }`}
+                      />
+                    </span>
+                  </button>
+                ))}
+              </div>
 
-          <span className="mx-2 h-6 w-px bg-slate-200 dark:bg-slate-700/60" />
+              <div className="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-4 text-sm text-slate-700 dark:border-slate-800/80 dark:bg-slate-950/70 dark:text-slate-300">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600 dark:text-slate-400">Estado actual</span>
+                  <StatusChip
+                    label={payload.trim() ? parsed.summary : "Sin geometría"}
+                    tone={parsed.valid ? "info" : "warning"}
+                  />
+                </div>
+                <p className="leading-6">
+                  <strong>Dibujo:</strong> punto, línea, polígono o círculo. Usá seleccionar para mover o borrar figuras.
+                </p>
+                <p className="leading-6">
+                  <strong>Archivos:</strong> importá KML, KMZ o DXF cuando necesites traer referencias externas.
+                </p>
+              </div>
 
-          {/* Import / Export */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".kml,.kmz,.dxf"
-            className="hidden"
-            onChange={handleImportFile}
-          />
-          <ToolbarButton
-            icon="📂"
-            label={importing ? "Importando…" : "Importar"}
-            onClick={() => fileInputRef.current?.click()}
-          />
-          <ToolbarButton
-            icon="📤"
-            label="KML"
-            onClick={() => handleExport("kml")}
-          />
-          <ToolbarButton
-            icon="📤"
-            label="DXF"
-            onClick={() => handleExport("dxf")}
-          />
-        </div>
-
-        {/* Map */}
-        <div className="relative h-[300px] sm:h-[400px] lg:h-[560px] bg-slate-100 dark:bg-slate-950">
-          <div ref={containerRef} className="h-full w-full" />
-          {!parsed.valid ? (
-            <div className="pointer-events-none absolute inset-x-4 top-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 backdrop-blur dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
-              La vista previa se pausa hasta que el GeoJSON vuelva a ser válido.
+              <div className="flex flex-col gap-2">
+                <PrimaryButton type="submit">Guardar área de operación</PrimaryButton>
+                <Link
+                  href={`/flight-plans/${flightPlanId}`}
+                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
+                >
+                  Volver al plan de vuelo
+                </Link>
+              </div>
             </div>
-          ) : null}
-        </div>
-      </section>
+          </DetailPanel>
 
-      <DetailPanel title={title} description={description}>
-        <form action={action} className="space-y-4">
-          <input type="hidden" name="flightPlanId" value={flightPlanId} />
+          <DetailPanel title="Intercambio técnico" description="Opciones secundarias para CAD/GIS y soporte avanzado.">
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleExport("kml")}
+                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
+                >
+                  Exportar KML
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleExport("dxf")}
+                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
+                >
+                  Exportar DXF
+                </button>
+              </div>
 
-          <label className="block space-y-2">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
-              GeoJSON de la geometría
-            </span>
-            <textarea
-              name="geometryPayload"
-              rows={14}
-              value={payload}
-              onChange={(event) => setPayload(event.target.value)}
-              placeholder='{"type":"Feature","geometry":{"type":"Polygon","coordinates":[...]},"properties":{}}'
-              className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 font-mono text-xs leading-6 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/90 dark:text-slate-100 dark:placeholder:text-slate-500"
-            />
-          </label>
-
-          {/* ── Action buttons row ─────────────────────────────────── */}
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={handleApplyFromTextarea}
-              disabled={!parsed.valid}
-              className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
-            >
-              Aplicar desde texto
-            </button>
-          </div>
-
-          <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 dark:border-slate-800/80 dark:bg-slate-950/70 dark:text-slate-300">
-            <div className="flex items-center justify-between">
-              <span className="text-slate-600 dark:text-slate-400">Estado actual</span>
-              <StatusChip
-                label={parsed.valid ? "Vista activa" : "Error de validación"}
-                tone={parsed.valid ? "info" : "warning"}
-              />
+              <details className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/70">
+                <summary className="cursor-pointer text-sm font-semibold text-slate-900 dark:text-white">
+                  Ver GeoJSON avanzado
+                </summary>
+                <label className="mt-4 block space-y-2">
+                  <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
+                    GeoJSON interno
+                  </span>
+                  <textarea
+                    rows={10}
+                    value={payload}
+                    onChange={(event) => setPayload(event.target.value)}
+                    placeholder='{"type":"Feature","geometry":{"type":"Polygon","coordinates":[...]},"properties":{}}'
+                    className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 font-mono text-xs leading-6 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/90 dark:text-slate-100 dark:placeholder:text-slate-500"
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={handleApplyFromTextarea}
+                  disabled={!parsed.valid}
+                  className="mt-3 inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
+                >
+                  Aplicar desde texto
+                </button>
+              </details>
             </div>
-            <p className="leading-6 text-slate-700 dark:text-slate-300">
-              <strong>Dibujar:</strong> Usá la barra de herramientas para crear puntos, líneas, polígonos o círculos. Cambiá a <strong>Seleccionar</strong> para mover o borrar elementos. También tenés Deshacer / Rehacer.
-            </p>
-            <p className="leading-6 text-slate-700 dark:text-slate-300">
-              <strong>Importar / exportar:</strong> Cargá KMZ, KML o DXF, editá libremente y exportá la geometría para CAD (AutoCAD / DraftSight / QGIS).
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3 pt-2">
-            <PrimaryButton type="submit">Guardar área de operación</PrimaryButton>
-            <Link
-              href={`/flight-plans/${flightPlanId}`}
-              className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
-            >
-              Volver al plan de vuelo
-            </Link>
-          </div>
-        </form>
-      </DetailPanel>
-    </div>
+          </DetailPanel>
+        </aside>
+      </div>
+    </form>
   );
 }

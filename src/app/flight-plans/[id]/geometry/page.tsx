@@ -47,15 +47,15 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
       <PageShell>
         <div className="space-y-6">
           <PageHeader
-            eyebrow="Bloque 3 / Geometría asistida por mapa"
-            title={`${record.code} · área de operación`}
-            description="Mostrá el GeoJSON actual en un mapa real, editá la geometría de forma controlada y guardala en el plan de vuelo."
+            eyebrow="Bloque 3 / Editor satelital"
+            title={`${record.code} · mapa de operación`}
+            description="Dibujá el área de vuelo directamente sobre el mapa, controlá capas visibles y guardá la geometría operacional del plan."
             actions={<StatusChip label={record.permissionStatus} tone={toneFromPermissionStatus(record.permissionStatus)} />}
           />
 
           <GeometryEditorWrapper
-            title="Editor de área de operación"
-            description="Usá esta página para sincronizar GeoJSON canónico con un mapa vivo. Las herramientas geoespaciales pesadas quedan para una etapa posterior."
+            title="Control de operación"
+            description="La geometría se guarda como dato interno, pero el trabajo principal se realiza desde el mapa."
             action={updateFlightPlanGeometry.bind(null, record.id)}
             flightPlanId={record.id}
             initialPayload={record.geometryJson ? JSON.stringify(record.geometryJson, null, 2) : ""}
