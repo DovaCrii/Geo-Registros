@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 // ─────────────────────────────────────────────────────────────
 //  DATA
@@ -74,7 +74,7 @@ const beforeAfter = {
 
 function NavBar() {
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-slate-200 bg-white/90 backdrop-blur-2xl dark:border-slate-800/50 dark:bg-[#080f1e]/90">
+    <nav className="fixed top-0 z-50 w-full border-b border-slate-200 bg-white/90 backdrop-blur-2xl dark:border-slate-800/50 dark:bg-slate-950/90">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2">
           <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>
@@ -553,7 +553,7 @@ function DashboardPreview() {
             <span className="h-3 w-3 rounded-full bg-rose-500/60" />
             <span className="h-3 w-3 rounded-full bg-amber-500/60" />
             <span className="h-3 w-3 rounded-full bg-emerald-500/60" />
-            <span className="ml-4 rounded-md border border-slate-200 bg-slate-50 px-4 py-1 text-xs text-slate-600 dark:border-slate-700/40 dark:bg-slate-800/60 dark:text-slate-500">
+            <span className="ml-4 rounded-md border border-slate-200 bg-slate-50 px-4 py-1 text-xs text-slate-600 dark:border-slate-700/40 dark:bg-slate-950/60 dark:text-slate-500">
               app.aeroflow.io/panel-operativo
             </span>
           </div>
@@ -587,7 +587,7 @@ function DashboardPreview() {
 
               <div className="mb-5 grid grid-cols-4 gap-3">
                 {["12 planes", "86% avance", "24 vuelos", "18 entregables"].map((m) => (
-                    <div key={m} className="rounded-xl border border-slate-200 bg-white/90 p-3 dark:border-slate-700/40 dark:bg-slate-800/40">
+                    <div key={m} className="rounded-xl border border-slate-200 bg-white/90 p-3 dark:border-slate-700/40 dark:bg-slate-950/40">
                       <div className="h-2 w-16 rounded bg-slate-200 dark:bg-slate-700/40" />
                       <div className="mt-2 h-5 w-20 rounded bg-cyan-100 dark:bg-cyan-500/20" />
                     </div>
@@ -595,7 +595,7 @@ function DashboardPreview() {
               </div>
 
               {/* Map placeholder */}
-              <div className="geo-grid-subtle relative h-44 rounded-xl border border-slate-200 bg-slate-50/90 dark:border-slate-700/40 dark:bg-slate-800/60">
+              <div className="geo-grid-subtle relative h-44 rounded-xl border border-slate-200 bg-slate-50/90 dark:border-slate-700/40 dark:bg-slate-950/60">
                 <div className="absolute left-3 top-3 rounded-lg border border-slate-200 bg-white/90 px-3 py-2 dark:border-slate-700/40 dark:bg-slate-950/80">
                   <div className="h-2 w-16 rounded bg-cyan-500/30" />
                   <div className="mt-1 h-2 w-24 rounded bg-slate-200 dark:bg-slate-700/30" />
@@ -764,7 +764,7 @@ function Footer() {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-[#080f1e] dark:text-slate-100">
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <NavBar />
       <HeroSection />
       <ProblemSection />

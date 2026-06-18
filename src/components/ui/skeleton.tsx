@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Minimal skeleton components for loading states.
  * Match the light-first rounded-card aesthetic.
  */
@@ -6,7 +6,7 @@
 export function SkeletonBar({ className = "" }: { className?: string }) {
   return (
     <div
-      className={`animate-pulse rounded-2xl bg-slate-200 dark:bg-slate-800/60 ${className}`}
+      className={`animate-pulse rounded-2xl bg-slate-200 dark:bg-slate-950/60 ${className}`}
     />
   );
 }

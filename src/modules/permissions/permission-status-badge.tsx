@@ -1,4 +1,4 @@
-type StatusTone = "success" | "warning" | "danger" | "info" | "neutral";
+﻿type StatusTone = "success" | "warning" | "danger" | "info" | "neutral";
 
 const STATUS_CONFIG: Record<string, { label: string; tone: StatusTone }> = {
   DRAFT: { label: "Borrador", tone: "neutral" },
@@ -18,7 +18,7 @@ const toneClasses: Record<StatusTone, string> = {
   warning: "border-amber-500/30 bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300",
   danger: "border-rose-500/30 bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-300",
   info: "border-cyan-500/30 bg-cyan-50 text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-300",
-  neutral: "border-slate-300 bg-slate-100 text-slate-600 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-300",
+  neutral: "border-slate-300 bg-slate-100 text-slate-600 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-300",
 };
 
 export function PermissionStatusBadge({ status }: { status: string }) {

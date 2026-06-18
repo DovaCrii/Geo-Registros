@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusChip } from "@/components/ui/status-chip";
@@ -239,7 +239,7 @@ function WorkflowStrip({ stages }: { stages: WorkflowStage[] }) {
           <p className="text-xs font-semibold uppercase tracking-[0.26em] text-slate-500">Flujo recomendado</p>
           <h2 className="mt-2 text-xl font-semibold text-slate-900 dark:text-white">Orden de trabajo más intuitivo</h2>
         </div>
-        <span className="rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-400">4 pasos</span>
+        <span className="rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-400">4 pasos</span>
       </div>
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {stages.map((stage) => {
@@ -351,7 +351,7 @@ export default async function DashboardPage({
             action={
               <div className="flex flex-wrap gap-2">
                 <Link href="/dashboard" className="rounded-lg border border-status-warning/30 bg-status-warning/10 px-3 py-1.5 text-xs font-medium text-status-warning dark:text-amber-200 transition hover:border-status-warning/50 hover:bg-status-warning/20">Reintentar</Link>
-                <Link href="/flight-plans/new" className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-700">Seguir al flujo correcto</Link>
+                <Link href="/flight-plans/new" className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-700">Seguir al flujo correcto</Link>
               </div>
             }
           />

@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 import { AlertCard } from "@/components/ui/alert-card";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -246,7 +246,7 @@ export default async function FlightPlanDetailPage({
             {/* Progress bar */}
             <div className="mb-4 flex items-center gap-3 px-1">
               <div className="flex-1">
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-950">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 transition-all duration-500"
                     style={{ width: `${progressPercent}%` }}
@@ -281,7 +281,7 @@ export default async function FlightPlanDetailPage({
                           ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
                           : active
                             ? "bg-accent/20 dark:bg-cyan-400/20 text-accent-strong dark:text-cyan-100"
-                            : "bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
+                            : "bg-slate-200 dark:bg-slate-950 text-slate-500 dark:text-slate-400"
                       }`}>
                         {done && !active ? "✓" : step.tab}
                       </span>
