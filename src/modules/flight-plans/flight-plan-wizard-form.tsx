@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
@@ -24,11 +24,9 @@ type FlightPlanFormValues = {
 };
 
 const STEPS = [
-  { label: "Datos generales", description: "Identificación y fecha de operación." },
+  { label: "Datos generales", description: "Identificación, fecha y contexto operativo." },
   { label: "Asignación", description: "Centro de costo, cliente, dron y operador." },
-  { label: "Área de operación", description: "Contexto operativo y geometría base." },
-  { label: "Documentación", description: "Respaldos mínimos antes de revisión DGAC." },
-  { label: "Checklist DGAC / cliente", description: "Validación previa al envío." },
+  { label: "Área de operación", description: "Geometría base y contexto del terreno." },
   { label: "Revisión final", description: "Resumen y guardado del plan de vuelo." },
 ] as const;
 
@@ -114,21 +112,10 @@ export function FlightPlanWizardForm({
   const canGoNext = step < STEPS.length - 1;
   const canGoBack = step > 0;
 
-  const checklist = useMemo(
-    () => [
-      "Operador con credencial vigente",
-      "Dron con documentación al día",
-      "Área de operación definida",
-      "Documentos mínimos adjuntos",
-      "Checklist DGAC revisado",
-    ],
-    [],
-  );
-
   return (
     <DetailPanel title={title} description={description}>
       <form action={action} className="space-y-6">
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-4">
           {STEPS.map((item, index) => (
             <div
               key={item.label}
@@ -188,6 +175,17 @@ export function FlightPlanWizardForm({
               className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-100"
             />
           </label>
+
+          <label className="block space-y-2">
+            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">Notas operativas</span>
+            <textarea
+              name="notes"
+              rows={4}
+              defaultValue={initialValues.notes}
+              placeholder="Contexto de la operación, objetivos, condiciones del terreno."
+              className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-100 dark:placeholder:text-slate-500"
+            />
+          </label>
         </section>
 
         <section className={step === 1 ? "space-y-4" : "hidden"}>
@@ -198,45 +196,9 @@ export function FlightPlanWizardForm({
         </section>
 
         <section className={step === 2 ? "space-y-4" : "hidden"}>
-          <label className="block space-y-2">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">Notas operativas</span>
-            <textarea
-              name="notes"
-              rows={6}
-              defaultValue={initialValues.notes}
-              placeholder="Contexto operativo antes de geometría y revisión normativa."
-              className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-100 dark:placeholder:text-slate-500"
-            />
-          </label>
-
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950/45 dark:text-slate-400">
             <p className="font-medium text-slate-900 dark:text-slate-200">Área de operación</p>
-            <p className="mt-2 leading-6">La geometría editable se mostrará en el paso avanzado. Por ahora, dejá el contexto operativo y seguí con la asignación.</p>
-          </div>
-        </section>
-
-        <section className={step === 3 ? "space-y-4" : "hidden"}>
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950/45 dark:text-slate-300">
-            <p className="font-medium text-slate-900 dark:text-white">Documentación requerida</p>
-            <ul className="mt-3 space-y-2 text-slate-600 dark:text-slate-400">
-              <li>• Seguro / documentación del dron</li>
-              <li>• Credencial del operador</li>
-              <li>• Evidencia cliente / respaldo técnico</li>
-            </ul>
-          </div>
-
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-500/20 dark:bg-amber-500/[0.04] dark:text-amber-100">
-            Antes de enviar el plan, asegurate de que la documentación mínima esté lista para revisión DGAC.
-          </div>
-        </section>
-
-        <section className={step === 4 ? "space-y-4" : "hidden"}>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {checklist.map((item) => (
-              <div key={item} className="rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-700 dark:border-slate-800 dark:bg-slate-950/45 dark:text-slate-300">
-                {item}
-              </div>
-            ))}
+            <p className="mt-2 leading-6">La geometría se define después de crear el plan, en el editor satelital. Si ya tenés coordenadas, podés pegarlas como GeoJSON.</p>
           </div>
 
           <button
@@ -244,12 +206,12 @@ export function FlightPlanWizardForm({
             onClick={() => setShowAdvancedGeoJson((prev) => !prev)}
             className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
           >
-            {showAdvancedGeoJson ? "Ocultar GeoJSON avanzado" : "Ver GeoJSON avanzado"}
+            {showAdvancedGeoJson ? "Ocultar GeoJSON avanzado" : "Pegar GeoJSON manual"}
           </button>
 
           {showAdvancedGeoJson ? (
             <label className="block space-y-2">
-              <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">GeoJSON avanzado</span>
+              <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">GeoJSON</span>
               <textarea
                 rows={10}
                 value={payload}
@@ -257,23 +219,23 @@ export function FlightPlanWizardForm({
                 placeholder='{"type":"Feature","geometry":{"type":"Polygon","coordinates":[...]}"}'
                 className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 font-mono text-xs text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/90 dark:text-slate-100 dark:placeholder:text-slate-500"
               />
-              <p className="text-xs leading-5 text-slate-600 dark:text-slate-500">Vista avanzada para revisar o pegar GeoJSON manualmente. El flujo principal no depende de este campo.</p>
+              <p className="mt-2 text-xs leading-5 text-slate-600 dark:text-slate-500">Campo opcional. Después podés definir o ajustar la geometría en el editor satelital desde el detalle del plan.</p>
             </label>
           ) : null}
 
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950/45 dark:text-slate-300">
-            <p className="font-medium text-slate-900 dark:text-white">Resumen actual</p>
+            <p className="font-medium text-slate-900 dark:text-white">Estado actual</p>
             <p className="mt-2 leading-6 text-slate-600 dark:text-slate-400">{geometrySummary ?? "Sin geometría adjunta todavía"}</p>
           </div>
         </section>
 
-        <section className={step === 5 ? "space-y-4" : "hidden"}>
+        <section className={step === 3 ? "space-y-4" : "hidden"}>
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950/45 dark:text-slate-300">
             <p className="font-medium text-slate-900 dark:text-white">Revisión final</p>
             <ul className="mt-3 space-y-2 text-slate-600 dark:text-slate-400">
-              <li>• Código, título y fecha listos</li>
+              <li>• Código, título, fecha y notas listos</li>
               <li>• Centro de costo, cliente, dron y operador asignados</li>
-              <li>• Checklist DGAC / cliente revisado</li>
+              <li>• Geometría base opcional registrada</li>
             </ul>
           </div>
 
