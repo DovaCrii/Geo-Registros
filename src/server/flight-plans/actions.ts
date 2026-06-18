@@ -112,7 +112,7 @@ export async function createFlightPlan(formData: FormData) {
     throw new Error("Code and title are required.");
   }
 
-  await prisma.flightPlan.create({
+  const record = await prisma.flightPlan.create({
     data: {
       code,
       title,
@@ -129,7 +129,7 @@ export async function createFlightPlan(formData: FormData) {
   });
 
   revalidatePath("/flight-plans");
-  redirect("/flight-plans");
+  redirect(`/flight-plans/${record.id}?tab=2`);
 }
 
 export async function updateFlightPlan(id: string, formData: FormData) {
@@ -167,7 +167,7 @@ export async function updateFlightPlan(id: string, formData: FormData) {
 
   revalidatePath("/flight-plans");
   revalidatePath(`/flight-plans/${id}`);
-  redirect("/flight-plans");
+  redirect(`/flight-plans/${id}`);
 }
 
 export async function updateFlightPlanGeometry(id: string, formData: FormData) {
