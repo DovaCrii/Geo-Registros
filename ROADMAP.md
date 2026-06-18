@@ -45,7 +45,10 @@
 - Checklist operativo DGAC persistido por plan de vuelo. ✅
 - Componentes en `src/components/help-center/`: FlowMap, DocPreview, HelpCenterClient. ✅
 
-## Fase 7 - Mapa operacional 🔜 PLANIFICADO
-- Convertir el editor de geometria en workspace visual con mapa amplio, herramientas claras y panel de capas.
-- Ocultar GeoJSON del flujo normal y mantenerlo solo como formato interno/avanzado.
-- Validar dibujo, edicion, guardado, recarga e import/export.
+## Fase 7 - Mapa operacional ✅ COMPLETADA
+- Workspace visual con mapa amplio (720px), herramientas claras y panel de capas. ✅
+- Mediciones en vivo: área (m²/km²) y perímetro (m/km) al dibujar. ✅
+- Hint contextual que cambia según si hay figuras en el mapa. ✅
+- GeoJSON oculto en sección "Intercambio técnico" como formato avanzado. ✅
+- Import/export KML, KMZ, DXF funcional. ✅
+- Indicador de área/perímetro flotante sobre el mapa. ✅
