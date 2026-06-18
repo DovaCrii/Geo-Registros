@@ -13,7 +13,7 @@ export type MasterDataSummary = {
   operators: EntitySummary;
 };
 
-function summarize<T extends { status: string }>(
+export function summarize<T extends { status: string }>(
   items: T[],
 ): EntitySummary {
   return {
@@ -32,9 +32,9 @@ export async function getMasterDataSummary(): Promise<MasterDataSummary> {
   ]);
 
   return {
-    costCenters: await summarize(costCenters),
-    clients: await summarize(clients),
-    drones: await summarize(drones),
-    operators: await summarize(operators),
+    costCenters: summarize(costCenters),
+    clients: summarize(clients),
+    drones: summarize(drones),
+    operators: summarize(operators),
   };
 }

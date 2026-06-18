@@ -42,6 +42,21 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
     },
   },
   {
+    pattern: /^\/flight-plans\/new$/,
+    entry: {
+      title: "Nuevo plan de vuelo",
+      icon: "✈️",
+      steps: [
+        "Completá el formulario para crear un nuevo plan de vuelo.",
+        "Código interno: usá un formato como FP-2026-001.",
+        "Seleccioná: centro de costo, cliente, dron y operador.",
+        "La fecha de operación define cuándo se realizará el vuelo.",
+        "El wizard separa el alta en pasos para evitar saturar el formulario con JSON técnico.",
+      ],
+      tip: "Tip: Si no ves centros de costo o clientes en los selectores, primero crealos desde sus módulos correspondientes.",
+    },
+  },
+  {
     pattern: /^\/flight-plans\/([^/]+)$/,
     entry: {
       title: "Plan de vuelo",
@@ -55,21 +70,6 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
         "Para emitir un permiso, primero cargá la documentación requerida.",
       ],
       tip: "Tip: El clima se obtiene automáticamente desde las coordenadas de la geometría del plan de vuelo. Sin geometría, no hay pronóstico.",
-    },
-  },
-  {
-    pattern: /^\/flight-plans\/new$/,
-    entry: {
-      title: "Nuevo plan de vuelo",
-      icon: "✈️",
-      steps: [
-        "Completá el formulario para crear un nuevo plan de vuelo.",
-        "Código interno: usá un formato como FP-2026-001.",
-        "Seleccioná: centro de costo, cliente, dron y operador.",
-        "La fecha de operación define cuándo se realizará el vuelo.",
-        "El wizard separa el alta en pasos para evitar saturar el formulario con JSON técnico.",
-      ],
-      tip: "Tip: Si no ves centros de costo o clientes en los selectores, primero crealos desde sus módulos correspondientes.",
     },
   },
   {
@@ -116,6 +116,21 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
     },
   },
   {
+    pattern: /^\/operators\/new$/,
+    entry: {
+      title: "Nuevo operador",
+      icon: "👨‍✈️",
+      steps: [
+        "Registrá un nuevo operador RPA en el sistema.",
+        "Nombre completo: obligatorio para identificación.",
+        "Licencia y vencimiento: datos clave para la documentación DGAC.",
+        "Centro de costo: asignación opcional a un grupo de trabajo.",
+        "El operador se crea como activo por defecto.",
+      ],
+      tip: "Tip: Mantené la licencia al día — sin licencia vigente no se puede operar.",
+    },
+  },
+  {
     pattern: /^\/operators\/([^/]+)$/,
     entry: {
       title: "Detalle del operador",
@@ -140,6 +155,19 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
         "Estado activo/inactivo para control de disponibilidad.",
       ],
       tip: "Tip: Vinculá la licencia del operador como documento en los planes de vuelo para mantener la trazabilidad.",
+    },
+  },
+  {
+    pattern: /^\/cost-centers\/new$/,
+    entry: {
+      title: "Nuevo grupo de trabajo",
+      icon: "📊",
+      steps: [
+        "Creá un nuevo centro de costo o grupo de trabajo.",
+        "Código: único, formato sugerido GT-001.",
+        "Nombre y descripción ayudan a identificar el grupo.",
+        "Los grupos agrupan drones, operadores y planes de vuelo.",
+      ],
     },
   },
   {
@@ -198,21 +226,6 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
     },
   },
   {
-    pattern: /^\/operators\/new$/,
-    entry: {
-      title: "Nuevo operador",
-      icon: "👨‍✈️",
-      steps: [
-        "Registrá un nuevo operador RPA en el sistema.",
-        "Nombre completo: obligatorio para identificación.",
-        "Licencia y vencimiento: datos clave para la documentación DGAC.",
-        "Centro de costo: asignación opcional a un grupo de trabajo.",
-        "El operador se crea como activo por defecto.",
-      ],
-      tip: "Tip: Mantené la licencia al día — sin licencia vigente no se puede operar.",
-    },
-  },
-  {
     pattern: /^\/cost-centers\/new$/,
     entry: {
       title: "Nuevo grupo de trabajo",
@@ -256,6 +269,19 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
     },
   },
   {
+    pattern: /^\/admin\/users\/new$/,
+    entry: {
+      title: "Nuevo usuario",
+      icon: "👤",
+      steps: [
+        "Creá un usuario administrativo manualmente.",
+        "Email: debe ser único en el sistema.",
+        "Rol: definí si será admin, supervisor u operador.",
+        "El usuario creado recibirá un email para establecer su contraseña.",
+      ],
+    },
+  },
+  {
     pattern: /^\/admin\/users\/([^/]+)$/,
     entry: {
       title: "Detalle del usuario",
@@ -267,19 +293,6 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
         "Para desactivar un usuario, cambiá su estado a inactivo.",
       ],
       tip: "Los usuarios autogestionados se crean desde /auth/register. Este panel es solo para administración.",
-    },
-  },
-  {
-    pattern: /^\/admin\/users\/new$/,
-    entry: {
-      title: "Nuevo usuario",
-      icon: "👤",
-      steps: [
-        "Creá un usuario administrativo manualmente.",
-        "Email: debe ser único en el sistema.",
-        "Rol: definí si será admin, supervisor u operador.",
-        "El usuario creado recibirá un email para establecer su contraseña.",
-      ],
     },
   },
   {
@@ -342,8 +355,10 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
 ];
 
 export function findGuide(pathname: string): GuideEntry | null {
+  // Strip query strings and trailing slash for consistent matching
+  const clean = pathname.split("?")[0].replace(/\/$/, "") || "/";
   for (const { pattern, entry } of guideContent) {
-    if (pattern.test(pathname)) return entry;
+    if (pattern.test(clean)) return entry;
   }
   return null;
 }

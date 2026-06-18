@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
-    "@next/font": "^14.2.15",
     "@prisma/client": "^6.9.0",
     "@tmcw/togeojson": "^7.1.2",
     "@types/pdfkit": "^0.17.6",
