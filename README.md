@@ -17,7 +17,7 @@
 
 | Product state | Current focus | Branches to review |
 |---|---|---|---|
-| Production-ready platform with operational modules, visual system, and contextual guidance | UX polish, workflow DGAC alignment, and commercial readiness | `ux-dgac-login-fix` |
+| Production-ready platform with operational modules, visual system, and contextual guidance | Commercial polish, map-first geometry workflow, and GitHub-ready documentation | `ux-dgac-login-fix` |
 
 ### Current highlights
 
@@ -26,6 +26,7 @@
 - Permissions, documents, geometry, and checklist modules aligned with the design system and fully localized to Spanish.
 - Contextual help (FlowGuide) covers 16 routes with step-by-step guidance and operational tips.
 - Commercial landing page with industry use cases (mining, construction, infrastructure, environment, surveying, inspection) and before/after comparison.
+- Map-first geometry experience in progress: the normal user flow prioritizes drawing, layers, and saving from the map while GeoJSON remains internal/advanced.
 
 ### Review this first
 
@@ -142,7 +143,8 @@ flowchart TD
 | Visual system | Light-first migration complete, design tokens normalized across all surfaces, 62 files updated | Mantener consistencia en nuevas pantallas |
 | Mission flow (T-010) | Wizard podado, redirects creation→detail, progress bar con X/6 y gradiente | Etapa 2 (mapa preview en wizard) pendiente |
 | Fase 4 DGAC alignment | Permissions, documents, geometry, checklist — tokens aligned, timeline localized, FlowGuide expanded to 16 routes | Próximo: Fase 5 comercialización |
-| Commercial readiness | Landing page completa con casos de uso, antes/después, demo CTA | Demo data en seed script y handoff operativo |
+| Commercial readiness | Landing page en polish premium con foco mapa-first, permisos y trazabilidad | QA visual y demo data después |
+| Geometry workflow | GeoJSON sale del flujo normal; editor satelital pasa a workspace con capas | Validar dibujo/guardado/import/export |
 
 ---
 

@@ -372,3 +372,19 @@
 - **Próximos pasos recomendados**:
   1. Mantener el handoff y el changelog alineados con este plan.
   2. Si aparecen restos visuales, tratarlos como ajustes puntuales, no como un nuevo rediseño.
+
+## 2026-06-18 — Sesión — Commercial polish and map-first geometry (Codex)
+
+- **Objetivo**: Repriorizar AeroFlow hacia una experiencia comercial premium y flujo de geometría centrado en mapa.
+- **Archivos modificados**:
+  - `src/app/page.tsx` — hero y propuesta comercial orientados a centro operativo RPAS mapa-first.
+  - `src/components/ui/page-shell.tsx` — navegación interna sin Inicio redundante.
+  - `src/modules/flight-plans/flight-plan-wizard-form.tsx` — alta de plan sin GeoJSON visible.
+  - `src/app/flight-plans/[id]/geometry/page.tsx` — copy orientado a editor satelital.
+  - `src/modules/flight-plans/geometry-editor.tsx` — workspace mapa-first con toolbar, capas, guardado y GeoJSON avanzado.
+  - `README.md`, `PROJECT_STATUS.md`, `ROADMAP.md`, `TASKS.md`, `CHANGELOG.md`, `docs/OPENCODE_HANDOFF.md`, `docs/UX_WORKFLOW_MASTER_PLAN.md`, `docs/DESIGN_SYSTEM_PLAN.md` — seguimiento actualizado.
+- **Decisión**: Mantener GeoJSON como formato interno/avanzado, no como paso normal del usuario.
+- **Validación**: Pendiente al cierre de edición: `npm run typecheck`, `npm run test`, `npm run build`.
+- **Próximos pasos recomendados**:
+  1. Validar dibujo real en navegador: punto, línea, polígono, guardar y recargar.
+  2. Preparar commits separados y push de `ux-dgac-login-fix` cuando QA pase.

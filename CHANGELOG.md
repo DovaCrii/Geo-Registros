@@ -1,5 +1,14 @@
 # CHANGELOG.md
 
+## 2026-06-18
+
+### Commercial polish and map-first workflow
+- La landing se ajusta para comunicar AeroFlow como centro operativo RPAS con mapa, capas, permisos y trazabilidad.
+- La navegación interna elimina el acceso redundante a Inicio y prioriza el Panel operativo.
+- El alta de plan de vuelo deja de exponer GeoJSON en el flujo normal.
+- El editor de geometría se reorienta como workspace mapa-first con herramientas visibles, panel de capas y GeoJSON avanzado.
+- Documentación de seguimiento actualizada para que GitHub refleje la fase actual y el handoff hacia OpenCode.
+
 ## 2026-06-17
 
 ### Documentation and GitHub visibility

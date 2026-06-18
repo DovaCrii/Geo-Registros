@@ -58,6 +58,7 @@ The system has already been applied gradually across:
 3. Keep `dark:` fallbacks for compatibility.
 4. Do not change business logic for purely visual work.
 5. Validate with `npm run typecheck` and `npm run build` when visual changes are non-trivial.
+6. Map screens should be treated as operational workspaces: large map, compact tools, visible layers, clear save action, and technical JSON hidden behind advanced controls.
 
 ## Maintenance Note
 If a screen still feels dark-first, treat it as a leftover to normalize, not as a new design pattern.

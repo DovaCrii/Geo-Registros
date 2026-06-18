@@ -9,6 +9,7 @@
 - Convertir dashboard en centro operativo claro.
 - Mejorar flujo crear mision -> mapa -> documentos -> permiso -> cierre.
 - Reducir sensacion de CRUD en listas y detalles.
+- Repriorizar geometria como flujo mapa-first, no como edicion manual de GeoJSON.
 
 ## Fase 3 - Sistema visual ✅ COMPLETADA
 - Definir tokens base, jerarquia tipografica, estados, botones y cards. ✅
@@ -25,6 +26,12 @@
 - Alinear la experiencia de permisos, documentos y geometria con el nuevo sistema visual.
 
 ## Fase 5 - Comercializacion y entrega
-- Ajustar README y home para explicar valor comercial.
-- Preparar demo guiada con datos de ejemplo.
+- Ajustar README y home para explicar valor comercial con foco en mapa, permisos y trazabilidad.
+- Pulir landing para que se sienta mas premium, clara y profesional.
+- Preparar demo guiada con datos de ejemplo despues de cerrar el flujo mapa-first.
 - Documentar handoff operativo para futuras mejoras.
+
+## Fase 6 - Mapa operacional
+- Convertir el editor de geometria en workspace visual con mapa amplio, herramientas claras y panel de capas.
+- Ocultar GeoJSON del flujo normal y mantenerlo solo como formato interno/avanzado.
+- Validar dibujo, edicion, guardado, recarga e import/export.
