@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
+import { StatusChip } from "@/components/ui/status-chip";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { GeometryPreviewWrapper } from "@/modules/flight-plans/geometry-preview-wrapper";
 
 type Option = {
   id: string;
@@ -109,6 +111,16 @@ export function FlightPlanWizardForm({
   const [showAdvancedGeoJson, setShowAdvancedGeoJson] = useState(false);
   const [payload, setPayload] = useState(initialValues.geometryPayload);
 
+  const hasValidGeometry = useMemo(() => {
+    if (!payload.trim()) return false;
+    try {
+      const parsed = JSON.parse(payload);
+      return Boolean(parsed && typeof parsed === "object");
+    } catch {
+      return false;
+    }
+  }, [payload]);
+
   const canGoNext = step < STEPS.length - 1;
   const canGoBack = step > 0;
 
@@ -196,37 +208,56 @@ export function FlightPlanWizardForm({
         </section>
 
         <section className={step === 2 ? "space-y-4" : "hidden"}>
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950/45 dark:text-slate-400">
-            <p className="font-medium text-slate-900 dark:text-slate-200">Área de operación</p>
-            <p className="mt-2 leading-6">La geometría se define después de crear el plan, en el editor satelital. Si ya tenés coordenadas, podés pegarlas como GeoJSON.</p>
-          </div>
+          {/* Map preview — shown when valid GeoJSON is entered */}
+          {hasValidGeometry ? (
+            <GeometryPreviewWrapper payload={payload} height={200} />
+          ) : null}
 
-          <button
-            type="button"
-            onClick={() => setShowAdvancedGeoJson((prev) => !prev)}
-            className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
-          >
-            {showAdvancedGeoJson ? "Ocultar GeoJSON avanzado" : "Pegar GeoJSON manual"}
-          </button>
+          {/* Description: differs whether there's geometry or not */}
+          {payload.trim() ? (
+            <div className="rounded-2xl border border-emerald-500/20 bg-emerald-50 px-4 py-3 text-sm leading-6 text-emerald-800 dark:bg-emerald-500/[0.04] dark:text-emerald-200">
+              <p className="font-medium">Geometría cargada</p>
+              <p className="mt-1">Se mostrará en el editor satelital del detalle del plan, donde podés ajustarla.</p>
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-600 dark:border-slate-800 dark:bg-slate-950/45 dark:text-slate-400">
+              <p className="font-medium text-slate-900 dark:text-slate-200">Definir área después</p>
+              <p className="mt-2">Después de crear el plan, definí la geometría en el editor satelital desde el detalle. Si ya tenés coordenadas, pegalas como GeoJSON más abajo.</p>
+            </div>
+          )}
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowAdvancedGeoJson((prev) => !prev)}
+              className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
+            >
+              {showAdvancedGeoJson ? "Ocultar GeoJSON" : "Pegar GeoJSON manual"}
+            </button>
+
+            <StatusChip
+              label={hasValidGeometry ? "Con geometría" : "Sin geometría"}
+              tone={hasValidGeometry ? "success" : "neutral"}
+            />
+          </div>
 
           {showAdvancedGeoJson ? (
             <label className="block space-y-2">
               <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">GeoJSON</span>
               <textarea
-                rows={10}
+                rows={8}
                 value={payload}
                 onChange={(event) => setPayload(event.target.value)}
                 placeholder='{"type":"Feature","geometry":{"type":"Polygon","coordinates":[...]}"}'
-                className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 font-mono text-xs text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/90 dark:text-slate-100 dark:placeholder:text-slate-500"
+                className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 font-mono text-xs leading-6 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/90 dark:text-slate-100 dark:placeholder:text-slate-500"
               />
-              <p className="mt-2 text-xs leading-5 text-slate-600 dark:text-slate-500">Campo opcional. Después podés definir o ajustar la geometría en el editor satelital desde el detalle del plan.</p>
+              <p className="text-xs leading-5 text-slate-600 dark:text-slate-500">
+                {payload.trim()
+                  ? "La geometría se renderiza en el mapa de previsualización. Después podés ajustarla en el editor satelital."
+                  : "Campo opcional. Pegá un GeoJSON para verlo en el mapa; después podés ajustarlo en el editor satelital desde el detalle del plan."}
+              </p>
             </label>
           ) : null}
-
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950/45 dark:text-slate-300">
-            <p className="font-medium text-slate-900 dark:text-white">Estado actual</p>
-            <p className="mt-2 leading-6 text-slate-600 dark:text-slate-400">{geometrySummary ?? "Sin geometría adjunta todavía"}</p>
-          </div>
         </section>
 
         <section className={step === 3 ? "space-y-4" : "hidden"}>
