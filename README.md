@@ -1,6 +1,6 @@
 # AeroFlow
 
-**Drone & RPA flight operations platform — mission planning, permissions, documents, geo-spatial tracking.**
+**Platform for drone/RPA flight operations, geo-registration, technical deliverables, and operational compliance — from mission planning to report delivery in a single traceable workflow.**
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=next.js)](https://nextjs.org/)
@@ -16,15 +16,16 @@
 ## Current snapshot
 
 | Product state | Current focus | Branches to review |
-|---|---|---|
-| Functional platform with operational modules live | UX clarity, visual consistency, and shorter AI handoff context | `ux-dgac-login-fix`, `codex/docs-dashboard-clean` |
+|---|---|---|---|
+| Production-ready platform with operational modules, visual system, and contextual guidance | UX polish, workflow DGAC alignment, and commercial readiness | `ux-dgac-login-fix` |
 
 ### Current highlights
 
-- Design system visual base fully applied (light-first, dark mode secondary) across all shared components, modules, and pages.
-- Operational dashboard evolving from KPI screen into a clearer command center.
-- Short-context documentation maintained for OpenCode and Codex collaboration.
-- GitHub review path reduced to a few key files instead of long prompts.
+- Visual system fully applied (light-first, dark mode secondary) — all components, modules, and pages normalized to `slate-950` dark surfaces.
+- Mission flow redesigned: wizard pruned from 6 to 4 actionable steps, creation redirects to detail with progress bar.
+- Permissions, documents, geometry, and checklist modules aligned with the design system and fully localized to Spanish.
+- Contextual help (FlowGuide) covers 16 routes with step-by-step guidance and operational tips.
+- Commercial landing page with industry use cases (mining, construction, infrastructure, environment, surveying, inspection) and before/after comparison.
 
 ### Review this first
 
@@ -137,11 +138,11 @@ flowchart TD
 ## Recent progress
 
 | Area | Progress | Next move |
-|---|---|---|
-| Documentation | Source-of-truth docs for AI sessions, roadmap, project status, and handoff are in the repo | Keep status docs current with each change |
-| Design system | Sistema visual base aplicado (light-first, 55 archivos, commit `136c0b6`) | Siguiente: sincronizar README con stack real o arrancar Fase 2/4 |
-| Dashboard UX | El dashboard operativo fue reformulado hacia jerarquía visual más clara | Extender el mismo lenguaje visual a nuevas pantallas |
-| GitHub reviewability | Short review path disponible para contexto de producto, docs y workflow | Mantener alineado con el estado real del repo |
+|---|---|---|---|
+| Visual system | Light-first migration complete, design tokens normalized across all surfaces, 62 files updated | Mantener consistencia en nuevas pantallas |
+| Mission flow (T-010) | Wizard podado, redirects creation→detail, progress bar con X/6 y gradiente | Etapa 2 (mapa preview en wizard) pendiente |
+| Fase 4 DGAC alignment | Permissions, documents, geometry, checklist — tokens aligned, timeline localized, FlowGuide expanded to 16 routes | Próximo: Fase 5 comercialización |
+| Commercial readiness | Landing page completa con casos de uso, antes/después, demo CTA | Demo data en seed script y handoff operativo |
 
 ---
 
