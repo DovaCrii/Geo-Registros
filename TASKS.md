@@ -26,4 +26,7 @@
 - ✅ T-015 — Editor mapa-first con capas y toolbar dedicado (`63b1d60`)
 - ✅ Fase mapa-first mergeada a main (`8b89cfc`)
 - ✅ Menú de usuario en sidebar con avatar y logout (`e052f6b`)
-- 🔜 Próximo: fase DGAC (checklist, permisos, trazabilidad) o fase comercial (demo data, README premium)
+- ✅ FlightPlanChecklist — 9 tests de componente (`3acc398`)
+- ✅ HelpDocs migrado de filesystem a Prisma DB (`3acc398`)
+- ✅ Testing infra: jsdom, @testing-library/react, @vitejs/plugin-react
+- 🔜 Próximo: fase comercial (demo data, README premium, landing polish)
