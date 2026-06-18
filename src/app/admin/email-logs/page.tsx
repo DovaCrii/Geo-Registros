@@ -51,12 +51,27 @@ export default async function AdminEmailLogsPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Registro de correos</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Historial de correos enviados desde la plataforma
           </p>
+          <div className="flex flex-wrap items-center gap-2 mt-3">
+            {[
+              { label: "Notificación", tone: "bg-sky-100 text-sky-700 dark:bg-sky-500/10 dark:text-sky-300" },
+              { label: "Permiso", tone: "bg-violet-100 text-violet-700 dark:bg-violet-500/10 dark:text-violet-300" },
+              { label: "Reporte", tone: "bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300" },
+              { label: "Manual", tone: "bg-slate-100 text-slate-600 dark:bg-slate-500/10 dark:text-slate-300" },
+            ].map((t) => (
+              <span
+                key={t.label}
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${t.tone}`}
+              >
+                {t.label}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -78,8 +93,17 @@ export default async function AdminEmailLogsPage() {
             <tbody>
               {emails.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-slate-500 dark:text-slate-400">
-                    No se han enviado correos todavía. Si la base de datos no está disponible, este listado quedará vacío hasta recuperar la conexión.
+                  <td colSpan={7} className="px-4 py-12 text-center">
+                    <div className="max-w-md mx-auto space-y-2">
+                      <p className="text-slate-500 dark:text-slate-400">
+                        No se han registrado correos todavía.
+                      </p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500 leading-5">
+                        Los correos aparecen automáticamente al enviar notificaciones, permisos DGAC,
+                        reportes o envíos manuales desde la plataforma. Si esperabas ver correos y el
+                        listado está vacío, verificá que el servicio de email esté configurado.
+                      </p>
+                    </div>
                   </td>
                 </tr>
               )}

@@ -226,6 +226,36 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
     },
   },
   {
+    pattern: /^\/admin\/email-logs\/([^/]+)$/,
+    entry: {
+      title: "Detalle del correo",
+      icon: "📧",
+      steps: [
+        "Acá ves el contenido completo del correo enviado.",
+        "Estados: 'sent' (enviado), 'failed' (error al enviar), 'bounced' (rechazado por el servidor destino).",
+        "Si el estado es 'failed', podés reenviar el correo con el botón superior derecho.",
+        "El error técnico aparece en la columna izquierda para diagnosticar problemas con el proveedor de email.",
+        "El cuerpo del correo se muestra en formato HTML renderizado.",
+      ],
+      tip: "Los errores de envío suelen deberse a credenciales SMTP inválidas o dominio destino inexistente.",
+    },
+  },
+  {
+    pattern: /^\/admin\/email-logs/,
+    entry: {
+      title: "Registro de correos",
+      icon: "📧",
+      steps: [
+        "Historial de todos los correos enviados desde la plataforma: notificaciones, permisos, reportes y envíos manuales.",
+        "Cada fila muestra: destinatario, asunto, tipo, estado y plan de vuelo asociado.",
+        "Tipos de correo: 'Notificación' (automática del sistema), 'Permiso' (documentación DGAC), 'Reporte' (exportaciones), 'Manual' (envío hecho por un operador).",
+        "Estados: 'sent' → enviado correctamente, 'failed' → error en el envío, 'bounced' → rechazado por el destino.",
+        "Si un correo falló, entrá al detalle para ver el error y reenviarlo.",
+      ],
+      tip: "Los correos no se reenvían automáticamente. Si ves un 'failed', revisá la configuración SMTP antes de reenviar.",
+    },
+  },
+  {
     pattern: /^\/clients/,
     entry: {
       title: "Clientes",
