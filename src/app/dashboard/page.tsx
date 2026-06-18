@@ -8,6 +8,7 @@ import { AlertCard } from "@/components/ui/alert-card";
 import { StatusBadge, type OperationalStatus } from "@/components/ui/status-badge";
 import { requirePageAuth } from "@/lib/require-page-auth";
 import { getDashboardStats } from "@/server/dashboard/queries";
+import { OnboardingDialog } from "@/modules/onboarding/onboarding-dialog";
 
 export const dynamic = "force-dynamic";
 
@@ -324,6 +325,7 @@ export default async function DashboardPage({
 
   return (
     <PageShell>
+      <OnboardingDialog />
       <div className="space-y-6">
         {/* Header */}
         <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-6 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
