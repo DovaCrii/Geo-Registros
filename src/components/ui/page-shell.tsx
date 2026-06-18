@@ -9,8 +9,7 @@ import { FlowGuide } from "@/modules/flow-guide/flow-guide";
 import { NotificationPanel } from "@/modules/notifications/notification-panel";
 
 const ALL_NAV_ITEMS = [
-  { href: "/", label: "Inicio", primary: true },
-  { href: "/dashboard", label: "Panel operativo" },
+  { href: "/dashboard", label: "Panel operativo", primary: true },
   { href: "/cost-centers", label: "Grupos de trabajo" },
   { href: "/clients", label: "Clientes" },
   { href: "/drones", label: "Flota RPAS" },
@@ -112,14 +111,6 @@ export function PageShell({ children }: { children: ReactNode }) {
                 AeroFlow
               </span>
             </button>
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-accent/25 bg-accent/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-accent-strong dark:text-cyan-200 transition hover:border-accent/40 hover:bg-accent/15 dark:hover:border-cyan-400/40 dark:hover:bg-cyan-500/15"
-              aria-label="Volver al inicio"
-            >
-              <span aria-hidden="true" className="text-sm">⌂</span>
-              <span>Inicio</span>
-            </Link>
           </div>
           <NotificationPanel />
         </div>
@@ -153,14 +144,7 @@ export function PageShell({ children }: { children: ReactNode }) {
 
         <main className="min-w-0 flex-1">
           {/* Top bar */}
-          <div className="mb-4 hidden items-center justify-between lg:flex">
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-accent/25 bg-accent/10 px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-accent-strong dark:text-cyan-200 transition hover:border-accent/40 hover:bg-accent/15 dark:hover:border-cyan-400/40 dark:hover:bg-cyan-500/15"
-            >
-              <span aria-hidden="true">⌂</span>
-              <span>Inicio</span>
-            </Link>
+          <div className="mb-4 hidden items-center justify-end lg:flex">
             <NotificationPanel />
           </div>
           <ErrorBoundary>{children}</ErrorBoundary>

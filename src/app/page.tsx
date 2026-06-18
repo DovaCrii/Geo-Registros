@@ -22,9 +22,15 @@ const processSteps = [
 ] as const;
 
 const pillars = [
-  { title: "Planificación de vuelos RPAS", desc: "Prepará la misión con datos operativos, cobertura y responsables claros." },
-  { title: "Cumplimiento documental / DGAC", desc: "Ordená permisos, vigencias, respaldos y revisión normativa antes de volar." },
-  { title: "Georegistro y entregables técnicos", desc: "Consolidá geometría, evidencia, reportes y trazabilidad operacional." },
+  { title: "Mapa como centro de mando", desc: "Dibujá zonas, activá capas y mantené la operación visible desde el inicio." },
+  { title: "Permisos y documentos guiados", desc: "Ordená checklist, vigencias, observaciones y respaldos antes de volar." },
+  { title: "Trazabilidad comercializable", desc: "Cerrá cada vuelo con evidencia, historial y reportes listos para auditoría." },
+] as const;
+
+const proofPoints = [
+  { value: "1 flujo", label: "misión · mapa · permiso · cierre" },
+  { value: "6 etapas", label: "operación guiada sin perder contexto" },
+  { value: "100%", label: "trazabilidad documental y geoespacial" },
 ] as const;
 
 const modules = [
@@ -137,31 +143,40 @@ function HeroSection() {
         <div className="space-y-6">
           <p className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-50 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-cyan-700 dark:bg-cyan-500/5 dark:text-cyan-300">
             <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 pulse-dot" />
-            Inteligencia geoespacial aplicada
+            Centro operativo RPAS mapa-first
           </p>
           <h1 className="text-4xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl">
-            Transformá el terreno en{" "}
+            Convertí vuelos con drones en{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-emerald-400">
-              decisiones técnicas
+              operaciones listas para auditar
             </span>
           </h1>
           <p className="max-w-lg text-base leading-7 text-slate-600 dark:text-slate-400">
-            Gestioná vuelos, georegistros, modelos 2D/3D, entregables e informes técnicos desde una
-            plataforma diseñada para ingeniería, minería, topografía e infraestructura.
+            AeroFlow reúne misión, mapa, capas, documentos, permisos DGAC/SIGO y reportes en un
+            flujo profesional para equipos de ingeniería, minería, topografía e infraestructura.
           </p>
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <Link
-              href="#demo"
+              href="/dashboard"
                 className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-50 px-7 py-3 text-sm font-medium text-cyan-700 shadow-lg shadow-cyan-500/5 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-gradient-to-b dark:from-cyan-500/20 dark:to-cyan-600/10 dark:text-cyan-100 dark:hover:from-cyan-500/30 dark:hover:to-cyan-600/20"
             >
-              Solicitar demo
+              Ver panel operativo
             </Link>
             <Link
               href="#proceso"
               className="inline-flex items-center justify-center rounded-xl px-2 py-3 text-sm font-medium text-slate-600 transition hover:text-cyan-700 dark:text-slate-400 dark:hover:text-cyan-200"
             >
-              Cómo funciona
+              Ver workflow
             </Link>
+          </div>
+
+          <div className="grid gap-3 pt-4 sm:grid-cols-3">
+            {proofPoints.map((item) => (
+              <div key={item.value} className="rounded-2xl border border-cyan-500/15 bg-white/85 p-4 shadow-sm shadow-cyan-950/5 backdrop-blur dark:border-cyan-500/15 dark:bg-slate-950/45">
+                <p className="font-mono text-2xl font-bold text-cyan-700 dark:text-cyan-200">{item.value}</p>
+                <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">{item.label}</p>
+              </div>
+            ))}
           </div>
 
           <div className="grid gap-3 pt-4 sm:grid-cols-3">
@@ -191,8 +206,8 @@ function HeroSection() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700 dark:text-cyan-300">Panel de misión</p>
-                    <p className="text-lg font-semibold text-slate-900 dark:text-white">Vuelos, geometría y trazabilidad</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700 dark:text-cyan-300">Centro operativo</p>
+                    <p className="text-lg font-semibold text-slate-900 dark:text-white">Mapa, capas y permisos en una vista</p>
                   </div>
                 </div>
 
@@ -224,7 +239,7 @@ function HeroSection() {
                 </div>
 
                 {/* Row 2: Map visualization — clean, no overlaps */}
-                <div className="relative h-[260px] overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/90 dark:border-slate-800/80 dark:bg-slate-950/80">
+                <div className="relative h-[300px] overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/90 dark:border-slate-800/80 dark:bg-slate-950/80">
                   <svg className="absolute inset-0 h-full w-full" viewBox="0 0 800 260" fill="none" preserveAspectRatio="xMidYMid slice">
                     <path
                       d="M60 200 Q 180 180 280 150 Q 400 110 500 80 Q 600 50 720 40"
@@ -256,7 +271,17 @@ function HeroSection() {
                   {/* Status badge (only overlay, small and top-left) */}
                   <div className="absolute left-4 top-4 rounded-xl border border-slate-200 bg-white/90 px-4 py-2.5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/90">
                     <p className="text-xs font-medium text-slate-600 dark:text-slate-400">Trazabilidad operativa</p>
-                    <p className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-white">Tiempo real · 3 capas activas</p>
+                    <p className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-white">Mapa vivo · 3 capas activas</p>
+                  </div>
+
+                  <div className="absolute right-4 top-4 w-44 rounded-xl border border-slate-200 bg-white/90 p-3 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/90">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">Capas</p>
+                    {["Área de vuelo", "Documentos", "Permiso DGAC"].map((layer) => (
+                      <div key={layer} className="mt-2 flex items-center justify-between gap-3 text-xs text-slate-700 dark:text-slate-300">
+                        <span>{layer}</span>
+                        <span className="h-3 w-6 rounded-full bg-cyan-400/80" />
+                      </div>
+                    ))}
                   </div>
 
                   {/* Bottom-right badge */}
