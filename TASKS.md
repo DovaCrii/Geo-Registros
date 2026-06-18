@@ -14,11 +14,16 @@
 | T-010 | Planificar rediseño gradual del flujo de misión | Alta | OpenCode | `docs/UX_WORKFLOW_MASTER_PLAN.md`, `src/app/flight-plans/` | Existe una tarea pequeña para mejorar el wizard sin refactor global | Handoff aprobado |
 | T-011 | Definir y aplicar sistema visual base | Alta ✅ | OpenCode | `docs/DESIGN_SYSTEM_PLAN.md`, `src/app/globals.css`, `src/components/ui/` | Tokens y patrones visuales quedan definidos y aplicados de forma gradual antes de rediseñar pantallas | `npm run typecheck` ✅ |
 | T-012 | Actualizar bitácora de avance IA | Media | Codex | `docs/AI_PROGRESS_LOG.md` | Cada sesión deja objetivo, cambios, decisiones y próxima tarea | Revisión manual |
-| T-013 | Polish comercial de landing y navegación operacional | Alta | OpenCode | `src/app/page.tsx`, `src/components/ui/page-shell.tsx`, `README.md` | Home comunica valor premium y la app elimina Inicio redundante | `npm run typecheck`, smoke visual |
-| T-014 | Simplificar alta de misión sin GeoJSON visible | Alta | OpenCode | `src/modules/flight-plans/flight-plan-wizard-form.tsx`, `src/app/flight-plans/new/page.tsx` | Crear plan queda orientado a datos operativos y mapa posterior | `npm run typecheck`, crear plan manual |
-| T-015 | Editor de geometría mapa-first con capas | Alta | OpenCode | `src/app/flight-plans/[id]/geometry/page.tsx`, `src/modules/flight-plans/geometry-editor.tsx` | Mapa ocupa el centro, capas son visibles y GeoJSON queda avanzado | `npm run typecheck`, `npm run build`, smoke dibujo |
+| T-013 | Polish comercial de landing y navegación operacional | Alta ✅ | OpenCode | `src/app/page.tsx`, `src/components/ui/page-shell.tsx`, `README.md` | Home comunica valor premium y la app elimina Inicio redundante | `npm run typecheck`, smoke visual ✅ |
+| T-014 | Simplificar alta de misión sin GeoJSON visible | Alta ✅ | OpenCode | `src/modules/flight-plans/flight-plan-wizard-form.tsx`, `src/app/flight-plans/new/page.tsx` | Crear plan queda orientado a datos operativos y mapa posterior | `npm run typecheck`, crear plan manual ✅ |
+| T-015 | Editor de geometría mapa-first con capas | Alta ✅ | OpenCode | `src/app/flight-plans/[id]/geometry/page.tsx`, `src/modules/flight-plans/geometry-editor.tsx` | Mapa ocupa el centro, capas son visibles y GeoJSON queda avanzado | `npm run typecheck`, `npm run build`, smoke dibujo ✅ |
 
 ## Estado de seguimiento
 
-- T-011 ✅ — Sistema visual base aplicado y commiteado (`136c0b6`, 55 archivos). Incluye migración light-first, fix estructural en tablas seleccionables, accesibilidad, localización a español y documentación sincronizada.
-- Próximo paso recomendado: validar T-013/T-015 en navegador y preparar commits separados antes de push/merge.
+- ✅ T-011 — Sistema visual base aplicado y commiteado (`136c0b6`)
+- ✅ T-013 — Landing comercial + navegación sin Inicio redundante (`5c61e3d`)
+- ✅ T-014 — Wizard simplificado a 4 pasos, GeoJSON como flujo avanzado (`055ad42`)
+- ✅ T-015 — Editor mapa-first con capas y toolbar dedicado (`63b1d60`)
+- ✅ Fase mapa-first mergeada a main (`8b89cfc`)
+- ✅ Menú de usuario en sidebar con avatar y logout (`e052f6b`)
+- 🔜 Próximo: fase DGAC (checklist, permisos, trazabilidad) o fase comercial (demo data, README premium)
