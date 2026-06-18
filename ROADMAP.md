@@ -30,20 +30,20 @@
 - Menú de usuario en sidebar con avatar, email y logout. ✅
 - FlowGuide corrigió duplicados de patrones — 16 rutas alineadas. ✅
 
-## Fase 5 - Comercializacion y entrega 🚧 EN CURSO
-- README premium con posicionamiento comercial claro.
-- Landing polish continuo: hero, CTA, proof points de trazabilidad.
-- Seed demo refinado con `SEED_DEMO=true`: demo user listo para mostrar sin configuración.
-- Preparar demo guiada con datos de ejemplo — 3 equipos, 3 clientes, 3 drones, 3 operadores, 3 planes con estados distintos.
-- Documentar handoff operativo para futuras mejoras.
+## Fase 5 - Comercializacion y entrega ✅ COMPLETADA
+- README premium con posicionamiento comercial claro. ✅
+- Landing premium: hero gradiente, proof points concretos, stats con datos reales. ✅
+- Seed demo refinado con `SEED_DEMO=true`: demo user auto-creado, 4 FP, 17 eventos, 5 HelpDocs, 3 notificaciones. ✅
+- Documentar handoff operativo para futuras mejoras. ✅
 
-## Fase 6 — Centro de Conocimiento (reemplaza /ayuda) 🔜 PLANIFICADO
-- Buscador en vivo de documentos internos (HelpDocs desde Prisma).
-- Mapa del flujo operacional de 7 pasos (planificación → cierre).
-- Vista previa de documentos sin descarga (PDF en línea, imágenes).
-- Secciones normativas (DAN 151, DAN 91, etc.) con referencias dinámicas.
-- Checklist operativo DGAC persistido por plan de vuelo (ya existe en FlightPlanChecklist).
-- Integración con el menú de ayuda contextual en cada página.
+## Fase 6 — Centro de Conocimiento ✅ COMPLETADA
+- Buscador en vivo de documentos internos (HelpDocs desde Prisma). ✅
+- Mapa del flujo operacional de 7 pasos (planificación → cierre). ✅
+- Vista previa de documentos sin descarga (PDF en línea, imágenes). ✅
+- Ruta `/api/help-docs/[id]/preview` con `Content-Disposition: inline`. ✅
+- Secciones normativas (DAN 151, DAN 91, etc.) con referencias dinámicas. ✅
+- Checklist operativo DGAC persistido por plan de vuelo. ✅
+- Componentes en `src/components/help-center/`: FlowMap, DocPreview, HelpCenterClient. ✅
 
 ## Fase 7 - Mapa operacional 🔜 PLANIFICADO
 - Convertir el editor de geometria en workspace visual con mapa amplio, herramientas claras y panel de capas.
