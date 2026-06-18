@@ -19,19 +19,36 @@
 - **Commit final:** `136c0b6` — 55 archivos, 673 inserciones.
 - **Incluye:** migración light-first general, fix estructural en tablas seleccionables, accesibilidad, localización completa a español, documentación sincronizada.
 
-## Fase 4 - Workflow DGAC y trazabilidad
-- Pulir checklist documental.
-- Mejorar timeline de permisos.
-- Reforzar mensajes de ayuda contextual.
-- Alinear la experiencia de permisos, documentos y geometria con el nuevo sistema visual.
+## Fase 4 - Workflow DGAC y trazabilidad ✅ COMPLETADA
+- Pulir checklist documental. ✅
+- Mejorar timeline de permisos. ✅
+- Reforzar mensajes de ayuda contextual. ✅
+- Alinear la experiencia de permisos, documentos y geometria con el nuevo sistema visual. ✅
+- FlightPlanChecklist: 9 tests de componente con jsdom + testing-library. ✅
+- HelpDocs migrado de filesystem a Prisma DB. ✅
+- Testing infra completa: @vitejs/plugin-react, jsdom, @testing-library/react. ✅
+- Menú de usuario en sidebar con avatar, email y logout. ✅
+- FlowGuide corrigió duplicados de patrones — 16 rutas alineadas. ✅
 
-## Fase 5 - Comercializacion y entrega
-- Ajustar README y home para explicar valor comercial con foco en mapa, permisos y trazabilidad.
-- Pulir landing para que se sienta mas premium, clara y profesional.
-- Preparar demo guiada con datos de ejemplo despues de cerrar el flujo mapa-first.
-- Documentar handoff operativo para futuras mejoras.
+## Fase 5 - Comercializacion y entrega ✅ COMPLETADA
+- README premium con posicionamiento comercial claro. ✅
+- Landing premium: hero gradiente, proof points concretos, stats con datos reales. ✅
+- Seed demo refinado con `SEED_DEMO=true`: demo user auto-creado, 4 FP, 17 eventos, 5 HelpDocs, 3 notificaciones. ✅
+- Documentar handoff operativo para futuras mejoras. ✅
 
-## Fase 6 - Mapa operacional
-- Convertir el editor de geometria en workspace visual con mapa amplio, herramientas claras y panel de capas.
-- Ocultar GeoJSON del flujo normal y mantenerlo solo como formato interno/avanzado.
-- Validar dibujo, edicion, guardado, recarga e import/export.
+## Fase 6 — Centro de Conocimiento ✅ COMPLETADA
+- Buscador en vivo de documentos internos (HelpDocs desde Prisma). ✅
+- Mapa del flujo operacional de 7 pasos (planificación → cierre). ✅
+- Vista previa de documentos sin descarga (PDF en línea, imágenes). ✅
+- Ruta `/api/help-docs/[id]/preview` con `Content-Disposition: inline`. ✅
+- Secciones normativas (DAN 151, DAN 91, etc.) con referencias dinámicas. ✅
+- Checklist operativo DGAC persistido por plan de vuelo. ✅
+- Componentes en `src/components/help-center/`: FlowMap, DocPreview, HelpCenterClient. ✅
+
+## Fase 7 - Mapa operacional ✅ COMPLETADA
+- Workspace visual con mapa amplio (720px), herramientas claras y panel de capas. ✅
+- Mediciones en vivo: área (m²/km²) y perímetro (m/km) al dibujar. ✅
+- Hint contextual que cambia según si hay figuras en el mapa. ✅
+- GeoJSON oculto en sección "Intercambio técnico" como formato avanzado. ✅
+- Import/export KML, KMZ, DXF funcional. ✅
+- Indicador de área/perímetro flotante sobre el mapa. ✅

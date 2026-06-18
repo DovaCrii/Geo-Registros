@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { FlowGuide } from "@/modules/flow-guide/flow-guide";
 import { NotificationPanel } from "@/modules/notifications/notification-panel";
@@ -72,6 +72,8 @@ function NavLinks({ pathname, onClick }: { pathname?: string; onClick?: () => vo
 // ─── Sidebar content (shared between mobile + desktop) ──
 
 function SidebarContent({ pathname, onClick }: { pathname?: string; onClick?: () => void }) {
+  const { data: session } = useSession();
+
   return (
     <>
       <div className="mb-6 space-y-1 text-center">
@@ -86,6 +88,33 @@ function SidebarContent({ pathname, onClick }: { pathname?: string; onClick?: ()
         </p>
       </div>
       <NavLinks pathname={pathname} onClick={onClick} />
+
+      {/* User menu */}
+      {session?.user && (
+        <div className="mt-6 border-t border-slate-200 pt-4 dark:border-slate-800/60">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-sm font-medium text-slate-600 dark:border-slate-700/60 dark:bg-slate-800/60 dark:text-slate-300">
+              {session.user.email?.[0]?.toUpperCase() ?? "?"}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-slate-900 dark:text-white">
+                {session.user.name ?? "Usuario"}
+              </p>
+              <p className="truncate text-xs text-slate-500 dark:text-slate-400">
+                {session.user.email}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-500 transition hover:bg-red-50 hover:text-red-600 dark:text-slate-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+              title="Cerrar sesión"
+            >
+              Salir
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

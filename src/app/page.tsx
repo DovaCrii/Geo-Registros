@@ -28,9 +28,9 @@ const pillars = [
 ] as const;
 
 const proofPoints = [
-  { value: "1 flujo", label: "misión · mapa · permiso · cierre" },
-  { value: "6 etapas", label: "operación guiada sin perder contexto" },
-  { value: "100%", label: "trazabilidad documental y geoespacial" },
+  { value: "1 plataforma", label: "misión · mapa · permiso · cierre · trazabilidad" },
+  { value: "4 planes activos", label: "en distintos estados del workflow DGAC" },
+  { value: "100% trazabilidad", label: "documental, geoespacial y de permisos" },
 ] as const;
 
 const modules = [
@@ -105,10 +105,10 @@ function NavBar() {
             Iniciar sesión
           </Link>
           <Link
-            href="#demo"
-            className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-50 px-5 py-2.5 text-sm font-medium text-cyan-700 shadow-sm shadow-cyan-500/5 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-cyan-500/10 dark:text-cyan-200 dark:hover:bg-cyan-500/20"
+            href="/auth/login"
+            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-5 py-2.5 text-sm font-medium text-white shadow-sm shadow-cyan-500/20 transition hover:from-cyan-400 hover:to-emerald-400 dark:from-cyan-400 dark:to-emerald-400 dark:text-slate-950"
           >
-            Solicitar demo
+            Probar demo
           </Link>
         </div>
 
@@ -120,8 +120,8 @@ function NavBar() {
             Ingresar
           </Link>
           <Link
-            href="#demo"
-            className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-50 px-4 py-2 text-sm font-medium text-cyan-700 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-cyan-500/10 dark:text-cyan-200 dark:hover:bg-cyan-500/20"
+            href="/auth/login"
+            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-4 py-2 text-sm font-medium text-white transition hover:from-cyan-400 hover:to-emerald-400 dark:from-cyan-400 dark:to-emerald-400 dark:text-slate-950"
           >
             Demo
           </Link>
@@ -157,10 +157,10 @@ function HeroSection() {
           </p>
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <Link
-              href="/dashboard"
-                className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-50 px-7 py-3 text-sm font-medium text-cyan-700 shadow-lg shadow-cyan-500/5 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-gradient-to-b dark:from-cyan-500/20 dark:to-cyan-600/10 dark:text-cyan-100 dark:hover:from-cyan-500/30 dark:hover:to-cyan-600/20"
+              href="/auth/login"
+                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-7 py-3 text-sm font-medium text-white shadow-lg shadow-cyan-500/20 transition hover:from-cyan-400 hover:to-emerald-400 hover:shadow-cyan-500/30 dark:from-cyan-400 dark:to-emerald-400 dark:text-slate-950 dark:hover:from-cyan-300 dark:hover:to-emerald-300"
             >
-              Ver panel operativo
+              Probar demo
             </Link>
             <Link
               href="#proceso"
@@ -347,6 +347,37 @@ function ProblemSection() {
             <p className="text-base leading-7 text-slate-600 dark:text-slate-400">{pain.desc}</p>
           </div>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function StatsSection() {
+  return (
+    <section className="border-t border-slate-200 bg-white dark:border-slate-800/40 dark:bg-slate-950/40">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="text-center">
+            <p className="font-mono text-4xl font-bold text-cyan-700 dark:text-cyan-200">4</p>
+            <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-400">Planes de vuelo activos</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">Desde DRAFT hasta CLOSED</p>
+          </div>
+          <div className="text-center">
+            <p className="font-mono text-4xl font-bold text-emerald-700 dark:text-emerald-200">3</p>
+            <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-400">Equipos de trabajo</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">Minería, construcción, topografía</p>
+          </div>
+          <div className="text-center">
+            <p className="font-mono text-4xl font-bold text-cyan-700 dark:text-cyan-200">17</p>
+            <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-400">Eventos de trazabilidad</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">Permisos, documentos, cambios de estado</p>
+          </div>
+          <div className="text-center">
+            <p className="font-mono text-4xl font-bold text-emerald-700 dark:text-emerald-200">5</p>
+            <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-400">Documentos internos</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">Normativa, guías, procedimientos</p>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -740,20 +771,37 @@ function CtaSection() {
     <section id="demo" className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-white/95 p-12 text-center shadow-2xl shadow-cyan-950/5 backdrop-blur dark:border-slate-800/60 dark:bg-gradient-to-b dark:from-slate-900/80 dark:to-slate-950/60">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">Demo</p>
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">Comenzá ahora</p>
           <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
-            Convertí tus levantamientos en información accionable
+            Listo para probar AeroFlow
           </h2>
-          <p className="mx-auto mb-10 max-w-lg text-base leading-7 text-slate-600 dark:text-slate-400">
-            Agendá una demo y descubrí cómo AeroFlow puede ordenar tus vuelos, registros, modelos y
-            entregables técnicos.
+          <p className="mx-auto mb-6 max-w-lg text-base leading-7 text-slate-600 dark:text-slate-400">
+            Creá el admin con `SEED_DEMO=true` y accedé a datos de ejemplo: 4 planes de vuelo,
+            trazabilidad completa DGAC, geometría en mapa y documentación operativa.
           </p>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-50 px-8 py-3.5 text-base font-medium text-cyan-700 shadow-lg shadow-cyan-500/5 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-gradient-to-b dark:from-cyan-500/20 dark:to-cyan-600/10 dark:text-cyan-100 dark:hover:from-cyan-500/30 dark:hover:to-cyan-600/20"
-          >
-            Ingresar a AeroFlow
-          </Link>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/auth/login"
+              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-8 py-3.5 text-base font-medium text-white shadow-lg shadow-cyan-500/20 transition hover:from-cyan-400 hover:to-emerald-400 hover:shadow-cyan-500/30 dark:from-cyan-400 dark:to-emerald-400 dark:text-slate-950"
+            >
+              Probar demo ahora
+            </Link>
+            <Link
+              href="/auth/register"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-8 py-3.5 text-base font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-900"
+            >
+              Crear cuenta
+            </Link>
+          </div>
+          <div className="mx-auto mt-8 max-w-sm rounded-xl border border-slate-200 bg-slate-50/80 p-4 text-left dark:border-slate-700/40 dark:bg-slate-950/40">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Demo local</p>
+            <code className="block text-xs leading-6 text-slate-600 dark:text-slate-400">
+              SEED_ADMIN_EMAIL=demo@aeroflow.io<br />
+              SEED_ADMIN_PASSWORD=demo1234<br />
+              SEED_DEMO=true<br />
+              npm run seed:dev
+            </code>
+          </div>
         </div>
       </div>
     </section>
@@ -793,6 +841,7 @@ export default function LandingPage() {
       <NavBar />
       <HeroSection />
       <ProblemSection />
+      <StatsSection />
       <SolutionSection />
       <ModulesSection />
       <DashboardPreview />

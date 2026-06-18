@@ -80,6 +80,97 @@ function parseGeoJsonPayload(text: string) {
   }
 }
 
+/** Compute area (m²) and perimeter (m) from a polygon geometry. */
+function computeMeasurements(fc: GeoJSON.FeatureCollection): {
+  totalArea: string;
+  totalPerimeter: string;
+  featureCount: number;
+} {
+  let totalArea = 0;
+  let totalPerimeter = 0;
+  let featureCount = 0;
+
+  for (const feature of fc.features) {
+    if (!feature.geometry) continue;
+    featureCount++;
+
+    if (feature.geometry.type === "Polygon") {
+      const coords = feature.geometry.coordinates[0];
+      if (coords.length < 3) continue;
+      totalPerimeter += computeRingLength(coords);
+      totalArea += Math.abs(computePolygonArea(coords));
+    } else if (feature.geometry.type === "MultiPolygon") {
+      for (const ringGroup of feature.geometry.coordinates) {
+        const coords = ringGroup[0];
+        if (coords.length < 3) continue;
+        totalPerimeter += computeRingLength(coords);
+        totalArea += Math.abs(computePolygonArea(coords));
+      }
+    } else if (feature.geometry.type === "LineString") {
+      totalPerimeter += computeRingLength(feature.geometry.coordinates);
+    } else if (feature.geometry.type === "MultiLineString") {
+      for (const coords of feature.geometry.coordinates) {
+        totalPerimeter += computeRingLength(coords);
+      }
+    }
+  }
+
+  return {
+    totalArea: totalArea > 0 ? formatArea(totalArea) : "—",
+    totalPerimeter: totalPerimeter > 0 ? formatLength(totalPerimeter) : "—",
+    featureCount,
+  };
+}
+
+function computeRingLength(coords: number[][]): number {
+  let length = 0;
+  for (let i = 0; i < coords.length - 1; i++) {
+    length += haversineDistance(coords[i], coords[i + 1]);
+  }
+  return length;
+}
+
+function haversineDistance(a: number[], b: number[]): number {
+  const R = 6371000;
+  const dLat = ((b[1] - a[1]) * Math.PI) / 180;
+  const dLng = ((b[0] - a[0]) * Math.PI) / 180;
+  const sinLat = Math.sin(dLat / 2);
+  const sinLng = Math.sin(dLng / 2);
+  const h =
+    sinLat * sinLat +
+    Math.cos((a[1] * Math.PI) / 180) *
+      Math.cos((b[1] * Math.PI) / 180) *
+      sinLng * sinLng;
+  return 2 * R * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+}
+
+function computePolygonArea(coords: number[][]): number {
+  if (coords.length < 3) return 0;
+  let area = 0;
+  const R = 6371000;
+  for (let i = 0; i < coords.length; i++) {
+    const j = (i + 1) % coords.length;
+    const x1 = (coords[i][0] * Math.PI) / 180;
+    const y1 = (coords[i][1] * Math.PI) / 180;
+    const x2 = (coords[j][0] * Math.PI) / 180;
+    const y2 = (coords[j][1] * Math.PI) / 180;
+    area += (x2 - x1) * (2 + Math.sin(y1) + Math.sin(y2));
+  }
+  area = (area * R * R) / 2;
+  return area;
+}
+
+function formatArea(m2: number): string {
+  if (m2 >= 1_000_000) return `${(m2 / 1_000_000).toFixed(2)} km²`;
+  if (m2 >= 1) return `${m2.toFixed(0)} m²`;
+  return `${(m2 * 10_000).toFixed(0)} cm²`;
+}
+
+function formatLength(m: number): string {
+  if (m >= 1000) return `${(m / 1000).toFixed(2)} km`;
+  return `${m.toFixed(1)} m`;
+}
+
 /** Strip Terra Draw internal properties and return clean GeoJSON features. */
 function featuresToCleanGeoJson(
   features: GeoJSON.Feature[],
@@ -276,6 +367,7 @@ export function GeometryEditor({
   const [terraDrawReady, setTerraDrawReady] = useState(false);
   const [activeMode, setActiveMode] = useState<DrawMode | null>(null);
   const [importing, setImporting] = useState(false);
+  const [measurements, setMeasurements] = useState({ totalArea: "—", totalPerimeter: "—", featureCount: 0 });
   const [layers, setLayers] = useState({
     satellite: true,
     operationArea: true,
@@ -366,11 +458,13 @@ export function GeometryEditor({
 
     if (fc.features.length === 0) {
       setPayload("");
+      setMeasurements({ totalArea: "—", totalPerimeter: "—", featureCount: 0 });
       return;
     }
 
     const cleaned = featuresToCleanGeoJson(fc.features as GeoJSON.Feature[]);
     setPayload(JSON.stringify(cleaned, null, 2));
+    setMeasurements(computeMeasurements(cleaned));
   }, []);
 
   // ── Load existing GeoJSON into Terra Draw (once, when ready) ─────
@@ -640,15 +734,25 @@ export function GeometryEditor({
             />
           </div>
 
-          <div className="relative h-[420px] bg-slate-100 dark:bg-slate-950 sm:h-[560px] xl:h-[680px]">
+          <div className="relative h-[480px] bg-slate-100 dark:bg-slate-950 sm:h-[600px] xl:h-[720px]">
             <div ref={containerRef} className="h-full w-full" />
+            {/* Contextual hint */}
             <div className="pointer-events-none absolute left-4 top-4 max-w-xs rounded-2xl border border-white/70 bg-white/90 px-4 py-3 text-sm text-slate-700 shadow-lg shadow-slate-950/10 backdrop-blur dark:border-slate-800/70 dark:bg-slate-950/85 dark:text-slate-200">
-              <p className="font-semibold text-slate-950 dark:text-white">Siguiente acción</p>
+              <p className="font-semibold text-slate-950 dark:text-white">
+                {measurements.featureCount > 0 ? `Editor — ${measurements.featureCount} figura${measurements.featureCount !== 1 ? "s" : ""}` : "Siguiente acción"}
+              </p>
               <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">
-                Elegí Polígono, marcá la zona de operación y guardá el área.
+                {measurements.featureCount > 0
+                  ? "Usá Seleccionar para mover figuras. Guardá el área antes de salir."
+                  : "Elegí Polígono, marcá la zona de operación y guardá el área."}
               </p>
             </div>
-            {!parsed.valid ? (
+            {measurements.featureCount > 0 && (
+              <div className="pointer-events-none absolute right-4 top-4 rounded-2xl border border-emerald-500/20 bg-emerald-50/90 px-4 py-2 text-xs font-medium text-emerald-700 backdrop-blur dark:bg-emerald-500/10 dark:text-emerald-200">
+                {measurements.totalArea} · {measurements.totalPerimeter}
+              </div>
+            )}
+            {!parsed.valid && payload.trim() ? (
               <div className="pointer-events-none absolute inset-x-4 bottom-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 backdrop-blur dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
                 La geometría interna necesita revisión antes de guardar.
               </div>
@@ -659,11 +763,30 @@ export function GeometryEditor({
         <aside className="space-y-4">
           <DetailPanel title={title} description={description}>
             <div className="space-y-4">
-              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 text-sm leading-6 text-cyan-900 dark:bg-cyan-500/[0.06] dark:text-cyan-100">
-                <p className="font-semibold">Workflow recomendado</p>
-                <p className="mt-1 text-cyan-800/80 dark:text-cyan-200/80">
-                  1. Dibujar área. 2. Revisar capas. 3. Guardar. 4. Volver al permiso.
+              {/* Measurement panel */}
+              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 dark:bg-cyan-500/[0.06]">
+                <p className="text-sm font-semibold text-cyan-900 dark:text-cyan-100">
+                  {measurements.featureCount > 0
+                    ? `Geometría activa (${measurements.featureCount})`
+                    : "Sin geometría"}
                 </p>
+                {measurements.featureCount > 0 && (
+                  <div className="mt-2 grid grid-cols-2 gap-3">
+                    <div className="rounded-xl border border-cyan-500/15 bg-white/80 px-3 py-2 text-center dark:bg-slate-950/60">
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Área</p>
+                      <p className="mt-0.5 font-mono text-sm font-bold text-cyan-700 dark:text-cyan-200">{measurements.totalArea}</p>
+                    </div>
+                    <div className="rounded-xl border border-cyan-500/15 bg-white/80 px-3 py-2 text-center dark:bg-slate-950/60">
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Perímetro</p>
+                      <p className="mt-0.5 font-mono text-sm font-bold text-cyan-700 dark:text-cyan-200">{measurements.totalPerimeter}</p>
+                    </div>
+                  </div>
+                )}
+                {measurements.featureCount === 0 && (
+                  <p className="mt-1 text-xs leading-5 text-cyan-800/80 dark:text-cyan-200/80">
+                    Dibujá un polígono o línea para ver mediciones en vivo.
+                  </p>
+                )}
               </div>
 
               <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800/80 dark:bg-slate-950/70">
@@ -701,22 +824,6 @@ export function GeometryEditor({
                     </span>
                   </button>
                 ))}
-              </div>
-
-              <div className="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-4 text-sm text-slate-700 dark:border-slate-800/80 dark:bg-slate-950/70 dark:text-slate-300">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600 dark:text-slate-400">Estado actual</span>
-                  <StatusChip
-                    label={payload.trim() ? parsed.summary : "Sin geometría"}
-                    tone={parsed.valid ? "info" : "warning"}
-                  />
-                </div>
-                <p className="leading-6">
-                  <strong>Dibujo:</strong> punto, línea, polígono o círculo. Usá seleccionar para mover o borrar figuras.
-                </p>
-                <p className="leading-6">
-                  <strong>Archivos:</strong> importá KML, KMZ o DXF cuando necesites traer referencias externas.
-                </p>
               </div>
 
               <div className="flex flex-col gap-2">

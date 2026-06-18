@@ -68,36 +68,32 @@ async function main() {
     throw new Error("Seeding blocked in production. Set SEED_ALLOW_PRODUCTION=true only if you really mean it.");
   }
 
-  // ── Admin user ──────────────────────────────────────────────
+  // ── Demo user (auto-created with SEED_DEMO) ─────────────────
 
-  const email = (process.env.SEED_ADMIN_EMAIL || "").trim().toLowerCase();
-  const password = process.env.SEED_ADMIN_PASSWORD || "";
-  const fullName = (process.env.SEED_ADMIN_FULL_NAME || "").trim();
+  const demoEmail = (process.env.SEED_ADMIN_EMAIL || "demo@aeroflow.io").trim().toLowerCase();
+  const demoPassword = process.env.SEED_ADMIN_PASSWORD || "demo1234";
+  const demoFullName = (process.env.SEED_ADMIN_FULL_NAME || "Demo AeroFlow").trim();
 
-  if (!email || !password || !fullName) {
-    throw new Error("Missing SEED_ADMIN_EMAIL, SEED_ADMIN_PASSWORD or SEED_ADMIN_FULL_NAME.");
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 12);
+  const hashedPassword = await bcrypt.hash(demoPassword, 12);
 
   const admin = await prisma.user.upsert({
-    where: { email },
+    where: { email: demoEmail },
     update: {
-      fullName,
+      fullName: demoFullName,
       hashedPassword,
       role: Role.ADMIN,
       active: true,
     },
     create: {
-      email,
-      fullName,
+      email: demoEmail,
+      fullName: demoFullName,
       hashedPassword,
       role: Role.ADMIN,
       active: true,
     },
   });
 
-  console.log(`Seeded ADMIN user: ${email}`);
+  console.log(`Seeded ADMIN user: ${demoEmail} / ${demoPassword}`);
 
   // ── Demo data (opt-in) ──────────────────────────────────────
   //
@@ -433,15 +429,152 @@ async function main() {
   });
 
   console.log("Seeded 5 documents.");
+
+  /* ── 8. HelpDocs (only if empty) ─────────────────────────── */
+
+  const existingDocs = await prisma.helpDoc.count();
+  if (existingDocs === 0) {
+    const helpDocs = [
+      { title: "Checklist prevuelo RPAS", slug: "checklist-prevuelo", category: "Operaciones", fileName: "checklist_prevuelo.pdf", storedName: "demo_checklist_prevuelo.pdf", mimeType: "application/pdf", size: 245000 },
+      { title: "DAN 151 — Operaciones RPAS (resumen)", slug: "dan-151-resumen", category: "Normativa", fileName: "dan_151_resumen.pdf", storedName: "demo_dan_151.pdf", mimeType: "application/pdf", size: 180000 },
+      { title: "Guía solicitud permiso DGAC", slug: "solicitud-permiso-dgac", category: "Procedimientos", fileName: "guia_permiso_dgac.pdf", storedName: "demo_guia_permiso.pdf", mimeType: "application/pdf", size: 310000 },
+      { title: "Requisitos de seguro para RPAS", slug: "seguro-rpas-requisitos", category: "Normativa", fileName: "requisitos_seguro.pdf", storedName: "demo_requisitos_seguro.pdf", mimeType: "application/pdf", size: 95000 },
+      { title: "Manual de Operaciones — AOC", slug: "manual-operaciones-aoc", category: "Gestión", fileName: "manual_operaciones_aoc.pdf", storedName: "demo_manual_aoc.pdf", mimeType: "application/pdf", size: 420000 },
+    ];
+    for (const hd of helpDocs) {
+      await prisma.helpDoc.create({ data: hd });
+    }
+    console.log(`Seeded ${helpDocs.length} help docs.`);
+  } else {
+    console.log(`SKIP help docs: ${existingDocs} already exist.`);
+  }
+
+  console.log("Seeded 5 help docs.");
+
+  /* ── 9. Notifications for demo user (only if empty) ──────── */
+
+  const existingNotifs = await prisma.notification.count({ where: { userId: admin.id } });
+  if (existingNotifs === 0) {
+    await prisma.notification.create({
+      data: { userId: admin.id, title: "Permiso autorizado", message: "El plan Monitoreo Humedal Cerro Navia fue autorizado por DGAC.", type: "success", read: false, link: "/flight-plans/" + fp3.id, createdAt: daysFromNow(-1) },
+    });
+    await prisma.notification.create({
+      data: { userId: admin.id, title: "Seguro próximo a vencer", message: "El dron EVO II Pro V3 (D-003) tiene seguro vencido desde hace 30 días.", type: "warning", read: false, link: "/drones/" + drone3.id, createdAt: daysFromNow(-2) },
+    });
+    await prisma.notification.create({
+      data: { userId: admin.id, title: "Checklist completado", message: "Inspección Puente Los Morros completó el checklist DGAC. Revisar antes de envío.", type: "info", read: true, link: "/flight-plans/" + fp2.id, createdAt: daysFromNow(-5) },
+    });
+    console.log("Seeded 3 notifications.");
+  } else {
+    console.log("SKIP notifications: already exist.");
+  }
+
+  /* ── 10. CLOSED flight plan (completed mission) ───────────── */
+
+  const fp4 = await prisma.flightPlan.upsert({
+    where: { code: "FP-2026-004" },
+    update: {},
+    create: {
+      code: "FP-2026-004",
+      title: "Levantamiento Fotogramétrico — Sector Los Bronces",
+      operationDate: daysFromNow(-45),
+      permissionStatus: PermissionStatus.CLOSED,
+      notes: "Proyecto completado. Ortófoto 5 cm/pixel, nube de puntos clasificada y reporte entregado al cliente.",
+      geometryJson: santiagoPolygon(),
+      geometryType: "Polygon",
+      costCenterId: team1.id,
+      clientId: client1.id,
+      droneId: drone1.id,
+      operatorId: op1.id,
+    },
+  });
+
+  await prisma.permissionEvent.create({
+    data: {
+      flightPlanId: fp4.id,
+      eventType: "CREATED",
+      description: "Plan creado para levantamiento fotogramétrico en sector Los Bronces.",
+      createdAt: daysFromNow(-90),
+    },
+  });
+
+  await prisma.permissionEvent.create({
+    data: {
+      flightPlanId: fp4.id,
+      eventType: "STATUS_CHANGED",
+      fromStatus: PermissionStatus.DRAFT,
+      toStatus: PermissionStatus.IN_REVIEW,
+      description: "Inicia revisión técnica.",
+      createdAt: daysFromNow(-85),
+    },
+  });
+
+  await prisma.permissionEvent.create({
+    data: {
+      flightPlanId: fp4.id,
+      eventType: "STATUS_CHANGED",
+      fromStatus: PermissionStatus.IN_REVIEW,
+      toStatus: PermissionStatus.READY_FOR_SUBMISSION,
+      description: "Documentación completa. Listo para envío DGAC.",
+      createdAt: daysFromNow(-80),
+    },
+  });
+
+  await prisma.permissionEvent.create({
+    data: {
+      flightPlanId: fp4.id,
+      eventType: "STATUS_CHANGED",
+      fromStatus: PermissionStatus.READY_FOR_SUBMISSION,
+      toStatus: PermissionStatus.SUBMITTED,
+      description: "Enviado a DGAC para autorización.",
+      createdAt: daysFromNow(-75),
+    },
+  });
+
+  await prisma.permissionEvent.create({
+    data: {
+      flightPlanId: fp4.id,
+      eventType: "STATUS_CHANGED",
+      fromStatus: PermissionStatus.SUBMITTED,
+      toStatus: PermissionStatus.AUTHORIZED,
+      description: "Autorizado por DGAC. Permiso vigente por 30 días.",
+      createdAt: daysFromNow(-70),
+    },
+  });
+
+  await prisma.permissionEvent.create({
+    data: {
+      flightPlanId: fp4.id,
+      eventType: "STATUS_CHANGED",
+      fromStatus: PermissionStatus.AUTHORIZED,
+      toStatus: PermissionStatus.CLOSED,
+      description: "Operación completada. Informe final entregado al cliente.",
+      createdAt: daysFromNow(-45),
+    },
+  });
+
+  await prisma.permissionEvent.create({
+    data: {
+      flightPlanId: fp4.id,
+      eventType: "DOCUMENT_ATTACHED",
+      description: "Adjuntado: informe fotogramétrico final con ortófoto y nube de puntos.",
+      createdAt: daysFromNow(-45),
+    },
+  });
+
+  console.log("Seeded flight plan FP-2026-004 (CLOSED) with 7 events.");
+
   console.log("\n✓ Demo data seeded successfully!");
-  console.log("  Users:   admin (%s)", email);
+  console.log("  Users:   admin (%s / %s)", demoEmail, demoPassword);
   console.log("  Teams:   3 equipos de trabajo");
   console.log("  Clients: 3");
   console.log("  Drones:  3 (1 con seguro vencido)");
   console.log("  Ops:     3");
-  console.log("  FPs:     3 (DRAFT / IN_REVIEW / AUTHORIZED)");
-  console.log("  Events:  10");
+  console.log("  FPs:     4 (DRAFT / IN_REVIEW / AUTHORIZED / CLOSED)");
+  console.log("  Events:  17");
   console.log("  Docs:    5");
+  console.log("  HelpDocs: 5");
+  console.log("  Notifications: 3 (2 sin leer)");
   console.log("\nSet SEED_DEMO=false in .env to skip demo data on next seed.");
 }
 

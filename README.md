@@ -2,6 +2,8 @@
 
 **Platform for drone/RPA flight operations, geo-registration, technical deliverables, and operational compliance — from mission planning to report delivery in a single traceable workflow.**
 
+> 🇪🇸 **AeroFlow** convierte vuelos con drones en operaciones listas para auditar: mapa, permisos DGAC/SIGO, trazabilidad y reportes en una sola plataforma.
+
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=next.js)](https://nextjs.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma)](https://www.prisma.io/)
@@ -17,16 +19,17 @@
 
 | Product state | Current focus | Branches to review |
 |---|---|---|---|
-| Production-ready platform with operational modules, visual system, and contextual guidance | Commercial polish, map-first geometry workflow, and GitHub-ready documentation | `ux-dgac-login-fix` |
+| Production-ready platform with DGAC workflow complete, 136 tests, Centro de Conocimiento, and premium landing | Mapa operacional workspace | `ux-dgac-login-fix` |
 
 ### Current highlights
 
-- Visual system fully applied (light-first, dark mode secondary) — all components, modules, and pages normalized to `slate-950` dark surfaces.
-- Mission flow redesigned: wizard pruned from 6 to 4 actionable steps, creation redirects to detail with progress bar.
-- Permissions, documents, geometry, and checklist modules aligned with the design system and fully localized to Spanish.
-- Contextual help (FlowGuide) covers 16 routes with step-by-step guidance and operational tips.
-- Commercial landing page with industry use cases (mining, construction, infrastructure, environment, surveying, inspection) and before/after comparison.
-- Map-first geometry experience in progress: the normal user flow prioritizes drawing, layers, and saving from the map while GeoJSON remains internal/advanced.
+- **Centro de Conocimiento** (/ayuda): buscador en vivo, flujo operacional de 7 etapas, preview inline de documentos, secciones normativas.
+- **Fase DGAC completa**: permisos, documentos, geometría, checklist, HelpDocs Prisma, 136 tests.
+- **Landing premium**: hero con CTA gradiente, proof points concretos, stats con datos reales de la plataforma.
+- **Seed demo** (`SEED_DEMO=true`): demo user auto-creado, 4 planes de vuelo (DRAFT/IN_REVIEW/AUTHORIZED/CLOSED), 17 eventos, 5 HelpDocs, 3 notificaciones.
+- **Sistema visual aplicado**: light-first, dark mode secondary, tokens `slate-950` normalizados.
+- **Flujo de misión rediseñado**: wizard de 4 pasos, redirects creation→detail con barra de progreso.
+- **Mapa operacional planificado**: editor geometría con capas y workspace visual como fase futura.
 
 ### Review this first
 
@@ -40,19 +43,19 @@
 
 ## Concept
 
-> **AeroFlow centralizes RPA/drone flight operations into a single platform — from mission planning and interactive mapping to document tracking, permission workflows, and operational history.**
+> **AeroFlow centraliza operaciones RPA/drone en una plataforma profesional — desde la planificación de la misión y el mapeo interactivo hasta la gestión documental, los flujos de permiso DGAC/SIGO y la trazabilidad operativa completa.**
 
-Today, managing drone permits, flight logs, aircraft documents, operator credentials, and mission geometry often means juggling emails, spreadsheets, PDFs, KML files, and shared folders. AeroFlow replaces that fragmentation with a structured, visual, and traceable platform.
+Hoy, gestionar permisos de drones, registros de vuelo, documentos de aeronaves, credenciales de operadores y geometría de misión significa lidiar con correos, planillas, PDFs, archivos KML y carpetas compartidas. AeroFlow reemplaza esa fragmentación con una plataforma estructurada, visual y trazable.
 
-**What makes AeroFlow different:**
+**Lo que hace diferente a AeroFlow:**
 
-- **Permission-first workflow** — Full state machine for DGAC/SIGO approvals (draft → review → sent → authorized → rejected → closed)
-- **Map as a tool, not a decoration** — Draw zones, measure areas, mark no-fly zones, save GeoJSON directly from the browser
-- **Weather-aware planning** — Automatic wind, temperature, and precipitation data via free APIs (Open-Meteo)
-- **Process guidance** — Built-in helper that tells you what's missing, what's next, and how to complete each step
-- **Document-centric** — Every mission carries its document package: permits, insurance, checklists, logbooks, KMZ files
-- **Audit trail** — Every state change, document upload, and communication is logged with who, when, and why
-- **Learning journey** — The project itself is documented as it grows, with decisions, trade-offs, and lessons learned alongside the code
+- **Workflow de permisos DGAC/SIGO** — Máquina de estados completa (borrador → revisión → enviado → autorizado → rechazado → cerrado)
+- **Mapa como herramienta, no decoración** — Dibujá zonas, medí áreas, marcá zonas restringidas, guardá GeoJSON desde el navegador
+- **Planificación con datos meteorológicos** — Viento, temperatura y precipitación vía Open-Meteo (API gratuita, sin API key)
+- **Guía de proceso integrada** — FlowGuide te dice qué falta, qué sigue y cómo completar cada paso
+- **Documentos por misión** — Cada plan de vuelo lleva su paquete documental: permisos, seguros, checklists, bitácoras, archivos KMZ
+- **Traza de auditoría** — Cada cambio de estado, carga de documento y comunicación queda registrado con quién, cuándo y por qué
+- **Demo lista para probar** — `SEED_DEMO=true` crea datos de ejemplo: 4 planes, 17 eventos, 5 HelpDocs, 3 notificaciones
 
 ---
 
@@ -141,10 +144,10 @@ flowchart TD
 | Area | Progress | Next move |
 |---|---|---|---|
 | Visual system | Light-first migration complete, design tokens normalized across all surfaces, 62 files updated | Mantener consistencia en nuevas pantallas |
-| Mission flow (T-010) | Wizard podado, redirects creation→detail, progress bar con X/6 y gradiente | Etapa 2 (mapa preview en wizard) pendiente |
-| Fase 4 DGAC alignment | Permissions, documents, geometry, checklist — tokens aligned, timeline localized, FlowGuide expanded to 16 routes | Próximo: Fase 5 comercialización |
-| Commercial readiness | Landing page en polish premium con foco mapa-first, permisos y trazabilidad | QA visual y demo data después |
-| Geometry workflow | GeoJSON sale del flujo normal; editor satelital pasa a workspace con capas | Validar dibujo/guardado/import/export |
+| Fase 4 DGAC | Completa: permisos, documentos, geometría, checklist, HelpDocs Prisma, FlowGuide 16 rutas, 136 tests | ✅ Cerrada |
+| Fase 5 Comercial | Landing premium (hero gradiente, stats, proof points); Seed demo con SEED_DEMO=true; README actualizado | ✅ Fase completa |
+| Fase 6 Centro Conocimiento | Buscador en vivo, flujo 7 etapas, preview inline, secciones normativas | ✅ Implementado |
+| Geometry workflow | GeoJSON sale del flujo normal; editor pasa a workspace con capas (planificado) | Fase 7 — Mapa operacional |
 
 ---
 
@@ -202,6 +205,30 @@ npm run dev
 > **Nota:** El proyecto usa SQLite por defecto para desarrollo local. No requiere Docker ni PostgreSQL.
 > Si necesitás PostGIS para pruebas espaciales, levantá el contenedor con `docker compose up -d`
 > y cambiá `DATABASE_URL` en `.env` a la URL de PostgreSQL (ver `.env.example`).
+
+### Demo data
+
+Para probar la plataforma con datos de ejemplo:
+
+```powershell
+# Configura en .env:
+SEED_DEMO=true
+
+# Ejecutá el seed (sin env vars extras — usa credenciales por defecto):
+npm run seed:dev
+```
+
+Esto crea automáticamente:
+- **1 admin**: `demo@aeroflow.io` / `demo1234` (no requiere env vars)
+- **3 equipos de trabajo** (Minería Norte, Construcción Santiago Sur, Topografía y Fotogrametría)
+- **3 clientes** (Minera Los Pelambres, Constructora Vial SA, Municipalidad de Providencia)
+- **3 drones** (Matrice 350 RTK, Mavic 3 Enterprise, EVO II Pro V3)
+- **3 operadores** con licencias vigentes
+- **4 planes de vuelo**: DRAFT (levantamiento norte), IN_REVIEW (puente), AUTHORIZED (humedal), CLOSED (fotogrametría completa)
+- **17 eventos** de línea de tiempo de permisos — incluyendo el flujo completo hasta CLOSED
+- **5 documentos** asociados (seguro, checklist, resolución DGAC, KMZ, plano)
+- **5 HelpDocs** en el Centro de Conocimiento
+- **3 notificaciones** (2 sin leer) para probar el panel
 
 > Guía detallada de lanzamiento con troubleshooting en [`docs/10_launch_guide.md`](docs/10_launch_guide.md).
 
