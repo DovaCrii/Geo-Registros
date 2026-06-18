@@ -237,3 +237,17 @@ model EmailLog {
   @@index([status])
   @@index([sentAt])
 }
+
+model HelpDoc {
+  id         String   @id @default(cuid())
+  title      String
+  slug       String
+  category   String
+  fileName   String
+  storedName String
+  mimeType   String
+  size       Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  deletedAt  DateTime?
+}
