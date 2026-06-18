@@ -241,6 +241,62 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
     },
   },
   {
+    pattern: /^\/admin\/users\/([^/]+)$/,
+    entry: {
+      title: "Detalle del usuario",
+      icon: "👤",
+      steps: [
+        "Acá ves la información completa del usuario: email, rol, nombre y datos de perfil.",
+        "Podés cambiar el rol entre admin, supervisor y operador según corresponda.",
+        "Los cambios de rol se reflejan inmediatamente en los permisos del sistema.",
+        "Para desactivar un usuario, cambiá su estado a inactivo.",
+      ],
+      tip: "Los usuarios autogestionados se crean desde /auth/register. Este panel es solo para administración.",
+    },
+  },
+  {
+    pattern: /^\/admin\/users\/new$/,
+    entry: {
+      title: "Nuevo usuario",
+      icon: "👤",
+      steps: [
+        "Creá un usuario administrativo manualmente.",
+        "Email: debe ser único en el sistema.",
+        "Rol: definí si será admin, supervisor u operador.",
+        "El usuario creado recibirá un email para establecer su contraseña.",
+      ],
+    },
+  },
+  {
+    pattern: /^\/admin\/users/,
+    entry: {
+      title: "Usuarios del sistema",
+      icon: "👤",
+      steps: [
+        "Listado de todos los usuarios registrados en la plataforma.",
+        "Cada usuario tiene: email, nombre, rol y estado (activo/inactivo).",
+        "Usá la búsqueda para encontrar usuarios por nombre o email.",
+        "Hacé clic en un usuario para ver su detalle y gestionar permisos.",
+        "Solo administradores pueden acceder a esta sección.",
+      ],
+      tip: "Los cambios de rol son efectivos inmediatamente. No requieren reconexión.",
+    },
+  },
+  {
+    pattern: /^\/admin\/help-docs/,
+    entry: {
+      title: "Documentación DGAC",
+      icon: "📄",
+      steps: [
+        "Panel administrativo para gestionar documentos DGAC que se muestran en /ayuda.",
+        "Subí archivos (PDF, DOC, etc.) con un título y categoría.",
+        "Los documentos publicados aparecen automáticamente en el centro de ayuda.",
+        "Podés eliminar documentos existentes desde este mismo panel.",
+      ],
+      tip: "Los documentos deben estar en formato accesible. Evitá archivos escaneados de baja calidad.",
+    },
+  },
+  {
     pattern: /^\/admin\/email-logs/,
     entry: {
       title: "Registro de correos",
