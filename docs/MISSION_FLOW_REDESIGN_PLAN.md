@@ -29,11 +29,10 @@ Esto obliga al usuario a: crear → guardar → navegar al detalle → buscar el
 - El usuario puede ver si ya hay geometría o marcar que la definirá después
 - Botón "Definir área después" → redirige al tab de geometría del detalle
 
-### Etapa 3 — Transición natural creación → detalle
+### Etapa 3 — Transición natural creación → detalle ✅
 - Al crear el plan, redirigir al detalle con el tab activo según el estado:
-  - Si no hay geometría → tab 2 (geometría)
-  - Si hay geometría pero sin documentos → tab 3 (documentos)
-  - etc.
+  - `createFlightPlan` → redirige a `/flight-plans/{id}?tab=2` (geometría) ✅
+  - `updateFlightPlan` → se queda en `/flight-plans/{id}` en vez de volver al listado ✅
 - El detail page se vuelve el centro operativo real
 
 ### Etapa 4 — Barra de progreso en detalle

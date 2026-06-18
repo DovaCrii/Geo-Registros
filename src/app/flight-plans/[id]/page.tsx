@@ -190,6 +190,22 @@ export default async function FlightPlanDetailPage({
 
     const stepHref = (tab: StepTab) => `/flight-plans/${record.id}?tab=${tab}`;
 
+    const stepCompletion: Record<StepTab, boolean> = {
+      1: true,
+      2: Boolean(record.geometryJson),
+      3: documents.length > 0,
+      4: Boolean(
+        record.dgacChecklist &&
+          typeof record.dgacChecklist === "object" &&
+          Object.values(record.dgacChecklist as Record<string, unknown>).some(Boolean),
+      ),
+      5: permissionEvents.length > 0 || record.permissionStatus !== "DRAFT",
+      6: Boolean(weatherData && !("error" in weatherData)) || Boolean(persistedChecklist["weather-check"]),
+    };
+
+    const completedCount = STEP_META.filter((s) => stepCompletion[s.tab]).length;
+    const progressPercent = Math.round((completedCount / STEP_META.length) * 100);
+
     return (
       <PageShell>
         <div className="space-y-6">
@@ -227,9 +243,26 @@ export default async function FlightPlanDetailPage({
           />
 
           <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/55 p-3 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
+            {/* Progress bar */}
+            <div className="mb-4 flex items-center gap-3 px-1">
+              <div className="flex-1">
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 transition-all duration-500"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
+              </div>
+              <span className="shrink-0 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                {completedCount}/{STEP_META.length} completados
+              </span>
+            </div>
+
+            {/* Step tabs */}
             <div className="grid gap-2 md:grid-cols-3 xl:grid-cols-6">
               {STEP_META.map((step) => {
                 const active = activeTab === step.tab;
+                const done = stepCompletion[step.tab];
                 return (
                   <Link
                     key={step.tab}
@@ -237,12 +270,20 @@ export default async function FlightPlanDetailPage({
                     className={`rounded-lg border px-4 py-3 text-left transition ${
                       active
                         ? "border-accent/40 dark:border-cyan-400/40 bg-accent/10 dark:bg-cyan-500/15 text-accent-strong dark:text-cyan-100"
-                        : "border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/45 text-slate-500 dark:text-slate-400 hover:border-accent/30 dark:hover:border-cyan-500/30 hover:bg-accent/5 dark:hover:bg-cyan-500/5 hover:text-accent-strong dark:hover:text-slate-200"
+                        : done
+                          ? "border-emerald-500/20 dark:border-emerald-500/20 bg-emerald-50/60 dark:bg-emerald-500/[0.04] text-slate-600 dark:text-slate-300 hover:border-accent/30 dark:hover:border-cyan-500/30 hover:bg-accent/5 dark:hover:bg-cyan-500/5"
+                          : "border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/45 text-slate-500 dark:text-slate-400 hover:border-accent/30 dark:hover:border-cyan-500/30 hover:bg-accent/5 dark:hover:bg-cyan-500/5 hover:text-accent-strong dark:hover:text-slate-200"
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <span className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${active ? "bg-accent/20 dark:bg-cyan-400/20 text-accent-strong dark:text-cyan-100" : "bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400"}`}>
-                        {step.tab}
+                      <span className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${
+                        done && !active
+                          ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+                          : active
+                            ? "bg-accent/20 dark:bg-cyan-400/20 text-accent-strong dark:text-cyan-100"
+                            : "bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
+                      }`}>
+                        {done && !active ? "✓" : step.tab}
                       </span>
                       <div>
                         <p className="text-sm font-semibold">{step.label}</p>
