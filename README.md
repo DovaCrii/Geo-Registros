@@ -2,6 +2,8 @@
 
 **Platform for drone/RPA flight operations, geo-registration, technical deliverables, and operational compliance — from mission planning to report delivery in a single traceable workflow.**
 
+> 🇪🇸 **AeroFlow** convierte vuelos con drones en operaciones listas para auditar: mapa, permisos DGAC/SIGO, trazabilidad y reportes en una sola plataforma.
+
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=next.js)](https://nextjs.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma)](https://www.prisma.io/)
@@ -17,16 +19,17 @@
 
 | Product state | Current focus | Branches to review |
 |---|---|---|---|
-| Production-ready platform with operational modules, visual system, and contextual guidance | Commercial polish, map-first geometry workflow, and GitHub-ready documentation | `ux-dgac-login-fix` |
+| Production-ready platform with DGAC workflow complete, 136 tests, and commercial landing | Seed demo data, README premium, landing polish, Centro de Conocimiento | `ux-dgac-login-fix` |
 
 ### Current highlights
 
-- Visual system fully applied (light-first, dark mode secondary) — all components, modules, and pages normalized to `slate-950` dark surfaces.
-- Mission flow redesigned: wizard pruned from 6 to 4 actionable steps, creation redirects to detail with progress bar.
-- Permissions, documents, geometry, and checklist modules aligned with the design system and fully localized to Spanish.
-- Contextual help (FlowGuide) covers 16 routes with step-by-step guidance and operational tips.
-- Commercial landing page with industry use cases (mining, construction, infrastructure, environment, surveying, inspection) and before/after comparison.
-- Map-first geometry experience in progress: the normal user flow prioritizes drawing, layers, and saving from the map while GeoJSON remains internal/advanced.
+- **Fase DGAC completa**: permisos, documentos, geometría, checklist, HelpDocs migrados a Prisma DB, 136 tests pasando.
+- **Sistema visual aplicado** (light-first, dark mode secondary) — todos los componentes y páginas normalizados con tokens `slate-950`.
+- **Flujo de misión rediseñado**: wizard de 4 pasos, redirects creation→detail con barra de progreso.
+- **Centro de ayuda operativa** (/ayuda) con documentación DGAC integrada y checklist persistido por plan de vuelo.
+- **Landing comercial** con 7 secciones: hero, pains, flujo de 7 etapas, 6 módulos, 6 casos de uso, antes/después, CTA.
+- **Seed demo** con `SEED_DEMO=true`: crea 3 equipos, 3 clientes, 3 drones, 3 operadores, 3 planes con eventos y documentos.
+- **Mapa operacional planificado**: editor geometría con capas y workspace visual como fase futura.
 
 ### Review this first
 
@@ -141,10 +144,10 @@ flowchart TD
 | Area | Progress | Next move |
 |---|---|---|---|
 | Visual system | Light-first migration complete, design tokens normalized across all surfaces, 62 files updated | Mantener consistencia en nuevas pantallas |
-| Mission flow (T-010) | Wizard podado, redirects creation→detail, progress bar con X/6 y gradiente | Etapa 2 (mapa preview en wizard) pendiente |
-| Fase 4 DGAC alignment | Permissions, documents, geometry, checklist — tokens aligned, timeline localized, FlowGuide expanded to 16 routes | Próximo: Fase 5 comercialización |
-| Commercial readiness | Landing page en polish premium con foco mapa-first, permisos y trazabilidad | QA visual y demo data después |
-| Geometry workflow | GeoJSON sale del flujo normal; editor satelital pasa a workspace con capas | Validar dibujo/guardado/import/export |
+| Fase 4 DGAC | Completa: permisos, documentos, geometría, checklist, HelpDocs Prisma, FlowGuide 16 rutas, 136 tests | ✅ Cerrada |
+| Fase 5 Comercial | Landind premium con hero + 7 secciones; seed demo funcional con SEED_DEMO=true | Seed refinado, README premium, landing polish |
+| Fase 6 Centro Conocimiento | Planificado: buscador en vivo, flujo 7 pasos, preview docs | 🔜 Pendiente de diseño |
+| Geometry workflow | GeoJSON sale del flujo normal; editor pasa a workspace con capas (planificado) | Fase 7 — Mapa operacional |
 
 ---
 
@@ -202,6 +205,31 @@ npm run dev
 > **Nota:** El proyecto usa SQLite por defecto para desarrollo local. No requiere Docker ni PostgreSQL.
 > Si necesitás PostGIS para pruebas espaciales, levantá el contenedor con `docker compose up -d`
 > y cambiá `DATABASE_URL` en `.env` a la URL de PostgreSQL (ver `.env.example`).
+
+### Demo data
+
+Para ver la plataforma con datos de ejemplo:
+
+```powershell
+# En .env, configura:
+SEED_ADMIN_EMAIL=demo@aeroflow.io
+SEED_ADMIN_PASSWORD=demo1234
+SEED_ADMIN_FULL_NAME="Demo AeroFlow"
+SEED_DEMO=true
+
+# Ejecutá el seed (puede ejecutarse múltiples veces con upsert):
+npm run seed:dev
+```
+
+Esto crea:
+- **1 admin** (`demo@aeroflow.io` / `demo1234`)
+- **3 equipos de trabajo** (Minería Norte, Construcción Santiago Sur, Topografía y Fotogrametría)
+- **3 clientes** (Minera Los Pelambres, Constructora Vial SA, Municipalidad de Providencia)
+- **3 drones** (Matrice 350 RTK, Mavic 3 Enterprise, EVO II Pro V3)
+- **3 operadores** con licencias vigentes
+- **3 planes de vuelo** en distintos estados: DRAFT, IN_REVIEW, AUTHORIZED
+- **10 eventos** de línea de tiempo de permisos
+- **5 documentos** asociados (seguro, checklist, resolución DGAC, KMZ)
 
 > Guía detallada de lanzamiento con troubleshooting en [`docs/10_launch_guide.md`](docs/10_launch_guide.md).
 

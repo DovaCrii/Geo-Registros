@@ -744,16 +744,33 @@ function CtaSection() {
           <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
             Convertí tus levantamientos en información accionable
           </h2>
-          <p className="mx-auto mb-10 max-w-lg text-base leading-7 text-slate-600 dark:text-slate-400">
-            Agendá una demo y descubrí cómo AeroFlow puede ordenar tus vuelos, registros, modelos y
-            entregables técnicos.
+          <p className="mx-auto mb-6 max-w-lg text-base leading-7 text-slate-600 dark:text-slate-400">
+            Probá AeroFlow con datos de ejemplo: creá el admin con `SEED_DEMO=true` y
+            explorá planes de vuelo, permisos DGAC y geometría en el mapa.
           </p>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-50 px-8 py-3.5 text-base font-medium text-cyan-700 shadow-lg shadow-cyan-500/5 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-gradient-to-b dark:from-cyan-500/20 dark:to-cyan-600/10 dark:text-cyan-100 dark:hover:from-cyan-500/30 dark:hover:to-cyan-600/20"
-          >
-            Ingresar a AeroFlow
-          </Link>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/auth/login"
+              className="inline-flex items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-50 px-8 py-3.5 text-base font-medium text-cyan-700 shadow-lg shadow-cyan-500/5 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-gradient-to-b dark:from-cyan-500/20 dark:to-cyan-600/10 dark:text-cyan-100 dark:hover:from-cyan-500/30 dark:hover:to-cyan-600/20"
+            >
+              Ingresar a AeroFlow
+            </Link>
+            <Link
+              href="/auth/register"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-8 py-3.5 text-base font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-900"
+            >
+              Crear cuenta
+            </Link>
+          </div>
+          <div className="mx-auto mt-8 max-w-sm rounded-xl border border-slate-200 bg-slate-50/80 p-4 text-left dark:border-slate-700/40 dark:bg-slate-950/40">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Demo local</p>
+            <code className="block text-xs leading-6 text-slate-600 dark:text-slate-400">
+              SEED_ADMIN_EMAIL=demo@aeroflow.io<br />
+              SEED_ADMIN_PASSWORD=demo1234<br />
+              SEED_DEMO=true<br />
+              npm run seed:dev
+            </code>
+          </div>
         </div>
       </div>
     </section>

@@ -19,19 +19,33 @@
 - **Commit final:** `136c0b6` — 55 archivos, 673 inserciones.
 - **Incluye:** migración light-first general, fix estructural en tablas seleccionables, accesibilidad, localización completa a español, documentación sincronizada.
 
-## Fase 4 - Workflow DGAC y trazabilidad
-- Pulir checklist documental.
-- Mejorar timeline de permisos.
-- Reforzar mensajes de ayuda contextual.
-- Alinear la experiencia de permisos, documentos y geometria con el nuevo sistema visual.
+## Fase 4 - Workflow DGAC y trazabilidad ✅ COMPLETADA
+- Pulir checklist documental. ✅
+- Mejorar timeline de permisos. ✅
+- Reforzar mensajes de ayuda contextual. ✅
+- Alinear la experiencia de permisos, documentos y geometria con el nuevo sistema visual. ✅
+- FlightPlanChecklist: 9 tests de componente con jsdom + testing-library. ✅
+- HelpDocs migrado de filesystem a Prisma DB. ✅
+- Testing infra completa: @vitejs/plugin-react, jsdom, @testing-library/react. ✅
+- Menú de usuario en sidebar con avatar, email y logout. ✅
+- FlowGuide corrigió duplicados de patrones — 16 rutas alineadas. ✅
 
-## Fase 5 - Comercializacion y entrega
-- Ajustar README y home para explicar valor comercial con foco en mapa, permisos y trazabilidad.
-- Pulir landing para que se sienta mas premium, clara y profesional.
-- Preparar demo guiada con datos de ejemplo despues de cerrar el flujo mapa-first.
+## Fase 5 - Comercializacion y entrega 🚧 EN CURSO
+- README premium con posicionamiento comercial claro.
+- Landing polish continuo: hero, CTA, proof points de trazabilidad.
+- Seed demo refinado con `SEED_DEMO=true`: demo user listo para mostrar sin configuración.
+- Preparar demo guiada con datos de ejemplo — 3 equipos, 3 clientes, 3 drones, 3 operadores, 3 planes con estados distintos.
 - Documentar handoff operativo para futuras mejoras.
 
-## Fase 6 - Mapa operacional
+## Fase 6 — Centro de Conocimiento (reemplaza /ayuda) 🔜 PLANIFICADO
+- Buscador en vivo de documentos internos (HelpDocs desde Prisma).
+- Mapa del flujo operacional de 7 pasos (planificación → cierre).
+- Vista previa de documentos sin descarga (PDF en línea, imágenes).
+- Secciones normativas (DAN 151, DAN 91, etc.) con referencias dinámicas.
+- Checklist operativo DGAC persistido por plan de vuelo (ya existe en FlightPlanChecklist).
+- Integración con el menú de ayuda contextual en cada página.
+
+## Fase 7 - Mapa operacional 🔜 PLANIFICADO
 - Convertir el editor de geometria en workspace visual con mapa amplio, herramientas claras y panel de capas.
 - Ocultar GeoJSON del flujo normal y mantenerlo solo como formato interno/avanzado.
 - Validar dibujo, edicion, guardado, recarga e import/export.

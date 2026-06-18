@@ -16,16 +16,22 @@ AeroFlow / Geo-Registros es una plataforma Next.js para operaciones RPA/drones: 
 
 ## Estado de producto
 - Base funcional avanzada y documentada.
-- UX del dashboard y la geometria avanza hacia centro operativo mapa-first.
-- La home comercial existe, pero sigue en fase de polish para comunicar mejor valor, workflow y trazabilidad.
-- Documentacion historica existe en `docs/`; esta capa nueva resume la direccion futura.
-- Sistema visual base completamente aplicado y commiteado (T-011 ✅, 55 archivos, commit `136c0b6`).
+- Fase DGAC completa: checklist, permisos, HelpDocs en Prisma, tests de componente (136 tests pasando).
+- Fase comercial en curso: landing lista (hero, 7 pasos, 6 módulos, casos de uso), seed demo funcional con SEED_DEMO=true.
+- Centro de Conocimiento planificado para reemplazar /ayuda con buscador en vivo + flujo operacional + preview docs.
+- Mapa operacional planificado como fase futura (editor geometría con capas y workspace visual).
 
 ## Riesgos activos
 - `prisma/data/` aparece como dato local no versionado.
 - La rama `ux-dgac-login-fix` tiene trabajo local pendiente; evitar mezclar commits ajenos.
-- La experiencia de geometria debe validarse manualmente con dibujo real en MapLibre/TerraDraw.
-- Quedan pantallas heredadas puntuales por refinar, pero la direccion visual base ya esta consolidada.
+- El Centro de Conocimiento requiere diseño de UI no trivial (buscador en vivo, sidebar de flujo operacional, preview de PDF en navegador).
+- README premium necesita sincronización con el stack real y posicionamiento comercial.
+
+## Próximos pasos inmediatos
+1. **Seed demo refinado** — asegurar que `SEED_DEMO=true` produce datos vistosos
+2. **README premium** — posicionamiento comercial con foco en mapa, permisos, trazabilidad
+3. **Landing polish** — hero, proof points, CTA más fuertes
+4. **Centro de Conocimiento** — buscador en vivo + flujo 7 pasos + vista previa de documentos
 
 ## Fuente de verdad para IA
 - OpenCode ejecuta implementacion.
