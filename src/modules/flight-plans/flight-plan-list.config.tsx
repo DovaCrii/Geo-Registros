@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PermissionStatus } from "@prisma/client";
 
-import { StatusChip } from "@/components/ui/status-chip";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { ListColumn, ListConfig } from "@/lib/list-config/types";
 
 type FlightPlanRow = {
@@ -17,19 +17,6 @@ type FlightPlanRow = {
   operator: { id: string; fullName: string } | null;
 };
 
-const STATUS_TONES: Record<string, "success" | "warning" | "neutral" | "info" | "danger"> = {
-  DRAFT: "neutral",
-  IN_REVIEW: "info",
-  READY_FOR_SUBMISSION: "warning",
-  SUBMITTED: "info",
-  AUTHORIZED: "success",
-  OBSERVED: "warning",
-  REJECTED: "danger",
-  EXPIRED: "neutral",
-  CLOSED: "neutral",
-  CANCELLED: "danger",
-};
-
 const STATUS_LABELS: Record<string, string> = {
   DRAFT: "Borrador",
   IN_REVIEW: "En revisión",
@@ -42,10 +29,6 @@ const STATUS_LABELS: Record<string, string> = {
   CLOSED: "Cerrado",
   CANCELLED: "Cancelado",
 };
-
-function permissionTone(status: PermissionStatus) {
-  return STATUS_TONES[status] ?? "neutral";
-}
 
 export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
   {
@@ -109,18 +92,34 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
     render: (row) =>
       row.geometryType ? (
         <div className="space-y-1">
-          <StatusChip label="Adjunta" tone="success" />
+          <StatusBadge status="approved" label="Adjunta" size="sm" />
           <p className="text-xs text-slate-600 dark:text-slate-500">{row.geometryType}</p>
         </div>
       ) : (
-        <StatusChip label="Sin adjuntar" tone="neutral" />
+        <StatusBadge status="planned" label="Sin adjuntar" size="sm" />
       ),
   },
   {
     key: "permissionStatus",
     header: "Permiso",
     render: (row) => (
-      <StatusChip label={STATUS_LABELS[row.permissionStatus] ?? row.permissionStatus} tone={permissionTone(row.permissionStatus)} />
+      <StatusBadge
+        status={
+          row.permissionStatus === "AUTHORIZED"
+            ? "approved"
+            : row.permissionStatus === "REJECTED"
+              ? "rejected"
+              : row.permissionStatus === "CLOSED"
+                ? "completed"
+                : row.permissionStatus === "CANCELLED"
+                  ? "cancelled"
+                  : row.permissionStatus === "EXPIRED"
+                    ? "expired"
+                    : "in-review"
+        }
+        label={STATUS_LABELS[row.permissionStatus] ?? row.permissionStatus}
+        size="sm"
+      />
     ),
   },
   {
