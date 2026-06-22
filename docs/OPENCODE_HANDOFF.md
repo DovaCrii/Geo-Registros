@@ -8,8 +8,10 @@ OpenCode ejecuta implementación principal. Codex entrega planes, revisiones, QA
 2. `PROJECT_STATUS.md`
 3. `ROADMAP.md`
 4. `TASKS.md`
-5. `docs/OPENCODE_HANDOFF.md`
-6. `CHANGELOG.md` (últimos cambios)
+5. `docs/GIT_WORKFLOW_ORCHESTRATOR.md`
+6. `docs/OPENCODE_HANDOFF.md`
+7. `docs/HANDOFF/GIT_HANDOFF.md` (si existe)
+8. `CHANGELOG.md` (últimos cambios)
 
 ## Estado actual del proyecto
 
