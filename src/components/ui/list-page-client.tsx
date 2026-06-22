@@ -76,6 +76,60 @@ function renderActions(actions: HeaderAction[] | undefined) {
   });
 }
 
+function buildEmptyStateCopy(title: string, actionHref?: string, actionLabel?: string) {
+  const lower = title.toLowerCase();
+
+  if (lower.includes("plan")) {
+    return {
+      title: "No hay planes de vuelo todavía",
+      description: "Creá la primera misión para activar el flujo operativo, el mapa y la documentación asociada.",
+      action: actionHref && actionLabel ? { label: actionLabel, href: actionHref } : undefined,
+      steps: [
+        { number: 1, label: "Creá la misión", description: "Usá el formulario para registrar el plan de vuelo." },
+        { number: 2, label: "Definí la geometría", description: "Abrí el mapa y dibujá el área de operación." },
+        { number: 3, label: "Seguimiento operativo", description: "Gestioná permisos, documentos y vigencias desde el plan." },
+      ],
+    };
+  }
+
+  if (lower.includes("dron")) {
+    return {
+      title: "No hay drones registrados",
+      description: "Registrá la flota para poder asignarla a planes de vuelo y controlar sus vigencias.",
+      action: actionHref && actionLabel ? { label: actionLabel, href: actionHref } : undefined,
+      steps: [
+        { number: 1, label: "Cargá el dron", description: "Registrá modelo, serie y estado operativo." },
+        { number: 2, label: "Comprobá vigencias", description: "Mantené seguros y seguros de vuelo al día." },
+        { number: 3, label: "Asignalo a una misión", description: "Vinculalo a un plan de vuelo cuando esté listo." },
+      ],
+    };
+  }
+
+  if (lower.includes("cliente")) {
+    return {
+      title: "No hay clientes todavía",
+      description: "Agregá un cliente para dejar listo el catálogo operativo y asociarlo a planes de vuelo.",
+      action: actionHref && actionLabel ? { label: actionLabel, href: actionHref } : undefined,
+      steps: [
+        { number: 1, label: "Cargá el cliente", description: "Registrá nombre y datos de contacto." },
+        { number: 2, label: "Vinculalo al trabajo", description: "Usalo en planes de vuelo y documentación." },
+        { number: 3, label: "Mantenelo ordenado", description: "Editá desde esta vista cuando necesites cambios." },
+      ],
+    };
+  }
+
+  return {
+    title: "No hay registros todavía",
+    description: "Aún no se ha creado ningún registro en esta sección. Una vez que haya datos, aparecerán aquí.",
+    action: actionHref && actionLabel ? { label: actionLabel, href: actionHref } : undefined,
+    steps: [
+      { number: 1, label: "Completá los datos maestros", description: "Asegurate de tener los registros base disponibles." },
+      { number: 2, label: "Usá el formulario de creación", description: "Completá los datos del registro y guardalo." },
+      { number: 3, label: "Administrá desde esta vista", description: "Buscá, filtrá y gestioná todo desde un solo lugar." },
+    ],
+  };
+}
+
 function renderSidebar(sidebar: SidebarConfig, total: number) {
   return (
     <DetailPanel title={sidebar.title} description={sidebar.description}>
@@ -149,21 +203,22 @@ export function ListPageClient<Row extends { id: string }>({
         )}
 
         {rows.length === 0 ? (
+          (() => {
+            const emptyState = buildEmptyStateCopy(config.title, config.headerActions?.[0]?.href, config.headerActions?.[0]?.label);
+            return (
           <EmptyState
             icon={
               <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
                 <path d="M9 17v-2m3 2v-4m3 4v-6M5 10l7-7 7 7M5 19h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             }
-            title="No hay registros todavía"
-            description="Aún no se ha creado ningún registro en esta sección. Una vez que haya datos, aparecerán aquí."
-            action={config.headerActions?.[0] ? { label: config.headerActions[0].label, href: config.headerActions[0].href } : undefined}
-            steps={[
-              { number: 1, label: "Completá los datos maestros", description: "Asegurate de tener grupos de trabajo, clientes, drones y operadores activos." },
-              { number: 2, label: "Usá el formulario de creación", description: "Completá los datos del registro y guardalo." },
-              { number: 3, label: "Administrá desde esta vista", description: "Buscá, filtrá y gestioná todos tus registros desde un solo lugar." },
-            ]}
+            title={emptyState.title}
+            description={emptyState.description}
+            action={emptyState.action}
+            steps={emptyState.steps}
           />
+            );
+          })()
         ) : (
           <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_360px]">
             {config.batchActions && batchHandlers ? (
