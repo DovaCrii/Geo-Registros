@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { requirePermission } from "@/lib/authorize";
+import { requireFlightPlanEditor, requirePermission } from "@/lib/authorize";
 import { prisma } from "@/lib/prisma";
 
 const allowedGeometryTypes = new Set([
@@ -98,6 +98,8 @@ async function requireActiveFlightPlan(id: string) {
 }
 
 export async function createFlightPlan(formData: FormData) {
+  await requireFlightPlanEditor();
+
   const code = readString(formData, "code");
   const title = readString(formData, "title");
   const operationDate = readOperationDate(formData);
@@ -133,6 +135,7 @@ export async function createFlightPlan(formData: FormData) {
 }
 
 export async function updateFlightPlan(id: string, formData: FormData) {
+  await requireFlightPlanEditor();
   await requireActiveFlightPlan(id);
 
   const code = readString(formData, "code");
@@ -171,6 +174,7 @@ export async function updateFlightPlan(id: string, formData: FormData) {
 }
 
 export async function updateFlightPlanGeometry(id: string, formData: FormData) {
+  await requireFlightPlanEditor();
   await requireActiveFlightPlan(id);
 
   const { geometryJson, geometryType } = readGeometryPayload(formData);

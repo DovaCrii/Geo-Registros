@@ -68,6 +68,42 @@ const ROLE_PERMISSIONS: Record<Role, Permission[] | "admin"> = {
   ],
 };
 
+function normalizeRole(role: string): string {
+  return role.trim().toUpperCase();
+}
+
+/**
+ * Compatibility helpers for reviewer/editor splits.
+ * We keep them string-based so they can be consumed from UI/session code
+ * without changing the Prisma enum or the existing permission map.
+ */
+export function isReviewer(role: string): boolean {
+  const normalized = normalizeRole(role);
+  return normalized === "REVIEWER" || normalized === "VIEWER" || normalized === "AUDITOR";
+}
+
+export function canEditEntity(role: string): boolean {
+  const normalized = normalizeRole(role);
+  return (
+    normalized === "ADMIN" ||
+    normalized === "GERENTE_OPERACIONES_AEREAS" ||
+    normalized === "OPERADOR_RPA" ||
+    normalized === "OPERATOR"
+  );
+}
+
+export async function requireFlightPlanEditor(): Promise<void> {
+  const session = await auth();
+
+  if (!session?.user?.role) {
+    throw new Error("Autenticación requerida.");
+  }
+
+  if (canEditEntity(String(session.user.role))) return;
+
+  throw new Error("Acción no autorizada. Solo perfiles operativos pueden editar planes de vuelo.");
+}
+
 /**
  * Check if the current user has a specific permission.
  * Throws an error (suitable for server actions) or returns result.
