@@ -9,6 +9,7 @@ import { StatusBadge, type OperationalStatus } from "@/components/ui/status-badg
 import { requirePageAuth } from "@/lib/require-page-auth";
 import { getDashboardStats } from "@/server/dashboard/queries";
 import { OnboardingDialog } from "@/modules/onboarding/onboarding-dialog";
+import { OperationalCalendar } from "@/modules/dashboard/operational-calendar";
 
 export const dynamic = "force-dynamic";
 
@@ -171,7 +172,7 @@ function getNextAction(stats: Awaited<ReturnType<typeof getDashboardStats>>): Ne
     return {
       label: "Próximo vuelo", title: "Preparar operaciones próximas",
       description: "Hay vuelos agendados en los próximos días. Confirmá flota, operador y documentos.",
-      href: "/flight-plans", cta: "Ver agenda",
+      href: "/dashboard#agenda", cta: "Ver agenda",
     };
   }
   return {
@@ -396,6 +397,9 @@ export default async function DashboardPage({
                 </div>
               ) : <NoPriorityState />}
             </div>
+
+            {/* Operational calendar */}
+            <OperationalCalendar flightPlans={stats.upcomingFlightPlans} />
 
             {/* KPI Cards — using MetricCard */}
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

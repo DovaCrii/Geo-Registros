@@ -29,8 +29,16 @@ export async function getDashboardStats() {
     costCenters,
     recentEvents,
     recentDocuments,
-    expiringItems,
-    pendingCounts,
+    expiringDrones,
+    expiringOperators,
+    pendingNoGeometry,
+    pendingInReview,
+    pendingObserved,
+    pendingUpcomingFlights,
+    upcomingFlightPlans,
+    pendingMissingDocuments,
+    pendingOperatorsWithoutLicense,
+    pendingDronesWithoutExpiry,
   ] = await Promise.all([
     settle(
       "flightPlans",
@@ -88,103 +96,118 @@ export async function getDashboardStats() {
     ),
 
     // Expiring items (next 30 days or already past)
-    Promise.all([
-      settle(
-        "expiringDrones",
-        prisma.drone.findMany({
-          where: {
-            deletedAt: null,
-            insuranceExpiry: { lte: thirtyDaysFromNow, not: null },
-          },
-          select: {
-            id: true,
-            code: true,
-            model: true,
-            insuranceExpiry: true,
-          },
-        }),
-        [],
-      ),
-      settle(
-        "expiringOperators",
-        prisma.operator.findMany({
-          where: {
-            deletedAt: null,
-            licenseExpiry: { lte: thirtyDaysFromNow, not: null },
-          },
-          select: {
-            id: true,
-            fullName: true,
-            licenseExpiry: true,
-          },
-        }),
-        [],
-      ),
-    ]),
+    settle(
+      "expiringDrones",
+      prisma.drone.findMany({
+        where: {
+          deletedAt: null,
+          insuranceExpiry: { lte: thirtyDaysFromNow, not: null },
+        },
+        select: {
+          id: true,
+          code: true,
+          model: true,
+          insuranceExpiry: true,
+        },
+      }),
+      [],
+    ),
+    settle(
+      "expiringOperators",
+      prisma.operator.findMany({
+        where: {
+          deletedAt: null,
+          licenseExpiry: { lte: thirtyDaysFromNow, not: null },
+        },
+        select: {
+          id: true,
+          fullName: true,
+          licenseExpiry: true,
+        },
+      }),
+      [],
+    ),
 
-    Promise.all([
-      settle(
-        "pendingNoGeometry",
-        prisma.flightPlan.count({
-          where: { deletedAt: null, geometryJson: { equals: Prisma.DbNull } },
-        }),
-        0,
-      ),
-      settle(
-        "pendingInReview",
-        prisma.flightPlan.count({
-          where: { deletedAt: null, permissionStatus: "IN_REVIEW" },
-        }),
-        0,
-      ),
-      settle(
-        "pendingObserved",
-        prisma.flightPlan.count({
-          where: { deletedAt: null, permissionStatus: "OBSERVED" },
-        }),
-        0,
-      ),
-      settle(
-        "pendingUpcomingFlights",
-        prisma.flightPlan.count({
-          where: {
-            deletedAt: null,
-            operationDate: { gte: now, lte: sevenDaysFromNow },
-          },
-        }),
-        0,
-      ),
-      settle(
-        "pendingMissingDocuments",
-        prisma.flightPlan.count({
-          where: {
-            deletedAt: null,
-            documents: { none: {} },
-          },
-        }),
-        0,
-      ),
-      settle(
-        "pendingOperatorsWithoutLicense",
-        prisma.operator.count({
-          where: {
-            deletedAt: null,
-            OR: [{ licenseNumber: null }, { licenseExpiry: null }],
-          },
-        }),
-        0,
-      ),
-      settle(
-        "pendingDronesWithoutExpiry",
-        prisma.drone.count({
-          where: {
-            deletedAt: null,
-            insuranceExpiry: null,
-          },
-        }),
-        0,
-      ),
-    ]),
+    settle(
+      "pendingNoGeometry",
+      prisma.flightPlan.count({
+        where: { deletedAt: null, geometryJson: { equals: Prisma.DbNull } },
+      }),
+      0,
+    ),
+    settle(
+      "pendingInReview",
+      prisma.flightPlan.count({
+        where: { deletedAt: null, permissionStatus: "IN_REVIEW" },
+      }),
+      0,
+    ),
+    settle(
+      "pendingObserved",
+      prisma.flightPlan.count({
+        where: { deletedAt: null, permissionStatus: "OBSERVED" },
+      }),
+      0,
+    ),
+    settle(
+      "pendingUpcomingFlights",
+      prisma.flightPlan.count({
+        where: {
+          deletedAt: null,
+          operationDate: { gte: now, lte: sevenDaysFromNow },
+        },
+      }),
+      0,
+    ),
+    settle(
+      "upcomingFlightPlans",
+      prisma.flightPlan.findMany({
+        where: {
+          deletedAt: null,
+          operationDate: { gte: now, lte: sevenDaysFromNow },
+        },
+        select: {
+          id: true,
+          code: true,
+          title: true,
+          operationDate: true,
+          permissionStatus: true,
+        },
+        orderBy: { operationDate: "asc" },
+        take: 12,
+      }),
+      [],
+    ),
+    settle(
+      "pendingMissingDocuments",
+      prisma.flightPlan.count({
+        where: {
+          deletedAt: null,
+          documents: { none: {} },
+        },
+      }),
+      0,
+    ),
+    settle(
+      "pendingOperatorsWithoutLicense",
+      prisma.operator.count({
+        where: {
+          deletedAt: null,
+          OR: [{ licenseNumber: null }, { licenseExpiry: null }],
+        },
+      }),
+      0,
+    ),
+    settle(
+      "pendingDronesWithoutExpiry",
+      prisma.drone.count({
+        where: {
+          deletedAt: null,
+          insuranceExpiry: null,
+        },
+      }),
+      0,
+    ),
   ]);
 
   const totalFlightPlans = flightPlans.reduce((sum, g) => sum + g._count, 0);
@@ -213,18 +236,19 @@ export async function getDashboardStats() {
     recentEvents,
     recentDocuments,
     expiring: {
-      drones: expiringItems[0],
-      operators: expiringItems[1],
+      drones: expiringDrones,
+      operators: expiringOperators,
     },
     pending: {
-      noGeometry: pendingCounts[0],
-      inReview: pendingCounts[1],
-      observed: pendingCounts[2],
-      upcomingFlights: pendingCounts[3],
-      missingDocuments: pendingCounts[4],
-      operatorsWithoutLicense: pendingCounts[5],
-      dronesWithoutExpiry: pendingCounts[6],
+      noGeometry: pendingNoGeometry,
+      inReview: pendingInReview,
+      observed: pendingObserved,
+      upcomingFlights: pendingUpcomingFlights,
+      missingDocuments: pendingMissingDocuments,
+      operatorsWithoutLicense: pendingOperatorsWithoutLicense,
+      dronesWithoutExpiry: pendingDronesWithoutExpiry,
     },
+    upcomingFlightPlans,
     issues,
     isEmpty: totalFlightPlans === 0 && totalDrones === 0 && operators === 0 && clients === 0 && costCenters === 0,
   };

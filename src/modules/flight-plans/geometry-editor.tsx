@@ -6,12 +6,14 @@ import maplibregl, { Map } from "maplibre-gl";
 import { MaplibreTerradrawControl } from "@watergis/maplibre-gl-terradraw";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
+import { AlertCard } from "@/components/ui/alert-card";
 import { PrimaryButton } from "@/components/ui/primary-button";
 import { StatusChip } from "@/components/ui/status-chip";
 import { useToast } from "@/lib/toast-context";
 import { importKml, importDxf, importKmz } from "@/lib/geo-import";
 import { exportKml, exportDxf } from "@/lib/geo-export";
 import type { ImportResult } from "@/lib/geo-import";
+import { evaluateRestrictedZoneAlert } from "@/lib/geo-restrictions";
 
 const emptyFeatureCollection: GeoJSON.FeatureCollection = {
   type: "FeatureCollection",
@@ -381,6 +383,10 @@ export function GeometryEditor({
   const initialLoadedRef = useRef(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const parsed = useMemo(() => parseGeoJsonPayload(payload), [payload]);
+  const restrictedZoneAlert = useMemo(
+    () => evaluateRestrictedZoneAlert(parsed.valid ? parsed.data : null),
+    [parsed],
+  );
   const enabledLayerCount = useMemo(
     () => Object.values(layers).filter(Boolean).length,
     [layers],
@@ -620,7 +626,13 @@ export function GeometryEditor({
         }
 
         applyImport(result);
-        toast("success", "Geometría importada", result.summary);
+
+        const importedAlert = evaluateRestrictedZoneAlert(result.features);
+        if (importedAlert) {
+          toast("info", importedAlert.label, importedAlert.description);
+        } else {
+          toast("success", "Geometría importada", result.summary);
+        }
       } catch (err) {
         toast("error", "Error al importar", err instanceof Error ? err.message : "Error desconocido");
       } finally {
@@ -673,6 +685,12 @@ export function GeometryEditor({
       const cleaned = featuresToCleanGeoJson(
         fc.features as GeoJSON.Feature[],
       );
+
+      const exportAlert = evaluateRestrictedZoneAlert(cleaned);
+      if (exportAlert) {
+        toast("info", exportAlert.label, `${exportAlert.description} La exportación seguirá disponible.`);
+      }
+
       let content: string;
       let mimeType: string;
       let extension: string;
@@ -761,6 +779,13 @@ export function GeometryEditor({
         <aside className="space-y-4">
           <DetailPanel title={title} description={description}>
             <div className="space-y-4">
+              {restrictedZoneAlert ? (
+                <AlertCard
+                  severity="warning"
+                  title={restrictedZoneAlert.label}
+                  message={restrictedZoneAlert.description}
+                />
+              ) : null}
               <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 dark:border-cyan-500/20 dark:bg-cyan-500/[0.06]" role="status" aria-live="polite">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
