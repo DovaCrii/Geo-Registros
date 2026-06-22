@@ -33,6 +33,7 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
   const { id } = await params;
   const session = await requirePageAuth(`/flight-plans/${id}/geometry`);
   const canEdit = session?.user?.role ? canEditEntity(String(session.user.role)) : false;
+  const accessLabel = canEdit ? "Edición habilitada" : "Solo lectura";
 
   try {
     const record = await getFlightPlanById(id);
@@ -50,10 +51,10 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
     return (
       <PageShell>
         <div className="space-y-6">
-          <PageHeader
+            <PageHeader
             eyebrow="Workspace — Mapa operacional"
             title={`${record.code} · área de operación`}
-            description="Workspace visual para dibujar la geometría de vuelo, medir áreas, controlar capas y preparar el permiso DGAC."
+            description={`Workspace visual para dibujar la geometría de vuelo, medir áreas, controlar capas y preparar el permiso DGAC. ${accessLabel}.`}
             actions={
               <div className="flex flex-wrap items-center gap-2">
                 <Link
