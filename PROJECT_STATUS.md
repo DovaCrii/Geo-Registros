@@ -20,7 +20,7 @@ AeroFlow / Geo-Registros es una plataforma Next.js para operaciones RPA/drones: 
 - Fase comercial completa: landing premium, seed demo funcional con SEED_DEMO=true y README premium actualizado.
 - Centro de Conocimiento completo: buscador en vivo, flujo operacional, preview docs.
 - Mapa operacional completo: workspace visual, mediciones en vivo, import/export y GeoJSON avanzado oculto.
-- Nuevo foco: RBAC/reviewer roles + UX/UI refinada y mapa avanzado.
+- Nuevo foco: RBAC/reviewer roles + UX/UI refinada, mapa avanzado y trazabilidad documental.
 
 ## Riesgos activos
 - `prisma/data/` aparece como dato local no versionado.
@@ -30,9 +30,9 @@ AeroFlow / Geo-Registros es una plataforma Next.js para operaciones RPA/drones: 
 - El mapa avanzado necesita diseñar bien capas extra (ciudades/referencias) sin saturar al operador.
 
 ## Próximos pasos inmediatos
-1. **RBAC y perfiles de revisión** — bloquear edición/borrado/transición según rol
-2. **UX/UI refinada** — centrar información, mejorar navegación, panel operativo persistente
-3. **Mapa avanzado** — integrar capas contextuales y reordenar la barra lateral técnica
+1. **UX/UI refinada** — centrar información, mejorar navegación, empty states y calendario
+2. **Mapa avanzado** — integrar capas contextuales y reordenar la barra lateral técnica
+3. **Trazabilidad documental** — preview de paquete, vista revisor y microinteracciones
 
 ## Fuente de verdad para IA
 - OpenCode ejecuta implementacion.
@@ -40,4 +40,4 @@ AeroFlow / Geo-Registros es una plataforma Next.js para operaciones RPA/drones: 
 - Engram conserva memoria persistente; no duplicar memoria estable fuera de docs del repo.
 
 ## Actualizado
-2026-06-18
+2026-06-22

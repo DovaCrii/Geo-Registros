@@ -74,7 +74,7 @@
 - Implementar sistema de colores semánticos por estado operacional (DRAFT/IN_REVIEW/AUTHORIZED/REJECTED/CLOSED).
 - Crear componente `StatusBadge` reutilizable y aplicarlo en lista, detalle y dashboard.
 - Agregar validación inline en wizard de misión (paso a paso, no al final).
-- Implementar panel operativo persistente (sticky bar con misión activa + clima + alertas).
+- Implementar panel operativo persistente (sticky bar con misión activa + clima + alertas). ✅
 - Crear vista "Calendario de Operaciones" alternativa a tabla.
 - Integrar tooltips DGAC inline en formulario de permiso (reutilizar HelpDocs).
 - Diseñar empty states con acción contextual en todos los módulos.

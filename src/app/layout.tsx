@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
+import { OperationalPanel } from "@/components/operational-panel";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { SessionWrapper } from "@/components/ui/session-wrapper";
 import { ToastProvider } from "@/lib/toast-context";
@@ -39,7 +40,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       >
         <ThemeProvider>
           <SessionWrapper>
-            <ToastProvider>{children}</ToastProvider>
+            <ToastProvider>
+              <OperationalPanel />
+              {children}
+            </ToastProvider>
           </SessionWrapper>
         </ThemeProvider>
       </body>

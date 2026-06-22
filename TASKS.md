@@ -32,7 +32,7 @@
 |---|---|---|---|---|---|---|---|
 | T-024 | Sistema de colores semánticos — StatusBadge | Alta ✅ | OpenCode | src/components/ui/status-badge.tsx, src/app/flight-plans/page.tsx, src/app/flight-plans/[id]/page.tsx, src/app/dashboard/page.tsx | Componente reutilizable tipado con 5 variantes de color. Aplicado en lista, detalle y dashboard. | npm run typecheck ✅, npm run build ✅, smoke visual ✅ | 2h |
 | T-025 | Validación inline en wizard de misión — pasos 1-2 | Alta | OpenCode | src/modules/flight-plans/flight-plan-wizard-form.tsx | Campos obligatorios validan antes de avanzar. Borde rojo + tooltip si falta. Draft guardado en localStorage. | npm run typecheck, crear plan manual | 3h |
-| T-026 | Panel operativo persistente — sticky bar | Alta | OpenCode | src/components/operational-panel.tsx, src/app/layout.tsx | Barra visible con misión activa, clima, alertas de vigencia. Colapsa a pill si no hay misión. | npm run typecheck, npm run build | 3h |
+| T-026 | Panel operativo persistente — sticky bar | Alta ✅ | OpenCode | src/components/operational-panel.tsx, src/app/layout.tsx | Barra visible con misión activa, clima, alertas de vigencia. Colapsa a pill si no hay misión. | npm run typecheck ✅, npm run build ✅ | 3h |
 | T-027 | Alertas geográficas en tiempo real — zonas restringidas | Media | OpenCode | src/modules/flight-plans/geometry-editor.tsx, src/lib/geo-restrictions.ts | Toast inmediato si polígono intersecta zona restringida. Capa siempre visible en mapa. | npm run typecheck, npm run build, smoke dibujo | 4h |
 | T-028 | Tooltips DGAC inline en formulario de permiso | Media | OpenCode | src/app/flight-plans/[id]/permissions/page.tsx, src/components/help-center/inline-tooltip.tsx | Icono ? junto a campos clave. Modal/tooltip con contenido de HelpDocs. No recarga página. | npm run typecheck, npm run build | 2h |
 | T-029 | Empty states con acción contextual | Media | OpenCode | src/app/flight-plans/page.tsx, src/app/drones/page.tsx, src/app/clients/page.tsx | Ilustración + CTA + acción directa en módulos vacíos. | npm run typecheck, revisión visual | 2h |
@@ -63,7 +63,7 @@
 - ✅ **Fase 7 — Mapa operacional** — workspace visual, mediciones en vivo, hint contextual, mapa amplio (720px)
 - ✅ T-024 — Sistema de colores semánticos — StatusBadge
 - ✅ T-025 — Validación inline en wizard de misión — pasos 1-2
-- 🔜 T-026 — Panel operativo persistente — sticky bar
+- ✅ T-026 — Panel operativo persistente — sticky bar
 - 🔜 T-027 — Alertas geográficas en tiempo real — zonas restringidas
 - 🔜 T-028 — Tooltips DGAC inline en formulario de permiso
 - 🔜 T-029 — Empty states con acción contextual
