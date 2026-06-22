@@ -5,6 +5,7 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { requirePageAuth } from "@/lib/require-page-auth";
 import { FlightPlanForm } from "@/modules/flight-plans/flight-plan-form";
 import { PermissionActions } from "@/modules/permissions/permission-actions";
@@ -27,6 +28,7 @@ import { getFlightPlanById } from "@/server/flight-plans/queries";
 import { getPermissionDocuments, getPermissionHistory } from "@/server/permissions/queries";
 import { getWeatherForecast } from "@/server/weather/service";
 import { WeatherCard } from "@/modules/weather/weather-card";
+import { canEditEntity } from "@/lib/authorize";
 
 export const dynamic = "force-dynamic";
 
@@ -85,8 +87,8 @@ export default async function FlightPlanDetailPage({
   const { id } = await params;
   const query = await searchParams;
   const activeTab = parseTab(query.tab);
-
-  await requirePageAuth(`/flight-plans/${id}`);
+  const session = await requirePageAuth(`/flight-plans/${id}`);
+  const canEdit = session?.user?.role ? canEditEntity(String(session.user.role)) : false;
 
   try {
     const [record, costCenters, clients, drones, operators] = await Promise.all([
@@ -237,7 +239,23 @@ export default async function FlightPlanDetailPage({
                 >
                   Ir al área de operación
                 </Link>
-                <PermissionStatusBadge status={record.permissionStatus} />
+                <StatusBadge
+                  status={
+                    record.permissionStatus === "AUTHORIZED"
+                      ? "approved"
+                      : record.permissionStatus === "REJECTED"
+                        ? "rejected"
+                        : record.permissionStatus === "CLOSED"
+                          ? "completed"
+                          : record.permissionStatus === "CANCELLED"
+                            ? "cancelled"
+                            : record.permissionStatus === "EXPIRED"
+                              ? "expired"
+                              : "in-review"
+                  }
+                  label={record.permissionStatus}
+                  size="sm"
+                />
               </>
             }
           />
@@ -319,28 +337,48 @@ export default async function FlightPlanDetailPage({
                 </div>
               </DetailPanel>
 
-              <FlightPlanForm
-                title="Datos del plan"
-                description="Ajustá identidad operativa, fecha, asignaciones y payload canónico."
-                action={updateFlightPlan.bind(null, record.id)}
-                submitLabel="Guardar cambios"
-                initialValues={{
-                  code: record.code,
-                  title: record.title,
-                  operationDate: formatDateInput(record.operationDate),
-                  notes: record.notes ?? "",
-                  geometryPayload: record.geometryJson ? JSON.stringify(record.geometryJson, null, 2) : "",
-                  costCenterId: record.costCenterId,
-                  clientId: record.clientId,
-                  droneId: record.droneId,
-                  operatorId: record.operatorId,
-                }}
-                costCenterOptions={costCenters.map((item) => ({ id: item.id, label: `${item.code} · ${item.name}` }))}
-                clientOptions={clientOptionsWithCurrent}
-                droneOptions={droneOptionsWithCurrent}
-                operatorOptions={operatorOptionsWithCurrent}
-                geometrySummary={record.geometryType ?? "Sin geometría adjunta todavía"}
-              />
+              {canEdit ? (
+                <FlightPlanForm
+                  title="Datos del plan"
+                  description="Ajustá identidad operativa, fecha, asignaciones y payload canónico."
+                  action={updateFlightPlan.bind(null, record.id)}
+                  submitLabel="Guardar cambios"
+                  initialValues={{
+                    code: record.code,
+                    title: record.title,
+                    operationDate: formatDateInput(record.operationDate),
+                    notes: record.notes ?? "",
+                    geometryPayload: record.geometryJson ? JSON.stringify(record.geometryJson, null, 2) : "",
+                    costCenterId: record.costCenterId,
+                    clientId: record.clientId,
+                    droneId: record.droneId,
+                    operatorId: record.operatorId,
+                  }}
+                  costCenterOptions={costCenters.map((item) => ({ id: item.id, label: `${item.code} · ${item.name}` }))}
+                  clientOptions={clientOptionsWithCurrent}
+                  droneOptions={droneOptionsWithCurrent}
+                  operatorOptions={operatorOptionsWithCurrent}
+                  geometrySummary={record.geometryType ?? "Sin geometría adjunta todavía"}
+                />
+              ) : (
+                <DetailPanel title="Datos del plan" description="Modo revisión: solo lectura.">
+                  <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                    {[
+                      { label: "Código", value: record.code },
+                      { label: "Fecha", value: formatDateInput(record.operationDate) },
+                      { label: "Cliente", value: currentClient ? currentClient.name : "Sin asignar" },
+                      { label: "Grupo", value: currentCostCenter ? `${currentCostCenter.code} · ${currentCostCenter.name}` : "Sin asignar" },
+                      { label: "Dron", value: currentDrone ? `${currentDrone.model} · ${currentDrone.serialNumber}` : "Sin asignar" },
+                      { label: "Operador", value: currentOperator ? currentOperator.fullName : "Sin asignar" },
+                    ].map((item) => (
+                      <div key={item.label} className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800/80 dark:bg-slate-950/45">
+                        <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">{item.label}</p>
+                        <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">{item.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </DetailPanel>
+              )}
             </div>
           )}
 
@@ -353,9 +391,11 @@ export default async function FlightPlanDetailPage({
                     <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">{record.geometryType ?? "Sin geometría adjunta todavía"}</p>
                   </div>
                   <div className="flex flex-wrap gap-3">
-                    <Link href={`/flight-plans/${record.id}/geometry`} className="inline-flex items-center justify-center rounded-lg border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-accent-strong dark:text-cyan-100 transition hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20">
-                      Abrir editor satelital
-                    </Link>
+                    {canEdit ? (
+                      <Link href={`/flight-plans/${record.id}/geometry`} className="inline-flex items-center justify-center rounded-lg border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-accent-strong dark:text-cyan-100 transition hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20">
+                        Abrir editor satelital
+                      </Link>
+                    ) : null}
                     <Link href={`/flight-plans/${record.id}/geometry`} className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-700/80 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800">
                       Ver área de operación
                     </Link>

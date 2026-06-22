@@ -3,8 +3,8 @@
 import type { ReactNode } from "react";
 
 /**
- * Estados operacionales de AeroFlow.
- * Cada estado tiene color, ícono y label por defecto.
+ * StatusBadge uses 5 visual variants and maps the operational states into them.
+ * This keeps the UI consistent without losing compatibility with the existing workflow statuses.
  */
 export type OperationalStatus =
   | "planned"
@@ -16,58 +16,53 @@ export type OperationalStatus =
   | "cancelled"
   | "expired";
 
+type StatusVariant = "neutral" | "info" | "success" | "warning" | "danger";
+
 const statusConfig: Record<
-  OperationalStatus,
+  StatusVariant,
   { label: string; dot: string; bg: string; text: string }
 > = {
-  planned: {
+  neutral: {
     label: "Planificado",
-    dot: "bg-accent",
-    bg: "bg-accent/10 dark:bg-accent/15",
-    text: "text-accent dark:text-cyan-300",
-  },
-  "in-review": {
-    label: "En revisión",
-    dot: "bg-status-warning",
-    bg: "bg-status-warning/10 dark:bg-status-warning/15",
-    text: "text-status-warning dark:text-amber-300",
-  },
-  approved: {
-    label: "Aprobado",
-    dot: "bg-status-success",
-    bg: "bg-status-success/10 dark:bg-status-success/15",
-    text: "text-status-success dark:text-emerald-300",
-  },
-  rejected: {
-    label: "Rechazado",
-    dot: "bg-status-danger",
-    bg: "bg-status-danger/10 dark:bg-status-danger/15",
-    text: "text-status-danger dark:text-rose-300",
-  },
-  "in-execution": {
-    label: "En ejecución",
-    dot: "bg-accent",
-    bg: "bg-accent/10 dark:bg-accent/15",
-    text: "text-accent dark:text-cyan-300",
-  },
-  completed: {
-    label: "Completado",
-    dot: "bg-status-success",
-    bg: "bg-status-success/10 dark:bg-status-success/15",
-    text: "text-status-success dark:text-emerald-300",
-  },
-  cancelled: {
-    label: "Cancelado",
     dot: "bg-slate-400 dark:bg-slate-500",
     bg: "bg-slate-100 dark:bg-slate-500/10",
     text: "text-slate-600 dark:text-slate-400",
   },
-  expired: {
-    label: "Vencido",
-    dot: "bg-status-danger",
-    bg: "bg-status-danger/10 dark:bg-status-danger/15",
-    text: "text-status-danger dark:text-rose-300",
+  info: {
+    label: "En revisión",
+    dot: "bg-cyan-500",
+    bg: "bg-cyan-50 dark:bg-cyan-500/10",
+    text: "text-cyan-700 dark:text-cyan-300",
   },
+  success: {
+    label: "Aprobado",
+    dot: "bg-emerald-500",
+    bg: "bg-emerald-50 dark:bg-emerald-500/10",
+    text: "text-emerald-700 dark:text-emerald-300",
+  },
+  warning: {
+    label: "Pendiente",
+    dot: "bg-amber-500",
+    bg: "bg-amber-50 dark:bg-amber-500/10",
+    text: "text-amber-700 dark:text-amber-300",
+  },
+  danger: {
+    label: "Rechazado",
+    dot: "bg-rose-500",
+    bg: "bg-rose-50 dark:bg-rose-500/10",
+    text: "text-rose-700 dark:text-rose-300",
+  },
+};
+
+const statusVariantByOperationalStatus: Record<OperationalStatus, StatusVariant> = {
+  planned: "neutral",
+  "in-review": "info",
+  approved: "success",
+  rejected: "danger",
+  "in-execution": "info",
+  completed: "success",
+  cancelled: "neutral",
+  expired: "warning",
 };
 
 interface StatusBadgeProps {
@@ -78,7 +73,7 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, label, size = "md" }: StatusBadgeProps) {
-  const config = statusConfig[status];
+  const config = statusConfig[statusVariantByOperationalStatus[status]];
   const dotSize = size === "sm" ? "h-1.5 w-1.5" : "h-2 w-2";
   const padding = size === "sm" ? "px-1.5 py-0.5" : "px-2 py-0.5";
   const fontSize = size === "sm" ? "text-[11px]" : "text-xs";

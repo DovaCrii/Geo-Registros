@@ -334,6 +334,7 @@ function ToolbarButton({
       type="button"
       onClick={onClick}
       title={label}
+      aria-pressed={Boolean(active)}
       className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition ${
         active
           ? "border-cyan-500/30 bg-cyan-50 text-cyan-700 shadow-sm shadow-cyan-500/10 dark:border-cyan-500/50 dark:bg-cyan-500/20 dark:text-cyan-200"
@@ -380,6 +381,48 @@ export function GeometryEditor({
   const initialLoadedRef = useRef(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const parsed = useMemo(() => parseGeoJsonPayload(payload), [payload]);
+  const enabledLayerCount = useMemo(
+    () => Object.values(layers).filter(Boolean).length,
+    [layers],
+  );
+  const workspaceModeSummary: {
+    label: string;
+    tone: "success" | "warning" | "danger" | "info" | "neutral";
+    helper: string;
+  } = useMemo(() => {
+    if (!terraDrawReady) {
+      return {
+        label: "Cargando mapa",
+        tone: "neutral" as const,
+        helper: "Preparando herramientas y capas operativas.",
+      };
+    }
+
+    if (activeMode) {
+      const modeLabel = DRAW_MODES.find((mode) => mode.id === activeMode)?.label ?? activeMode;
+
+      return {
+        label: `Modo ${modeLabel}`,
+        tone: "info" as const,
+        helper:
+          activeMode === "select"
+            ? "Seleccioná figuras para moverlas o revisar su ubicación."
+            : activeMode === "delete-selection"
+              ? "Eliminá la selección actual con cuidado."
+              : activeMode === "undo" || activeMode === "redo"
+                ? "Revisá la secuencia de edición antes de guardar."
+                : `Dibujá una nueva ${modeLabel.toLowerCase()} sobre el mapa satelital.`,
+      };
+    }
+
+    return {
+      label: payload.trim() ? "Geometría lista" : "Sin geometría",
+      tone: payload.trim() ? "success" : "neutral",
+      helper: payload.trim()
+        ? "Podés seguir editando, importar referencias o guardar el área."
+        : "Elegí una herramienta de dibujo para iniciar el área de operación.",
+    };
+  }, [activeMode, payload, terraDrawReady]);
 
   // ── Initialise map + Terra Draw control (runs once) ──────────────
   useEffect(() => {
@@ -689,51 +732,6 @@ export function GeometryEditor({
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 bg-slate-50/90 px-4 py-3 dark:border-slate-800/80 dark:bg-slate-950/70">
-            <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-500">
-              Dibujar
-            </span>
-            {DRAW_MODES.filter((m) => m.group === "draw").map((mode) => (
-              <ToolbarButton
-                key={mode.id}
-                active={activeMode === mode.id}
-                icon={mode.icon}
-                label={mode.label}
-                onClick={() => handleSetMode(mode.id)}
-              />
-            ))}
-
-            <span className="mx-2 hidden h-6 w-px bg-slate-200 dark:bg-slate-700/60 sm:inline-block" />
-
-            <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-500">
-              Editar
-            </span>
-            {DRAW_MODES.filter((m) => m.group === "edit").map((mode) => (
-              <ToolbarButton
-                key={mode.id}
-                active={activeMode === mode.id}
-                icon={mode.icon}
-                label={mode.label}
-                onClick={() => handleSetMode(mode.id)}
-              />
-            ))}
-
-            <span className="mx-2 hidden h-6 w-px bg-slate-200 dark:bg-slate-700/60 sm:inline-block" />
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".kml,.kmz,.dxf"
-              className="hidden"
-              onChange={handleImportFile}
-            />
-            <ToolbarButton
-              icon="📂"
-              label={importing ? "Importando..." : "Importar"}
-              onClick={() => fileInputRef.current?.click()}
-            />
-          </div>
-
           <div className="relative h-[480px] bg-slate-100 dark:bg-slate-950 sm:h-[600px] xl:h-[720px]">
             <div ref={containerRef} className="h-full w-full" />
             {/* Contextual hint */}
@@ -763,6 +761,64 @@ export function GeometryEditor({
         <aside className="space-y-4">
           <DetailPanel title={title} description={description}>
             <div className="space-y-4">
+              <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 dark:border-slate-800/80 dark:bg-slate-950/70" role="status" aria-live="polite">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                      Estado del workspace
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">
+                      {workspaceModeSummary.label}
+                    </p>
+                  </div>
+                  <StatusChip label={workspaceModeSummary.label} tone={workspaceModeSummary.tone} />
+                </div>
+                <p className="mt-3 text-xs leading-5 text-slate-600 dark:text-slate-400">
+                  {workspaceModeSummary.helper}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 dark:border-cyan-500/20 dark:bg-cyan-500/[0.06]" role="status" aria-live="polite">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-300">
+                  Siguiente acción
+                </p>
+                <p className="mt-1 text-sm font-medium text-cyan-950 dark:text-cyan-50">
+                  {measurements.featureCount > 0
+                    ? "Seguí refinando la geometría o exportá el resultado final."
+                    : "Arrancá con un polígono o importá una referencia operativa."}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <ToolbarButton
+                    active={activeMode === "polygon"}
+                    icon="⬠"
+                    label="Polígono"
+                    onClick={() => handleSetMode("polygon")}
+                  />
+                  <ToolbarButton icon="📂" label="Importar" onClick={() => fileInputRef.current?.click()} />
+                  {measurements.featureCount > 0 ? (
+                    <ToolbarButton icon="⬇" label="Exportar KML" onClick={() => handleExport("kml")} />
+                  ) : null}
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-3 text-center">
+                  <div className="rounded-xl border border-white/60 bg-white/80 px-3 py-2 dark:border-slate-800/80 dark:bg-slate-950/60">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                      Figuras
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">
+                      {measurements.featureCount}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-white/60 bg-white/80 px-3 py-2 dark:border-slate-800/80 dark:bg-slate-950/60">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                      GeoJSON
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">
+                      {parsed.valid ? "Válido" : "Revisar"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* Measurement panel */}
               <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 dark:bg-cyan-500/[0.06]">
                 <p className="text-sm font-semibold text-cyan-900 dark:text-cyan-100">
@@ -791,50 +847,114 @@ export function GeometryEditor({
 
               <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800/80 dark:bg-slate-950/70">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-slate-950 dark:text-white">Capas y áreas</p>
-                  <span className="text-xs text-slate-500 dark:text-slate-500">Vista operacional</span>
+                  <p className="text-sm font-semibold text-slate-950 dark:text-white">Herramientas</p>
+                  <span className="text-xs text-slate-500 dark:text-slate-500">
+                    {activeMode ? `Modo: ${DRAW_MODES.find((mode) => mode.id === activeMode)?.label ?? activeMode}` : "Sin modo activo"}
+                  </span>
                 </div>
 
-                {[
-                  { key: "satellite" as const, label: "Base satelital", desc: "Mapa de referencia visual" },
-                  { key: "operationArea" as const, label: "Área de operación", desc: "Figuras activas del plan" },
-                  { key: "importedReferences" as const, label: "Referencias importadas", desc: "KML, KMZ o DXF cargados" },
-                ].map((item) => (
-                  <button
-                    key={item.key}
-                    type="button"
-                    onClick={() => handleLayerToggle(item.key)}
-                    className="flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-left transition hover:border-cyan-500/30 hover:bg-white dark:border-slate-800 dark:bg-slate-950/80 dark:hover:border-cyan-500/30"
-                  >
-                    <span>
-                      <span className="block text-sm font-medium text-slate-900 dark:text-white">{item.label}</span>
-                      <span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-500">{item.desc}</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-500">
+                    Dibujar
+                  </span>
+                  {DRAW_MODES.filter((m) => m.group === "draw").map((mode) => (
+                    <ToolbarButton
+                      key={mode.id}
+                      active={activeMode === mode.id}
+                      icon={mode.icon}
+                      label={mode.label}
+                      onClick={() => handleSetMode(mode.id)}
+                    />
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-500">
+                    Editar
+                  </span>
+                  {DRAW_MODES.filter((m) => m.group === "edit").map((mode) => (
+                    <ToolbarButton
+                      key={mode.id}
+                      active={activeMode === mode.id}
+                      icon={mode.icon}
+                      label={mode.label}
+                      onClick={() => handleSetMode(mode.id)}
+                    />
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".kml,.kmz,.dxf"
+                    className="hidden"
+                    onChange={handleImportFile}
+                  />
+                  <ToolbarButton
+                    icon="📂"
+                    label={importing ? "Importando..." : "Importar"}
+                    onClick={() => fileInputRef.current?.click()}
+                  />
+                </div>
+
+                <div className="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-3 dark:border-slate-800/80 dark:bg-slate-950/70">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Capas</p>
+                    <span className="text-[10px] text-slate-500 dark:text-slate-500">
+                      {enabledLayerCount}/3 visibles
                     </span>
-                    <span
-                      className={`relative h-6 w-11 rounded-full transition ${
-                        layers[item.key] ? "bg-cyan-500" : "bg-slate-300 dark:bg-slate-700"
-                      }`}
-                      aria-hidden="true"
+                  </div>
+
+                  {[
+                    { key: "satellite" as const, label: "Base satelital", desc: "Mapa de referencia visual" },
+                    { key: "operationArea" as const, label: "Área de operación", desc: "Figuras activas del plan" },
+                    { key: "importedReferences" as const, label: "Referencias importadas", desc: "KML, KMZ o DXF cargados" },
+                  ].map((item) => (
+                    <button
+                      key={item.key}
+                      type="button"
+                      onClick={() => handleLayerToggle(item.key)}
+                      className="flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-left transition hover:border-cyan-500/30 hover:bg-white dark:border-slate-800 dark:bg-slate-950/80 dark:hover:border-cyan-500/30"
                     >
+                      <span>
+                        <span className="block text-sm font-medium text-slate-900 dark:text-white">{item.label}</span>
+                        <span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-500">{item.desc}</span>
+                      </span>
                       <span
-                        className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow transition ${
-                          layers[item.key] ? "left-6" : "left-1"
+                        className={`relative h-6 w-11 rounded-full transition ${
+                          layers[item.key] ? "bg-cyan-500" : "bg-slate-300 dark:bg-slate-700"
                         }`}
-                      />
-                    </span>
-                  </button>
-                ))}
+                        aria-hidden="true"
+                      >
+                        <span
+                          className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow transition ${
+                            layers[item.key] ? "left-6" : "left-1"
+                          }`}
+                        />
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              <div className="flex flex-col gap-2">
-                <PrimaryButton type="submit">Guardar área de operación</PrimaryButton>
-                <Link
-                  href={`/flight-plans/${flightPlanId}`}
-                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
-                >
-                  Volver al plan de vuelo
-                </Link>
+              <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800/80 dark:bg-slate-950/70">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-slate-950 dark:text-white">Acciones</p>
+                  <span className="text-xs text-slate-500 dark:text-slate-500">Guardar / volver</span>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <PrimaryButton type="submit">Guardar área de operación</PrimaryButton>
+                  <Link
+                    href={`/flight-plans/${flightPlanId}`}
+                    className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
+                  >
+                    Volver al plan de vuelo
+                  </Link>
+                </div>
               </div>
+
             </div>
           </DetailPanel>
 

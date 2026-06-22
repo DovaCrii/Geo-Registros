@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import Link from "next/link";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
@@ -32,22 +32,31 @@ const STEPS = [
 function SelectField({
   name,
   label,
-  defaultValue,
+  value,
   options,
+  error,
+  onChange,
 }: {
   name: string;
   label: string;
-  defaultValue: string;
+  value: string;
   options: Option[];
+  error?: string;
+  onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
 }) {
   return (
     <label className="block space-y-2">
-      <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">{label}</span>
+      <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
+        {label}
+      </span>
       <select
         name={name}
         required
-        defaultValue={defaultValue}
-        className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-100 dark:placeholder:text-slate-500"
+        value={value}
+        onChange={onChange}
+        aria-invalid={Boolean(error)}
+        title={error}
+        className={fieldClass(Boolean(error))}
       >
         <option value="" disabled>
           Seleccioná {label.toLowerCase()}
@@ -57,7 +66,8 @@ function SelectField({
             {option.label}
           </option>
         ))}
-      </select>
+        </select>
+      {error ? <p className="text-xs text-rose-600 dark:text-rose-300">{error}</p> : null}
     </label>
   );
 }
@@ -79,6 +89,14 @@ function StepBadge({ current, step }: { current: number; step: number }) {
       {step + 1}
     </div>
   );
+}
+
+function fieldClass(hasError?: boolean) {
+  return `w-full rounded-2xl border bg-white/95 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:ring-2 focus:ring-cyan-500/15 dark:bg-slate-950/80 dark:text-slate-100 dark:placeholder:text-slate-500 ${
+    hasError
+      ? "border-rose-400 focus:border-rose-500 focus:ring-rose-500/15 dark:border-rose-500/60"
+      : "border-slate-200 focus:border-cyan-500/50 dark:border-slate-800"
+  }`;
 }
 
 export function FlightPlanWizardForm({
@@ -104,10 +122,64 @@ export function FlightPlanWizardForm({
   operatorOptions: Option[];
   geometrySummary?: string;
 }) {
+  const draftKey = initialValues.code
+    ? `aeroflow:flight-plan-wizard:${initialValues.code}`
+    : "aeroflow:flight-plan-wizard:new";
   const [step, setStep] = useState(0);
-  const payload = initialValues.geometryPayload;
+  const [values, setValues] = useState(initialValues);
+  const [errors, setErrors] = useState<Partial<Record<keyof FlightPlanFormValues, string>>>({});
+  const payload = values.geometryPayload;
   const canGoNext = step < STEPS.length - 1;
   const canGoBack = step > 0;
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(draftKey);
+      if (!raw) return;
+
+      const parsed = JSON.parse(raw) as Partial<FlightPlanFormValues>;
+      setValues((current) => ({ ...current, ...parsed }));
+    } catch {
+      // Silently ignore invalid draft data.
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(draftKey, JSON.stringify(values));
+  }, [draftKey, values]);
+
+  function handleFieldChange(
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+  ) {
+    const { name, value } = event.target;
+    setValues((current) => ({ ...current, [name]: value }));
+    setErrors((current) => ({ ...current, [name]: undefined }));
+  }
+
+  function validateStep(targetStep: number): boolean {
+    const nextErrors: Partial<Record<keyof FlightPlanFormValues, string>> = {};
+
+    if (targetStep === 0) {
+      if (!values.code.trim()) nextErrors.code = "Completá el código interno.";
+      if (!values.title.trim()) nextErrors.title = "Completá el título.";
+      if (!values.operationDate.trim()) nextErrors.operationDate = "Seleccioná la fecha de operación.";
+    }
+
+    if (targetStep === 1) {
+      if (!values.costCenterId) nextErrors.costCenterId = "Elegí un grupo de trabajo.";
+      if (!values.clientId) nextErrors.clientId = "Elegí un cliente.";
+      if (!values.droneId) nextErrors.droneId = "Elegí un dron.";
+      if (!values.operatorId) nextErrors.operatorId = "Elegí un operador.";
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  }
+
+  function handleContinue() {
+    if (!validateStep(step)) return;
+    setStep((prev) => Math.min(STEPS.length - 1, prev + 1));
+  }
 
   return (
     <DetailPanel title={title} description={description}>
@@ -139,15 +211,21 @@ export function FlightPlanWizardForm({
 
         <section className={step === 0 ? "space-y-4" : "hidden"}>
           <label className="block space-y-2">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">Código interno</span>
+            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
+              Código interno
+            </span>
             <input
               type="text"
               name="code"
               required
-              defaultValue={initialValues.code}
+              value={values.code}
+              onChange={handleFieldChange}
               placeholder="FP-2026-001"
-              className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-100 dark:placeholder:text-slate-500"
+              aria-invalid={Boolean(errors.code)}
+              title={errors.code}
+              className={fieldClass(Boolean(errors.code))}
             />
+            {errors.code ? <p className="text-xs text-rose-600 dark:text-rose-300">{errors.code}</p> : null}
           </label>
 
           <label className="block space-y-2">
@@ -156,10 +234,14 @@ export function FlightPlanWizardForm({
               type="text"
               name="title"
               required
-              defaultValue={initialValues.title}
+              value={values.title}
+              onChange={handleFieldChange}
               placeholder="Inspección corredor norte"
-              className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-100 dark:placeholder:text-slate-500"
+              aria-invalid={Boolean(errors.title)}
+              title={errors.title}
+              className={fieldClass(Boolean(errors.title))}
             />
+            {errors.title ? <p className="text-xs text-rose-600 dark:text-rose-300">{errors.title}</p> : null}
           </label>
 
           <label className="block space-y-2">
@@ -168,9 +250,13 @@ export function FlightPlanWizardForm({
               type="date"
               name="operationDate"
               required
-              defaultValue={initialValues.operationDate}
-              className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-100"
+              value={values.operationDate}
+              onChange={handleFieldChange}
+              aria-invalid={Boolean(errors.operationDate)}
+              title={errors.operationDate}
+              className={fieldClass(Boolean(errors.operationDate))}
             />
+            {errors.operationDate ? <p className="text-xs text-rose-600 dark:text-rose-300">{errors.operationDate}</p> : null}
           </label>
 
           <label className="block space-y-2">
@@ -178,18 +264,19 @@ export function FlightPlanWizardForm({
             <textarea
               name="notes"
               rows={4}
-              defaultValue={initialValues.notes}
+              value={values.notes}
+              onChange={handleFieldChange}
               placeholder="Contexto de la operación, objetivos, condiciones del terreno."
-              className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-100 dark:placeholder:text-slate-500"
+              className={fieldClass() + " min-h-[120px]"}
             />
           </label>
         </section>
 
         <section className={step === 1 ? "space-y-4" : "hidden"}>
-          <SelectField name="costCenterId" label="Grupo de trabajo" defaultValue={initialValues.costCenterId} options={costCenterOptions} />
-          <SelectField name="clientId" label="Cliente" defaultValue={initialValues.clientId} options={clientOptions} />
-          <SelectField name="droneId" label="Dron" defaultValue={initialValues.droneId} options={droneOptions} />
-          <SelectField name="operatorId" label="Operador" defaultValue={initialValues.operatorId} options={operatorOptions} />
+          <SelectField name="costCenterId" label="Grupo de trabajo" value={values.costCenterId} error={errors.costCenterId} onChange={handleFieldChange} options={costCenterOptions} />
+          <SelectField name="clientId" label="Cliente" value={values.clientId} error={errors.clientId} onChange={handleFieldChange} options={clientOptions} />
+          <SelectField name="droneId" label="Dron" value={values.droneId} error={errors.droneId} onChange={handleFieldChange} options={droneOptions} />
+          <SelectField name="operatorId" label="Operador" value={values.operatorId} error={errors.operatorId} onChange={handleFieldChange} options={operatorOptions} />
         </section>
 
         <section className={step === 2 ? "space-y-4" : "hidden"}>
@@ -231,9 +318,9 @@ export function FlightPlanWizardForm({
           </button>
 
           {canGoNext ? (
-            <button
+              <button
               type="button"
-              onClick={() => setStep((prev) => Math.min(STEPS.length - 1, prev + 1))}
+              onClick={handleContinue}
               className="inline-flex items-center justify-center rounded-2xl border border-cyan-500/30 bg-cyan-50 px-4 py-2.5 text-sm font-medium text-cyan-700 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-400/20"
             >
               Continuar

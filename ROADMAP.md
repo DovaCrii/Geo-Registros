@@ -69,3 +69,20 @@
 - Incorporar capas adicionales del contexto geográfico (ciudades, referencias, apoyo visual) sin saturar al operador.
 - Mantener GeoJSON fuera del flujo normal y consolidar la barra lateral de intercambio técnico.
 - Revisar errores de guardado/acciones sin uso y distribución de controles.
+
+## Fase 10 — UX/UI Operacional y Semántica Visual 🔜 NUEVA
+- Implementar sistema de colores semánticos por estado operacional (DRAFT/IN_REVIEW/AUTHORIZED/REJECTED/CLOSED).
+- Crear componente `StatusBadge` reutilizable y aplicarlo en lista, detalle y dashboard.
+- Agregar validación inline en wizard de misión (paso a paso, no al final).
+- Implementar panel operativo persistente (sticky bar con misión activa + clima + alertas).
+- Crear vista "Calendario de Operaciones" alternativa a tabla.
+- Integrar tooltips DGAC inline en formulario de permiso (reutilizar HelpDocs).
+- Diseñar empty states con acción contextual en todos los módulos.
+- Implementar Modo Campo (Field Mode) para tablets en terreno.
+- Agregar alertas geográficas en tiempo real (intersección con zonas restringidas).
+
+## Fase 11 — Trazabilidad y Documentación 🔜 NUEVA
+- Preview de paquete documental antes de enviar a DGAC.
+- Vista Revisor con modo comparación y comentarios tipo pin.
+- Microinteracciones de estado (transiciones animadas, toasts contextuales).
+- Consolidar bitácora de avance y documentación técnica.
