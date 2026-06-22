@@ -761,32 +761,20 @@ export function GeometryEditor({
         <aside className="space-y-4">
           <DetailPanel title={title} description={description}>
             <div className="space-y-4">
-              <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 dark:border-slate-800/80 dark:bg-slate-950/70" role="status" aria-live="polite">
+              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 dark:border-cyan-500/20 dark:bg-cyan-500/[0.06]" role="status" aria-live="polite">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
-                      Estado del workspace
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-300">
+                      Siguiente acción
                     </p>
-                    <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">
-                      {workspaceModeSummary.label}
+                    <p className="mt-1 text-sm font-medium text-cyan-950 dark:text-cyan-50">
+                      {measurements.featureCount > 0
+                        ? "Seguí refinando la geometría o exportá el resultado final."
+                        : "Arrancá con un polígono o importá una referencia operativa."}
                     </p>
                   </div>
-                  <StatusChip label={workspaceModeSummary.label} tone={workspaceModeSummary.tone} />
+                  <StatusChip label={measurements.featureCount > 0 ? "Con geometría" : "Sin geometría"} tone={measurements.featureCount > 0 ? "success" : "neutral"} />
                 </div>
-                <p className="mt-3 text-xs leading-5 text-slate-600 dark:text-slate-400">
-                  {workspaceModeSummary.helper}
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 dark:border-cyan-500/20 dark:bg-cyan-500/[0.06]" role="status" aria-live="polite">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-300">
-                  Siguiente acción
-                </p>
-                <p className="mt-1 text-sm font-medium text-cyan-950 dark:text-cyan-50">
-                  {measurements.featureCount > 0
-                    ? "Seguí refinando la geometría o exportá el resultado final."
-                    : "Arrancá con un polígono o importá una referencia operativa."}
-                </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <ToolbarButton
                     active={activeMode === "polygon"}
@@ -817,6 +805,23 @@ export function GeometryEditor({
                     </p>
                   </div>
                 </div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 dark:border-slate-800/80 dark:bg-slate-950/70" role="status" aria-live="polite">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                      Estado del workspace
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">
+                      {workspaceModeSummary.label}
+                    </p>
+                  </div>
+                  <StatusChip label={workspaceModeSummary.label} tone={workspaceModeSummary.tone} />
+                </div>
+                <p className="mt-3 text-xs leading-5 text-slate-600 dark:text-slate-400">
+                  {workspaceModeSummary.helper}
+                </p>
               </div>
 
               {/* Measurement panel */}
@@ -958,7 +963,7 @@ export function GeometryEditor({
             </div>
           </DetailPanel>
 
-          <DetailPanel title="Intercambio técnico" description="Opciones secundarias para CAD/GIS y soporte avanzado.">
+          <DetailPanel title="Intercambio técnico (opcional)" description="Opciones secundarias para CAD/GIS y soporte avanzado.">
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-2">
                 <button
