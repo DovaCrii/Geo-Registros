@@ -26,26 +26,24 @@ OpenCode ejecuta implementación principal. Codex entrega planes, revisiones, QA
 | **README** | Debe reflejar stack real y posicionamiento comercial |
 | **Home page** | Landing premium existente con 7 secciones; sigue en polish |
 | **Seed demo** | `SEED_DEMO=true` en seed.cjs — crear demo user y datos vistosos |
+| **Workflow Git** | ✅ Operativo — `vibe-check`, `vibe-review` y `git-handoff` disponibles |
 
 ## Próxima tarea recomendada
 
-**Fase comercial — polish y demo:**
-1. Refinar seed demo: crear demo user automático para login sin configuración.
-2. Landing: fortalecer hero, proof points numéricos y CTA.
-3. README premium: posicionamiento con foco en mapa, permisos, trazabilidad.
-4. Preparar commits separados y push.
+**T-023 — UX/UI refinada y mapa avanzado**
+- **Por qué primero:** El panel operativo ya está persistente; ahora toca pulir navegación, coherencia visual y el workspace del mapa.
+- **Archivos probables:** `src/app/**`, `src/components/ui/**`, `src/modules/flight-plans/geometry-editor.tsx`
+- **Criterio:** Alineación más clara, panel operativo destacado, navegación simple y barra lateral del mapa mejor ordenada.
+- **Validación:** `npm run build`, `npm run typecheck`, revisión visual.
 
 ## Alcance sugerido
-- `prisma/seed.cjs` — demo user, demo data refinada.
-- `src/app/page.tsx` — polish de hero, proof points, CTA.
-- `README.md` — actualizar con stack real y valor comercial.
-- `ROADMAP.md`, `TASKS.md`, `PROJECT_STATUS.md` — mantener sincronizados.
+- `src/app/**`, `src/components/ui/**`, `src/modules/flight-plans/geometry-editor.tsx` — polish visual y mapa avanzado.
+- `ROADMAP.md`, `TASKS.md`, `PROJECT_STATUS.md`, `docs/OPENCODE_HANDOFF.md` — mantener sincronizados.
 
 ## Criterio de aceptación
 - Cambio acotado y reversible.
 - No modificar lógica de negocio existente ni schema de Prisma.
-- Seed debe ejecutarse sin errores con `SEED_DEMO=true`.
-- Validar con `npm run build`.
+- Validar con `npm run build` y `npm run typecheck`.
 
 ## Prompt corto
 Lee `AGENTS.md`, `ROADMAP.md`, `TASKS.md` y `docs/OPENCODE_HANDOFF.md`. Continuá con la fase comercial: refiná el seed demo, pulí la landing, actualizá el README premium y mantené los docs de seguimiento sincronizados. Validá con `npm run build` antes de commit.

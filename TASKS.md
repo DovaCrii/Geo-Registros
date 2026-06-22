@@ -2,7 +2,7 @@
 
 | ID | Título | Prioridad | Herramienta recomendada | Archivos probables | Criterio de aceptación | Validación esperada |
 |---|---|---:|---|---|---|---|
-| T-001 | Sincronizar documentación operativa OpenCode + Codex | Alta | Codex | `AGENTS.md`, `PROJECT_STATE.md` | El contrato operativo queda claro y sin ambigüedad | Revisión manual de contenido |
+| T-001 | Sincronizar documentación operativa OpenCode + Codex | Alta ✅ | Codex | `AGENTS.md`, `PROJECT_STATUS.md`, `ROADMAP.md`, `TASKS.md`, `docs/OPENCODE_HANDOFF.md` | El contrato operativo queda claro y sin ambigüedad | Revisión manual de contenido ✅ |
 | T-002 | Revisar divergencia entre README y Prisma actual | Alta | Codex | `README.md`, `prisma/schema.prisma`, `PROJECT_STATE.md` | Queda documentada la diferencia entre objetivo y estado real | Confirmación documental |
 | T-003 | Alinear decisiones técnicas estables | Media | OpenCode | `DECISIONS.md`, `docs/` | Las decisiones clave quedan registradas con fecha y motivo | Revisión de consistencia |
 | T-004 | Mantener inventario de bugs conocidos | Media | Codex | `KNOWN_BUGS.md`, `src/` | Cada bug tiene reproducción, severidad y estado | Revisión de trazabilidad |
