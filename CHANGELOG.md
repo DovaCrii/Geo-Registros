@@ -1,5 +1,17 @@
 # CHANGELOG.md
 
+## 2026-06-22
+
+### Operational calendar and geo alerts
+- Se agrega un calendario operativo liviano en el dashboard, agrupado por `operationDate`.
+- Se integran alertas geográficas informativas para zonas restringidas en el editor de geometría.
+- La experiencia de importación/exportación mantiene el aviso sin bloquear el flujo.
+
+### RBAC consistency audit
+- Se refuerza la consistencia de permisos en el flujo de detalle de planes de vuelo.
+- La UI oculta o deshabilita acciones según el rol y el servidor valida explícitamente las mutaciones.
+- La checklist DGAC también respeta el contrato de edición.
+
 ## 2026-06-18
 
 ### Commercial polish and map-first workflow

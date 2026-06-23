@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { requirePermission } from "@/lib/authorize";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { normalizeChecklist } from "@/modules/dgac/checklist-items";
@@ -8,6 +9,12 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    await requirePermission("flight_plan:edit");
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Unauthorized" }, { status: 403 });
   }
 
   const { id } = await params;

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
+import { HelpHint } from "@/components/ui/help-hint";
 import { useToast } from "@/lib/toast-context";
 import {
   DGAC_CHECKLIST_ITEMS,
@@ -14,12 +15,14 @@ export function FlightPlanChecklist({
   initialChecklist,
   suggestedChecklist,
   geometryLink,
+  canEdit = true,
 }: {
   flightPlanId: string;
   initialChecklist?: unknown;
   suggestedChecklist?: unknown;
   /** When set, shows a link to the geometry page for the "operation-area" item. */
   geometryLink?: string;
+  canEdit?: boolean;
 }) {
   const items = useMemo(() => DGAC_CHECKLIST_ITEMS, []);
   const { toast } = useToast();
@@ -91,11 +94,14 @@ export function FlightPlanChecklist({
                     setChecked(next);
                     void persist(next);
                   }}
-                  disabled={saving !== null}
+                  disabled={!canEdit || saving !== null}
                   className="mt-1 h-4 w-4 rounded border-slate-300 bg-white text-cyan-500 focus:ring-cyan-400/40 dark:border-slate-600 dark:bg-slate-950 dark:text-cyan-400"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-slate-900 dark:text-white">{item.label}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-slate-900 dark:text-white">{item.label}</p>
+                    <HelpHint label={`Ayuda: ${item.label}`} title={item.hint} />
+                  </div>
                   <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-500">{item.hint}</p>
                   {item.id === "operation-area" && geometryLink && (
                     <a
@@ -117,6 +123,12 @@ export function FlightPlanChecklist({
         <p className="text-xs leading-5 text-slate-600 dark:text-slate-500">
           Esta checklist es un apoyo interno. No reemplaza normativa oficial DGAC ni revisiones operativas obligatorias.
         </p>
+
+        {!canEdit ? (
+          <p className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-600 dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-400">
+            Tu perfil puede revisar la checklist, pero no modificarla.
+          </p>
+        ) : null}
       </div>
     </DetailPanel>
   );

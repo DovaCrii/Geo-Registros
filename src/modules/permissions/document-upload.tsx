@@ -24,6 +24,8 @@ const DOC_TYPE_LABELS: Record<string, string> = {
 export function DocumentUpload({
   flightPlanId,
   documents,
+  canUpload = true,
+  canRemove = true,
 }: {
   flightPlanId: string;
   documents: Array<{
@@ -33,6 +35,8 @@ export function DocumentUpload({
     filePath: string;
     createdAt: Date;
   }>;
+  canUpload?: boolean;
+  canRemove?: boolean;
 }) {
   const router = useRouter();
   const { toast } = useToast();
@@ -123,38 +127,44 @@ export function DocumentUpload({
       ) : null}
 
       {/* Upload form */}
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="space-y-2">
-          <label className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
-            Tipo de documento
-          </label>
-          <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/90 dark:text-slate-100"
+      {canUpload ? (
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="space-y-2">
+            <label className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
+              Tipo de documento
+            </label>
+            <select
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/90 dark:text-slate-100"
+            >
+              <option value="">Seleccioná un tipo...</option>
+              {Object.entries(DOC_TYPE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <input
+            type="file"
+            name="file"
+            className="w-full text-sm text-slate-600 file:mr-3 file:rounded-2xl file:border file:border-slate-200 file:bg-white file:px-4 file:py-2 file:text-sm file:text-slate-700 file:transition hover:file:border-slate-300 dark:text-slate-400 dark:file:border-slate-800 dark:file:bg-slate-950/90 dark:file:text-slate-200 dark:hover:file:border-slate-600"
+          />
+
+          <button
+            type="submit"
+            className="inline-flex items-center justify-center rounded-2xl border border-cyan-500/30 bg-cyan-50 px-4 py-2 text-xs font-medium text-cyan-700 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-400/20"
           >
-            <option value="">Seleccioná un tipo...</option>
-            {Object.entries(DOC_TYPE_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
+            Subir documento
+          </button>
+        </form>
+      ) : (
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-600 dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-400">
+          Tu perfil puede ver los documentos, pero no subir nuevos archivos.
         </div>
-
-        <input
-          type="file"
-          name="file"
-          className="w-full text-sm text-slate-600 file:mr-3 file:rounded-2xl file:border file:border-slate-200 file:bg-white file:px-4 file:py-2 file:text-sm file:text-slate-700 file:transition hover:file:border-slate-300 dark:text-slate-400 dark:file:border-slate-800 dark:file:bg-slate-950/90 dark:file:text-slate-200 dark:hover:file:border-slate-600"
-        />
-
-        <button
-          type="submit"
-          className="inline-flex items-center justify-center rounded-2xl border border-cyan-500/30 bg-cyan-50 px-4 py-2 text-xs font-medium text-cyan-700 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-400/20"
-        >
-          Subir documento
-        </button>
-      </form>
+      )}
 
       {/* Document list */}
       {documents.length > 0 ? (
@@ -172,18 +182,20 @@ export function DocumentUpload({
                       {DOC_TYPE_LABELS[doc.docType] ?? doc.docType}
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    disabled={pendingRemove === doc.id}
-                    onClick={() => setConfirmRemove(doc.id)}
-                    className="ml-3 shrink-0 rounded-xl border border-rose-500/30 bg-rose-50 px-3 py-1 text-xs font-medium text-rose-700 transition hover:bg-rose-100 disabled:opacity-40 dark:bg-rose-500/10 dark:text-rose-300 dark:hover:bg-rose-500/20"
-                  >
-                    {pendingRemove === doc.id ? "..." : "Quitar"}
-                  </button>
+                  {canRemove ? (
+                    <button
+                      type="button"
+                      disabled={pendingRemove === doc.id}
+                      onClick={() => setConfirmRemove(doc.id)}
+                      className="ml-3 shrink-0 rounded-xl border border-rose-500/30 bg-rose-50 px-3 py-1 text-xs font-medium text-rose-700 transition hover:bg-rose-100 disabled:opacity-40 dark:bg-rose-500/10 dark:text-rose-300 dark:hover:bg-rose-500/20"
+                    >
+                      {pendingRemove === doc.id ? "..." : "Quitar"}
+                    </button>
+                  ) : null}
                 </div>
 
                 {/* Confirmation overlay */}
-                {confirmRemove === doc.id && (
+                {canRemove && confirmRemove === doc.id && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-slate-950/80 backdrop-blur-sm dark:bg-slate-950/90">
                     <div className="text-center">
                       <p className="mb-2 text-sm font-medium text-white">

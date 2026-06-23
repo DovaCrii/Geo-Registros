@@ -28,7 +28,7 @@ import { getFlightPlanById } from "@/server/flight-plans/queries";
 import { getPermissionDocuments, getPermissionHistory } from "@/server/permissions/queries";
 import { getWeatherForecast } from "@/server/weather/service";
 import { WeatherCard } from "@/modules/weather/weather-card";
-import { canEditEntity } from "@/lib/authorize";
+import { canEditEntity, hasPermission } from "@/lib/authorize";
 
 export const dynamic = "force-dynamic";
 
@@ -89,6 +89,12 @@ export default async function FlightPlanDetailPage({
   const activeTab = parseTab(query.tab);
   const session = await requirePageAuth(`/flight-plans/${id}`);
   const canEdit = session?.user?.role ? canEditEntity(String(session.user.role)) : false;
+  const [canTransition, canUploadDocuments, canRemoveDocuments, canDeleteFlightPlan] = await Promise.all([
+    hasPermission("permission:transition"),
+    hasPermission("document:upload"),
+    hasPermission("document:remove"),
+    hasPermission("flight_plan:delete"),
+  ]);
 
   try {
     const [record, costCenters, clients, drones, operators] = await Promise.all([
@@ -407,7 +413,12 @@ export default async function FlightPlanDetailPage({
 
           {activeTab === 3 && (
             <DetailPanel title="Documentos" description="Adjuntá y gestioná los documentos operativos de este plan.">
-              <DocumentUpload flightPlanId={record.id} documents={documents} />
+              <DocumentUpload
+                flightPlanId={record.id}
+                documents={documents}
+                canUpload={canUploadDocuments}
+                canRemove={canRemoveDocuments}
+              />
             </DetailPanel>
           )}
 
@@ -418,6 +429,7 @@ export default async function FlightPlanDetailPage({
                 initialChecklist={record.dgacChecklist}
                 suggestedChecklist={suggestedChecklist}
                 geometryLink={record.geometryJson ? `/flight-plans/${record.id}/geometry` : undefined}
+                canEdit={canEdit}
               />
             </div>
           )}
@@ -468,6 +480,7 @@ export default async function FlightPlanDetailPage({
                       flightPlanId={record.id}
                       currentStatus={record.permissionStatus}
                       transitionBlocks={transitionBlocks}
+                      canTransition={canTransition}
                     />
                   </div>
                 </div>
@@ -494,17 +507,23 @@ export default async function FlightPlanDetailPage({
                     <span aria-hidden="true">⬇</span>
                     Reporte PDF
                   </a>
-                  <form action={deleteFlightPlan.bind(null, record.id)} className="space-y-3">
+                  {canDeleteFlightPlan ? (
+                    <form action={deleteFlightPlan.bind(null, record.id)} className="space-y-3">
+                      <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
+                        Esta acción lo saca de vistas activas, listados, conteos del panel y acceso a geometría.
+                      </p>
+                      <button
+                        type="submit"
+                        className="inline-flex items-center justify-center rounded-lg border border-status-danger/30 bg-status-danger/10 px-4 py-2.5 text-sm font-medium text-status-danger transition hover:border-status-danger/50 hover:bg-status-danger/15 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200 dark:hover:border-rose-400/50 dark:hover:bg-rose-400/20"
+                      >
+                        Eliminar plan de vuelo
+                      </button>
+                    </form>
+                  ) : (
                     <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
-                      Esta acción lo saca de vistas activas, listados, conteos del panel y acceso a geometría.
+                      Tu perfil puede revisar el cierre, pero no eliminar este plan de vuelo.
                     </p>
-                    <button
-                      type="submit"
-                      className="inline-flex items-center justify-center rounded-lg border border-status-danger/30 bg-status-danger/10 px-4 py-2.5 text-sm font-medium text-status-danger transition hover:border-status-danger/50 hover:bg-status-danger/15 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200 dark:hover:border-rose-400/50 dark:hover:bg-rose-400/20"
-                    >
-                      Eliminar plan de vuelo
-                    </button>
-                  </form>
+                  )}
                 </div>
               </DetailPanel>
             </div>

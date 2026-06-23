@@ -86,3 +86,8 @@
 - Vista Revisor con modo comparación y comentarios tipo pin.
 - Microinteracciones de estado (transiciones animadas, toasts contextuales).
 - Consolidar bitácora de avance y documentación técnica.
+
+## Fase 12 — Documentación operativa y sincronización 🔜 NUEVA
+- Mantener `PROJECT_STATUS.md`, `ROADMAP.md`, `TASKS.md` y `docs/OPENCODE_HANDOFF.md` sincronizados con la rama activa.
+- Regenerar `docs/HANDOFF/GIT_HANDOFF.md` cuando cambie el último commit relevante.
+- Registrar changelog breve por bloques cuando haya cierres funcionales importantes.

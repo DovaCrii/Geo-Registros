@@ -41,10 +41,12 @@ export function PermissionActions({
   flightPlanId,
   currentStatus,
   transitionBlocks,
+  canTransition = true,
 }: {
   flightPlanId: string;
   currentStatus: string;
   transitionBlocks?: Partial<Record<string, string>>;
+  canTransition?: boolean;
 }) {
   const router = useRouter();
   const { toast } = useToast();
@@ -107,6 +109,14 @@ export function PermissionActions({
 
   if (nextStates.length === 0) {
     return <p className="text-xs text-slate-600 dark:text-slate-500">No hay transiciones disponibles (estado terminal).</p>;
+  }
+
+  if (!canTransition) {
+    return (
+      <p className="text-sm text-slate-600 dark:text-slate-500">
+        Tu perfil puede ver el estado del permiso, pero no realizar transiciones.
+      </p>
+    );
   }
 
   return (
