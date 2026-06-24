@@ -1,0 +1,15 @@
+# AeroFlow operational flow ready
+
+```mermaid
+flowchart TD
+  D[Dashboard operativo] --> M[Crear misión o plan de vuelo]
+  M --> A[Asignar cliente dron y operador]
+  A --> Z[Definir zona en mapa]
+  Z --> DOC[Preparar documentos]
+  DOC --> CHK[Revisar checklist DGAC SIGO]
+  CHK --> AUT[Autorizar vuelo]
+  AUT --> EXE[Ejecutar o cerrar operación]
+  EXE --> REP[Generar reportes y evidencia]
+  REP --> TR[Registrar trazabilidad]
+  TR --> D
+```

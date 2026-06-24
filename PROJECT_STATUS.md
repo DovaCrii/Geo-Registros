@@ -20,7 +20,20 @@ AeroFlow / Geo-Registros es una plataforma Next.js para operaciones RPA/drones: 
 - Fase comercial completa: landing premium, seed demo funcional con SEED_DEMO=true y README premium actualizado.
 - Centro de Conocimiento completo: buscador en vivo, flujo operacional, preview docs.
 - Mapa operacional completo: workspace visual, mediciones en vivo, import/export y GeoJSON avanzado oculto.
-- Nuevo foco: RBAC/reviewer roles + UX/UI refinada y mapa avanzado.
+- RBAC base completo: helpers isReviewer, canEditEntity, requireFlightPlanEditor en authorize.ts.
+- Validación inline en wizard: controlled inputs, errores visuales, draft en localStorage.
+- Sistema de colores semánticos: StatusBadge con 5 variantes aplicado en lista, detalle y dashboard.
+- Panel operativo persistente: sticky cues y panel lateral más claro en el shell y dashboard.
+- Empty states con acción contextual: CTA primaria y secundaria en listas.
+- Vista calendario de operaciones: toggle por fecha en planes de vuelo.
+- Modo campo: toggle persistente para tablets / terreno.
+- Alertas geográficas: detección de zonas restringidas en geometría.
+- Vista revisor: modo comparación + notas locales en el detalle del plan.
+- Paquete documental: preflight visual con acceso al PDF de revisión.
+- Dashboard semáforo: readiness verde/amarillo/rojo con contadores existentes.
+- Microinteracciones de estado: transiciones de permiso con feedback visible y helpers puros para test.
+- Nuevo foco: UX/UI refinada (panel operativo, empty states, calendario) + mapa avanzado + trazabilidad documental.
+- Nuevo foco: pulido visual final y handoff Figma-ready.
 
 ## Riesgos activos
 - `prisma/data/` aparece como dato local no versionado.
@@ -30,14 +43,17 @@ AeroFlow / Geo-Registros es una plataforma Next.js para operaciones RPA/drones: 
 - El mapa avanzado necesita diseñar bien capas extra (ciudades/referencias) sin saturar al operador.
 
 ## Próximos pasos inmediatos
-1. **RBAC y perfiles de revisión** — bloquear edición/borrado/transición según rol
-2. **UX/UI refinada** — centrar información, mejorar navegación, panel operativo persistente
-3. **Mapa avanzado** — integrar capas contextuales y reordenar la barra lateral técnica
+1. **UX/UI refinada transversal (T-023)** — polish restante y mapa avanzado
+2. **Consolidar documentación y handoffs** — README y bitácoras alineadas con el estado actual
+3. **Revisión final de consistencia** — pequeños ajustes visuales/responsivos si aparecen
+4. **Figma handoff** — frames, tokens y componentes clave para continuar diseño sin arrancar de cero.
 
 ## Fuente de verdad para IA
 - OpenCode ejecuta implementacion.
 - Codex planifica, revisa, documenta y hace QA.
 - Engram conserva memoria persistente; no duplicar memoria estable fuera de docs del repo.
+- Git Workflow Orchestrator en `docs/GIT_WORKFLOW_ORCHESTRATOR.md` define el flujo de orquestación por commits.
+- Handoffs generados automáticamente en `docs/HANDOFF/` después de cada push.
 
 ## Actualizado
-2026-06-18
+2026-06-24

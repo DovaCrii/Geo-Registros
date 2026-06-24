@@ -31,17 +31,17 @@
 | ID | Título | Prioridad | Herramienta recomendada | Archivos probables | Criterio de aceptación | Validación esperada | Estimación |
 |---|---|---|---|---|---|---|---|
 | T-024 | Sistema de colores semánticos — StatusBadge | Alta ✅ | OpenCode | src/components/ui/status-badge.tsx, src/app/flight-plans/page.tsx, src/app/flight-plans/[id]/page.tsx, src/app/dashboard/page.tsx | Componente reutilizable tipado con 5 variantes de color. Aplicado en lista, detalle y dashboard. | npm run typecheck ✅, npm run build ✅, smoke visual ✅ | 2h |
-| T-025 | Validación inline en wizard de misión — pasos 1-2 | Alta | OpenCode | src/modules/flight-plans/flight-plan-wizard-form.tsx | Campos obligatorios validan antes de avanzar. Borde rojo + tooltip si falta. Draft guardado en localStorage. | npm run typecheck, crear plan manual | 3h |
-| T-026 | Panel operativo persistente — sticky bar | Alta | OpenCode | src/components/operational-panel.tsx, src/app/layout.tsx | Barra visible con misión activa, clima, alertas de vigencia. Colapsa a pill si no hay misión. | npm run typecheck, npm run build | 3h |
-| T-027 | Alertas geográficas en tiempo real — zonas restringidas | Media | OpenCode | src/modules/flight-plans/geometry-editor.tsx, src/lib/geo-restrictions.ts | Toast inmediato si polígono intersecta zona restringida. Capa siempre visible en mapa. | npm run typecheck, npm run build, smoke dibujo | 4h |
-| T-028 | Tooltips DGAC inline en formulario de permiso | Media | OpenCode | src/app/flight-plans/[id]/permissions/page.tsx, src/components/help-center/inline-tooltip.tsx | Icono ? junto a campos clave. Modal/tooltip con contenido de HelpDocs. No recarga página. | npm run typecheck, npm run build | 2h |
-| T-029 | Empty states con acción contextual | Media | OpenCode | src/app/flight-plans/page.tsx, src/app/drones/page.tsx, src/app/clients/page.tsx | Ilustración + CTA + acción directa en módulos vacíos. | npm run typecheck, revisión visual | 2h |
-| T-030 | Vista Calendario de Operaciones | Baja | OpenCode | src/app/flight-plans/page.tsx, src/components/flight-plans/calendar-view.tsx | Toggle tabla/calendario. Días con dot de color. Click abre detalle. | npm run typecheck, npm run build | 4h |
-| T-031 | Modo Campo (Field Mode) | Baja | OpenCode | src/app/layout.tsx, src/components/field-mode-toggle.tsx | Toggle en perfil. Fuente lg, botones h-14, sidebar colapsado, alto contraste. | npm run typecheck, npm run build, smoke tablet | 3h |
-| T-032 | Preview de paquete documental antes de enviar | Baja | OpenCode | src/app/flight-plans/[id]/permissions/page.tsx, src/components/permission-document-preview.tsx | Lista de docs requeridos con check. Preview miniatura. Botón "Generar paquete DGAC". | npm run typecheck, npm run build | 4h |
-| T-033 | Vista Revisor — modo comparación y comentarios | Baja | OpenCode | src/app/flight-plans/[id]/page.tsx, src/components/reviewer/ | Sin botones de acción. Highlight de cambios. Pins de comentario. | npm run typecheck, npm run build | 5h |
-| T-034 | Microinteracciones de estado (transiciones + toasts) | Baja | OpenCode | src/components/ui/toast.tsx, src/app/flight-plans/[id]/page.tsx | Animación en cambio de estado. Toast con dato útil (ej: "Zona guardada — 2.4 km²"). | npm run typecheck, npm run build | 2h |
-| T-035 | Dashboard semáforo operativo — próxima misión + clima | Alta | OpenCode | src/app/dashboard/page.tsx | Card principal con próxima misión autorizada. Semáforo listo/no listo. Widget de vigencias. | npm run typecheck, npm run build, smoke visual | 3h |
+| T-025 | Validación inline en wizard de misión — pasos 1-2 | Alta ✅ | OpenCode | src/modules/flight-plans/flight-plan-wizard-form.tsx | Campos obligatorios validan antes de avanzar. Borde rojo + tooltip si falta. Draft guardado en localStorage. | npm run typecheck, crear plan manual | 3h |
+| T-026 | Panel operativo persistente — sticky bar | Alta ✅ | OpenCode | src/app/dashboard/page.tsx, src/components/ui/page-shell.tsx | Barra visible con misión activa, clima, alertas de vigencia. Colapsa a pill si no hay misión. | npm run typecheck, npm run build ✅ | 3h |
+| T-027 | Alertas geográficas en tiempo real — zonas restringidas | Media ✅ | OpenCode | src/modules/flight-plans/geometry-editor.tsx, src/lib/geo-restrictions.ts, src/lib/geo-restrictions.test.ts | Toast inmediato si polígono intersecta zona restringida. Capa siempre visible en mapa. | npm run typecheck, npm run build, smoke dibujo ✅ | 4h |
+| T-028 | Tooltips DGAC inline en formulario de permiso | Media ✅ | OpenCode | src/app/flight-plans/[id]/page.tsx, src/components/ui/help-hint.tsx, src/modules/dgac/flight-plan-checklist.tsx | Icono ? junto a campos clave. Tooltip con contenido DGAC contextual. No recarga página. | npm run typecheck, npm run build ✅ | 2h |
+| T-029 | Empty states con acción contextual | Media ✅ | OpenCode | src/components/ui/empty-state.tsx, src/components/ui/list-page.tsx, src/components/ui/list-page-client.tsx | Ilustración + CTA + acción directa en módulos vacíos. | npm run typecheck, revisión visual ✅ | 2h |
+| T-030 | Vista Calendario de Operaciones | Baja ✅ | OpenCode | src/lib/list-config/types.ts, src/components/ui/list-page.tsx, src/modules/flight-plans/flight-plan-list.config.tsx | Toggle tabla/calendario. Días con dot de color. Click abre detalle. | npm run typecheck, npm run build ✅ | 4h |
+| T-031 | Modo Campo (Field Mode) | Baja ✅ | OpenCode | src/components/ui/page-shell.tsx | Toggle persistente en el shell. Fuente lg, botones más grandes, sidebar simplificado, alto contraste. | npm run typecheck, npm run build, smoke tablet ✅ | 3h |
+| T-032 | Preview de paquete documental antes de enviar | Baja ✅ | OpenCode | src/modules/permissions/document-upload.tsx, src/app/api/reports/flight-plan/[id]/route.ts | Lista de docs requeridos con check. Preview miniatura. Botón "Generar paquete DGAC". | npm run typecheck, npm run build ✅ | 4h |
+| T-033 | Vista Revisor — modo comparación y comentarios | Baja ✅ | OpenCode | src/app/flight-plans/[id]/page.tsx, src/modules/reviewer/reviewer-notes.tsx | Sin botones de acción. Highlight de cambios. Pins de comentario. | npm run typecheck, npm run build ✅ | 5h |
+| T-034 | Microinteracciones de estado (transiciones + toasts) | Baja ✅ | OpenCode | src/modules/permissions/permission-actions.tsx, src/modules/permissions/permission-actions.utils.ts, src/app/flight-plans/[id]/page.tsx | Animación en cambio de estado. Toast con dato útil y feedback visible durante el cambio. | npm run typecheck, npm run build ✅ | 2h |
+| T-035 | Dashboard semáforo operativo — próxima misión + clima | Alta ✅ | OpenCode | src/app/dashboard/page.tsx | Card principal con próxima misión autorizada. Semáforo listo/no listo. Widget de vigencias. | npm run typecheck, npm run build, smoke visual ✅ | 3h |
 
 ## Estado de seguimiento
 
@@ -63,15 +63,15 @@
 - ✅ **Fase 7 — Mapa operacional** — workspace visual, mediciones en vivo, hint contextual, mapa amplio (720px)
 - ✅ T-024 — Sistema de colores semánticos — StatusBadge
 - ✅ T-025 — Validación inline en wizard de misión — pasos 1-2
-- 🔜 T-026 — Panel operativo persistente — sticky bar
-- 🔜 T-027 — Alertas geográficas en tiempo real — zonas restringidas
-- 🔜 T-028 — Tooltips DGAC inline en formulario de permiso
-- 🔜 T-029 — Empty states con acción contextual
-- 🔜 T-030 — Vista Calendario de Operaciones
-- 🔜 T-031 — Modo Campo (Field Mode)
-- 🔜 T-032 — Preview de paquete documental antes de enviar
-- 🔜 T-033 — Vista Revisor — modo comparación y comentarios
-- 🔜 T-034 — Microinteracciones de estado (transiciones + toasts)
-- 🔜 T-035 — Dashboard semáforo operativo — próxima misión + clima
+- ✅ T-026 — Panel operativo persistente — sticky bar
+- ✅ T-027 — Alertas geográficas en tiempo real — zonas restringidas
+- ✅ T-028 — Tooltips DGAC inline en formulario de permiso
+- ✅ T-029 — Empty states con acción contextual
+- ✅ T-030 — Vista Calendario de Operaciones
+- ✅ T-031 — Modo Campo (Field Mode)
+- ✅ T-032 — Preview de paquete documental antes de enviar
+- ✅ T-033 — Vista Revisor — modo comparación y comentarios
+- ✅ T-034 — Microinteracciones de estado (transiciones + toasts)
+- ✅ T-035 — Dashboard semáforo operativo — próxima misión + clima
 - ✅ T-022 — RBAC y perfiles de revisión
 - 🔜 T-023 — UX/UI refinada y mapa avanzado

@@ -1,0 +1,48 @@
+graph TD
+    subgraph Frontend
+        F1[Next.js App]
+        F2[TailwindCSS]
+        F3[MapLibre GL JS]
+        F4[React Components]
+    end
+    subgraph Backend
+        B1[Next.js Server Actions]
+        B2[Prisma ORM]
+        B3[SQLite/PostgreSQL]
+        B4[Node.js Services]
+    end
+    subgraph Database
+        D1[SQLite (dev)]
+        D2[PostgreSQL (prod, planned)]
+    end
+    subgraph Map Editing
+        ME1[TerraDraw]
+        ME2[Turf.js (planned)]
+    end
+    subgraph Weather Integration
+        WI1[Open-Meteo API]
+    end
+    subgraph PDF Export
+        PE1[react-pdf/pdf-lib (planned)]
+    end
+    subgraph Storage
+        S1[Local-first (MinIO/S3 future)]
+    end
+    subgraph Auth & Roles
+        A1[NextAuth.js]
+        A2[Scaffolded roles]
+    end
+    F1 --> B1
+    F1 --> F2
+    F1 --> F3
+    F1 --> F4
+    B1 --> B2
+    B2 --> D1
+    B2 --> D2
+    B1 --> ME1
+    B1 --> ME2
+    B1 --> WI1
+    B1 --> PE1
+    B1 --> S1
+    B1 --> A1
+    B1 --> A2

@@ -135,7 +135,7 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
             href={`/flight-plans/${row.id}/geometry`}
             className="text-sm font-medium text-emerald-700 transition hover:text-emerald-600 dark:text-emerald-300 dark:hover:text-emerald-200"
           >
-            Geometría
+            Mapa operativo
           </Link>
         )}
       </div>
@@ -146,7 +146,8 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
 export const flightPlanListConfig: ListConfig<FlightPlanRow> = {
   eyebrow: "Bloque 1 / Operación principal",
   title: "Planes de vuelo",
-  description: "Gestioná los registros operativos de vuelos RPAS con flujo de permisos, geometría, documentos y clima.",
+  description: "Gestioná los registros operativos de vuelos RPAS con flujo de permisos, mapa operativo, documentos y clima.",
+  basePath: "/flight-plans",
   columns: flightPlanColumns,
   filters: [
     { field: "q", label: "Buscar", type: "search", placeholder: "Código o título…" },
@@ -172,9 +173,72 @@ export const flightPlanListConfig: ListConfig<FlightPlanRow> = {
   headerActions: [
     { href: "/flight-plans/new", label: "Crear plan de vuelo", variant: "primary" },
   ],
+  calendarView: {
+    field: "operationDate",
+    label: "Vista calendario",
+    description: "Agrupá los planes por día para ver la carga operativa y entrar rápido al mapa de cada vuelo.",
+    renderItem: (row) => (
+      <div className="space-y-3">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">{row.code}</p>
+            <Link href={`/flight-plans/${row.id}`} className="mt-1 block text-sm font-semibold text-slate-900 transition hover:text-cyan-600 dark:text-white dark:hover:text-cyan-300">
+              {row.title}
+            </Link>
+            <p className="mt-1 text-xs text-slate-600 dark:text-slate-500">
+              {row.operationDate.toLocaleDateString("es-CL", {
+                weekday: "short",
+                day: "numeric",
+                month: "short",
+              })}
+            </p>
+          </div>
+
+          <StatusBadge
+            status={
+              row.permissionStatus === "AUTHORIZED"
+                ? "approved"
+                : row.permissionStatus === "REJECTED"
+                  ? "rejected"
+                  : row.permissionStatus === "CLOSED"
+                    ? "completed"
+                    : row.permissionStatus === "CANCELLED"
+                      ? "cancelled"
+                      : row.permissionStatus === "EXPIRED"
+                        ? "expired"
+                        : "in-review"
+            }
+            label={STATUS_LABELS[row.permissionStatus] ?? row.permissionStatus}
+            size="sm"
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-2 text-xs text-slate-500 dark:text-slate-400">
+          <span>{row.costCenter ? row.costCenter.code : "Sin grupo"}</span>
+          <span>·</span>
+          <span>{row.client ? row.client.name : "Sin cliente"}</span>
+          <span>·</span>
+          <span>{row.drone ? row.drone.model : "Sin dron"}</span>
+          <span>·</span>
+          <span>{row.operator ? row.operator.fullName : "Sin operador"}</span>
+        </div>
+
+        <div className="flex flex-wrap gap-3 text-sm font-medium">
+          <Link href={`/flight-plans/${row.id}`} className="text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200">
+            Editar
+          </Link>
+          {row.geometryType && (
+            <Link href={`/flight-plans/${row.id}/geometry`} className="text-emerald-700 transition hover:text-emerald-600 dark:text-emerald-300 dark:hover:text-emerald-200">
+              Abrir mapa
+            </Link>
+          )}
+        </div>
+      </div>
+    ),
+  },
   sidebar: {
     title: "Cobertura del plan",
-    description: "Flujo de permisos, geometría, documentos y clima conectados.",
+    description: "Flujo de permisos, mapa operativo, documentos y clima conectados.",
     items: [
       { label: "Flujo de permisos", value: "Completo", tone: "success" },
       { label: "Geometría", value: "Habilitada", tone: "info" },

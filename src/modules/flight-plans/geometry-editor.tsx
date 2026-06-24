@@ -6,11 +6,11 @@ import maplibregl, { Map } from "maplibre-gl";
 import { MaplibreTerradrawControl } from "@watergis/maplibre-gl-terradraw";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
-import { PrimaryButton } from "@/components/ui/primary-button";
 import { StatusChip } from "@/components/ui/status-chip";
 import { useToast } from "@/lib/toast-context";
 import { importKml, importDxf, importKmz } from "@/lib/geo-import";
 import { exportKml, exportDxf } from "@/lib/geo-export";
+import { findGeoRestrictionConflicts } from "@/lib/geo-restrictions";
 import type { ImportResult } from "@/lib/geo-import";
 
 const emptyFeatureCollection: GeoJSON.FeatureCollection = {
@@ -171,11 +171,22 @@ function formatLength(m: number): string {
   return `${m.toFixed(1)} m`;
 }
 
-/** Strip Terra Draw internal properties and return clean GeoJSON features. */
+function isPersistableFeature(feature: GeoJSON.Feature | null | undefined): feature is GeoJSON.Feature {
+  if (!feature || feature.type !== "Feature" || !feature.geometry) return false;
+
+  const geometry = feature.geometry as GeoJSON.Geometry;
+  if (geometry.type === "GeometryCollection") {
+    return Array.isArray((geometry as GeoJSON.GeometryCollection).geometries);
+  }
+
+  return typeof geometry.type === "string" && "coordinates" in geometry;
+}
+
+/** Strip Terra Draw internal properties and return only persistable GeoJSON features. */
 function featuresToCleanGeoJson(
   features: GeoJSON.Feature[],
 ): GeoJSON.FeatureCollection {
-  const cleaned = features.map((f) => ({
+  const cleaned = features.filter(isPersistableFeature).map((f) => ({
     type: "Feature" as const,
     geometry: f.geometry,
     properties: f.properties ? { ...f.properties } : {},
@@ -381,15 +392,29 @@ export function GeometryEditor({
   const initialLoadedRef = useRef(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const parsed = useMemo(() => parseGeoJsonPayload(payload), [payload]);
+  const restrictionConflicts = useMemo(
+    () => (parsed.valid ? findGeoRestrictionConflicts(parsed.data) : []),
+    [parsed.data, parsed.valid],
+  );
   const enabledLayerCount = useMemo(
     () => Object.values(layers).filter(Boolean).length,
     [layers],
   );
+  const restrictionSignature = restrictionConflicts.map((zone) => zone.id).join("|");
+  const lastRestrictionToastRef = useRef<string | null>(null);
   const workspaceModeSummary: {
     label: string;
     tone: "success" | "warning" | "danger" | "info" | "neutral";
     helper: string;
   } = useMemo(() => {
+    if (restrictionConflicts.length > 0) {
+      return {
+        label: "Zona restringida detectada",
+        tone: "warning" as const,
+        helper: `El área cruza ${restrictionConflicts.length === 1 ? "una zona" : `${restrictionConflicts.length} zonas`} sensibles. Revisá antes de guardar.`,
+      };
+    }
+
     if (!terraDrawReady) {
       return {
         label: "Cargando mapa",
@@ -422,7 +447,24 @@ export function GeometryEditor({
         ? "Podés seguir editando, importar referencias o guardar el área."
         : "Elegí una herramienta de dibujo para iniciar el área de operación.",
     };
-  }, [activeMode, payload, terraDrawReady]);
+  }, [activeMode, payload, restrictionConflicts.length, terraDrawReady]);
+
+  useEffect(() => {
+    if (!restrictionSignature) {
+      lastRestrictionToastRef.current = null;
+      return;
+    }
+
+    if (lastRestrictionToastRef.current === restrictionSignature) return;
+
+    const zoneLabels = restrictionConflicts.map((zone) => zone.label).join(", ");
+    toast(
+      "info",
+      "Área con restricción geográfica",
+      `La geometría intersecta ${zoneLabels}.`,
+    );
+    lastRestrictionToastRef.current = restrictionSignature;
+  }, [restrictionConflicts, restrictionSignature, toast]);
 
   // ── Initialise map + Terra Draw control (runs once) ──────────────
   useEffect(() => {
@@ -499,13 +541,14 @@ export function GeometryEditor({
     const fc = drawControlRef.current?.getFeatures();
     if (!fc) return;
 
-    if (fc.features.length === 0) {
+    const cleaned = featuresToCleanGeoJson(fc.features as GeoJSON.Feature[]);
+
+    if (cleaned.features.length === 0) {
       setPayload("");
       setMeasurements({ totalArea: "—", totalPerimeter: "—", featureCount: 0 });
       return;
     }
 
-    const cleaned = featuresToCleanGeoJson(fc.features as GeoJSON.Feature[]);
     setPayload(JSON.stringify(cleaned, null, 2));
     setMeasurements(computeMeasurements(cleaned));
   }, []);
@@ -518,7 +561,7 @@ export function GeometryEditor({
     if (!terraDraw) return;
     if (!parsed.valid) return;
 
-    const features = normalizeToFeatures(parsed.data);
+    const features = normalizeToFeatures(parsed.data).filter(isPersistableFeature);
     if (features.length === 0) return;
 
     terraDraw.addFeatures(featuresToTdFormat(features) as any);
@@ -569,7 +612,7 @@ export function GeometryEditor({
       terraDraw.clear();
     }
 
-    const features = normalizeToFeatures(parsed.data);
+    const features = normalizeToFeatures(parsed.data).filter(isPersistableFeature);
     if (features.length === 0) return;
 
     terraDraw.addFeatures(featuresToTdFormat(features) as any);
@@ -583,12 +626,13 @@ export function GeometryEditor({
       if (!terraDraw) return;
 
       terraDraw.clear();
-      terraDraw.addFeatures(
-        featuresToTdFormat(result.features.features) as any,
-      );
+      const persistableFeatures = result.features.features.filter(isPersistableFeature);
 
-      setPayload(JSON.stringify(result.features, null, 2));
-      fitMapToPoints(mapRef.current!, result.features);
+      terraDraw.addFeatures(featuresToTdFormat(persistableFeatures) as any);
+
+      const cleaned = featuresToCleanGeoJson(persistableFeatures);
+      setPayload(cleaned.features.length > 0 ? JSON.stringify(cleaned, null, 2) : "");
+      fitMapToPoints(mapRef.current!, cleaned);
     },
     [getTerraDraw],
   );
@@ -673,6 +717,11 @@ export function GeometryEditor({
       const cleaned = featuresToCleanGeoJson(
         fc.features as GeoJSON.Feature[],
       );
+
+      if (cleaned.features.length === 0) {
+        toast("info", "Sin geometría persistible", "Terminá la figura antes de exportar.");
+        return;
+      }
       let content: string;
       let mimeType: string;
       let extension: string;
@@ -698,6 +747,8 @@ export function GeometryEditor({
     },
     [toast],
   );
+
+  const canSaveGeometry = parsed.valid && payload.trim().length > 0;
 
   return (
     <form action={action} className="space-y-6">
@@ -736,18 +787,24 @@ export function GeometryEditor({
             <div ref={containerRef} className="h-full w-full" />
             {/* Contextual hint */}
             <div className="pointer-events-none absolute left-4 top-4 max-w-xs rounded-2xl border border-white/70 bg-white/90 px-4 py-3 text-sm text-slate-700 shadow-lg shadow-slate-950/10 backdrop-blur dark:border-slate-800/70 dark:bg-slate-950/85 dark:text-slate-200">
-              <p className="font-semibold text-slate-950 dark:text-white">
-                {measurements.featureCount > 0 ? `Editor — ${measurements.featureCount} figura${measurements.featureCount !== 1 ? "s" : ""}` : "Siguiente acción"}
+                <p className="font-semibold text-slate-950 dark:text-white">
+                {activeMode
+                  ? `Modo: ${DRAW_MODES.find((mode) => mode.id === activeMode)?.label ?? activeMode}`
+                  : measurements.featureCount > 0
+                    ? `Editor — ${measurements.featureCount} figura${measurements.featureCount !== 1 ? "s" : ""}`
+                    : "Siguiente acción"}
               </p>
               <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">
                 {measurements.featureCount > 0
-                  ? "Usá Seleccionar para mover figuras. Guardá el área antes de salir."
-                  : "Elegí Polígono, marcá la zona de operación y guardá el área."}
+                  ? "Usá Seleccionar para mover figuras. Guardá el área operativa antes de salir."
+                  : "Elegí Polígono, marcá la zona operativa y guardá el área."}
               </p>
             </div>
             {measurements.featureCount > 0 && (
               <div className="pointer-events-none absolute right-4 top-4 rounded-2xl border border-emerald-500/20 bg-emerald-50/90 px-4 py-2 text-xs font-medium text-emerald-700 backdrop-blur dark:bg-emerald-500/10 dark:text-emerald-200">
-                {measurements.totalArea} · {measurements.totalPerimeter}
+                <span>Área {measurements.totalArea}</span>
+                <span className="mx-1.5 text-emerald-300 dark:text-emerald-400">·</span>
+                <span>Perímetro {measurements.totalPerimeter}</span>
               </div>
             )}
             {!parsed.valid && payload.trim() ? (
@@ -765,7 +822,7 @@ export function GeometryEditor({
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
-                      Estado del workspace
+                      Resumen operativo
                     </p>
                     <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">
                       {workspaceModeSummary.label}
@@ -776,11 +833,16 @@ export function GeometryEditor({
                 <p className="mt-3 text-xs leading-5 text-slate-600 dark:text-slate-400">
                   {workspaceModeSummary.helper}
                 </p>
+                {restrictionConflicts.length > 0 && (
+                  <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
+                    {restrictionConflicts.map((zone) => zone.label).join(" · ")}
+                  </div>
+                )}
               </div>
 
-              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 dark:border-cyan-500/20 dark:bg-cyan-500/[0.06]" role="status" aria-live="polite">
+                <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 dark:border-cyan-500/20 dark:bg-cyan-500/[0.06]" role="status" aria-live="polite">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-300">
-                  Siguiente acción
+                  Herramientas de dibujo
                 </p>
                 <p className="mt-1 text-sm font-medium text-cyan-950 dark:text-cyan-50">
                   {measurements.featureCount > 0
@@ -802,7 +864,7 @@ export function GeometryEditor({
                 <div className="mt-4 grid grid-cols-2 gap-3 text-center">
                   <div className="rounded-xl border border-white/60 bg-white/80 px-3 py-2 dark:border-slate-800/80 dark:bg-slate-950/60">
                     <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                      Figuras
+                      Figuras activas
                     </p>
                     <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">
                       {measurements.featureCount}
@@ -810,7 +872,7 @@ export function GeometryEditor({
                   </div>
                   <div className="rounded-xl border border-white/60 bg-white/80 px-3 py-2 dark:border-slate-800/80 dark:bg-slate-950/60">
                     <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                      GeoJSON
+                      GeoJSON avanzado
                     </p>
                     <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">
                       {parsed.valid ? "Válido" : "Revisar"}
@@ -823,8 +885,8 @@ export function GeometryEditor({
               <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 dark:bg-cyan-500/[0.06]">
                 <p className="text-sm font-semibold text-cyan-900 dark:text-cyan-100">
                   {measurements.featureCount > 0
-                    ? `Geometría activa (${measurements.featureCount})`
-                    : "Sin geometría"}
+                    ? `Mediciones en vivo (${measurements.featureCount})`
+                    : "Sin mediciones todavía"}
                 </p>
                 {measurements.featureCount > 0 && (
                   <div className="mt-2 grid grid-cols-2 gap-3">
@@ -840,22 +902,22 @@ export function GeometryEditor({
                 )}
                 {measurements.featureCount === 0 && (
                   <p className="mt-1 text-xs leading-5 text-cyan-800/80 dark:text-cyan-200/80">
-                    Dibujá un polígono o línea para ver mediciones en vivo.
+                    Dibujá una figura para ver mediciones en vivo.
                   </p>
                 )}
               </div>
 
-              <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800/80 dark:bg-slate-950/70">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-slate-950 dark:text-white">Herramientas</p>
-                  <span className="text-xs text-slate-500 dark:text-slate-500">
-                    {activeMode ? `Modo: ${DRAW_MODES.find((mode) => mode.id === activeMode)?.label ?? activeMode}` : "Sin modo activo"}
-                  </span>
-                </div>
+                <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800/80 dark:bg-slate-950/70">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-slate-950 dark:text-white">Herramientas de operación</p>
+                    <span className="text-xs text-slate-500 dark:text-slate-500">
+                      {activeMode ? `Activo: ${DRAW_MODES.find((mode) => mode.id === activeMode)?.label ?? activeMode}` : "Esperando herramienta"}
+                    </span>
+                  </div>
 
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-500">
-                    Dibujar
+                    Crear
                   </span>
                   {DRAW_MODES.filter((m) => m.group === "draw").map((mode) => (
                     <ToolbarButton
@@ -870,7 +932,7 @@ export function GeometryEditor({
 
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-500">
-                    Editar
+                    Modificar
                   </span>
                   {DRAW_MODES.filter((m) => m.group === "edit").map((mode) => (
                     <ToolbarButton
@@ -893,23 +955,23 @@ export function GeometryEditor({
                   />
                   <ToolbarButton
                     icon="📂"
-                    label={importing ? "Importando..." : "Importar"}
+                    label={importing ? "Importando..." : "Cargar archivo"}
                     onClick={() => fileInputRef.current?.click()}
                   />
                 </div>
 
                 <div className="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-3 dark:border-slate-800/80 dark:bg-slate-950/70">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Capas</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Capas operativas</p>
                     <span className="text-[10px] text-slate-500 dark:text-slate-500">
                       {enabledLayerCount}/3 visibles
                     </span>
                   </div>
 
                   {[
-                    { key: "satellite" as const, label: "Base satelital", desc: "Mapa de referencia visual" },
+                    { key: "satellite" as const, label: "Mapa base", desc: "Imagen satelital de referencia" },
                     { key: "operationArea" as const, label: "Área de operación", desc: "Figuras activas del plan" },
-                    { key: "importedReferences" as const, label: "Referencias importadas", desc: "KML, KMZ o DXF cargados" },
+                    { key: "importedReferences" as const, label: "Referencias operativas", desc: "KML, KMZ o DXF cargados" },
                   ].map((item) => (
                     <button
                       key={item.key}
@@ -945,7 +1007,18 @@ export function GeometryEditor({
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <PrimaryButton type="submit">Guardar área de operación</PrimaryButton>
+                  <button
+                    type="submit"
+                    disabled={!canSaveGeometry}
+                    className="inline-flex items-center justify-center rounded-2xl border border-accent/30 bg-accent/10 px-4 py-2.5 text-sm font-medium text-accent-strong transition hover:border-accent/50 hover:bg-accent/15 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400 dark:border-cyan-400/30 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:border-cyan-300/50 dark:hover:bg-cyan-400/20 dark:disabled:border-slate-800 dark:disabled:bg-slate-950/50 dark:disabled:text-slate-500"
+                  >
+                    Guardar área de operación
+                  </button>
+                  {!canSaveGeometry && (
+                    <p className="text-xs text-amber-700 dark:text-amber-300">
+                      Dibujá una geometría completa antes de guardar.
+                    </p>
+                  )}
                   <Link
                     href={`/flight-plans/${flightPlanId}`}
                     className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
@@ -958,7 +1031,7 @@ export function GeometryEditor({
             </div>
           </DetailPanel>
 
-          <DetailPanel title="Intercambio técnico" description="Opciones secundarias para CAD/GIS y soporte avanzado.">
+          <DetailPanel title="Exportación avanzada" description="Opciones secundarias para CAD/GIS y soporte avanzado.">
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-2">
                 <button

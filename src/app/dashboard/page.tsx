@@ -12,6 +12,13 @@ import { OnboardingDialog } from "@/modules/onboarding/onboarding-dialog";
 
 export const dynamic = "force-dynamic";
 
+const ACTIVITY_DATE_FORMATTER = new Intl.DateTimeFormat("es-CL", {
+  day: "numeric",
+  month: "short",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
 // ─── Status map ──────────────────────────────────────────────
 
 const STATUS_BADGE: Record<string, OperationalStatus> = {
@@ -80,6 +87,80 @@ type PriorityItem = {
   tone: "neutral" | "info" | "warning" | "danger";
 };
 
+type ReadinessLevel = "ready" | "caution" | "critical";
+
+function getReadinessLevel(stats: Awaited<ReturnType<typeof getDashboardStats>>): ReadinessLevel {
+  const criticalSignals = stats.pending.noGeometry + stats.pending.missingDocuments + stats.pending.observed;
+  const cautionSignals = stats.pending.inReview + stats.pending.upcomingFlights + stats.pending.operatorsWithoutLicense + stats.pending.dronesWithoutExpiry;
+
+  if (stats.flightPlans.total === 0 || criticalSignals > 0) return "critical";
+  if (cautionSignals > 0 || stats.expiring.drones.length + stats.expiring.operators.length > 0) return "caution";
+  return "ready";
+}
+
+function ReadinessBanner({ stats }: { stats: Awaited<ReturnType<typeof getDashboardStats>> }) {
+  const readiness = getReadinessLevel(stats);
+  const levelConfig = {
+    ready: {
+      label: "Listo para operar",
+      tone: "success" as const,
+      title: "Semáforo verde: la operación está despejada",
+      message: "No hay bloqueos críticos. Mantené el monitoreo de vigencias y seguí con el flujo recomendado.",
+      badge: "Verde",
+    },
+    caution: {
+      label: "Precaución",
+      tone: "warning" as const,
+      title: "Semáforo amarillo: hay puntos que conviene revisar",
+      message: "No hay bloqueo total, pero sí vencimientos o seguimientos en curso. Priorizá lo que está arriba en la lista.",
+      badge: "Amarillo",
+    },
+    critical: {
+      label: "Atención crítica",
+      tone: "danger" as const,
+      title: "Semáforo rojo: hay trabajo crítico pendiente",
+      message: "Resolvé geometría, documentos o observaciones antes de seguir. El tablero ya te marca el punto de salida.",
+      badge: "Rojo",
+    },
+  }[readiness];
+
+  return (
+    <div className={`rounded-xl border p-6 shadow-sm dark:shadow-xl dark:shadow-slate-950/10 ${
+      readiness === "ready"
+        ? "border-emerald-200 bg-emerald-50/80 dark:border-emerald-500/20 dark:bg-emerald-500/[0.06]"
+        : readiness === "caution"
+          ? "border-amber-200 bg-amber-50/80 dark:border-amber-500/20 dark:bg-amber-500/[0.06]"
+          : "border-rose-200 bg-rose-50/80 dark:border-rose-500/20 dark:bg-rose-500/[0.06]"
+    }`}>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p className={`text-xs font-semibold uppercase tracking-[0.26em] ${
+            readiness === "ready"
+              ? "text-emerald-700 dark:text-emerald-300"
+              : readiness === "caution"
+                ? "text-amber-700 dark:text-amber-300"
+                : "text-rose-700 dark:text-rose-300"
+          }`}>
+            Semáforo operativo
+          </p>
+          <h2 className="mt-2 text-xl font-semibold text-slate-900 dark:text-white">{levelConfig.title}</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">{levelConfig.message}</p>
+        </div>
+        <div className="flex flex-col items-start gap-2 sm:items-end">
+          <StatusBadge
+            status={readiness === "ready" ? "approved" : readiness === "caution" ? "in-review" : "rejected"}
+            label={levelConfig.label}
+            size="sm"
+          />
+          <span className="rounded-full border border-current/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700 dark:text-slate-200">
+            {levelConfig.badge}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Activity Timeline ────────────────────────────────────────
 
 function ActivityTimeline({
@@ -111,12 +192,7 @@ function ActivityTimeline({
                 {event.flightPlan.code}
               </Link>
               <span className="ml-2 text-xs font-normal text-slate-400 dark:text-slate-500">
-                {event.createdAt.toLocaleDateString("es-CL", {
-                  day: "numeric",
-                  month: "short",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                {ACTIVITY_DATE_FORMATTER.format(event.createdAt)}
               </span>
             </p>
             <p className="text-sm text-slate-500 dark:text-slate-400">{event.description ?? event.eventType}</p>
@@ -213,7 +289,7 @@ function getPriorityItems(stats: Awaited<ReturnType<typeof getDashboardStats>>):
 
 function NextActionCard({ action }: { action: NextAction }) {
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-6 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-6 shadow-sm dark:shadow-xl dark:shadow-slate-950/10 lg:sticky lg:top-6 lg:z-20">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.26em] text-accent dark:text-cyan-300">{action.label}</p>
@@ -314,9 +390,11 @@ export default async function DashboardPage({
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
-  const session = await requirePageAuth("/dashboard");
-  const stats = await getDashboardStats();
-  const params = await searchParams;
+  const [session, stats, params] = await Promise.all([
+    requirePageAuth("/dashboard"),
+    getDashboardStats(),
+    searchParams,
+  ]);
 
   const userName = session?.user?.name ?? "Usuario";
   const nextAction = getNextAction(stats);
@@ -335,6 +413,8 @@ export default async function DashboardPage({
             Centro operativo de AeroFlow: seguí el flujo recomendado, resolvé pendientes por impacto y mantené el control sin perder contexto.
           </p>
         </div>
+
+        <ReadinessBanner stats={stats} />
 
         <NextActionCard action={nextAction} />
         <WorkflowStrip stages={workflowStages} />
@@ -477,11 +557,16 @@ export default async function DashboardPage({
               </div>
 
               {/* Right: sidebar */}
-              <div className="space-y-6">
+              <div className="space-y-6 xl:sticky xl:top-6 xl:self-start">
                 {/* Quick links */}
                 <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-6 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
-                  <h2 className="mb-4 font-heading text-lg font-semibold text-slate-900 dark:text-white">Acceso rápido</h2>
+                  <h2 className="mb-2 font-heading text-lg font-semibold text-slate-900 dark:text-white">Atajos operativos</h2>
+                  <p className="mb-4 text-sm leading-6 text-slate-500 dark:text-slate-400">Entrá al mapa, creá planes o salí a las entidades clave sin perderte.</p>
                   <div className="space-y-3">
+                    <Link href="/flight-plans" className="flex items-center justify-between rounded-lg border border-cyan-500/20 dark:border-cyan-400/20 bg-cyan-50 dark:bg-cyan-500/10 px-4 py-3 text-sm transition hover:bg-cyan-100 dark:hover:border-cyan-300/30 dark:hover:bg-cyan-500/15">
+                      <span className="text-slate-700 dark:text-cyan-100">Abrir mapa operativo</span>
+                      <span className="text-xs font-medium text-cyan-700 dark:text-cyan-200">planes → mapa</span>
+                    </Link>
                     <Link href="/flight-plans/new" className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/70 px-4 py-3 text-sm transition hover:bg-slate-100 dark:hover:border-accent/30 dark:hover:bg-slate-800/70">
                       <span className="text-slate-700 dark:text-slate-300">Crear plan de vuelo</span>
                       <span className="text-xs text-accent dark:text-cyan-300">+</span>

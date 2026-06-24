@@ -19,17 +19,21 @@
 
 | Product state | Current focus | Branches to review |
 |---|---|---|---|
-| Production-ready platform with DGAC workflow complete, 136 tests, Centro de Conocimiento, and premium landing | Mapa operacional workspace | `ux-dgac-login-fix` |
+| Production-ready platform with DGAC workflow complete, 138 tests, Centro de Conocimiento, and premium landing | Final UX polish: reviewer mode, document preview, dashboard semáforo | `ux-dgac-login-fix` |
 
 ### Current highlights
 
 - **Centro de Conocimiento** (/ayuda): buscador en vivo, flujo operacional de 7 etapas, preview inline de documentos, secciones normativas.
-- **Fase DGAC completa**: permisos, documentos, geometría, checklist, HelpDocs Prisma, 136 tests.
+- **Fase DGAC completa**: permisos, documentos, geometría, checklist, HelpDocs Prisma, 138 tests.
+- **Modo revisor**: comparación read-only y notas locales para revisión de permisos.
+- **Paquete documental**: preflight visual y PDF de vista previa antes de enviar.
+- **Dashboard semáforo**: readiness claro con señales verde/amarillo/rojo.
+- **Modo campo**: toggle persistente para tablets/terreno con controles más grandes.
 - **Landing premium**: hero con CTA gradiente, proof points concretos, stats con datos reales de la plataforma.
 - **Seed demo** (`SEED_DEMO=true`): demo user auto-creado, 4 planes de vuelo (DRAFT/IN_REVIEW/AUTHORIZED/CLOSED), 17 eventos, 5 HelpDocs, 3 notificaciones.
 - **Sistema visual aplicado**: light-first, dark mode secondary, tokens `slate-950` normalizados.
 - **Flujo de misión rediseñado**: wizard de 4 pasos, redirects creation→detail con barra de progreso.
-- **Mapa operacional planificado**: editor geometría con capas y workspace visual como fase futura.
+- **Mapa operacional consolidado**: editor geometría con alertas geográficas y workspace visual ya operativo.
 
 ### Review this first
 

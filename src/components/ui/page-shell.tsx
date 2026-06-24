@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { FlowGuide } from "@/modules/flow-guide/flow-guide";
@@ -32,8 +32,19 @@ const navItemActive =
   "border-accent/40 bg-accent/15 text-accent-strong dark:border-cyan-500/40 dark:bg-cyan-500/15 dark:text-cyan-100 shadow-sm shadow-accent/5 dark:shadow-cyan-500/5";
 const navItemInactive =
   "border-transparent text-slate-600 dark:text-slate-300 hover:border-accent/30 hover:bg-accent/5 hover:text-accent-strong dark:hover:border-cyan-500/30 dark:hover:bg-cyan-500/5 dark:hover:text-cyan-200";
+const FIELD_MODE_STORAGE_KEY = "aeroflow:field-mode";
 
-function NavLinks({ pathname, onClick }: { pathname?: string; onClick?: () => void }) {
+function getActiveNavItem(pathname?: string) {
+  if (!pathname) return ALL_NAV_ITEMS[0];
+
+  return ALL_NAV_ITEMS.reduce((current, item) => {
+    const currentMatch = pathname.startsWith(current.href) ? current.href.length : -1;
+    const nextMatch = pathname.startsWith(item.href) ? item.href.length : -1;
+    return nextMatch > currentMatch ? item : current;
+  }, ALL_NAV_ITEMS[0]);
+}
+
+function NavLinks({ pathname, onClick, fieldMode }: { pathname?: string; onClick?: () => void; fieldMode: boolean }) {
   const { data: session, status } = useSession();
   const isAdmin = status === "authenticated" && session?.user?.role === "ADMIN";
 
@@ -52,14 +63,20 @@ function NavLinks({ pathname, onClick }: { pathname?: string; onClick?: () => vo
     <nav className="space-y-1.5">
       {visibleItems.map((item) => {
         const active = isActive(item.href);
+        const className = item.primary
+          ? active
+            ? navItemPrimary
+            : `${navItemInactive} border-slate-200/80 dark:border-slate-800/60`
+          : active
+            ? navItemActive
+            : navItemInactive;
         return (
           <Link
             key={item.href}
             href={item.href}
             onClick={onClick}
-            className={`${navItemBase} ${
-              item.primary ? navItemPrimary : active ? navItemActive : navItemInactive
-            }`}
+            aria-current={active ? "page" : undefined}
+            className={`${navItemBase} ${fieldMode ? "min-h-12 px-5 py-3 text-base" : "px-4 py-2.5 text-sm"} ${className}`}
           >
             {item.label}
           </Link>
@@ -71,11 +88,29 @@ function NavLinks({ pathname, onClick }: { pathname?: string; onClick?: () => vo
 
 // ─── Sidebar content (shared between mobile + desktop) ──
 
-function SidebarContent({ pathname, onClick }: { pathname?: string; onClick?: () => void }) {
+function SidebarContent({ pathname, onClick, fieldMode }: { pathname?: string; onClick?: () => void; fieldMode: boolean }) {
   const { data: session } = useSession();
+  const activeItem = getActiveNavItem(pathname);
 
   return (
     <>
+      <div className={`mb-5 rounded-xl border border-slate-200/80 dark:border-slate-800/70 bg-slate-50/80 dark:bg-slate-900/40 text-left shadow-sm dark:shadow-none ${fieldMode ? "p-5" : "p-4"}`}>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500 dark:text-slate-400">
+          Sección actual
+        </p>
+        <h2 className={`mt-2 font-heading font-semibold text-slate-900 dark:text-white ${fieldMode ? "text-[1.35rem]" : "text-xl"}`}>
+          {activeItem?.label ?? "Panel operativo"}
+        </h2>
+        <p className={`mt-2 leading-5 text-slate-500 dark:text-slate-400 ${fieldMode ? "text-[0.95rem]" : "text-sm"}`}>
+          Seguí el flujo operativo sin perderte: panel, planes, mapa, documentos y revisión.
+        </p>
+        {fieldMode && (
+          <p className="mt-3 rounded-lg border border-accent/20 bg-accent/5 px-3 py-2 text-xs font-medium text-accent-strong dark:border-cyan-400/20 dark:bg-cyan-500/10 dark:text-cyan-100">
+            Modo campo activo: controles más grandes y navegación más simple.
+          </p>
+        )}
+      </div>
+
       <div className="mb-6 space-y-1 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent dark:text-cyan-300">
           AeroFlow
@@ -84,10 +119,10 @@ function SidebarContent({ pathname, onClick }: { pathname?: string; onClick?: ()
           Espacio operacional
         </h2>
         <p className="text-sm leading-5 text-slate-500 dark:text-slate-400">
-          Base de datos maestra para operaciones de vuelo, documentos y flujos geoespaciales.
+          Empezá por Panel operativo o Planes de vuelo para abrir el mapa, la documentación y los permisos.
         </p>
       </div>
-      <NavLinks pathname={pathname} onClick={onClick} />
+      <NavLinks pathname={pathname} onClick={onClick} fieldMode={fieldMode} />
 
       {/* User menu */}
       {session?.user && (
@@ -122,13 +157,34 @@ function SidebarContent({ pathname, onClick }: { pathname?: string; onClick?: ()
 export function PageShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [fieldMode, setFieldMode] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(FIELD_MODE_STORAGE_KEY);
+      setFieldMode(stored === "true");
+    } catch {
+      setFieldMode(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(FIELD_MODE_STORAGE_KEY, String(fieldMode));
+    } catch {
+      // ignore storage errors
+    }
+  }, [fieldMode]);
 
   return (
-    <div className="min-h-screen bg-transparent text-slate-900 dark:text-slate-100">
+    <div
+      className={`min-h-screen bg-transparent text-slate-900 dark:text-slate-100 ${fieldMode ? "[--page-shell-gap:1rem]" : "[--page-shell-gap:1.5rem]"}`}
+      data-field-mode={fieldMode ? "true" : "false"}
+    >
       {/* ── Mobile top bar ─────────────────────────────── */}
-      <div className="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800/80 bg-white/90 dark:bg-slate-950/90 px-4 py-3 backdrop-blur lg:hidden">
+      <div className={`sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800/80 bg-white/90 dark:bg-slate-950/90 px-4 py-3 backdrop-blur lg:hidden ${fieldMode ? "shadow-sm" : ""}`}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-1">
             <button
               type="button"
               onClick={() => setMobileNavOpen(!mobileNavOpen)}
@@ -140,10 +196,26 @@ export function PageShell({ children }: { children: ReactNode }) {
                 AeroFlow
               </span>
             </button>
+            <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+              {getActiveNavItem(pathname)?.label ?? "Panel operativo"}
+            </p>
           </div>
-          <NotificationPanel />
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setFieldMode((current) => !current)}
+              aria-pressed={fieldMode}
+              className={`rounded-lg border px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] transition ${fieldMode ? "border-accent/30 bg-accent/10 text-accent-strong dark:border-cyan-400/30 dark:bg-cyan-500/10 dark:text-cyan-100" : "border-slate-300 bg-white text-slate-600 dark:border-slate-700/80 dark:bg-slate-950 dark:text-slate-300"}`}
+              >
+                {fieldMode ? "Salir campo" : "Modo campo"}
+              </button>
+              <NotificationPanel />
+            </div>
+          </div>
+          <p className="mt-2 text-[11px] leading-5 text-slate-500 dark:text-slate-400">
+            Modo campo agranda controles y simplifica la navegación para usar la app en terreno.
+          </p>
         </div>
-      </div>
 
       {/* ── Mobile nav overlay ─────────────────────────── */}
       {mobileNavOpen && (
@@ -155,31 +227,49 @@ export function PageShell({ children }: { children: ReactNode }) {
 
       {/* ── Mobile sidebar ─────────────────────────────── */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-72 shrink-0 border-r border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/95 p-5 shadow-lg dark:shadow-2xl dark:shadow-cyan-950/10 backdrop-blur transition-transform duration-300 lg:hidden ${
+        className={`fixed inset-y-0 left-0 z-40 w-72 shrink-0 border-r border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/95 ${fieldMode ? "p-6" : "p-5"} shadow-lg dark:shadow-2xl dark:shadow-cyan-950/10 backdrop-blur transition-transform duration-300 lg:hidden ${
           mobileNavOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <SidebarContent pathname={pathname} onClick={() => setMobileNavOpen(false)} />
+        <SidebarContent pathname={pathname} onClick={() => setMobileNavOpen(false)} fieldMode={fieldMode} />
       </aside>
 
       {/* ── Main content ───────────────────────────────── */}
-      <div className="mx-auto flex min-h-screen w-full max-w-[1600px] gap-6 px-4 py-6 sm:px-6 lg:px-8">
+      <div className={`mx-auto flex min-h-screen w-full max-w-[1600px] gap-[var(--page-shell-gap)] px-4 py-6 sm:px-6 lg:px-8 ${fieldMode ? "lg:px-6" : ""}`}>
         {/* Desktop sidebar (always visible) */}
-        <aside className="hidden w-64 shrink-0 lg:block">
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/55 p-5 shadow-sm dark:shadow-2xl dark:shadow-cyan-950/10 lg:sticky lg:top-6">
-            <SidebarContent pathname={pathname} />
+        <aside className={`hidden shrink-0 lg:block ${fieldMode ? "w-72" : "w-64"}`}>
+          <div className={`rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/55 ${fieldMode ? "p-6" : "p-5"} shadow-sm dark:shadow-2xl dark:shadow-cyan-950/10 lg:sticky lg:top-6`}>
+            <SidebarContent pathname={pathname} fieldMode={fieldMode} />
           </div>
         </aside>
 
         <main className="min-w-0 flex-1">
           {/* Top bar */}
           <div className="mb-4 hidden items-center justify-end lg:flex">
-            <NotificationPanel />
+            <div className="flex items-center gap-3">
+              <div className="hidden text-right xl:block">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+                  Uso en terreno
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Activalo para ver controles más grandes y menos ruido visual.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFieldMode((current) => !current)}
+                aria-pressed={fieldMode}
+                className={`rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] transition ${fieldMode ? "border-accent/30 bg-accent/10 text-accent-strong dark:border-cyan-400/30 dark:bg-cyan-500/10 dark:text-cyan-100" : "border-slate-300 bg-white text-slate-600 dark:border-slate-700/80 dark:bg-slate-950 dark:text-slate-300"}`}
+              >
+                {fieldMode ? "Salir campo" : "Modo campo"}
+              </button>
+              <NotificationPanel />
+            </div>
           </div>
           <ErrorBoundary>{children}</ErrorBoundary>
         </main>
       </div>
-      <FlowGuide />
+      {!fieldMode && <FlowGuide />}
     </div>
   );
 }

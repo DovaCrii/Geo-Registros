@@ -7,6 +7,8 @@ Si vienes desde GitHub y quieres entender rapido el estado del proyecto:
 3. `ROADMAP.md`
 4. `TASKS.md`
 5. `docs/OPENCODE_HANDOFF.md`
+6. `docs/GIT_WORKFLOW_ORCHESTRATOR.md` — protocolo de orquestación por Git
+7. `docs/VIBECODING_UX_UI.md` — flujo de diseño e implementación visual
 
 ## Contexto corto para IA
 - `AGENTS.md`: reglas de colaboracion OpenCode + Codex.
@@ -14,6 +16,9 @@ Si vienes desde GitHub y quieres entender rapido el estado del proyecto:
 - `ROADMAP.md`: fases de avance.
 - `TASKS.md`: tareas pequeñas y validables.
 - `docs/OPENCODE_HANDOFF.md`: siguiente handoff para ejecucion.
+- `docs/GIT_WORKFLOW_ORCHESTRATOR.md`: flujo de branches, commits y handoffs automatizados.
+- `docs/VIBECODING_UX_UI.md`: principios de diseño, patrones y mapa de calor UX/UI.
+- `docs/HANDOFF/GIT_HANDOFF.md`: estado más reciente post-push (generado automáticamente).
 
 ## Documentacion de producto
 - `README.md`: vision general, stack, progreso y quick start.

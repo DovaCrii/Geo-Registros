@@ -1,0 +1,11 @@
+graph TD
+    A[Usuario] --> B[Autenticación]
+    B --> C{Autenticado?}
+    C -- Sí --> D[Acceso a Funcionalidades]
+    C -- No --> E[Redirigido a Login]
+    D --> F[Seleccionar Operación]
+    F --> G{Operación Completa?}
+    G -- Sí --> H[Generar Reporte]
+    G -- No --> I[Continuar Operación]
+    H --> J[Enviar Reporte]
+    I --> F

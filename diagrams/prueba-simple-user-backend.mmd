@@ -1,0 +1,8 @@
+graph TD
+  User[Usuario] -->|Autenticación| Auth[Backend]
+  Auth -->|Validación| DB[Base de Datos]
+  DB -->|Datos del Usuario| User
+  User -->|Realiza Acción| Backend
+  Backend -->|Procesa y Valida| DB
+  DB -->|Actualiza Estado| Backend
+  Backend -->|Devuelve Respuesta| User

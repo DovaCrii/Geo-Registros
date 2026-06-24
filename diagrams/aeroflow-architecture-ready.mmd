@@ -1,0 +1,45 @@
+flowchart TB
+  subgraph Personas
+    U[Operador]
+    R[Revisor]
+    A[Admin]
+  end
+
+  subgraph App[Geo-Registros / AeroFlow]
+    FE[Next.js App Router]
+    UI[UI operacional]
+    MAP[Mapa geoespacial]
+    SA[Server Actions]
+    RH[Route Handlers]
+    AUTH[NextAuth y roles]
+    PRISMA[Prisma]
+    DOCS[Documentos]
+    TRACE[Trazabilidad]
+    EXP[Exportaciones PDF Excel KML DXF]
+  end
+
+  subgraph Data[Datos y almacenamiento]
+    DB[(SQLite local)]
+    DBP[(PostgreSQL PostGIS planned)]
+    FS[(Storage local / future object storage)]
+  end
+
+  subgraph Integrations[Integraciones]
+    WEATHER[Clima Open-Meteo]
+    MAIL[Correo Resend]
+  end
+
+  U --> FE
+  R --> FE
+  A --> FE
+  FE --> UI
+  UI --> MAP
+  UI --> AUTH
+  SA --> PRISMA --> DB
+  PRISMA -. planned .-> DBP
+  SA --> DOCS --> FS
+  SA --> TRACE
+  SA --> EXP
+  SA --> WEATHER
+  SA --> MAIL
+  MAP --> UI

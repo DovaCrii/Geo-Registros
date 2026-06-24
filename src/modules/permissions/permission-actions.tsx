@@ -3,6 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useToast } from "@/lib/toast-context";
+import {
+  getTransitionLoadingMessage,
+  getTransitionSuccessMessage,
+} from "@/modules/permissions/permission-actions.utils";
 
 const VALID_TRANSITIONS: Record<string, string[]> = {
   DRAFT: ["IN_REVIEW"],
@@ -93,7 +97,7 @@ export function PermissionActions({
         throw new Error(message);
       }
 
-      toast("success", `Permiso ${TRANSITION_LABELS[newStatus]?.toLowerCase() ?? newStatus}`);
+      toast("success", getTransitionSuccessMessage(newStatus, currentStatus));
       router.refresh();
     } catch (err) {
       const raw = err instanceof Error ? err.message : "Unexpected error.";
@@ -111,6 +115,13 @@ export function PermissionActions({
 
   return (
     <div className="space-y-3">
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600 dark:border-slate-800/80 dark:bg-slate-950/45 dark:text-slate-400">
+        <span>
+          Microinteracción: al cambiar el estado, el botón se desactiva, muestra progreso y luego refresca la vista.
+        </span>
+        {pending ? <span className="font-semibold text-cyan-700 dark:text-cyan-300">{getTransitionLoadingMessage(pending)}</span> : null}
+      </div>
+
       {error ? (
         <div className="rounded-2xl border border-rose-500/30 bg-rose-50 px-4 py-2 dark:bg-rose-500/10">
           <p className="text-xs text-rose-700 dark:text-rose-300">{error}</p>
@@ -135,9 +146,10 @@ export function PermissionActions({
               key={state}
               type="button"
               disabled={pending === state || Boolean(blockedReason)}
+              aria-busy={pending === state}
               title={blockedReason ?? undefined}
               onClick={() => handleTransition(state)}
-              className={`inline-flex items-center justify-center rounded-2xl border px-3 py-1.5 text-xs font-medium transition disabled:opacity-40 ${toneClass}`}
+              className={`inline-flex items-center justify-center rounded-2xl border px-3 py-1.5 text-xs font-medium transition duration-150 disabled:cursor-not-allowed disabled:opacity-40 disabled:scale-[0.98] ${pending === state ? "animate-pulse" : ""} ${toneClass}`}
             >
               {pending === state ? "Procesando..." : TRANSITION_LABELS[state] ?? state}
             </button>

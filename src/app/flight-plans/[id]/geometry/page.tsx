@@ -53,7 +53,7 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
           <PageHeader
             eyebrow="Workspace — Mapa operacional"
             title={`${record.code} · área de operación`}
-            description="Workspace visual para dibujar la geometría de vuelo, medir áreas, controlar capas y preparar el permiso DGAC."
+            description="Workspace visual para dibujar la geometría de vuelo, medir áreas, controlar capas y preparar el permiso DGAC desde una sola vista."
             actions={
               <div className="flex flex-wrap items-center gap-2">
                 <Link
@@ -69,13 +69,32 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
           />
 
           {canEdit ? (
-            <GeometryEditorWrapper
-              title="Workspace visual"
-              description="Dibujá, medí, importá y exportá geometría desde el mapa. El GeoJSON interno se mantiene como formato avanzado."
-              action={updateFlightPlanGeometry.bind(null, record.id)}
-              flightPlanId={record.id}
-              initialPayload={record.geometryJson ? JSON.stringify(record.geometryJson, null, 2) : ""}
-            />
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/85 p-4 text-sm text-slate-600 shadow-sm dark:border-slate-800/80 dark:bg-slate-950/45 dark:text-slate-300">
+                <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+                  <p>
+                    <span className="font-semibold text-slate-900 dark:text-white">Mapa primero:</span> dibujá, medí y ajustá el área sin salir del editor.
+                  </p>
+                  <p>
+                    <span className="font-semibold text-slate-900 dark:text-white">Acciones:</span> importar referencias, exportar entregables y guardar el GeoJSON canónico.
+                  </p>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+                  <span className="rounded-full border border-slate-200 bg-white px-3 py-1 dark:border-slate-800/80 dark:bg-slate-950/70">Dibujar</span>
+                  <span className="rounded-full border border-slate-200 bg-white px-3 py-1 dark:border-slate-800/80 dark:bg-slate-950/70">Medir</span>
+                  <span className="rounded-full border border-slate-200 bg-white px-3 py-1 dark:border-slate-800/80 dark:bg-slate-950/70">Importar</span>
+                  <span className="rounded-full border border-slate-200 bg-white px-3 py-1 dark:border-slate-800/80 dark:bg-slate-950/70">Exportar</span>
+                </div>
+              </div>
+
+              <GeometryEditorWrapper
+                title="Workspace visual"
+                description="Dibujá, medí, importá y exportá geometría desde el mapa. El GeoJSON interno se mantiene como formato avanzado."
+                action={updateFlightPlanGeometry.bind(null, record.id)}
+                flightPlanId={record.id}
+                initialPayload={record.geometryJson ? JSON.stringify(record.geometryJson, null, 2) : ""}
+              />
+            </div>
           ) : (
             <DetailPanel title="Modo revisión" description="Este perfil puede ver la geometría, pero no editarla.">
               <div className="space-y-4 text-sm leading-6 text-slate-600 dark:text-slate-300">

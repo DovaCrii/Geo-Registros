@@ -48,6 +48,18 @@ export interface SidebarConfig {
   };
 }
 
+/** Calendar-style alternate view for a list page. */
+export interface CalendarViewConfig<Row> {
+  /** Date field used to group items. */
+  field: Extract<keyof Row, string>;
+  /** Toggle label shown in the page. */
+  label: string;
+  /** Optional helper text shown in the alternate view. */
+  description?: string;
+  /** Custom renderer for each grouped item. */
+  renderItem: (row: Row) => ReactNode;
+}
+
 /** A header action button rendered in the page header area. */
 export interface HeaderAction {
   /** Link href. */
@@ -88,6 +100,10 @@ export interface ListConfig<Row> {
   reorderKey?: string;
   /** Sidebar configuration (right panel). */
   sidebar?: SidebarConfig;
+  /** Optional calendar-style alternate view. */
+  calendarView?: CalendarViewConfig<Row>;
+  /** Base path used to build view toggle links. */
+  basePath?: string;
   /** Search input placeholder. */
   searchPlaceholder?: string;
   /** Number of rows per page. Default 10. */

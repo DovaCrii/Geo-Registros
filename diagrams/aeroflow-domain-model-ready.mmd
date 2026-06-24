@@ -1,0 +1,75 @@
+classDiagram
+  class User {
+    id
+    email
+    fullName
+    hashedPassword
+    role
+    active
+  }
+
+  class Account
+  class Session
+  class VerificationToken
+  class CostCenter {
+    code
+    name
+    status
+  }
+  class Client {
+    code
+    name
+    contactName
+    contactEmail
+  }
+  class Drone {
+    code
+    serialNumber
+    model
+    insuranceExpiry
+  }
+  class Operator {
+    code
+    fullName
+    email
+    licenseNumber
+    licenseExpiry
+  }
+  class FlightPlan {
+    code
+    title
+    operationDate
+    permissionStatus
+    geometryJson
+    dgacChecklist
+  }
+  class PermissionEvent {
+    eventType
+    fromStatus
+    toStatus
+    metadata
+  }
+  class Document {
+    docType
+    fileName
+    filePath
+    mimeType
+  }
+  class Notification
+  class EmailLog
+  class HelpDoc
+
+  User "1" --> "many" Account
+  User "1" --> "many" Session
+  User "1" --> "many" Notification
+
+  CostCenter "1" --> "many" Drone
+  CostCenter "1" --> "many" Operator
+  CostCenter "1" --> "many" FlightPlan
+
+  Client "1" --> "many" FlightPlan
+  Drone "1" --> "many" FlightPlan
+  Operator "1" --> "many" FlightPlan
+  FlightPlan "1" --> "many" PermissionEvent
+  FlightPlan "1" --> "many" Document
+  FlightPlan "1" --> "many" EmailLog

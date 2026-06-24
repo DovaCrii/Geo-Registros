@@ -151,26 +151,44 @@ function HeroSection() {
               operaciones listas para auditar
             </span>
           </h1>
-          <p className="max-w-lg text-base leading-7 text-slate-600 dark:text-slate-400">
+          <p className="max-w-xl text-base leading-7 text-slate-600 dark:text-slate-400">
             AeroFlow reúne misión, mapa, capas, documentos, permisos DGAC/SIGO y reportes en un
             flujo profesional para equipos de ingeniería, minería, topografía e infraestructura.
+          </p>
+          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-50 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-700 dark:border-cyan-500/20 dark:bg-cyan-500/10 dark:text-cyan-200">
+            Entrada rápida al workspace operativo
+          </div>
+          <p className="max-w-lg text-sm leading-6 text-slate-500 dark:text-slate-400">
+            El mapa es la puerta de entrada: desde ahí llegás a permisos, geometría, documentos y revisión.
           </p>
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <Link
               href="/auth/login"
-                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-7 py-3 text-sm font-medium text-white shadow-lg shadow-cyan-500/20 transition hover:from-cyan-400 hover:to-emerald-400 hover:shadow-cyan-500/30 dark:from-cyan-400 dark:to-emerald-400 dark:text-slate-950 dark:hover:from-cyan-300 dark:hover:to-emerald-300"
+              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-7 py-3 text-sm font-medium text-white shadow-lg shadow-cyan-500/20 transition hover:from-cyan-400 hover:to-emerald-400 hover:shadow-cyan-500/30 dark:from-cyan-400 dark:to-emerald-400 dark:text-slate-950 dark:hover:from-cyan-300 dark:hover:to-emerald-300"
             >
               Probar demo
             </Link>
             <Link
-              href="#proceso"
-              className="inline-flex items-center justify-center rounded-xl px-2 py-3 text-sm font-medium text-slate-600 transition hover:text-cyan-700 dark:text-slate-400 dark:hover:text-cyan-200"
+              href="/auth/login?callbackUrl=%2Fflight-plans"
+               className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-medium text-slate-700 shadow-sm transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-cyan-400/40 dark:hover:bg-cyan-500/10 dark:hover:text-cyan-100"
+             >
+               Ir al workspace de mapas
+             </Link>
+             <Link
+               href="#proceso"
+               className="inline-flex items-center justify-center rounded-xl px-2 py-3 text-sm font-medium text-slate-600 transition hover:text-cyan-700 dark:text-slate-400 dark:hover:text-cyan-200"
             >
               Ver workflow
             </Link>
           </div>
+          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-50 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-700 dark:border-cyan-500/20 dark:bg-cyan-500/10 dark:text-cyan-200">
+            Acceso directo al workspace operativo
+          </div>
+          <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
+            Después de ingresar, abrís un plan de vuelo y entrás directo al área de operación con mapa, geometría y documentos.
+          </p>
 
-          <div className="grid gap-3 pt-4 sm:grid-cols-3">
+          <div className="grid gap-3 pt-6 sm:grid-cols-3">
             {proofPoints.map((item) => (
               <div key={item.value} className="rounded-2xl border border-cyan-500/15 bg-white/85 p-4 shadow-sm shadow-cyan-950/5 backdrop-blur dark:border-cyan-500/15 dark:bg-slate-950/45">
                 <p className="font-mono text-2xl font-bold text-cyan-700 dark:text-cyan-200">{item.value}</p>
@@ -179,7 +197,7 @@ function HeroSection() {
             ))}
           </div>
 
-          <div className="grid gap-3 pt-4 sm:grid-cols-3">
+          <div className="grid gap-3 pt-6 sm:grid-cols-3">
             {pillars.map((pillar) => (
               <div key={pillar.title} className="rounded-2xl border border-slate-200 bg-white/90 p-4 backdrop-blur dark:border-slate-800/60 dark:bg-slate-950/45">
                 <p className="text-sm font-semibold text-slate-900 dark:text-white">{pillar.title}</p>
@@ -595,10 +613,10 @@ function DashboardPreview() {
         <div className="mx-auto mb-16 max-w-2xl text-center">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">Dashboard</p>
           <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
-            Visualizá el estado operativo completo
+            Workspace operativo: estado, acción y mapa
           </h2>
           <p className="text-base leading-7 text-slate-600 dark:text-slate-400">
-            Mapa central, panel operativo, capas activas e indicadores de avance en tiempo real.
+            Mapa central, panel operativo, capas activas e indicadores de avance para tomar decisiones sin perder contexto.
           </p>
         </div>
 
@@ -770,7 +788,7 @@ function CtaSection() {
   return (
     <section id="demo" className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-white/95 p-12 text-center shadow-2xl shadow-cyan-950/5 backdrop-blur dark:border-slate-800/60 dark:bg-gradient-to-b dark:from-slate-900/80 dark:to-slate-950/60">
+          <div className="mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-white/95 p-12 text-center shadow-2xl shadow-cyan-950/5 backdrop-blur dark:border-slate-800/60 dark:bg-gradient-to-b dark:from-slate-900/80 dark:to-slate-950/60">
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">Comenzá ahora</p>
           <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
             Listo para probar AeroFlow

@@ -24,6 +24,7 @@ export function UsersPageClient({
       rows={rows}
       total={total}
       searchParams={searchParams}
+      withShell={false}
       batchHandlers={{
         deactivate: batchDeactivateUsers,
         reactivate: batchReactivateUsers,

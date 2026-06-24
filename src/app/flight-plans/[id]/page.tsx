@@ -3,6 +3,7 @@
 import { AlertCard } from "@/components/ui/alert-card";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { DetailPanel } from "@/components/ui/detail-panel";
+import { HelpHint } from "@/components/ui/help-hint";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -13,6 +14,7 @@ import { PermissionStatusBadge } from "@/modules/permissions/permission-status-b
 import { PermissionTimeline } from "@/modules/permissions/permission-timeline";
 import { DocumentUpload } from "@/modules/permissions/document-upload";
 import { FlightPlanChecklist } from "@/modules/dgac/flight-plan-checklist";
+import { ReviewerNotes } from "@/modules/reviewer/reviewer-notes";
 import {
   DGAC_CHECKLIST_ITEMS,
   deriveChecklistState,
@@ -87,6 +89,7 @@ export default async function FlightPlanDetailPage({
   const { id } = await params;
   const query = await searchParams;
   const activeTab = parseTab(query.tab);
+  const reviewMode = query.review === "1" || query.mode === "review";
   const session = await requirePageAuth(`/flight-plans/${id}`);
   const canEdit = session?.user?.role ? canEditEntity(String(session.user.role)) : false;
 
@@ -225,6 +228,16 @@ export default async function FlightPlanDetailPage({
             description="Gestioná el registro operativo, el estado del permiso, la documentación y la auditoría."
             actions={
               <>
+                <Link
+                  href={`/flight-plans/${record.id}?tab=5${reviewMode ? "" : "&review=1"}`}
+                  className={`inline-flex items-center justify-center rounded-lg border px-4 py-2.5 text-sm font-medium transition ${
+                    reviewMode
+                      ? "border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700/80 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:bg-slate-800"
+                      : "border-cyan-500/30 bg-cyan-50 text-cyan-700 hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-400/20"
+                  }`}
+                >
+                  {reviewMode ? "Salir de revisión" : "Entrar en revisión"}
+                </Link>
                 <a
                   href={`/api/reports/flight-plan/${record.id}`}
                   className="inline-flex items-center gap-2 rounded-lg border border-success/20 dark:border-emerald-400/30 bg-success/5 dark:bg-emerald-500/15 px-4 py-2.5 text-sm font-medium text-success dark:text-emerald-100 transition hover:border-success/30 dark:hover:border-emerald-300/50 hover:bg-success/10 dark:hover:bg-emerald-400/20"
@@ -235,9 +248,10 @@ export default async function FlightPlanDetailPage({
                 </a>
                 <Link
                   href={`/flight-plans/${record.id}/geometry`}
-                  className="inline-flex items-center justify-center rounded-lg border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-accent-strong dark:text-cyan-100 transition hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-accent-strong dark:text-cyan-100 transition hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20"
                 >
-                  Ir al área de operación
+                  <span aria-hidden="true">🗺</span>
+                  Abrir mapa operativo
                 </Link>
                 <StatusBadge
                   status={
@@ -259,6 +273,20 @@ export default async function FlightPlanDetailPage({
               </>
             }
           />
+
+          <div className="rounded-xl border border-slate-200 bg-slate-50/85 p-4 text-sm text-slate-600 shadow-sm dark:border-slate-800/80 dark:bg-slate-950/45 dark:text-slate-300">
+            <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+              <p>
+                <span className="font-semibold text-slate-900 dark:text-white">Mapa operativo:</span> revisá el área, la geometría y el contexto visual del vuelo desde un solo lugar.
+              </p>
+              <p>
+                <span className="font-semibold text-slate-900 dark:text-white">Modo revisor:</span>{" "}
+                {reviewMode
+                  ? "está activo para revisar el plan sin editar datos operativos."
+                  : "usalo para comparar y revisar el plan sin tocar datos operativos."}
+              </p>
+            </div>
+          </div>
 
           <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/55 p-3 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
             {/* Progress bar */}
@@ -424,11 +452,29 @@ export default async function FlightPlanDetailPage({
 
           {activeTab === 5 && (
             <div className="space-y-6">
+              {reviewMode ? (
+                <ReviewerNotes
+                  flightPlanId={record.id}
+                  summary={[
+                    { label: "Estado actual", value: record.permissionStatus, tone: checklistReview.canSubmit ? "success" : "warning" },
+                    { label: "Checklist DGAC", value: checklistReview.canSubmit ? "Completa" : `${checklistReview.missingItems.length} faltantes`, tone: checklistReview.canSubmit ? "success" : "danger" },
+                    { label: "Documentos", value: `${documents.length} adjuntos`, tone: documents.length > 0 ? "success" : "warning" },
+                    { label: "Historial", value: `${permissionEvents.length} eventos`, tone: permissionEvents.length > 0 ? "info" : "neutral" },
+                  ]}
+                  missingItems={checklistReview.missingItems.map((item) => item.label)}
+                />
+              ) : null}
+
               <DetailPanel title="Flujo de permisos" description="Gestioná el estado del permiso y sus transiciones.">
                 <div className="space-y-6">
                   <div className="rounded-lg border border-slate-200 bg-white px-4 py-3 dark:border-slate-800/80 dark:bg-slate-950/45">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-medium text-slate-900 dark:text-white">Estado de preparación DGAC</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium text-slate-900 dark:text-white">Estado de preparación DGAC</p>
+                        <HelpHint title="Estado de preparación">
+                          Resume si la checklist, los documentos y la geometría ya están listos para enviar el permiso.
+                        </HelpHint>
+                      </div>
                       <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${checklistReview.canSubmit ? "bg-success/10 dark:bg-emerald-500/15 text-success dark:text-emerald-200" : "bg-status-warning/10 dark:bg-amber-500/15 text-status-warning dark:text-amber-200"}`}>
                         {checklistReview.canSubmit ? "Listo para envío" : "Pendiente"}
                       </span>
@@ -458,17 +504,33 @@ export default async function FlightPlanDetailPage({
                   ) : null}
 
                   <div>
-                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Estado actual</p>
+                    <div className="mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                      <span>Estado actual</span>
+                      <HelpHint title="Estado actual">
+                        Este es el estado operacional del permiso. Las transiciones disponibles dependen de este valor.
+                      </HelpHint>
+                    </div>
                     <PermissionStatusBadge status={record.permissionStatus} />
                   </div>
 
                   <div>
-                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Transiciones disponibles</p>
-                    <PermissionActions
-                      flightPlanId={record.id}
-                      currentStatus={record.permissionStatus}
-                      transitionBlocks={transitionBlocks}
-                    />
+                    <div className="mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                      <span>Transiciones disponibles</span>
+                      <HelpHint title="Transiciones">
+                        Solo aparecen los cambios válidos desde el estado actual. Si alguna acción está bloqueada, la checklist DGAC o los permisos no alcanzan.
+                      </HelpHint>
+                    </div>
+                    {reviewMode ? (
+                      <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600 dark:border-slate-800/80 dark:bg-slate-950/60 dark:text-slate-400">
+                        Modo revisor activo: las transiciones quedan deshabilitadas para mantener esta vista en solo lectura.
+                      </div>
+                    ) : (
+                      <PermissionActions
+                        flightPlanId={record.id}
+                        currentStatus={record.permissionStatus}
+                        transitionBlocks={transitionBlocks}
+                      />
+                    )}
                   </div>
                 </div>
               </DetailPanel>

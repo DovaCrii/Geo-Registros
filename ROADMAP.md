@@ -53,16 +53,17 @@
 - Import/export KML, KMZ, DXF funcional. ✅
 - Indicador de área/perímetro flotante sobre el mapa. ✅
 
-## Fase 8 - RBAC y perfiles de revisión 🔜 NUEVA
-- Separar perfiles operativos de perfiles de revisión/lectura.
-- Bloquear edición, borrado y transición de permisos según rol.
-- Dejar admin con control total y revisores con acceso limitado y auditable.
-- Reflejar permisos también en la UI: botones, menús y acciones invisibles o deshabilitadas.
-- Revisar `requirePermission`, `requirePageAuth` y acciones de server para aplicar el contrato de forma consistente.
+## Fase 8 - RBAC y perfiles de revisión ✅ COMPLETADA (base)
+- Separar perfiles operativos de perfiles de revisión/lectura. ✅
+- Bloquear edición, borrado y transición de permisos según rol. ✅
+- Dejar admin con control total y revisores con acceso limitado y auditable. ✅
+- Reflejar permisos también en la UI: botones, menús y acciones invisibles o deshabilitadas. ✅
+- Revisar `requirePermission`, `requirePageAuth` y acciones de server para aplicar el contrato de forma consistente. ✅
+- **Nota:** Vista Revisor con modo comparación y comentarios se delega a Fase 11 (T-033).
 
 ## Fase 9 - UX/UI refinada y mapa avanzado 🔜 NUEVA
 - Centrar y alinear mejor la información, tipografía y bloques de contenido.
-- Unificar colores de secciones/etapas con semántica útil, no decorativa.
+- Unificar colores de secciones/etapas con semántica útil, no decorativa. ✅ (parcial — StatusBadge)
 - Mantener el panel operativo siempre destacado, aunque cambie la sección activa.
 - Agregar navegación clara para volver a inicio/panel donde corresponda.
 - Rediseñar el mapa como workspace integrado con panel lateral más ordenado y herramientas más intuitivas.
@@ -70,19 +71,24 @@
 - Mantener GeoJSON fuera del flujo normal y consolidar la barra lateral de intercambio técnico.
 - Revisar errores de guardado/acciones sin uso y distribución de controles.
 
-## Fase 10 — UX/UI Operacional y Semántica Visual 🔜 NUEVA
-- Implementar sistema de colores semánticos por estado operacional (DRAFT/IN_REVIEW/AUTHORIZED/REJECTED/CLOSED).
-- Crear componente `StatusBadge` reutilizable y aplicarlo en lista, detalle y dashboard.
-- Agregar validación inline en wizard de misión (paso a paso, no al final).
-- Implementar panel operativo persistente (sticky bar con misión activa + clima + alertas).
-- Crear vista "Calendario de Operaciones" alternativa a tabla.
-- Integrar tooltips DGAC inline en formulario de permiso (reutilizar HelpDocs).
-- Diseñar empty states con acción contextual en todos los módulos.
-- Implementar Modo Campo (Field Mode) para tablets en terreno.
-- Agregar alertas geográficas en tiempo real (intersección con zonas restringidas).
+## Fase 10 — UX/UI Operacional y Semántica Visual 🚧 EN PROGRESO
+- Implementar sistema de colores semánticos por estado operacional (DRAFT/IN_REVIEW/AUTHORIZED/REJECTED/CLOSED). ✅ — StatusBadge con 5 variantes aplicado en lista, detalle y dashboard.
+- Crear componente `StatusBadge` reutilizable y aplicarlo en lista, detalle y dashboard. ✅
+- Agregar validación inline en wizard de misión (paso a paso, no al final). ✅ — controlled inputs, errores visuales, draft en localStorage.
+- Implementar panel operativo persistente (sticky bar con misión activa + clima + alertas). ✅ T-026
+- Crear vista "Calendario de Operaciones" alternativa a tabla. ✅ T-030
+- Diseñar empty states con acción contextual en todos los módulos. ✅ T-029
+- Implementar Modo Campo (Field Mode) para tablets en terreno. ✅ T-031
+- Agregar alertas geográficas en tiempo real (intersección con zonas restringidas). ✅ T-027
+- Dashboard semáforo operativo — próxima misión + clima. ✅ T-035
+- Integrar tooltips DGAC inline en formulario de permiso (reutilizar HelpDocs). 🔜 T-028
 
 ## Fase 11 — Trazabilidad y Documentación 🔜 NUEVA
-- Preview de paquete documental antes de enviar a DGAC.
-- Vista Revisor con modo comparación y comentarios tipo pin.
-- Microinteracciones de estado (transiciones animadas, toasts contextuales).
+- Preview de paquete documental antes de enviar a DGAC. ✅ T-032
+- Vista Revisor con modo comparación y comentarios tipo pin. ✅ T-033
+- Microinteracciones de estado (transiciones animadas, toasts contextuales). ✅ T-034
 - Consolidar bitácora de avance y documentación técnica.
+
+## Prioridad actual
+- T-023 UX/UI refinada transversal y mapa avanzado (polish restante).
+- Figma handoff y consistencia visual final.

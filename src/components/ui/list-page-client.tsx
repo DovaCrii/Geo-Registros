@@ -113,6 +113,8 @@ type ListPageClientProps<Row extends { id: string }> = {
   searchParams: Record<string, string | undefined>;
   /** Server-action handlers keyed by batch action handler name. */
   batchHandlers?: Record<string, (ids: string[]) => Promise<void>>;
+  /** Set false when a route layout already provides PageShell. */
+  withShell?: boolean;
 };
 
 /**
@@ -125,6 +127,7 @@ export function ListPageClient<Row extends { id: string }>({
   total,
   searchParams,
   batchHandlers,
+  withShell = true,
 }: ListPageClientProps<Row>) {
   const columns = buildDataTableColumns(config.columns);
   const page = Number(searchParams.page) || 1;
@@ -134,9 +137,8 @@ export function ListPageClient<Row extends { id: string }>({
       ? `Mostrando ${rows.length} de ${total} registros.`
       : "No hay registros todavía.";
 
-  return (
-    <PageShell>
-      <div className="space-y-6">
+  const content = (
+    <div className="space-y-6">
         <PageHeader
           eyebrow={config.eyebrow}
           title={config.title}
@@ -158,6 +160,7 @@ export function ListPageClient<Row extends { id: string }>({
             title="No hay registros todavía"
             description="Aún no se ha creado ningún registro en esta sección. Una vez que haya datos, aparecerán aquí."
             action={config.headerActions?.[0] ? { label: config.headerActions[0].label, href: config.headerActions[0].href } : undefined}
+            secondaryAction={{ label: "Volver al panel operativo", href: "/dashboard" }}
             steps={[
               { number: 1, label: "Completá los datos maestros", description: "Asegurate de tener grupos de trabajo, clientes, drones y operadores activos." },
               { number: 2, label: "Usá el formulario de creación", description: "Completá los datos del registro y guardalo." },
@@ -210,6 +213,7 @@ export function ListPageClient<Row extends { id: string }>({
 
         <Pagination total={total} page={page} pageSize={defaultPageSize} />
       </div>
-    </PageShell>
   );
+
+  return withShell ? <PageShell>{content}</PageShell> : content;
 }

@@ -1,5 +1,15 @@
 # CHANGELOG.md
 
+## 2026-06-22
+
+### RBAC base, validación inline wizard y Git Workflow Orchestrator
+- **T-022 RBAC base:** `authorize.ts` agrega `isReviewer`, `canEditEntity`, `requireFlightPlanEditor` para separar perfiles operativos de revisores sin cambiar el enum de Prisma.
+- **T-025 Validación inline:** Wizard de planes de vuelo ahora usa controlled inputs con errores visuales (border-rose), tooltips y draftKey en `localStorage` para recuperación de sesión.
+- **Git Workflow Orchestrator:** Nuevo protocolo `docs/GIT_WORKFLOW_ORCHESTRATOR.md` para usar Git como memoria operativa con commits parseables por agentes (GCP).
+- **Scripts de automatización:** `scripts/vibe-check.js`, `scripts/vibe-review.js`, `scripts/git-handoff.js` generan handoffs automáticos en `docs/HANDOFF/`.
+- **Vibecoding UX/UI:** Nuevo documento `docs/VIBECODING_UX_UI.md` con flujo de 5 ritmos, patrones reutilizables y mapa de calor de prioridades.
+- **Documentación sincronizada:** `PROJECT_STATUS.md`, `ROADMAP.md`, `TASKS.md`, `docs/OPENCODE_HANDOFF.md` actualizados para reflejar T-024 y T-025 completados.
+
 ## 2026-06-18
 
 ### Commercial polish and map-first workflow

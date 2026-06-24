@@ -1,0 +1,23 @@
+flowchart LR
+  subgraph Main[Mapa first]
+    MAP[Area de mapa amplia]
+    TOOL[Toolbar de dibujo]
+    LAY[Capas y base map]
+    RISK[Indicadores de riesgo y pendientes]
+  end
+
+  subgraph Side[Panel de misión]
+    MISSION[Datos de la misión]
+    PERM[Estado del permiso]
+    CHECK[Checklist documental]
+    ACTIONS[Guardar Exportar Revisar Cerrar]
+  end
+
+  MAP --- TOOL
+  MAP --- LAY
+  MAP --- RISK
+  MISSION --> PERM
+  MISSION --> CHECK
+  MISSION --> ACTIONS
+  RISK --> PERM
+  RISK --> CHECK

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { FlightPlanChecklist } from "./flight-plan-checklist";
 
 // --- Mocks ---
@@ -77,12 +78,13 @@ describe("FlightPlanChecklist", () => {
   });
 
   it("toggles a checkbox on click and persists", async () => {
+    const user = userEvent.setup();
     renderChecklist();
     const checkboxes = screen.getAllByRole("checkbox");
     const first = checkboxes[0];
     expect(first).not.toBeChecked();
 
-    fireEvent.click(first);
+    await user.click(first);
     expect(first).toBeChecked();
     expect(globalThis.fetch).toHaveBeenCalledTimes(1);
     expect(globalThis.fetch).toHaveBeenCalledWith(
@@ -95,16 +97,17 @@ describe("FlightPlanChecklist", () => {
   });
 
   it("shows an error toast when save fails", async () => {
+    const user = userEvent.setup();
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: false,
       json: async () => ({ error: "Database error" }),
     });
     renderChecklist();
     const checkbox = screen.getAllByRole("checkbox")[0];
-    fireEvent.click(checkbox);
+    await user.click(checkbox);
 
     // Wait for the fetch to reject and toast to be called
-    await vi.waitFor(() => {
+    await waitFor(() => {
       expect(mockToast).toHaveBeenCalledWith(
         "error",
         "Error al guardar",
@@ -125,14 +128,35 @@ describe("FlightPlanChecklist", () => {
     expect(screen.queryByText("Ver área de operación")).not.toBeInTheDocument();
   });
 
-  it("disables checkboxes while saving", () => {
+  it("disables checkboxes while saving", async () => {
+    const user = userEvent.setup();
+    let resolveFetch!: (value: unknown) => void;
+    globalThis.fetch = vi.fn().mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveFetch = resolve;
+        }),
+    );
+
     renderChecklist();
     const checkbox = screen.getAllByRole("checkbox")[0];
-    fireEvent.click(checkbox);
-    // After clicking, saving state should disable all checkboxes
-    const allCheckboxes = screen.getAllByRole("checkbox");
-    allCheckboxes.forEach((cb) => {
-      expect(cb).toBeDisabled();
+
+    await user.click(checkbox);
+
+    await waitFor(() => {
+      const allCheckboxes = screen.getAllByRole("checkbox");
+      allCheckboxes.forEach((cb) => {
+        expect(cb).toBeDisabled();
+      });
+    });
+
+    resolveFetch({
+      ok: true,
+      json: async () => ({}),
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByRole("checkbox")[0]).not.toBeDisabled();
     });
   });
 });

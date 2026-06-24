@@ -41,6 +41,9 @@ export function DocumentUpload({
   const [pendingRemove, setPendingRemove] = useState<string | null>(null);
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
 
+  const documentTypes = new Set(documents.map((doc) => doc.docType));
+  const previewHref = `/api/reports/flight-plan/${flightPlanId}`;
+
   async function handleRemove(documentId: string) {
     setPendingRemove(documentId);
     setError(null);
@@ -121,6 +124,46 @@ export function DocumentUpload({
           <p className="text-xs text-rose-700 dark:text-rose-300">{error}</p>
         </div>
       ) : null}
+
+      <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 dark:border-cyan-500/20 dark:bg-cyan-500/[0.06]">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-300">
+              Paquete documental
+            </p>
+            <h3 className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">
+              Vista previa antes de enviar
+            </h3>
+            <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">
+              Revisá el contenido adjunto y abrí el reporte PDF para validar el paquete completo antes de seguir.
+            </p>
+          </div>
+
+          <a
+            href={previewHref}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center justify-center rounded-2xl border border-cyan-500/30 bg-cyan-50 px-4 py-2 text-xs font-medium text-cyan-700 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-400/20"
+          >
+            Ver paquete DGAC
+          </a>
+        </div>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-xl border border-white/70 bg-white/80 px-3 py-2 dark:border-slate-800/70 dark:bg-slate-950/60">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Documentos adjuntos</p>
+            <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">{documents.length}</p>
+          </div>
+          <div className="rounded-xl border border-white/70 bg-white/80 px-3 py-2 dark:border-slate-800/70 dark:bg-slate-950/60">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Tipos cubiertos</p>
+            <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">{documentTypes.size}</p>
+          </div>
+          <div className="rounded-xl border border-white/70 bg-white/80 px-3 py-2 dark:border-slate-800/70 dark:bg-slate-950/60">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Estado</p>
+            <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">Listo para revisión</p>
+          </div>
+        </div>
+      </div>
 
       {/* Upload form */}
       <form onSubmit={handleSubmit} className="space-y-3">

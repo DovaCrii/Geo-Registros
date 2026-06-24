@@ -1,0 +1,6 @@
+#!/bin/sh
+# Post-commit hook: opcional. Genera contexto después de cada commit.
+# Para instalar: git config core.hooksPath .githooks
+
+echo "[post-commit] Generando handoff context..."
+node scripts/git-handoff.js || true

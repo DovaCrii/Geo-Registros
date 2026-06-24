@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
+import { HelpHint } from "@/components/ui/help-hint";
 import { useToast } from "@/lib/toast-context";
 import {
   DGAC_CHECKLIST_ITEMS,
@@ -61,7 +62,12 @@ export function FlightPlanChecklist({
       <div className="space-y-4">
         <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 dark:border-slate-800/80 dark:bg-slate-950/45">
           <div>
-            <p className="text-sm font-medium text-slate-900 dark:text-white">Progreso</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium text-slate-900 dark:text-white">Progreso</p>
+              <HelpHint title="Cómo leer esta checklist">
+                Cada ítem valida una condición operativa previa al envío. Si una casilla se completa manualmente, el plan queda persistido igual que si se autocompletara.
+              </HelpHint>
+            </div>
             <p className="text-xs text-slate-600 dark:text-slate-500">{done} de {items.length} completados</p>
           </div>
           <div className="text-sm font-semibold text-cyan-700 dark:text-cyan-300">{Math.round((done / items.length) * 100)}%</div>
@@ -95,7 +101,14 @@ export function FlightPlanChecklist({
                   className="mt-1 h-4 w-4 rounded border-slate-300 bg-white text-cyan-500 focus:ring-cyan-400/40 dark:border-slate-600 dark:bg-slate-950 dark:text-cyan-400"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-slate-900 dark:text-white">{item.label}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-slate-900 dark:text-white">{item.label}</p>
+                    {item.id === "operation-area" && (
+                      <HelpHint title="Área de operación">
+                        Confirmá que la geometría cargada coincide con el mapa. Si todavía no la definiste, tocá el acceso directo para abrir el editor.
+                      </HelpHint>
+                    )}
+                  </div>
                   <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-500">{item.hint}</p>
                   {item.id === "operation-area" && geometryLink && (
                     <a

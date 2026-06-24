@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Backend
+    participant Database
+
+    User->>Frontend: Clicks 'Submit Mission'
+    Frontend->>Backend: Send mission data
+    Backend->>Database: Store mission data
+    Database-->>Backend: Confirm storage
+    Backend-->>Frontend: Confirmation message
+    Frontend-->>User: Display confirmation
