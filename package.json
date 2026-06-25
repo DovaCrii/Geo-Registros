@@ -3,18 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "typecheck": "next typegen && tsc --noEmit",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "seed:dev": "node prisma/seed.cjs",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "dev": "next dev apps/web",
+    "build": "next build apps/web",
+    "start": "next start apps/web",
+    "typecheck": "next typegen apps/web && tsc -p apps/web/tsconfig.json --noEmit",
+    "prisma:generate": "prisma generate --schema backend/prisma/schema.prisma",
+    "prisma:migrate": "prisma migrate dev --schema backend/prisma/schema.prisma",
+    "seed:dev": "node backend/prisma/seed.cjs",
+    "test": "vitest run --config apps/web/vitest.config.ts",
+    "test:watch": "vitest --config apps/web/vitest.config.ts"
   },
   "prisma": {
-    "seed": "node prisma/seed.cjs"
+    "seed": "node backend/prisma/seed.cjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",

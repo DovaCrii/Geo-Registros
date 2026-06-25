@@ -134,7 +134,30 @@ erDiagram
 | Roles avanzados | 🚧 Próximo | Revisor, auditor, permisos por rol |
 | UX premium | 🚧 Continuo | Menos CRUD, más operación guiada |
 
-Ver el estado completo en [`PROJECT_STATUS.md`](PROJECT_STATUS.md) y la ruta de avance en [`ROADMAP.md`](ROADMAP.md).
+Ver el estado completo en [`documentacion/PROJECT_STATUS.md`](documentacion/PROJECT_STATUS.md) y la ruta de avance en [`documentacion/ROADMAP.md`](documentacion/ROADMAP.md).
+
+---
+
+## Estructura del repositorio
+
+- `apps/web/`: app Next.js full-stack actual.
+- `backend/`: Prisma, storage y documentación técnica del backend.
+- `documentacion/`: estado, roadmap, tareas, decisiones, bugs, handoffs y guías.
+- `tooling/`: registry y skills operativas del repositorio.
+- `docs/`: documentación técnica complementaria.
+
+### Objetivo siguiente
+- `apps/web/`: aplicación Next.js actual.
+- `backend/`: Prisma, storage y documentación técnica backend.
+- `documentacion/`: guías, roadmap, decisiones, bugs, estado del proyecto y documentación externa.
+- `tooling/`: configuración de agentes, OpenCode, Codex, skills y herramientas IA.
+
+### Guía rápida
+1. Abrí la carpeta `Geo-Registros` en VS Code.
+2. Ejecutá `npm run dev` en la terminal integrada.
+3. Abrí `http://localhost:3000`.
+4. Si necesitás preparar datos locales, corré `npm run prisma:generate`, `npm run prisma:migrate` y `npm run seed:dev`.
+5. La app vive en `apps/web/`; la raíz queda como comando de entrada.
 
 ---
 
@@ -233,28 +256,12 @@ Para cambios visuales, además revisar manualmente:
 
 | Documento | Para qué sirve |
 |---|---|
-| [`AGENTS.md`](AGENTS.md) | Contrato de trabajo para OpenCode, Codex y sesiones IA |
-| [`PROJECT_STATUS.md`](PROJECT_STATUS.md) | Estado ejecutivo del producto |
-| [`ROADMAP.md`](ROADMAP.md) | Fases y prioridades |
-| [`TASKS.md`](TASKS.md) | Tareas pequeñas y verificables |
-| [`docs/00_DOCUMENTATION_INDEX.md`](docs/00_DOCUMENTATION_INDEX.md) | Índice completo |
-| [`docs/OPENCODE_HANDOFF.md`](docs/OPENCODE_HANDOFF.md) | Próximo handoff operativo |
-| [`docs/UX_WORKFLOW_MASTER_PLAN.md`](docs/UX_WORKFLOW_MASTER_PLAN.md) | Dirección UX/workflow |
-| [`docs/DESIGN_SYSTEM_PLAN.md`](docs/DESIGN_SYSTEM_PLAN.md) | Sistema visual y reglas UI |
-
----
-
-## Workflow de colaboración con IA
-
-Este repositorio está preparado para trabajar con contexto modular y bajo consumo de tokens:
-
-- **OpenCode** ejecuta desarrollo principal, orquestación y memoria con Engram.
-- **Codex** se usa como reviewer, planner corto, QA y apoyo puntual.
-- **AGENTS.md** define reglas de seguridad, roles, comandos y flujo recomendado.
-- **docs/ai/** mantiene contexto estable para no pegar prompts largos en cada sesión.
-- **.agents/skills/** contiene skills especializadas para revisión, QA, planificación y handoff.
-
-Regla práctica: **una tarea pequeña por sesión, validada y documentada.**
+| [`documentacion/PROJECT_STATUS.md`](documentacion/PROJECT_STATUS.md) | Estado ejecutivo del producto |
+| [`documentacion/PROJECT_STATE.md`](documentacion/PROJECT_STATE.md) | Estado técnico resumido del proyecto |
+| [`documentacion/ROADMAP.md`](documentacion/ROADMAP.md) | Fases y prioridades |
+| [`documentacion/TASKS.md`](documentacion/TASKS.md) | Tareas pequeñas y verificables |
+| [`documentacion/OPENCODE_HANDOFF.md`](documentacion/OPENCODE_HANDOFF.md) | Próximo handoff operativo |
+| [`documentacion/ESTRUCTURA_REPOSITORIO.md`](documentacion/ESTRUCTURA_REPOSITORIO.md) | Organización del repo |
 
 ---
 

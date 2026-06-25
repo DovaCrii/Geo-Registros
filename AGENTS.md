@@ -12,7 +12,7 @@ AeroFlow es una plataforma para operaciones de vuelos RPA/dron, con planificaci�
 - Tailwind CSS 3
 - Autenticación con NextAuth
 - MapLibre y TerraDraw para geometría interactiva
-- Almacenamiento local de desarrollo en `prisma/data/aeroflow.db`
+- Almacenamiento local de desarrollo en `backend/prisma/data/aeroflow.db`
 
 ## Comandos disponibles
 - `npm run dev`
@@ -100,9 +100,10 @@ Resume lo revisado hoy, lista decisiones o riesgos nuevos y deja una sola siguie
 ## Contexto optimizado para sesiones futuras
 Leer primero y en este orden:
 1. `AGENTS.md`
-2. `PROJECT_STATUS.md`
-3. `ROADMAP.md`
-4. `TASKS.md`
-5. `docs/OPENCODE_HANDOFF.md`
+2. `documentacion/PROJECT_STATUS.md`
+3. `documentacion/PROJECT_STATE.md`
+4. `documentacion/ROADMAP.md`
+5. `documentacion/TASKS.md`
+6. `documentacion/OPENCODE_HANDOFF.md`
 
-Usar `docs/00_DOCUMENTATION_INDEX.md` solo cuando se necesite ubicar documentación extendida. Evitar pegar contexto largo en prompts; si falta contexto estable, actualizar estos documentos breves en vez de duplicarlo en la conversación.
+Usar `documentacion/00_DOCUMENTATION_INDEX.md` solo cuando se necesite ubicar documentación extendida. Evitar pegar contexto largo en prompts; si falta contexto estable, actualizar estos documentos breves en vez de duplicarlo en la conversación.
