@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";

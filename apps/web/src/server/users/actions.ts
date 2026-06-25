@@ -11,7 +11,7 @@ import { validateEmail, validateName, validatePassword } from "@/lib/validation"
 
 async function requireAdmin() {
   const session = await auth();
-  if (!session?.user || session.user.role !== "ADMIN") {
+  if (!session || session.user?.role !== "ADMIN") {
     throw new Error("Acceso denegado. Se requiere rol ADMIN.");
   }
 }

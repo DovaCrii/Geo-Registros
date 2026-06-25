@@ -4,7 +4,7 @@ import Link from "next/link";
 import { StatusChip } from "@/components/ui/status-chip";
 import type { ListColumn, ListConfig } from "@/lib/list-config/types";
 
-type UserRow = {
+export type UserRow = {
   id: string;
   fullName: string;
   email: string;

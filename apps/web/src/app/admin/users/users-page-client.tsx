@@ -1,7 +1,7 @@
 "use client";
 
 import { ListPageClient } from "@/components/ui/list-page-client";
-import { userListConfig } from "@/modules/users/user-list.config";
+import { type UserRow, userListConfig } from "@/modules/users/user-list.config";
 import { batchDeactivateUsers, batchReactivateUsers } from "@/server/users/actions";
 
 export function UsersPageClient({
@@ -9,15 +9,13 @@ export function UsersPageClient({
   total,
   searchParams,
 }: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rows: any[];
+  rows: UserRow[];
   total: number;
   searchParams: Record<string, string | undefined>;
 }) {
   return (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    <ListPageClient<any>
-      config={userListConfig as any}
+    <ListPageClient<UserRow>
+      config={userListConfig}
       rows={rows}
       total={total}
       searchParams={searchParams}

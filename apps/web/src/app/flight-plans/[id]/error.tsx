@@ -25,6 +25,7 @@ export default function FlightPlanDetailError({
         </p>
         <div className="flex justify-center gap-3">
           <button
+            type="button"
             onClick={reset}
             className="rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-5 py-2.5 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20"
           >

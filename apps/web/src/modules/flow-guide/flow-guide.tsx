@@ -34,6 +34,7 @@ export function FlowGuide() {
     <>
       {/* Floating trigger button */}
       <button
+        type="button"
         onClick={toggle}
         aria-label="Ayuda"
         className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full border border-cyan-400/30 bg-gradient-to-b from-cyan-500/20 to-cyan-600/10 text-2xl shadow-2xl shadow-cyan-500/10 transition hover:from-cyan-500/30 hover:to-cyan-600/20 hover:scale-105 active:scale-95"
@@ -43,7 +44,12 @@ export function FlowGuide() {
 
       {/* Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" onClick={toggle} />
+        <button
+          type="button"
+          aria-label="Cerrar guía"
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+          onClick={toggle}
+        />
       )}
 
       {/* Panel */}
@@ -64,6 +70,7 @@ export function FlowGuide() {
             </div>
           </div>
           <button
+            type="button"
             onClick={toggle}
             className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-700/60 text-xs text-slate-500 transition hover:border-slate-500 hover:text-slate-300"
           >

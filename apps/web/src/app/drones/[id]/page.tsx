@@ -105,7 +105,7 @@ export default async function DroneDetailPage({ params }: { params: Promise<{ id
             submitLabel="Guardar cambios"
             costCenterOptions={
               record.costCenter
-                ? costCenterOptions.some((item) => item.id === record.costCenter!.id)
+                ? costCenterOptions.some((item) => item.id === record.costCenter?.id)
                   ? costCenterOptions
                   : [
                       {

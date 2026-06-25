@@ -117,6 +117,7 @@ export function NotificationPanel() {
     <div ref={panelRef} className="relative">
       {/* Bell button */}
       <button
+        type="button"
         onClick={handleOpen}
         className="relative rounded-xl p-2 text-slate-400 transition hover:bg-slate-800/60 hover:text-white"
         aria-label="Notificaciones"
@@ -149,6 +150,7 @@ export function NotificationPanel() {
             <h3 className="text-sm font-semibold text-white">Notificaciones</h3>
             {unreadCount > 0 && (
               <button
+                type="button"
                 onClick={handleMarkAllRead}
                 className="text-xs text-cyan-300 transition hover:text-cyan-200"
               >
@@ -195,6 +197,7 @@ export function NotificationPanel() {
                     </div>
                     {!n.read && (
                       <button
+                        type="button"
                         onClick={() => handleMarkRead(n.id)}
                         className="mt-1 shrink-0 rounded-full bg-cyan-500/20 p-1 text-[10px] text-cyan-300 transition hover:bg-cyan-500/30"
                         aria-label="Marcar como leída"
@@ -208,6 +211,7 @@ export function NotificationPanel() {
                 {/* Load more */}
                 {showMore && (
                   <button
+                    type="button"
                     onClick={() => fetchNotifications(page + 1, true)}
                     disabled={loading}
                     className="flex w-full items-center justify-center gap-2 px-4 py-3 text-xs text-slate-400 transition hover:bg-slate-800/30 hover:text-cyan-300 disabled:opacity-50"

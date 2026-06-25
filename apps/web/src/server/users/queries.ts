@@ -1,4 +1,4 @@
-import type { Role } from "@prisma/client";
+import type { Prisma, Role } from "@prisma/client";
 import type { ListQueryParams } from "@/lib/list-config/types";
 import { prisma } from "@/lib/prisma";
 
@@ -37,9 +37,9 @@ export async function listUsers(
         ? { active: false }
         : {};
 
-  const orderBy = params?.sortField
-    ? ({ [params.sortField]: params.sortDir ?? "asc" } as any)
-    : ([{ fullName: "asc" }] as any);
+  const orderBy: Prisma.UserOrderByWithRelationInput[] = params?.sortField
+    ? [{ [params.sortField]: params.sortDir ?? "asc" }]
+    : [{ fullName: "asc" }];
 
   const [rows, total] = await Promise.all([
     prisma.user.findMany({

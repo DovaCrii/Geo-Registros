@@ -6,7 +6,7 @@ import { checkRateLimit, getRateLimitReset } from "@/lib/rate-limit";
 import { generateFlightPlanReport } from "@/server/reports/pdf-service";
 import { getWeatherForecast } from "@/server/weather/service";
 
-export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user) {
     return new NextResponse("Unauthorized", { status: 401 });

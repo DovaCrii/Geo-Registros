@@ -109,7 +109,7 @@ export function FlightPlanWizardForm({
   clientOptions,
   droneOptions,
   operatorOptions,
-  geometrySummary,
+  geometrySummary: _geometrySummary,
 }: {
   title: string;
   description: string;
@@ -284,7 +284,7 @@ export function FlightPlanWizardForm({
               value={values.notes}
               onChange={handleFieldChange}
               placeholder="Contexto de la operación, objetivos, condiciones del terreno."
-              className={fieldClass() + " min-h-[120px]"}
+              className={`${fieldClass()} min-h-[120px]`}
             />
           </label>
         </section>

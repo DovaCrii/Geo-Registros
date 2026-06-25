@@ -147,9 +147,14 @@ export function PageShell({ children }: { children: ReactNode }) {
 
       {/* ── Mobile nav overlay ─────────────────────────── */}
       {mobileNavOpen && (
-        <div
+        <button
+          type="button"
+          aria-label="Cerrar navegación móvil"
           className="fixed inset-0 z-30 bg-black/20 dark:bg-slate-950/60 backdrop-blur-sm lg:hidden"
           onClick={() => setMobileNavOpen(false)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setMobileNavOpen(false);
+          }}
         />
       )}
 

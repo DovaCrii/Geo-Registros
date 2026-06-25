@@ -12,12 +12,7 @@ import { getFlightPlanById } from "@/server/flight-plans/queries";
 import { broadcastNotification } from "@/server/notifications/service";
 import { getOperatorById } from "@/server/operators/queries";
 import { getPermissionDocuments } from "@/server/permissions/queries";
-import {
-  isTerminalState,
-  isValidTransition,
-  VALID_TRANSITIONS,
-  validateTransition,
-} from "@/server/permissions/transitions";
+import { validateTransition } from "@/server/permissions/transitions";
 import { getWeatherForecast } from "@/server/weather/service";
 
 export async function transitionPermission(

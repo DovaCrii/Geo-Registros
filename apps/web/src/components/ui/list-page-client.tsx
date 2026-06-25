@@ -12,14 +12,7 @@ import { SearchInput } from "@/components/ui/search-input";
 import { SelectFilter } from "@/components/ui/select-filter";
 import { SelectableTable } from "@/components/ui/selectable-table";
 import { StatusChip } from "@/components/ui/status-chip";
-import type {
-  BatchAction,
-  HeaderAction,
-  ListColumn,
-  ListConfig,
-  ListQueryParams,
-  SidebarConfig,
-} from "@/lib/list-config/types";
+import type { HeaderAction, ListColumn, ListConfig, SidebarConfig } from "@/lib/list-config/types";
 
 function buildDataTableColumns<Row>(columns: ListColumn<Row>[]): Array<DataColumn<Row>> {
   return columns.map((col) => ({
@@ -97,7 +90,7 @@ function renderActions(actions: HeaderAction[] | undefined) {
   });
 }
 
-function renderSidebar(sidebar: SidebarConfig, total: number) {
+function renderSidebar(sidebar: SidebarConfig, _total: number) {
   return (
     <DetailPanel title={sidebar.title} description={sidebar.description}>
       {sidebar.items && sidebar.items.length > 0 && (

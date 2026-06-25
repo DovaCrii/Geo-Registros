@@ -4,7 +4,6 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { MetricCard } from "@/components/ui/metric-card";
 import { PageShell } from "@/components/ui/page-shell";
 import { type OperationalStatus, StatusBadge } from "@/components/ui/status-badge";
-import { StatusChip } from "@/components/ui/status-chip";
 import { requirePageAuth } from "@/lib/require-page-auth";
 import { OnboardingDialog } from "@/modules/onboarding/onboarding-dialog";
 import { getDashboardStats } from "@/server/dashboard/queries";
@@ -39,7 +38,7 @@ const STATUS_LABELS: Record<string, string> = {
   CANCELLED: "Cancelado",
 };
 
-const STATUS_TONES: Record<string, "success" | "warning" | "danger" | "info" | "neutral"> = {
+const _STATUS_TONES: Record<string, "success" | "warning" | "danger" | "info" | "neutral"> = {
   DRAFT: "neutral",
   IN_REVIEW: "info",
   READY_FOR_SUBMISSION: "info",
@@ -697,7 +696,9 @@ export default async function DashboardPage({
                       message="Revisá seguros y licencias antes de las fechas límite."
                     />
                     {stats.expiring.drones.map((drone) => {
-                      const expiry = new Date(drone.insuranceExpiry!);
+                      const expiry = drone.insuranceExpiry
+                        ? new Date(drone.insuranceExpiry)
+                        : new Date();
                       const expired = expiry < new Date();
                       return (
                         <Link
@@ -717,7 +718,7 @@ export default async function DashboardPage({
                       );
                     })}
                     {stats.expiring.operators.map((op) => {
-                      const expiry = new Date(op.licenseExpiry!);
+                      const expiry = op.licenseExpiry ? new Date(op.licenseExpiry) : new Date();
                       const expired = expiry < new Date();
                       return (
                         <Link

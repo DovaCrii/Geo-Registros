@@ -1,7 +1,7 @@
 "use client";
 
 import { Role } from "@prisma/client";
-import { useActionState, useCallback } from "react";
+import { useActionState } from "react";
 
 import { createUser, updateUser } from "@/server/users/actions";
 
@@ -39,7 +39,8 @@ export function UserForm(props: UserFormProps) {
         if (mode === "create") {
           await createUser(formData);
         } else {
-          await updateUser(user!.id, formData);
+          if (!user) throw new Error("User not loaded.");
+          await updateUser(user.id, formData);
         }
         return { error: undefined };
       } catch (e) {

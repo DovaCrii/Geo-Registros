@@ -96,22 +96,26 @@ export async function runExpiryAlerts() {
   ]);
 
   const targets: ExpiryTarget[] = [
-    ...drones.map((drone) => ({
-      kind: "drone" as const,
-      id: drone.id,
-      label: "Seguro de dron",
-      displayName: drone.code ? `${drone.code} · ${drone.model}` : drone.model,
-      expiry: drone.insuranceExpiry!,
-      link: `/drones/${drone.id}`,
-    })),
-    ...operators.map((operator) => ({
-      kind: "operator" as const,
-      id: operator.id,
-      label: "Licencia de operador",
-      displayName: operator.code ? `${operator.code} · ${operator.fullName}` : operator.fullName,
-      expiry: operator.licenseExpiry!,
-      link: `/operators/${operator.id}`,
-    })),
+    ...drones
+      .filter((drone): drone is (typeof drone & { insuranceExpiry: Date }) => drone.insuranceExpiry !== null)
+      .map((drone) => ({
+        kind: "drone" as const,
+        id: drone.id,
+        label: "Seguro de dron",
+        displayName: drone.code ? `${drone.code} · ${drone.model}` : drone.model,
+        expiry: drone.insuranceExpiry,
+        link: `/drones/${drone.id}`,
+      })),
+    ...operators
+      .filter((operator): operator is (typeof operator & { licenseExpiry: Date }) => operator.licenseExpiry !== null)
+      .map((operator) => ({
+        kind: "operator" as const,
+        id: operator.id,
+        label: "Licencia de operador",
+        displayName: operator.code ? `${operator.code} · ${operator.fullName}` : operator.fullName,
+        expiry: operator.licenseExpiry,
+        link: `/operators/${operator.id}`,
+      })),
   ];
 
   let created = 0;

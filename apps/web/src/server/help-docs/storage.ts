@@ -1,5 +1,5 @@
-import { mkdir, unlink, writeFile } from "fs/promises";
-import path from "path";
+import { mkdir, unlink, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { appConfig } from "@/lib/config";
 import { prisma } from "@/lib/prisma";
 

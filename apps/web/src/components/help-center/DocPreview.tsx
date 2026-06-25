@@ -70,16 +70,17 @@ export function DocPreview({ doc, onClose }: DocPreviewProps) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
-      onClick={onClose}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
       onKeyDown={handleKeyDown}
-      tabIndex={0}
       role="dialog"
       aria-modal="true"
       aria-label={`Vista previa: ${doc.title}`}
     >
       <div
+        role="presentation"
         className="relative flex max-h-[90vh] w-full max-w-4xl flex-col rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700/60 dark:bg-slate-950"
-        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-700/40">
@@ -100,6 +101,7 @@ export function DocPreview({ doc, onClose }: DocPreviewProps) {
               Descargar
             </a>
             <button
+              type="button"
               onClick={onClose}
               className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300"
               aria-label="Cerrar"

@@ -1,7 +1,7 @@
 "use client";
 
 import { ListPageClient } from "@/components/ui/list-page-client";
-import { droneListConfig } from "@/modules/drones/drone-list.config";
+import { type DroneRow, droneListConfig } from "@/modules/drones/drone-list.config";
 import {
   batchActivateDrones,
   batchDeactivateDrones,
@@ -13,15 +13,13 @@ export function DronesPageClient({
   total,
   searchParams,
 }: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rows: any[];
+  rows: DroneRow[];
   total: number;
   searchParams: Record<string, string | undefined>;
 }) {
   return (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    <ListPageClient<any>
-      config={droneListConfig as any}
+    <ListPageClient<DroneRow>
+      config={droneListConfig}
       rows={rows}
       total={total}
       searchParams={searchParams}

@@ -125,10 +125,14 @@ export function DocumentUpload({
       {/* Upload form */}
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="space-y-2">
-          <label className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
+          <label
+            htmlFor="document-type"
+            className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400"
+          >
             Tipo de documento
           </label>
           <select
+            id="document-type"
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
             className="w-full rounded-2xl border border-slate-200 bg-white/95 px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950/90 dark:text-slate-100"
@@ -142,11 +146,20 @@ export function DocumentUpload({
           </select>
         </div>
 
-        <input
-          type="file"
-          name="file"
-          className="w-full text-sm text-slate-600 file:mr-3 file:rounded-2xl file:border file:border-slate-200 file:bg-white file:px-4 file:py-2 file:text-sm file:text-slate-700 file:transition hover:file:border-slate-300 dark:text-slate-400 dark:file:border-slate-800 dark:file:bg-slate-950/90 dark:file:text-slate-200 dark:hover:file:border-slate-600"
-        />
+        <div className="space-y-2">
+          <label
+            htmlFor="document-file"
+            className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400"
+          >
+            Archivo
+          </label>
+          <input
+            id="document-file"
+            type="file"
+            name="file"
+            className="w-full text-sm text-slate-600 file:mr-3 file:rounded-2xl file:border file:border-slate-200 file:bg-white file:px-4 file:py-2 file:text-sm file:text-slate-700 file:transition hover:file:border-slate-300 dark:text-slate-400 dark:file:border-slate-800 dark:file:bg-slate-950/90 dark:file:text-slate-200 dark:hover:file:border-slate-600"
+          />
+        </div>
 
         <button
           type="submit"

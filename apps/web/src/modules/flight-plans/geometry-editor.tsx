@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { MaplibreTerradrawControl } from "@watergis/maplibre-gl-terradraw";
-import maplibregl, { type Map } from "maplibre-gl";
+import maplibregl, { type Map as MaplibreMap } from "maplibre-gl";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -27,6 +27,13 @@ type DrawMode =
   | "delete-selection"
   | "undo"
   | "redo";
+
+type GeoFeature = GeoJSON.Feature<GeoJSON.Geometry, GeoJSON.GeoJsonProperties>;
+
+type TerraDrawControlWithEvents = {
+  on?: (eventName: string, handler: () => void) => void;
+  off?: (eventName: string, handler: () => void) => void;
+};
 
 const DRAW_MODES: { id: DrawMode; label: string; icon: string; group: "draw" | "edit" }[] = [
   { id: "point", label: "Punto", icon: "⬤", group: "draw" },
@@ -187,17 +194,17 @@ function inferModeFromGeometryType(type: string): string {
  * Normalise any valid GeoJSON value into an array of feature-like objects.
  * Handles FeatureCollection, single Feature, and bare Geometry.
  */
-function normalizeToFeatures(data: unknown): any[] {
+function normalizeToFeatures(data: unknown): GeoFeature[] {
   if (!data || typeof data !== "object") return [];
 
-  const d = data as Record<string, unknown>;
+  const d = data as GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.GeometryCollection | GeoJSON.Geometry;
 
   if (d.type === "FeatureCollection" && Array.isArray(d.features)) {
-    return d.features as any[];
+    return d.features as GeoFeature[];
   }
 
   if (d.type === "Feature") {
-    return [d];
+    return [d as GeoFeature];
   }
 
   // Bare geometry object → wrap in a Feature
@@ -207,11 +214,11 @@ function normalizeToFeatures(data: unknown): any[] {
       d.type,
     )
   ) {
-    return [{ type: "Feature", geometry: d, properties: {} }];
+    return [{ type: "Feature", geometry: d as GeoJSON.Geometry, properties: {} }];
   }
 
   if (d.type === "GeometryCollection") {
-    const geometries = d.geometries as any[] | undefined;
+    const geometries = d.geometries;
     if (Array.isArray(geometries)) {
       return geometries.map((g) => ({
         type: "Feature",
@@ -225,7 +232,7 @@ function normalizeToFeatures(data: unknown): any[] {
 }
 
 /** Compute bounding box from an array of points and fit the map. */
-function fitMapToPoints(map: Map, data: unknown) {
+function fitMapToPoints(map: MaplibreMap, data: unknown) {
   const points: Array<[number, number]> = [];
   const features = normalizeToFeatures(data);
 
@@ -292,8 +299,8 @@ function extractCoordinates(geometry: GeoJSON.Geometry): Array<[number, number]>
 /**
  * Convert features to Terra Draw format (adds `properties.mode`).
  */
-function featuresToTdFormat(features: any[]) {
-  return features.map((f: any) => ({
+function featuresToTdFormat(features: GeoFeature[]): GeoFeature[] {
+  return features.map((f) => ({
     type: "Feature",
     geometry: f.geometry,
     properties: {
@@ -368,7 +375,7 @@ export function GeometryEditor({
     importedReferences: true,
   });
   const { toast } = useToast();
-  const mapRef = useRef<Map | null>(null);
+  const mapRef = useRef<MaplibreMap | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const drawControlRef = useRef<MaplibreTerradrawControl | null>(null);
   const initialLoadedRef = useRef(false);
@@ -507,11 +514,12 @@ export function GeometryEditor({
     const features = normalizeToFeatures(parsed.data);
     if (features.length === 0) return;
 
-    terraDraw.addFeatures(featuresToTdFormat(features) as any);
+    terraDraw.addFeatures(featuresToTdFormat(features) as never);
     initialLoadedRef.current = true;
 
     // Fit map to the loaded geometry
-    fitMapToPoints(mapRef.current!, parsed.data);
+    if (!mapRef.current) return;
+    fitMapToPoints(mapRef.current, parsed.data);
   }, [terraDrawReady, parsed.valid, parsed.data, getTerraDraw]);
 
   // ── Sync Terra Draw → hidden GeoJSON payload after draw/edit/delete ─
@@ -529,7 +537,7 @@ export function GeometryEditor({
       "selection-changed",
     ];
 
-    const controlWithEvents = control as any;
+    const controlWithEvents = control as TerraDrawControlWithEvents;
 
     for (const eventName of eventNames) {
       controlWithEvents.on?.(eventName, syncPayloadFromMap);
@@ -558,8 +566,9 @@ export function GeometryEditor({
     const features = normalizeToFeatures(parsed.data);
     if (features.length === 0) return;
 
-    terraDraw.addFeatures(featuresToTdFormat(features) as any);
-    fitMapToPoints(mapRef.current!, parsed.data);
+    terraDraw.addFeatures(featuresToTdFormat(features) as never);
+    if (!mapRef.current) return;
+    fitMapToPoints(mapRef.current, parsed.data);
   }, [parsed, getTerraDraw]);
 
   // ── Apply imported data to Terra Draw + textarea ──────────────────
@@ -569,10 +578,11 @@ export function GeometryEditor({
       if (!terraDraw) return;
 
       terraDraw.clear();
-      terraDraw.addFeatures(featuresToTdFormat(result.features.features) as any);
+      terraDraw.addFeatures(featuresToTdFormat(result.features.features) as never);
 
       setPayload(JSON.stringify(result.features, null, 2));
-      fitMapToPoints(mapRef.current!, result.features);
+      if (!mapRef.current) return;
+      fitMapToPoints(mapRef.current, result.features);
     },
     [getTerraDraw],
   );

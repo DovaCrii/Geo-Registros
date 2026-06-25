@@ -1,8 +1,8 @@
-import { createReadStream } from "fs";
-import { stat } from "fs/promises";
+import { createReadStream } from "node:fs";
+import { stat } from "node:fs/promises";
+import path from "node:path";
+import { Readable } from "node:stream";
 import { NextResponse } from "next/server";
-import path from "path";
-import { Readable } from "stream";
 
 import { getHelpDocById } from "@/server/help-docs/storage";
 
@@ -21,7 +21,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   }
 
   const stream = createReadStream(filePath);
-  return new Response(Readable.toWeb(stream) as any, {
+  return new Response(Readable.toWeb(stream) as ReadableStream<Uint8Array>, {
     headers: {
       "Content-Type": doc.mimeType,
       "Content-Length": String(fileStat.size),

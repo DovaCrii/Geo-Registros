@@ -107,7 +107,7 @@ export default async function OperatorDetailPage({ params }: { params: Promise<{
             submitLabel="Guardar cambios"
             costCenterOptions={
               record.costCenter
-                ? costCenterOptions.some((item) => item.id === record.costCenter!.id)
+                ? costCenterOptions.some((item) => item.id === record.costCenter?.id)
                   ? costCenterOptions
                   : [
                       {

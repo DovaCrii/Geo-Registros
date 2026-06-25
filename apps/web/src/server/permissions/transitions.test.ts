@@ -46,7 +46,7 @@ describe("State machine data integrity", () => {
   it("no transition points to its own state (no-op)", () => {
     for (const [from, allowed] of Object.entries(VALID_TRANSITIONS)) {
       expect(
-        allowed.includes(from as any),
+        allowed.includes(from as (typeof allowed)[number]),
         `State "${from}" should not list itself as a valid transition`,
       ).toBe(false);
     }

@@ -1,4 +1,4 @@
-import type { PermissionStatus } from "@prisma/client";
+import type { PermissionStatus, Prisma } from "@prisma/client";
 import type { ListQueryParams } from "@/lib/list-config/types";
 import { prisma } from "@/lib/prisma";
 
@@ -21,7 +21,7 @@ export async function listFlightPlans(
   const search = params?.search;
   const page = params?.page ?? 1;
   const pageSize = params?.pageSize ?? 10;
-  const permissionStatus = params?.permissionStatus as string | undefined;
+  const permissionStatus = params?.permissionStatus as PermissionStatus | undefined;
 
   const searchFilter = search
     ? {
@@ -36,13 +36,13 @@ export async function listFlightPlans(
       }
     : {};
 
-  const statusFilter = permissionStatus ? { permissionStatus: permissionStatus as any } : {};
+  const statusFilter = permissionStatus ? { permissionStatus } : {};
 
   const where = { ...searchFilter, ...statusFilter, deletedAt: null };
 
-  const orderBy = params?.sortField
-    ? ({ [params.sortField]: params.sortDir ?? "asc" } as any)
-    : ([{ operationDate: "desc" }, { code: "asc" }] as any);
+  const orderBy: Prisma.FlightPlanOrderByWithRelationInput[] = params?.sortField
+    ? [{ [params.sortField]: params.sortDir ?? "asc" } as Prisma.FlightPlanOrderByWithRelationInput]
+    : [{ operationDate: "desc" }, { code: "asc" }];
 
   const [rows, total] = await Promise.all([
     prisma.flightPlan.findMany({

@@ -34,4 +34,4 @@ Chain strategy: size-exception
 - [x] 3.2 `npm run build` — 41 rutas compiladas
 - [x] 3.3 `npm run typecheck` — sin errores de tipos
 - [x] 3.4 `no-mistakes status` — gate saludable
-- [ ] 3.5 Commitear y pushear todos los cambios a GitHub
+- [x] 3.5 Commitear y pushear todos los cambios a GitHub

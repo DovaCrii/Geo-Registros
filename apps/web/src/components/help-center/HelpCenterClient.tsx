@@ -191,6 +191,7 @@ export function HelpCenterClient({ docsByCategory }: HelpCenterClientProps) {
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {items.map((doc) => (
                     <button
+                      type="button"
                       key={doc.id}
                       onClick={() => setSelectedDoc(doc)}
                       className="rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/45 p-4 text-left transition hover:border-accent/30 dark:hover:border-cyan-400/40 hover:bg-accent/5 dark:hover:bg-cyan-500/5"

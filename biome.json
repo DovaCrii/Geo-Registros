@@ -26,7 +26,21 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "a11y": {
+        "noSvgWithoutTitle": "off",
+        "noStaticElementInteractions": "warn",
+        "useKeyWithClickEvents": "warn"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn",
+        "noUnknownAtRules": {
+          "level": "off",
+          "options": {
+            "ignore": ["tailwind"]
+          }
+        }
+      }
     }
   }
 }

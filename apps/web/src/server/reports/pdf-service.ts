@@ -37,7 +37,7 @@ const COLORS = {
   info: "#06b6d4",
 };
 
-function statusColor(status: string): string {
+function _statusColor(status: string): string {
   const map: Record<string, string> = {
     DRAFT: COLORS.muted,
     IN_REVIEW: COLORS.info,

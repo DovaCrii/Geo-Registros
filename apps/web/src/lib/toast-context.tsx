@@ -114,6 +114,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
         {toast.message && <p className="mt-0.5 text-xs text-slate-400">{toast.message}</p>}
       </div>
       <button
+        type="button"
         onClick={() => onDismiss(toast.id)}
         className="shrink-0 text-slate-500 transition hover:text-white"
         aria-label="Cerrar"

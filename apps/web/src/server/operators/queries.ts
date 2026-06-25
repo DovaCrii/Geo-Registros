@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { RecordStatus } from "@prisma/client";
 import type { ListQueryParams } from "@/lib/list-config/types";
 import { prisma } from "@/lib/prisma";
@@ -38,9 +39,9 @@ export async function listOperators(
 
   const where = { ...searchClause, ...statusClause, deletedAt: null };
 
-  const orderBy = params?.sortField
-    ? ({ [params.sortField]: params.sortDir ?? "asc" } as any)
-    : ([{ fullName: "asc" }] as any);
+  const orderBy: Prisma.OperatorOrderByWithRelationInput[] = params?.sortField
+    ? [{ [params.sortField]: params.sortDir ?? "asc" } as Prisma.OperatorOrderByWithRelationInput]
+    : [{ fullName: "asc" }];
 
   const [rows, total] = await Promise.all([
     prisma.operator.findMany({

@@ -1,6 +1,6 @@
-import { mkdir, unlink, writeFile } from "fs/promises";
+import { mkdir, unlink, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
-import path from "path";
 import { auth } from "@/lib/auth";
 import { validateCsrf } from "@/lib/csrf";
 import { checkRateLimit, getRateLimitReset } from "@/lib/rate-limit";

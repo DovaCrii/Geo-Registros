@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { StatusChip } from "@/components/ui/status-chip";
 
 export type EntityCard = {
   slug: string;
@@ -18,13 +17,9 @@ export function EntityCardView({ entity }: { entity: EntityCard }) {
   const router = useRouter();
 
   return (
-    <div
+    <button
+      type="button"
       onClick={() => router.push(entity.href)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") router.push(entity.href);
-      }}
-      role="button"
-      tabIndex={0}
       className="group block w-full cursor-pointer rounded-2xl border border-slate-200 bg-white/95 p-5 text-left shadow-sm transition hover:border-cyan-400/30 hover:shadow-md hover:shadow-cyan-500/5 dark:border-slate-800/80 dark:bg-slate-950/50 dark:hover:border-cyan-500/30 dark:hover:shadow-cyan-500/5"
     >
       <div className="flex items-start justify-between">
@@ -59,24 +54,17 @@ export function EntityCardView({ entity }: { entity: EntityCard }) {
           Ver listado →
         </span>
         <span className="text-xs text-slate-300 dark:text-slate-600">·</span>
-        <span
-          role="button"
-          tabIndex={0}
+        <button
+          type="button"
           onClick={(e) => {
             e.stopPropagation();
             router.push(entity.createHref);
           }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.stopPropagation();
-              router.push(entity.createHref);
-            }
-          }}
           className="cursor-pointer text-xs text-slate-400 underline underline-offset-2 transition hover:text-cyan-600 dark:hover:text-cyan-300"
         >
           Nuevo
-        </span>
+        </button>
       </div>
-    </div>
+    </button>
   );
 }

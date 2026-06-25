@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // ─── Onboarding key ────────────────────────────────────────────
 
@@ -188,6 +188,7 @@ export function OnboardingDialog() {
                   }`}
                 >
                   <button
+                    type="button"
                     onClick={() => {
                       setCheckedItems((prev) => {
                         const next = new Set(prev);
@@ -257,6 +258,7 @@ export function OnboardingDialog() {
             </div>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <button
+                type="button"
                 onClick={handleStartTour}
                 className="text-xs text-accent underline underline-offset-2 hover:text-accent-strong dark:text-cyan-300 dark:hover:text-cyan-200"
               >
@@ -269,6 +271,7 @@ export function OnboardingDialog() {
                   </span>
                 )}
                 <button
+                  type="button"
                   onClick={handleDismiss}
                   className="inline-flex items-center justify-center rounded-lg border border-accent/30 bg-accent/10 px-4 py-2 text-sm font-medium text-accent-strong transition hover:bg-accent/15 dark:border-cyan-400/30 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-400/20"
                 >
@@ -298,6 +301,7 @@ export function OnboardingDialog() {
             Paso {tourStep + 1} de {TOUR_STEPS.length}
           </span>
           <button
+            type="button"
             onClick={handleDismiss}
             className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
             aria-label="Cerrar tour"
@@ -315,6 +319,7 @@ export function OnboardingDialog() {
 
         <div className="mt-5 flex items-center justify-between">
           <button
+            type="button"
             onClick={handlePrevTourStep}
             disabled={tourStep === 0}
             className="text-xs text-slate-400 underline underline-offset-2 transition hover:text-slate-600 disabled:opacity-30 disabled:no-underline dark:hover:text-slate-300"
@@ -322,6 +327,7 @@ export function OnboardingDialog() {
             ← Anterior
           </button>
           <button
+            type="button"
             onClick={handleNextTourStep}
             className="inline-flex items-center justify-center rounded-lg border border-accent/30 bg-accent/10 px-4 py-2 text-sm font-medium text-accent-strong transition hover:bg-accent/15 dark:border-cyan-400/30 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-400/20"
           >

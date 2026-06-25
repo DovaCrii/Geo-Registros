@@ -25,7 +25,7 @@ export function validateCsrf(request: Request): { valid: boolean; reason?: strin
   // Validate origin
   if (origin) {
     const matches = allowedOrigins.some(
-      (allowed) => origin === allowed || origin.startsWith(allowed + "/"),
+      (allowed) => origin === allowed || origin.startsWith(`${allowed}/`),
     );
     if (!matches) {
       return { valid: false, reason: `Origin not allowed: ${origin}` };
@@ -35,7 +35,7 @@ export function validateCsrf(request: Request): { valid: boolean; reason?: strin
   // Validate referer (fallback if origin not present)
   if (!origin && referer) {
     const matches = allowedOrigins.some(
-      (allowed) => referer.startsWith(allowed + "/") || referer === allowed,
+      (allowed) => referer.startsWith(`${allowed}/`) || referer === allowed,
     );
     if (!matches) {
       return { valid: false, reason: `Referer not allowed: ${referer}` };

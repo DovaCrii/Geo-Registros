@@ -107,7 +107,7 @@ function renderActions(actions: HeaderAction[] | undefined) {
   });
 }
 
-function renderSidebar(sidebar: SidebarConfig, total: number) {
+function renderSidebar(sidebar: SidebarConfig, _total: number) {
   return (
     <DetailPanel title={sidebar.title} description={sidebar.description}>
       {sidebar.items && sidebar.items.length > 0 && (

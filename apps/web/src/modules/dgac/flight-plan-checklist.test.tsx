@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { FlightPlanChecklist } from "./flight-plan-checklist";
 
@@ -81,34 +82,39 @@ describe("FlightPlanChecklist", () => {
   });
 
   it("toggles a checkbox on click and persists", async () => {
+    const user = userEvent.setup();
     renderChecklist();
     const checkboxes = screen.getAllByRole("checkbox");
     const first = checkboxes[0];
     expect(first).not.toBeChecked();
 
-    fireEvent.click(first);
-    expect(first).toBeChecked();
-    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      "/api/flight-plans/fp-1/dgac-checklist",
-      expect.objectContaining({
-        method: "PUT",
-        body: expect.stringContaining('"drone-registered":true'),
-      }),
-    );
+    await user.click(first);
+
+    await waitFor(() => {
+      expect(first).toBeChecked();
+      expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+      expect(globalThis.fetch).toHaveBeenCalledWith(
+        "/api/flight-plans/fp-1/dgac-checklist",
+        expect.objectContaining({
+          method: "PUT",
+          body: expect.stringContaining('"drone-registered":true'),
+        }),
+      );
+    });
   });
 
   it("shows an error toast when save fails", async () => {
+    const user = userEvent.setup();
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: false,
       json: async () => ({ error: "Database error" }),
     });
     renderChecklist();
     const checkbox = screen.getAllByRole("checkbox")[0];
-    fireEvent.click(checkbox);
+    await user.click(checkbox);
 
     // Wait for the fetch to reject and toast to be called
-    await vi.waitFor(() => {
+    await waitFor(() => {
       expect(mockToast).toHaveBeenCalledWith("error", "Error al guardar", "Database error");
     });
   });
@@ -126,13 +132,16 @@ describe("FlightPlanChecklist", () => {
   });
 
   it("disables checkboxes while saving", () => {
+    const user = userEvent.setup();
     renderChecklist();
     const checkbox = screen.getAllByRole("checkbox")[0];
-    fireEvent.click(checkbox);
+    void user.click(checkbox);
     // After clicking, saving state should disable all checkboxes
-    const allCheckboxes = screen.getAllByRole("checkbox");
-    allCheckboxes.forEach((cb) => {
-      expect(cb).toBeDisabled();
+    return waitFor(() => {
+      const allCheckboxes = screen.getAllByRole("checkbox");
+      allCheckboxes.forEach((cb) => {
+        expect(cb).toBeDisabled();
+      });
     });
   });
 });
