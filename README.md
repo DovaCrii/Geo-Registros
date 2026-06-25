@@ -140,17 +140,23 @@ Ver el estado completo en [`documentacion/PROJECT_STATUS.md`](documentacion/PROJ
 
 ## Estructura del repositorio
 
-- `apps/web/`: app Next.js full-stack actual.
-- `backend/`: Prisma, storage y documentación técnica del backend.
-- `documentacion/`: estado, roadmap, tareas, decisiones, bugs, handoffs y guías.
-- `tooling/`: registry y skills operativas del repositorio.
-- `docs/`: documentación técnica complementaria.
-
-### Objetivo siguiente
-- `apps/web/`: aplicación Next.js actual.
-- `backend/`: Prisma, storage y documentación técnica backend.
-- `documentacion/`: guías, roadmap, decisiones, bugs, estado del proyecto y documentación externa.
-- `tooling/`: configuración de agentes, OpenCode, Codex, skills y herramientas IA.
+```
+📁 Geo-Registros/
+ ├── 📁 apps/web/              ← 🌐 App Next.js (frontend + backend)
+ │     ├── src/app/            ←    Páginas y rutas
+ │     ├── src/components/     ←    Componentes reutilizables
+ │     ├── src/modules/        ←    Lógica de negocio
+ │     ├── src/server/         ←    Server Actions + queries
+ │     └── src/lib/            ←    Utilidades
+ ├── 📁 backend/               ← 🗄️ Datos y almacenamiento
+ │     ├── prisma/             ←    Schema, migraciones, seed
+ │     └── storage/            ←    Archivos locales
+ ├── 📁 documentacion/         ← 📚 Documentación del proyecto
+ ├── 📁 tooling/               ← 🤖 Skills y herramientas IA
+ ├── 📄 package.json           ← ⚡ Comandos de entrada
+ ├── 📄 AGENTS.md              ← 📋 Guía para agentes IA
+ └── 📄 README.md              ← 🏠 Este archivo
+```
 
 ### Guía rápida
 1. Abrí la carpeta `Geo-Registros` en VS Code.
