@@ -6,11 +6,7 @@ import { getUserById } from "@/server/users/queries";
 
 export const dynamic = "force-dynamic";
 
-export default async function EditUserPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function EditUserPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   let user: Awaited<ReturnType<typeof getUserById>> | null = null;
   try {

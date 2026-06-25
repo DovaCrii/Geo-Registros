@@ -83,7 +83,9 @@ export function getStatusLabel(status: string): string {
  * Pure function: get the tone for a status.
  * Falls back to "neutral".
  */
-export function getStatusTone(status: string): "success" | "warning" | "danger" | "info" | "neutral" {
+export function getStatusTone(
+  status: string,
+): "success" | "warning" | "danger" | "info" | "neutral" {
   return STATUS_TONES[status] ?? "neutral";
 }
 
@@ -93,10 +95,7 @@ export function getStatusTone(status: string): "success" | "warning" | "danger" 
  *
  * This is a PURE function — no DB, no I/O.
  */
-export function validateTransition(
-  currentStatus: string,
-  newStatus: string,
-): string | null {
+export function validateTransition(currentStatus: string, newStatus: string): string | null {
   if (currentStatus === newStatus) {
     return `Flight plan is already in ${currentStatus} status.`;
   }

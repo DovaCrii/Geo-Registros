@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { generateDashboardExcel } from "@/server/reports/excel-service";
 import { auth } from "@/lib/auth";
 import { requirePermission } from "@/lib/authorize";
+import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitReset } from "@/lib/rate-limit";
+import { generateDashboardExcel } from "@/server/reports/excel-service";
 
 export async function GET(request: Request) {
   // Rate limit: 10 exports per minute per IP
@@ -58,9 +58,10 @@ export async function GET(request: Request) {
 
     const recentActivity = recentEvents.map((ev) => ({
       date: ev.createdAt.toISOString().slice(0, 10),
-      event: ev.eventType === "TRANSITION"
-        ? `${ev.fromStatus ?? "—"} → ${ev.toStatus ?? "—"}`
-        : ev.eventType.replace(/_/g, " "),
+      event:
+        ev.eventType === "TRANSITION"
+          ? `${ev.fromStatus ?? "—"} → ${ev.toStatus ?? "—"}`
+          : ev.eventType.replace(/_/g, " "),
       plan: ev.flightPlan.code,
     }));
 

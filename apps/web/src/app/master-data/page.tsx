@@ -7,7 +7,7 @@ import { PageShell } from "@/components/ui/page-shell";
 import { StatusChip } from "@/components/ui/status-chip";
 import { requirePageAuth } from "@/lib/require-page-auth";
 import { getMasterDataSummary } from "@/server/master-data/queries";
-import { EntityCardView, type EntityCard } from "./entity-card-view";
+import { type EntityCard, EntityCardView } from "./entity-card-view";
 
 export const dynamic = "force-dynamic";
 
@@ -73,14 +73,17 @@ export default async function MasterDataPage() {
 
         {error ? (
           <DetailPanel title="Error" description={error}>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Recargá la página e intentá de nuevo.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Recargá la página e intentá de nuevo.
+            </p>
           </DetailPanel>
         ) : (
           <>
             {/* Summary bar */}
             <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white/90 px-5 py-3 dark:border-slate-800/80 dark:bg-slate-950/50">
               <span className="text-sm text-slate-600 dark:text-slate-400">
-                <strong className="text-slate-900 dark:text-white">{totalRecords}</strong> registros en total
+                <strong className="text-slate-900 dark:text-white">{totalRecords}</strong> registros
+                en total
               </span>
               <span className="hidden h-4 w-px bg-slate-200 dark:bg-slate-700 sm:block" />
               <div className="flex flex-wrap gap-2">
@@ -108,20 +111,21 @@ export default async function MasterDataPage() {
             >
               <div className="space-y-3 text-sm leading-6 text-slate-600 dark:text-slate-400">
                 <p>
-                  Los <strong className="text-slate-900 dark:text-white">grupos de trabajo</strong> organizan
-                  las operaciones por centro de costo y agrupan drones, operadores y planes de vuelo.
+                  Los <strong className="text-slate-900 dark:text-white">grupos de trabajo</strong>{" "}
+                  organizan las operaciones por centro de costo y agrupan drones, operadores y
+                  planes de vuelo.
                 </p>
                 <p>
-                  Los <strong className="text-slate-900 dark:text-white">clientes</strong> son los mandantes
-                  de las operaciones. Cada plan de vuelo se vincula a un cliente.
+                  Los <strong className="text-slate-900 dark:text-white">clientes</strong> son los
+                  mandantes de las operaciones. Cada plan de vuelo se vincula a un cliente.
                 </p>
                 <p>
-                  La <strong className="text-slate-900 dark:text-white">flota RPAS</strong> registra los
-                  drones disponibles con su modelo, número de serie y estado de seguro.
+                  La <strong className="text-slate-900 dark:text-white">flota RPAS</strong> registra
+                  los drones disponibles con su modelo, número de serie y estado de seguro.
                 </p>
                 <p>
-                  Los <strong className="text-slate-900 dark:text-white">operadores RPA</strong> son los
-                  pilotos responsables de ejecutar los vuelos, con licencia y certificaciones.
+                  Los <strong className="text-slate-900 dark:text-white">operadores RPA</strong> son
+                  los pilotos responsables de ejecutar los vuelos, con licencia y certificaciones.
                 </p>
               </div>
             </DetailPanel>

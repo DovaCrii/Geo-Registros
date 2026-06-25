@@ -4,26 +4,26 @@ import type { PermissionStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { broadcastNotification } from "@/server/notifications/service";
 import { requirePermission } from "@/lib/authorize";
+import { prisma } from "@/lib/prisma";
+import { evaluateChecklistSubmission, normalizeChecklist } from "@/modules/dgac/checklist-items";
 import { getDroneById } from "@/server/drones/queries";
 import { getFlightPlanById } from "@/server/flight-plans/queries";
+import { broadcastNotification } from "@/server/notifications/service";
 import { getOperatorById } from "@/server/operators/queries";
 import { getPermissionDocuments } from "@/server/permissions/queries";
-import { getWeatherForecast } from "@/server/weather/service";
-import { evaluateChecklistSubmission, normalizeChecklist } from "@/modules/dgac/checklist-items";
 import {
   isTerminalState,
   isValidTransition,
   VALID_TRANSITIONS,
   validateTransition,
 } from "@/server/permissions/transitions";
+import { getWeatherForecast } from "@/server/weather/service";
 
 export async function transitionPermission(
   flightPlanId: string,
   newStatus: PermissionStatus,
-  description?: string
+  description?: string,
 ) {
   await requirePermission("permission:transition");
   const session = await auth();
@@ -45,9 +45,13 @@ export async function transitionPermission(
       Promise.resolve(normalizeChecklist(flightPlan.dgacChecklist)),
     ]);
     const weatherData = flightPlan.geometryJson
-      ? await getWeatherForecast(flightPlan.geometryJson, flightPlan.operationDate).catch(() => null)
+      ? await getWeatherForecast(flightPlan.geometryJson, flightPlan.operationDate).catch(
+          () => null,
+        )
       : null;
-    const weatherReady = Boolean(weatherData && !("error" in weatherData)) || Boolean(persistedChecklist["weather-check"]);
+    const weatherReady =
+      Boolean(weatherData && !("error" in weatherData)) ||
+      Boolean(persistedChecklist["weather-check"]);
 
     const readiness = evaluateChecklistSubmission(
       {
@@ -126,7 +130,7 @@ export async function attachDocument(
   filePath: string,
   mimeType?: string,
   fileSize?: number,
-  notes?: string
+  notes?: string,
 ) {
   await requirePermission("document:upload");
   const session = await auth();

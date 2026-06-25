@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useCallback, useState, useRef, type ReactNode } from "react";
+import { createContext, type ReactNode, useCallback, useContext, useRef, useState } from "react";
 
 export type ToastType = "success" | "error" | "info";
 
@@ -111,16 +111,20 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
       </span>
       <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold text-white">{toast.title}</p>
-        {toast.message && (
-          <p className="mt-0.5 text-xs text-slate-400">{toast.message}</p>
-        )}
+        {toast.message && <p className="mt-0.5 text-xs text-slate-400">{toast.message}</p>}
       </div>
       <button
         onClick={() => onDismiss(toast.id)}
         className="shrink-0 text-slate-500 transition hover:text-white"
         aria-label="Cerrar"
       >
-        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <svg
+          className="h-3.5 w-3.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>

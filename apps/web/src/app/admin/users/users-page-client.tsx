@@ -1,11 +1,8 @@
 "use client";
 
-import { userListConfig } from "@/modules/users/user-list.config";
 import { ListPageClient } from "@/components/ui/list-page-client";
-import {
-  batchDeactivateUsers,
-  batchReactivateUsers,
-} from "@/server/users/actions";
+import { userListConfig } from "@/modules/users/user-list.config";
+import { batchDeactivateUsers, batchReactivateUsers } from "@/server/users/actions";
 
 export function UsersPageClient({
   rows,

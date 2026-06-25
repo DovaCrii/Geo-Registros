@@ -1,7 +1,7 @@
 "use server";
 
-import bcrypt from "bcryptjs";
 import { Role } from "@prisma/client";
+import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -53,13 +53,13 @@ export async function createUser(formData: FormData) {
   const hashedPassword = await bcrypt.hash(password, 12);
 
   await prisma.user.create({
-      data: {
-        email,
-        fullName,
-        hashedPassword,
-        role,
-      },
-    });
+    data: {
+      email,
+      fullName,
+      hashedPassword,
+      role,
+    },
+  });
 
   revalidatePath("/admin/users");
   redirect("/admin/users");

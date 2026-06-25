@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type HelpDoc = {
   id: string;
@@ -61,7 +61,7 @@ export function DocPreview({ doc, onClose }: DocPreviewProps) {
     (e: React.KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     },
-    [onClose]
+    [onClose],
   );
 
   const isImage = doc.mimeType.startsWith("image/");
@@ -84,7 +84,9 @@ export function DocPreview({ doc, onClose }: DocPreviewProps) {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-700/40">
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{doc.title}</p>
+            <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+              {doc.title}
+            </p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {doc.fileName} · {formatSize(doc.size)}
             </p>
@@ -114,13 +116,17 @@ export function DocPreview({ doc, onClose }: DocPreviewProps) {
           {loading && (
             <div className="flex items-center justify-center py-20">
               <div className="h-8 w-8 animate-spin rounded-full border-2 border-cyan-500 border-t-transparent" />
-              <span className="ml-3 text-sm text-slate-500 dark:text-slate-400">Cargando vista previa...</span>
+              <span className="ml-3 text-sm text-slate-500 dark:text-slate-400">
+                Cargando vista previa...
+              </span>
             </div>
           )}
 
           {error && !loading && (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-              <p className="text-sm font-medium text-slate-900 dark:text-white">Vista previa no disponible</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white">
+                Vista previa no disponible
+              </p>
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Descargá el archivo para ver su contenido.
               </p>
@@ -128,11 +134,19 @@ export function DocPreview({ doc, onClose }: DocPreviewProps) {
           )}
 
           {!loading && !error && objectUrl && isImage && (
-            <img src={objectUrl} alt={doc.title} className="mx-auto max-h-[70vh] rounded-lg object-contain shadow-sm" />
+            <img
+              src={objectUrl}
+              alt={doc.title}
+              className="mx-auto max-h-[70vh] rounded-lg object-contain shadow-sm"
+            />
           )}
 
           {!loading && !error && objectUrl && isPdf && (
-            <iframe src={objectUrl} className="h-[70vh] w-full rounded-lg border border-slate-200 dark:border-slate-700/40" title={doc.title} />
+            <iframe
+              src={objectUrl}
+              className="h-[70vh] w-full rounded-lg border border-slate-200 dark:border-slate-700/40"
+              title={doc.title}
+            />
           )}
 
           {!loading && !error && objectUrl && !isImage && !isPdf && (

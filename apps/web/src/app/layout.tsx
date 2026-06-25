@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ui/theme-provider";
 import { SessionWrapper } from "@/components/ui/session-wrapper";
+import { ThemeProvider } from "@/components/ui/theme-provider";
 import { ToastProvider } from "@/lib/toast-context";
 
 const inter = Inter({

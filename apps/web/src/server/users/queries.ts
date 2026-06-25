@@ -1,7 +1,6 @@
-import { Role } from "@prisma/client";
-
-import { prisma } from "@/lib/prisma";
+import type { Role } from "@prisma/client";
 import type { ListQueryParams } from "@/lib/list-config/types";
+import { prisma } from "@/lib/prisma";
 
 type UserRow = {
   id: string;
@@ -12,7 +11,9 @@ type UserRow = {
   createdAt: Date;
 };
 
-export async function listUsers(params?: ListQueryParams): Promise<{ rows: UserRow[]; total: number }> {
+export async function listUsers(
+  params?: ListQueryParams,
+): Promise<{ rows: UserRow[]; total: number }> {
   const search = params?.search;
   const page = params?.page ?? 1;
   const pageSize = params?.pageSize ?? 10;
@@ -30,13 +31,15 @@ export async function listUsers(params?: ListQueryParams): Promise<{ rows: UserR
 
   const roleClause = roleFilter ? { role: roleFilter } : {};
   const activeClause =
-    statusFilter === "active" ? { active: true } :
-    statusFilter === "inactive" ? { active: false } :
-    {};
+    statusFilter === "active"
+      ? { active: true }
+      : statusFilter === "inactive"
+        ? { active: false }
+        : {};
 
   const orderBy = params?.sortField
-    ? { [params.sortField]: params.sortDir ?? "asc" } as any
-    : [{ fullName: "asc" }] as any;
+    ? ({ [params.sortField]: params.sortDir ?? "asc" } as any)
+    : ([{ fullName: "asc" }] as any);
 
   const [rows, total] = await Promise.all([
     prisma.user.findMany({

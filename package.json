@@ -11,7 +11,9 @@
     "prisma:migrate": "prisma migrate dev --schema backend/prisma/schema.prisma",
     "seed:dev": "node backend/prisma/seed.cjs",
     "test": "vitest run --config apps/web/vitest.config.ts",
-    "test:watch": "vitest --config apps/web/vitest.config.ts"
+    "test:watch": "vitest --config apps/web/vitest.config.ts",
+    "lint": "npx @biomejs/biome check apps/web/src/ backend/",
+    "format": "npx @biomejs/biome format --write apps/web/src/ backend/"
   },
   "prisma": {
     "seed": "node backend/prisma/seed.cjs"
@@ -38,6 +40,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",

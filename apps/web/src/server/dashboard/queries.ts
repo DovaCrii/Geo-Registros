@@ -188,8 +188,7 @@ export async function getDashboardStats() {
   ]);
 
   const totalFlightPlans = flightPlans.reduce((sum, g) => sum + g._count, 0);
-  const activeDrones =
-    drones.find((g) => g.status === "ACTIVE")?._count ?? 0;
+  const activeDrones = drones.find((g) => g.status === "ACTIVE")?._count ?? 0;
   const totalDrones = drones.reduce((sum, g) => sum + g._count, 0);
 
   // Build status map
@@ -226,7 +225,12 @@ export async function getDashboardStats() {
       dronesWithoutExpiry: pendingCounts[6],
     },
     issues,
-    isEmpty: totalFlightPlans === 0 && totalDrones === 0 && operators === 0 && clients === 0 && costCenters === 0,
+    isEmpty:
+      totalFlightPlans === 0 &&
+      totalDrones === 0 &&
+      operators === 0 &&
+      clients === 0 &&
+      costCenters === 0,
   };
 }
 

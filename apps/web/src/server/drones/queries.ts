@@ -1,7 +1,6 @@
 import { RecordStatus } from "@prisma/client";
-
-import { prisma } from "@/lib/prisma";
 import type { ListQueryParams } from "@/lib/list-config/types";
+import { prisma } from "@/lib/prisma";
 
 type DroneRow = {
   id: string;
@@ -15,7 +14,9 @@ type DroneRow = {
   costCenter: { id: string; code: string; name: string } | null;
 };
 
-export async function listDrones(params?: ListQueryParams): Promise<{ rows: DroneRow[]; total: number }> {
+export async function listDrones(
+  params?: ListQueryParams,
+): Promise<{ rows: DroneRow[]; total: number }> {
   const search = params?.search;
   const page = params?.page ?? 1;
   const pageSize = params?.pageSize ?? 10;
@@ -37,8 +38,8 @@ export async function listDrones(params?: ListQueryParams): Promise<{ rows: Dron
   const where = { ...searchClause, ...statusClause, deletedAt: null };
 
   const orderBy = params?.sortField
-    ? { [params.sortField]: params.sortDir ?? "asc" } as any
-    : [{ model: "asc" }, { serialNumber: "asc" }] as any;
+    ? ({ [params.sortField]: params.sortDir ?? "asc" } as any)
+    : ([{ model: "asc" }, { serialNumber: "asc" }] as any);
 
   const [rows, total] = await Promise.all([
     prisma.drone.findMany({

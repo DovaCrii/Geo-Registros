@@ -1,7 +1,6 @@
 "use client";
 
-import type { BatchAction, ListColumn, ListConfig } from "@/lib/list-config/types";
-import { DataColumn, DataTable } from "@/components/ui/data-table";
+import { type DataColumn, DataTable } from "@/components/ui/data-table";
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { DraggableTable } from "@/components/ui/draggable-table";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -10,10 +9,17 @@ import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
-import { SelectableTable } from "@/components/ui/selectable-table";
 import { SelectFilter } from "@/components/ui/select-filter";
+import { SelectableTable } from "@/components/ui/selectable-table";
 import { StatusChip } from "@/components/ui/status-chip";
-import type { HeaderAction, SidebarConfig, ListQueryParams } from "@/lib/list-config/types";
+import type {
+  BatchAction,
+  HeaderAction,
+  ListColumn,
+  ListConfig,
+  ListQueryParams,
+  SidebarConfig,
+} from "@/lib/list-config/types";
 
 function buildDataTableColumns<Row>(columns: ListColumn<Row>[]): Array<DataColumn<Row>> {
   return columns.map((col) => ({
@@ -21,10 +27,12 @@ function buildDataTableColumns<Row>(columns: ListColumn<Row>[]): Array<DataColum
     header: col.header,
     sortable: col.sortable,
     sortField: col.sortField,
-    render: col.render ?? ((row: Row) => {
-      const val = (row as Record<string, unknown>)[col.key];
-      return val != null ? String(val) : "—";
-    }),
+    render:
+      col.render ??
+      ((row: Row) => {
+        const val = (row as Record<string, unknown>)[col.key];
+        return val != null ? String(val) : "—";
+      }),
   }));
 }
 
@@ -32,7 +40,13 @@ function renderFilters(filters: NonNullable<ListConfig<unknown>["filters"]>) {
   return filters.map((filter) => {
     switch (filter.type) {
       case "search":
-        return <SearchInput key={filter.field} paramName={filter.field} placeholder={filter.placeholder} />;
+        return (
+          <SearchInput
+            key={filter.field}
+            paramName={filter.field}
+            placeholder={filter.placeholder}
+          />
+        );
       case "status":
         return (
           <SelectFilter
@@ -65,11 +79,18 @@ function renderFilters(filters: NonNullable<ListConfig<unknown>["filters"]>) {
 function renderActions(actions: HeaderAction[] | undefined) {
   if (!actions || actions.length === 0) return undefined;
   return actions.map((action) => {
-    const base = "inline-flex items-center justify-center rounded-lg border px-4 py-2.5 text-sm font-medium transition";
-    const primary = "border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 text-accent-strong dark:text-cyan-100 hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20";
-    const secondary = "border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-950/80 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:border-slate-600 dark:hover:bg-slate-800";
+    const base =
+      "inline-flex items-center justify-center rounded-lg border px-4 py-2.5 text-sm font-medium transition";
+    const primary =
+      "border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 text-accent-strong dark:text-cyan-100 hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20";
+    const secondary =
+      "border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-950/80 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:border-slate-600 dark:hover:bg-slate-800";
     return (
-      <a key={action.href} href={action.href} className={`${base} ${action.variant === "secondary" ? secondary : primary}`}>
+      <a
+        key={action.href}
+        href={action.href}
+        className={`${base} ${action.variant === "secondary" ? secondary : primary}`}
+      >
         {action.label}
       </a>
     );
@@ -152,16 +173,39 @@ export function ListPageClient<Row extends { id: string }>({
           <EmptyState
             icon={
               <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
-                <path d="M9 17v-2m3 2v-4m3 4v-6M5 10l7-7 7 7M5 19h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M9 17v-2m3 2v-4m3 4v-6M5 10l7-7 7 7M5 19h14"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             }
             title="No hay registros todavía"
             description="Aún no se ha creado ningún registro en esta sección. Una vez que haya datos, aparecerán aquí."
-            action={config.headerActions?.[0] ? { label: config.headerActions[0].label, href: config.headerActions[0].href } : undefined}
+            action={
+              config.headerActions?.[0]
+                ? { label: config.headerActions[0].label, href: config.headerActions[0].href }
+                : undefined
+            }
             steps={[
-              { number: 1, label: "Completá los datos maestros", description: "Asegurate de tener grupos de trabajo, clientes, drones y operadores activos." },
-              { number: 2, label: "Usá el formulario de creación", description: "Completá los datos del registro y guardalo." },
-              { number: 3, label: "Administrá desde esta vista", description: "Buscá, filtrá y gestioná todos tus registros desde un solo lugar." },
+              {
+                number: 1,
+                label: "Completá los datos maestros",
+                description:
+                  "Asegurate de tener grupos de trabajo, clientes, drones y operadores activos.",
+              },
+              {
+                number: 2,
+                label: "Usá el formulario de creación",
+                description: "Completá los datos del registro y guardalo.",
+              },
+              {
+                number: 3,
+                label: "Administrá desde esta vista",
+                description: "Buscá, filtrá y gestioná todos tus registros desde un solo lugar.",
+              },
             ]}
           />
         ) : (
@@ -185,26 +229,25 @@ export function ListPageClient<Row extends { id: string }>({
                 reorderKey={config.reorderKey}
               />
             ) : (
-              <DataTable
-                title={config.title}
-                description={desc}
-                columns={columns}
-                rows={rows}
-              />
+              <DataTable title={config.title} description={desc} columns={columns} rows={rows} />
             )}
 
-            {config.sidebar
-              ? renderSidebar(config.sidebar, total)
-              : (
-                <DetailPanel title="Listado" description="Vista de lista configurable.">
-                  <div className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/70 p-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-600 dark:text-slate-400">Total de registros</span>
-                      <span className="text-sm font-medium text-slate-800 dark:text-white">{total}</span>
-                    </div>
+            {config.sidebar ? (
+              renderSidebar(config.sidebar, total)
+            ) : (
+              <DetailPanel title="Listado" description="Vista de lista configurable.">
+                <div className="space-y-3 rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/70 p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-slate-600 dark:text-slate-400">
+                      Total de registros
+                    </span>
+                    <span className="text-sm font-medium text-slate-800 dark:text-white">
+                      {total}
+                    </span>
                   </div>
-                </DetailPanel>
-              )}
+                </div>
+              </DetailPanel>
+            )}
           </div>
         )}
 

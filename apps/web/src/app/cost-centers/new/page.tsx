@@ -13,7 +13,13 @@ export default async function NewCostCenterPage() {
   return (
     <PageShell>
       <div className="space-y-6">
-        <Breadcrumbs items={[{ label: "Inicio", href: "/" }, { label: "Grupos de trabajo", href: "/cost-centers" }, { label: "Crear grupo de trabajo" }]} />
+        <Breadcrumbs
+          items={[
+            { label: "Inicio", href: "/" },
+            { label: "Grupos de trabajo", href: "/cost-centers" },
+            { label: "Crear grupo de trabajo" },
+          ]}
+        />
 
         <PageHeader
           eyebrow="Bloque 2 / Datos maestros"

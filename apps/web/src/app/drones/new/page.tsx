@@ -18,7 +18,13 @@ export default async function NewDronePage() {
   return (
     <PageShell>
       <div className="space-y-6">
-        <Breadcrumbs items={[{ label: "Inicio", href: "/" }, { label: "Flota RPAS", href: "/drones" }, { label: "Registrar dron" }]} />
+        <Breadcrumbs
+          items={[
+            { label: "Inicio", href: "/" },
+            { label: "Flota RPAS", href: "/drones" },
+            { label: "Registrar dron" },
+          ]}
+        />
 
         <PageHeader
           eyebrow="Bloque 2 / Datos maestros"

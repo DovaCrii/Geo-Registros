@@ -27,12 +27,14 @@ export const masterDataCatalog: Record<string, MasterDataModuleConfig> = {
     slug: "cost-centers",
     eyebrow: "Block 2 / Master data",
     title: "Cost centers",
-    description: "Operational cost centers that anchor flight plans, documents, and downstream permit records.",
+    description:
+      "Operational cost centers that anchor flight plans, documents, and downstream permit records.",
     searchPlaceholder: "Search cost center code or name",
     filterLabel: "Business unit",
     ownerLabel: "Operations lead",
     panelTitle: "Create cost center",
-    panelDescription: "The creation panel will hold administrative and traceability fields once CRUD is connected.",
+    panelDescription:
+      "The creation panel will hold administrative and traceability fields once CRUD is connected.",
     rows: [
       {
         code: "CC-101",
@@ -56,12 +58,14 @@ export const masterDataCatalog: Record<string, MasterDataModuleConfig> = {
     slug: "clients",
     eyebrow: "Block 2 / Master data",
     title: "Clients",
-    description: "Mandantes and institutional counterparts associated with planned operations and formal submissions.",
+    description:
+      "Mandantes and institutional counterparts associated with planned operations and formal submissions.",
     searchPlaceholder: "Search client name or tax reference",
     filterLabel: "Contract type",
     ownerLabel: "Account owner",
     panelTitle: "Create client",
-    panelDescription: "Client records will later centralize contacts, contract metadata, and document rules.",
+    panelDescription:
+      "Client records will later centralize contacts, contract metadata, and document rules.",
     rows: [
       {
         code: "CL-044",
@@ -85,12 +89,14 @@ export const masterDataCatalog: Record<string, MasterDataModuleConfig> = {
     slug: "drones",
     eyebrow: "Block 2 / Master data",
     title: "Drones",
-    description: "RPA inventory prepared for assignment, maintenance tracking, and permit documentation packages.",
+    description:
+      "RPA inventory prepared for assignment, maintenance tracking, and permit documentation packages.",
     searchPlaceholder: "Search platform, serial, or model",
     filterLabel: "Platform class",
     ownerLabel: "Assigned team",
     panelTitle: "Register drone",
-    panelDescription: "The detail panel will later hold serial, certifications, payload configuration, and lifecycle status.",
+    panelDescription:
+      "The detail panel will later hold serial, certifications, payload configuration, and lifecycle status.",
     rows: [
       {
         code: "RP-009",
@@ -114,12 +120,14 @@ export const masterDataCatalog: Record<string, MasterDataModuleConfig> = {
     slug: "operators",
     eyebrow: "Block 2 / Master data",
     title: "Operators",
-    description: "Pilots and supporting personnel with the certifications and roles required by operational workflows.",
+    description:
+      "Pilots and supporting personnel with the certifications and roles required by operational workflows.",
     searchPlaceholder: "Search operator name or license",
     filterLabel: "Certification",
     ownerLabel: "Operational role",
     panelTitle: "Register operator",
-    panelDescription: "Operator records will later store licenses, expirations, assigned equipment, and compliance status.",
+    panelDescription:
+      "Operator records will later store licenses, expirations, assigned equipment, and compliance status.",
     rows: [
       {
         code: "OP-017",

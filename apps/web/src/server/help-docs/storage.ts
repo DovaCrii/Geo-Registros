@@ -1,8 +1,7 @@
-import { mkdir, writeFile, unlink } from "fs/promises";
+import { mkdir, unlink, writeFile } from "fs/promises";
 import path from "path";
-
-import { prisma } from "@/lib/prisma";
 import { appConfig } from "@/lib/config";
+import { prisma } from "@/lib/prisma";
 
 export type HelpDocRecord = {
   id: string;

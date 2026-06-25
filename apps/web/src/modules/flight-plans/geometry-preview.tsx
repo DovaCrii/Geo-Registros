@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
+import { useEffect, useRef } from "react";
 
 /**
  * Extract all [lng, lat] coordinate pairs from any GeoJSON geometry.
@@ -44,7 +44,9 @@ function parseGeoJson(text: string): GeoJSON.FeatureCollection | null {
     }
     if (
       typeof d.type === "string" &&
-      ["Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon"].includes(d.type)
+      ["Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon"].includes(
+        d.type,
+      )
     ) {
       return {
         type: "FeatureCollection",
@@ -177,15 +179,23 @@ export function GeometryPreview({ payload, height = 200 }: GeometryPreviewProps)
     }
 
     if (points.length > 0) {
-      let minLng = points[0][0], maxLng = points[0][0];
-      let minLat = points[0][1], maxLat = points[0][1];
+      let minLng = points[0][0],
+        maxLng = points[0][0];
+      let minLat = points[0][1],
+        maxLat = points[0][1];
       for (const [lng, lat] of points) {
         if (lng < minLng) minLng = lng;
         if (lng > maxLng) maxLng = lng;
         if (lat < minLat) minLat = lat;
         if (lat > maxLat) maxLat = lat;
       }
-      map.fitBounds([[minLng, minLat], [maxLng, maxLat]], { padding: 32, duration: 300 });
+      map.fitBounds(
+        [
+          [minLng, minLat],
+          [maxLng, maxLat],
+        ],
+        { padding: 32, duration: 300 },
+      );
     }
 
     sourceAddedRef.current = true;

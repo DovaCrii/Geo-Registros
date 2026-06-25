@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { removeDocument } from "@/server/permissions/actions";
-import { checkRateLimit, getRateLimitReset } from "@/lib/rate-limit";
+import { type NextRequest, NextResponse } from "next/server";
 import { validateCsrf } from "@/lib/csrf";
+import { checkRateLimit, getRateLimitReset } from "@/lib/rate-limit";
+import { removeDocument } from "@/server/permissions/actions";
 
 export async function POST(request: NextRequest) {
   const csrf = validateCsrf(request);
@@ -25,7 +25,10 @@ export async function POST(request: NextRequest) {
     const { flightPlanId, documentId } = body;
 
     if (!flightPlanId || !documentId) {
-      return NextResponse.json({ error: "flightPlanId and documentId are required." }, { status: 400 });
+      return NextResponse.json(
+        { error: "flightPlanId and documentId are required." },
+        { status: 400 },
+      );
     }
 
     await removeDocument(flightPlanId, documentId);

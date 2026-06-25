@@ -1,7 +1,6 @@
 import { RecordStatus } from "@prisma/client";
-
-import { prisma } from "@/lib/prisma";
 import type { ListQueryParams } from "@/lib/list-config/types";
+import { prisma } from "@/lib/prisma";
 
 export async function listClients(params?: ListQueryParams) {
   const search = params?.search;
@@ -25,8 +24,8 @@ export async function listClients(params?: ListQueryParams) {
   const where = { ...searchClause, ...statusClause, deletedAt: null };
 
   const orderBy = params?.sortField
-    ? { [params.sortField]: params.sortDir ?? "asc" } as any
-    : [{ name: "asc" }] as any;
+    ? ({ [params.sortField]: params.sortDir ?? "asc" } as any)
+    : ([{ name: "asc" }] as any);
 
   const [rows, total] = await Promise.all([
     prisma.client.findMany({

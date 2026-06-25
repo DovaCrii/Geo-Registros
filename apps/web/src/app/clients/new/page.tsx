@@ -13,7 +13,13 @@ export default async function NewClientPage() {
   return (
     <PageShell>
       <div className="space-y-6">
-        <Breadcrumbs items={[{ label: "Inicio", href: "/" }, { label: "Clientes", href: "/clients" }, { label: "Crear cliente" }]} />
+        <Breadcrumbs
+          items={[
+            { label: "Inicio", href: "/" },
+            { label: "Clientes", href: "/clients" },
+            { label: "Crear cliente" },
+          ]}
+        />
 
         <PageHeader
           eyebrow="Bloque 2 / Datos maestros"

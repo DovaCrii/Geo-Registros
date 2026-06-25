@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { RecordStatus } from "@prisma/client";
+import Link from "next/link";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -32,7 +32,9 @@ export function ClientForm({
     <DetailPanel title={title} description={description}>
       <form action={action} className="space-y-4">
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Código</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Código
+          </span>
           <input
             type="text"
             name="code"
@@ -43,7 +45,9 @@ export function ClientForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Nombre del cliente</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Nombre del cliente
+          </span>
           <input
             type="text"
             name="name"
@@ -55,7 +59,9 @@ export function ClientForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Nombre de contacto</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Nombre de contacto
+          </span>
           <input
             type="text"
             name="contactName"
@@ -66,7 +72,9 @@ export function ClientForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Correo de contacto</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Correo de contacto
+          </span>
           <input
             type="email"
             name="contactEmail"
@@ -77,7 +85,9 @@ export function ClientForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Estado</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Estado
+          </span>
           <select
             name="status"
             defaultValue={initialValues.status}
@@ -92,7 +102,9 @@ export function ClientForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Notas</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Notas
+          </span>
           <textarea
             name="notes"
             rows={5}

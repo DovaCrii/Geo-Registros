@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { RecordStatus } from "@prisma/client";
+import Link from "next/link";
 
 import { StatusChip } from "@/components/ui/status-chip";
-import { ListColumn, ListConfig } from "@/lib/list-config/types";
+import type { ListColumn, ListConfig } from "@/lib/list-config/types";
 
 type DroneRow = {
   id: string;
@@ -25,7 +25,9 @@ export const droneColumns: ListColumn<DroneRow>[] = [
     key: "code",
     header: "Código",
     sortable: true,
-    render: (row) => <span className="font-medium text-slate-900 dark:text-white">{row.code ?? "—"}</span>,
+    render: (row) => (
+      <span className="font-medium text-slate-900 dark:text-white">{row.code ?? "—"}</span>
+    ),
   },
   {
     key: "aircraft",
@@ -33,7 +35,9 @@ export const droneColumns: ListColumn<DroneRow>[] = [
     render: (row) => (
       <div className="space-y-1">
         <p className="font-medium text-slate-900 dark:text-white">{row.model}</p>
-        <p className="text-xs text-slate-600 dark:text-slate-500">{row.manufacturer ?? "Fabricante pendiente"}</p>
+        <p className="text-xs text-slate-600 dark:text-slate-500">
+          {row.manufacturer ?? "Fabricante pendiente"}
+        </p>
       </div>
     ),
   },
@@ -47,7 +51,10 @@ export const droneColumns: ListColumn<DroneRow>[] = [
         <p>{row.serialNumber}</p>
         <p className="text-xs text-slate-600 dark:text-slate-500">
           {row.costCenter ? (
-            <Link href={`/cost-centers/${row.costCenter.id}`} className="transition hover:text-cyan-600 dark:hover:text-cyan-300">
+            <Link
+              href={`/cost-centers/${row.costCenter.id}`}
+              className="transition hover:text-cyan-600 dark:hover:text-cyan-300"
+            >
               {row.costCenter.code} — {row.costCenter.name}
             </Link>
           ) : (
@@ -64,10 +71,14 @@ export const droneColumns: ListColumn<DroneRow>[] = [
       if (!row.insuranceExpiry) return <span className="text-sm text-slate-500">—</span>;
       const date = new Date(row.insuranceExpiry);
       const isExpired = date < new Date();
-        return (
-        <span className={`text-sm ${isExpired ? "text-red-600 dark:text-red-400" : "text-slate-700 dark:text-slate-300"}`}>
+      return (
+        <span
+          className={`text-sm ${isExpired ? "text-red-600 dark:text-red-400" : "text-slate-700 dark:text-slate-300"}`}
+        >
           {date.toISOString().slice(0, 10)}
-          {isExpired && <span className="ml-1.5 text-xs text-red-600 dark:text-red-400">(Vencido)</span>}
+          {isExpired && (
+            <span className="ml-1.5 text-xs text-red-600 dark:text-red-400">(Vencido)</span>
+          )}
         </span>
       );
     },
@@ -76,13 +87,21 @@ export const droneColumns: ListColumn<DroneRow>[] = [
     key: "status",
     header: "Estado",
     sortable: true,
-    render: (row) => <StatusChip label={row.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"} tone={toneFromStatus(row.status)} />,
+    render: (row) => (
+      <StatusChip
+        label={row.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"}
+        tone={toneFromStatus(row.status)}
+      />
+    ),
   },
   {
     key: "actions",
     header: "Acciones",
     render: (row) => (
-      <Link href={`/drones/${row.id}`} className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200">
+      <Link
+        href={`/drones/${row.id}`}
+        className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200"
+      >
         Editar
       </Link>
     ),
@@ -92,15 +111,14 @@ export const droneColumns: ListColumn<DroneRow>[] = [
 export const droneListConfig: ListConfig<DroneRow> = {
   eyebrow: "Bloque 2 / Datos maestros",
   title: "Flota RPAS",
-  description: "Inventario de aeronaves no tripuladas registradas, con estado, vencimiento de seguro y grupo de trabajo asociado.",
+  description:
+    "Inventario de aeronaves no tripuladas registradas, con estado, vencimiento de seguro y grupo de trabajo asociado.",
   columns: droneColumns,
   filters: [
     { field: "q", label: "Buscar", type: "search", placeholder: "Código, serie, modelo…" },
     { field: "status", label: "Estado", type: "status" },
   ],
-  headerActions: [
-    { href: "/drones/new", label: "Registrar dron", variant: "primary" },
-  ],
+  headerActions: [{ href: "/drones/new", label: "Registrar dron", variant: "primary" }],
   batchActions: [
     { label: "Activar", handler: "activate" },
     { label: "Desactivar", handler: "deactivate", variant: "warning" },

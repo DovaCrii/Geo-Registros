@@ -1,17 +1,17 @@
 ﻿"use client";
 
+import { MaplibreTerradrawControl } from "@watergis/maplibre-gl-terradraw";
+import maplibregl, { type Map } from "maplibre-gl";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import maplibregl, { Map } from "maplibre-gl";
-import { MaplibreTerradrawControl } from "@watergis/maplibre-gl-terradraw";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PrimaryButton } from "@/components/ui/primary-button";
 import { StatusChip } from "@/components/ui/status-chip";
-import { useToast } from "@/lib/toast-context";
-import { importKml, importDxf, importKmz } from "@/lib/geo-import";
-import { exportKml, exportDxf } from "@/lib/geo-export";
+import { exportDxf, exportKml } from "@/lib/geo-export";
 import type { ImportResult } from "@/lib/geo-import";
+import { importDxf, importKml, importKmz } from "@/lib/geo-import";
+import { useToast } from "@/lib/toast-context";
 
 const emptyFeatureCollection: GeoJSON.FeatureCollection = {
   type: "FeatureCollection",
@@ -61,10 +61,7 @@ function parseGeoJsonPayload(text: string) {
       };
     }
 
-    const type =
-      "type" in parsed && typeof parsed.type === "string"
-        ? parsed.type
-        : "Unknown";
+    const type = "type" in parsed && typeof parsed.type === "string" ? parsed.type : "Unknown";
 
     return {
       valid: true as const,
@@ -138,9 +135,7 @@ function haversineDistance(a: number[], b: number[]): number {
   const sinLng = Math.sin(dLng / 2);
   const h =
     sinLat * sinLat +
-    Math.cos((a[1] * Math.PI) / 180) *
-      Math.cos((b[1] * Math.PI) / 180) *
-      sinLng * sinLng;
+    Math.cos((a[1] * Math.PI) / 180) * Math.cos((b[1] * Math.PI) / 180) * sinLng * sinLng;
   return 2 * R * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
 }
 
@@ -172,9 +167,7 @@ function formatLength(m: number): string {
 }
 
 /** Strip Terra Draw internal properties and return clean GeoJSON features. */
-function featuresToCleanGeoJson(
-  features: GeoJSON.Feature[],
-): GeoJSON.FeatureCollection {
+function featuresToCleanGeoJson(features: GeoJSON.Feature[]): GeoJSON.FeatureCollection {
   const cleaned = features.map((f) => ({
     type: "Feature" as const,
     geometry: f.geometry,
@@ -210,7 +203,9 @@ function normalizeToFeatures(data: unknown): any[] {
   // Bare geometry object → wrap in a Feature
   if (
     typeof d.type === "string" &&
-    ["Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon"].includes(d.type)
+    ["Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon"].includes(
+      d.type,
+    )
   ) {
     return [{ type: "Feature", geometry: d, properties: {} }];
   }
@@ -271,18 +266,12 @@ function fitMapToPoints(map: Map, data: unknown) {
   );
 }
 
-function extractCoordinates(
-  geometry: GeoJSON.Geometry,
-): Array<[number, number]> {
+function extractCoordinates(geometry: GeoJSON.Geometry): Array<[number, number]> {
   const result: Array<[number, number]> = [];
 
   function walk(value: unknown) {
     if (!Array.isArray(value)) return;
-    if (
-      value.length >= 2 &&
-      typeof value[0] === "number" &&
-      typeof value[1] === "number"
-    ) {
+    if (value.length >= 2 && typeof value[0] === "number" && typeof value[1] === "number") {
       result.push([value[0], value[1]]);
       return;
     }
@@ -368,7 +357,11 @@ export function GeometryEditor({
   const [terraDrawReady, setTerraDrawReady] = useState(false);
   const [activeMode, setActiveMode] = useState<DrawMode | null>(null);
   const [importing, setImporting] = useState(false);
-  const [measurements, setMeasurements] = useState({ totalArea: "—", totalPerimeter: "—", featureCount: 0 });
+  const [measurements, setMeasurements] = useState({
+    totalArea: "—",
+    totalPerimeter: "—",
+    featureCount: 0,
+  });
   const [layers, setLayers] = useState({
     satellite: true,
     operationArea: true,
@@ -381,10 +374,7 @@ export function GeometryEditor({
   const initialLoadedRef = useRef(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const parsed = useMemo(() => parseGeoJsonPayload(payload), [payload]);
-  const enabledLayerCount = useMemo(
-    () => Object.values(layers).filter(Boolean).length,
-    [layers],
-  );
+  const enabledLayerCount = useMemo(() => Object.values(layers).filter(Boolean).length, [layers]);
   const workspaceModeSummary: {
     label: string;
     tone: "success" | "warning" | "danger" | "info" | "neutral";
@@ -439,8 +429,7 @@ export function GeometryEditor({
               "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
             ],
             tileSize: 256,
-            attribution:
-              "Esri, Maxar, Earthstar Geographics, and the GIS User Community",
+            attribution: "Esri, Maxar, Earthstar Geographics, and the GIS User Community",
           },
         },
         layers: [
@@ -457,10 +446,7 @@ export function GeometryEditor({
       zoom: 4,
     });
 
-    map.addControl(
-      new maplibregl.NavigationControl({ showCompass: false }),
-      "top-right",
-    );
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
 
     map.on("load", () => {
       const control = new MaplibreTerradrawControl({
@@ -583,9 +569,7 @@ export function GeometryEditor({
       if (!terraDraw) return;
 
       terraDraw.clear();
-      terraDraw.addFeatures(
-        featuresToTdFormat(result.features.features) as any,
-      );
+      terraDraw.addFeatures(featuresToTdFormat(result.features.features) as any);
 
       setPayload(JSON.stringify(result.features, null, 2));
       fitMapToPoints(mapRef.current!, result.features);
@@ -622,7 +606,11 @@ export function GeometryEditor({
         applyImport(result);
         toast("success", "Geometría importada", result.summary);
       } catch (err) {
-        toast("error", "Error al importar", err instanceof Error ? err.message : "Error desconocido");
+        toast(
+          "error",
+          "Error al importar",
+          err instanceof Error ? err.message : "Error desconocido",
+        );
       } finally {
         setImporting(false);
         if (fileInputRef.current) fileInputRef.current.value = "";
@@ -670,9 +658,7 @@ export function GeometryEditor({
         return;
       }
 
-      const cleaned = featuresToCleanGeoJson(
-        fc.features as GeoJSON.Feature[],
-      );
+      const cleaned = featuresToCleanGeoJson(fc.features as GeoJSON.Feature[]);
       let content: string;
       let mimeType: string;
       let extension: string;
@@ -694,7 +680,11 @@ export function GeometryEditor({
       a.download = `flight-plan-geometry.${extension}`;
       a.click();
       URL.revokeObjectURL(url);
-      toast("success", `Exportado a ${format.toUpperCase()}`, `Archivo generado correctamente en formato ${format.toUpperCase()}.`);
+      toast(
+        "success",
+        `Exportado a ${format.toUpperCase()}`,
+        `Archivo generado correctamente en formato ${format.toUpperCase()}.`,
+      );
     },
     [toast],
   );
@@ -716,7 +706,8 @@ export function GeometryEditor({
                   Mapa de operación y áreas de vuelo
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
-                  Dibujá el polígono de vuelo, activá capas de referencia y guardá el área sin trabajar con JSON manual.
+                  Dibujá el polígono de vuelo, activá capas de referencia y guardá el área sin
+                  trabajar con JSON manual.
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
@@ -737,7 +728,9 @@ export function GeometryEditor({
             {/* Contextual hint */}
             <div className="pointer-events-none absolute left-4 top-4 max-w-xs rounded-2xl border border-white/70 bg-white/90 px-4 py-3 text-sm text-slate-700 shadow-lg shadow-slate-950/10 backdrop-blur dark:border-slate-800/70 dark:bg-slate-950/85 dark:text-slate-200">
               <p className="font-semibold text-slate-950 dark:text-white">
-                {measurements.featureCount > 0 ? `Editor — ${measurements.featureCount} figura${measurements.featureCount !== 1 ? "s" : ""}` : "Siguiente acción"}
+                {measurements.featureCount > 0
+                  ? `Editor — ${measurements.featureCount} figura${measurements.featureCount !== 1 ? "s" : ""}`
+                  : "Siguiente acción"}
               </p>
               <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">
                 {measurements.featureCount > 0
@@ -761,7 +754,11 @@ export function GeometryEditor({
         <aside className="space-y-4">
           <DetailPanel title={title} description={description}>
             <div className="space-y-4">
-              <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 dark:border-slate-800/80 dark:bg-slate-950/70" role="status" aria-live="polite">
+              <div
+                className="rounded-2xl border border-slate-200 bg-white/90 p-4 dark:border-slate-800/80 dark:bg-slate-950/70"
+                role="status"
+                aria-live="polite"
+              >
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
@@ -778,7 +775,11 @@ export function GeometryEditor({
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 dark:border-cyan-500/20 dark:bg-cyan-500/[0.06]" role="status" aria-live="polite">
+              <div
+                className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 dark:border-cyan-500/20 dark:bg-cyan-500/[0.06]"
+                role="status"
+                aria-live="polite"
+              >
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-300">
                   Siguiente acción
                 </p>
@@ -794,9 +795,17 @@ export function GeometryEditor({
                     label="Polígono"
                     onClick={() => handleSetMode("polygon")}
                   />
-                  <ToolbarButton icon="📂" label="Importar" onClick={() => fileInputRef.current?.click()} />
+                  <ToolbarButton
+                    icon="📂"
+                    label="Importar"
+                    onClick={() => fileInputRef.current?.click()}
+                  />
                   {measurements.featureCount > 0 ? (
-                    <ToolbarButton icon="⬇" label="Exportar KML" onClick={() => handleExport("kml")} />
+                    <ToolbarButton
+                      icon="⬇"
+                      label="Exportar KML"
+                      onClick={() => handleExport("kml")}
+                    />
                   ) : null}
                 </div>
                 <div className="mt-4 grid grid-cols-2 gap-3 text-center">
@@ -829,12 +838,20 @@ export function GeometryEditor({
                 {measurements.featureCount > 0 && (
                   <div className="mt-2 grid grid-cols-2 gap-3">
                     <div className="rounded-xl border border-cyan-500/15 bg-white/80 px-3 py-2 text-center dark:bg-slate-950/60">
-                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Área</p>
-                      <p className="mt-0.5 font-mono text-sm font-bold text-cyan-700 dark:text-cyan-200">{measurements.totalArea}</p>
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        Área
+                      </p>
+                      <p className="mt-0.5 font-mono text-sm font-bold text-cyan-700 dark:text-cyan-200">
+                        {measurements.totalArea}
+                      </p>
                     </div>
                     <div className="rounded-xl border border-cyan-500/15 bg-white/80 px-3 py-2 text-center dark:bg-slate-950/60">
-                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Perímetro</p>
-                      <p className="mt-0.5 font-mono text-sm font-bold text-cyan-700 dark:text-cyan-200">{measurements.totalPerimeter}</p>
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        Perímetro
+                      </p>
+                      <p className="mt-0.5 font-mono text-sm font-bold text-cyan-700 dark:text-cyan-200">
+                        {measurements.totalPerimeter}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -847,9 +864,13 @@ export function GeometryEditor({
 
               <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800/80 dark:bg-slate-950/70">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-slate-950 dark:text-white">Herramientas</p>
+                  <p className="text-sm font-semibold text-slate-950 dark:text-white">
+                    Herramientas
+                  </p>
                   <span className="text-xs text-slate-500 dark:text-slate-500">
-                    {activeMode ? `Modo: ${DRAW_MODES.find((mode) => mode.id === activeMode)?.label ?? activeMode}` : "Sin modo activo"}
+                    {activeMode
+                      ? `Modo: ${DRAW_MODES.find((mode) => mode.id === activeMode)?.label ?? activeMode}`
+                      : "Sin modo activo"}
                   </span>
                 </div>
 
@@ -900,16 +921,30 @@ export function GeometryEditor({
 
                 <div className="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-3 dark:border-slate-800/80 dark:bg-slate-950/70">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Capas</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                      Capas
+                    </p>
                     <span className="text-[10px] text-slate-500 dark:text-slate-500">
                       {enabledLayerCount}/3 visibles
                     </span>
                   </div>
 
                   {[
-                    { key: "satellite" as const, label: "Base satelital", desc: "Mapa de referencia visual" },
-                    { key: "operationArea" as const, label: "Área de operación", desc: "Figuras activas del plan" },
-                    { key: "importedReferences" as const, label: "Referencias importadas", desc: "KML, KMZ o DXF cargados" },
+                    {
+                      key: "satellite" as const,
+                      label: "Base satelital",
+                      desc: "Mapa de referencia visual",
+                    },
+                    {
+                      key: "operationArea" as const,
+                      label: "Área de operación",
+                      desc: "Figuras activas del plan",
+                    },
+                    {
+                      key: "importedReferences" as const,
+                      label: "Referencias importadas",
+                      desc: "KML, KMZ o DXF cargados",
+                    },
                   ].map((item) => (
                     <button
                       key={item.key}
@@ -918,8 +953,12 @@ export function GeometryEditor({
                       className="flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-left transition hover:border-cyan-500/30 hover:bg-white dark:border-slate-800 dark:bg-slate-950/80 dark:hover:border-cyan-500/30"
                     >
                       <span>
-                        <span className="block text-sm font-medium text-slate-900 dark:text-white">{item.label}</span>
-                        <span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-500">{item.desc}</span>
+                        <span className="block text-sm font-medium text-slate-900 dark:text-white">
+                          {item.label}
+                        </span>
+                        <span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-500">
+                          {item.desc}
+                        </span>
                       </span>
                       <span
                         className={`relative h-6 w-11 rounded-full transition ${
@@ -941,7 +980,9 @@ export function GeometryEditor({
               <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800/80 dark:bg-slate-950/70">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-slate-950 dark:text-white">Acciones</p>
-                  <span className="text-xs text-slate-500 dark:text-slate-500">Guardar / volver</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-500">
+                    Guardar / volver
+                  </span>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -954,11 +995,13 @@ export function GeometryEditor({
                   </Link>
                 </div>
               </div>
-
             </div>
           </DetailPanel>
 
-          <DetailPanel title="Intercambio técnico" description="Opciones secundarias para CAD/GIS y soporte avanzado.">
+          <DetailPanel
+            title="Intercambio técnico"
+            description="Opciones secundarias para CAD/GIS y soporte avanzado."
+          >
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-2">
                 <button

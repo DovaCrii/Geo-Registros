@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import type { Role } from "@prisma/client";
 import { auth } from "@/lib/auth";
 
 type Permission =
@@ -36,12 +36,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[] | "admin"> = {
     "document:view",
     "report:export",
   ],
-  ADC: [
-    "flight_plan:view",
-    "permission:transition",
-    "document:view",
-    "report:export",
-  ],
+  ADC: ["flight_plan:view", "permission:transition", "document:view", "report:export"],
   ESPECIALISTA_DOCUMENTAL: [
     "flight_plan:view",
     "document:upload",
@@ -57,15 +52,8 @@ const ROLE_PERMISSIONS: Record<Role, Permission[] | "admin"> = {
     "document:view",
     "report:export",
   ],
-  AUDITOR: [
-    "flight_plan:view",
-    "document:view",
-    "report:export",
-  ],
-  VIEWER: [
-    "flight_plan:view",
-    "document:view",
-  ],
+  AUDITOR: ["flight_plan:view", "document:view", "report:export"],
+  VIEWER: ["flight_plan:view", "document:view"],
 };
 
 function normalizeRole(role: string): string {

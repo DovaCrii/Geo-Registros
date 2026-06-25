@@ -1,7 +1,7 @@
 "use client";
 
-import { useActionState, useCallback } from "react";
 import { Role } from "@prisma/client";
+import { useActionState, useCallback } from "react";
 
 import { createUser, updateUser } from "@/server/users/actions";
 
@@ -27,9 +27,7 @@ type UserData = {
   createdAt: Date;
 };
 
-type UserFormProps =
-  | { mode: "create"; user?: never }
-  | { mode: "edit"; user: UserData };
+type UserFormProps = { mode: "create"; user?: never } | { mode: "edit"; user: UserData };
 
 export function UserForm(props: UserFormProps) {
   const { mode } = props;
@@ -63,7 +61,10 @@ export function UserForm(props: UserFormProps) {
       )}
 
       <div>
-        <label htmlFor="fullName" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label
+          htmlFor="fullName"
+          className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300"
+        >
           Nombre completo
         </label>
         <input
@@ -77,7 +78,10 @@ export function UserForm(props: UserFormProps) {
       </div>
 
       <div>
-        <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label
+          htmlFor="email"
+          className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300"
+        >
           Correo
         </label>
         <input
@@ -92,7 +96,10 @@ export function UserForm(props: UserFormProps) {
       </div>
 
       <div>
-        <label htmlFor="role" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label
+          htmlFor="role"
+          className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300"
+        >
           Rol
         </label>
         <select
@@ -111,8 +118,13 @@ export function UserForm(props: UserFormProps) {
       </div>
 
       <div>
-        <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-          {mode === "create" ? "Contraseña" : "Nueva contraseña (dejalo vacío para mantener la actual)"}
+        <label
+          htmlFor="password"
+          className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300"
+        >
+          {mode === "create"
+            ? "Contraseña"
+            : "Nueva contraseña (dejalo vacío para mantener la actual)"}
         </label>
         <input
           id="password"
@@ -127,7 +139,9 @@ export function UserForm(props: UserFormProps) {
       {mode === "edit" && user && (
         <div className="flex items-center gap-3 rounded-lg border border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/50 px-4 py-3">
           <span className="text-sm text-slate-600 dark:text-slate-400">Estado:</span>
-          <span className={`text-sm font-medium ${user.active ? "text-success dark:text-emerald-300" : "text-slate-500 dark:text-slate-400"}`}>
+          <span
+            className={`text-sm font-medium ${user.active ? "text-success dark:text-emerald-300" : "text-slate-500 dark:text-slate-400"}`}
+          >
             {user.active ? "Activo" : "Inactivo"}
           </span>
         </div>

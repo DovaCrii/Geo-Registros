@@ -1,8 +1,8 @@
-import { Role } from "@prisma/client";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import type { Role } from "@prisma/client";
+import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import bcrypt from "bcryptjs";
 
 import { prisma } from "@/lib/prisma";
 

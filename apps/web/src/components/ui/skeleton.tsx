@@ -5,9 +5,7 @@
 
 export function SkeletonBar({ className = "" }: { className?: string }) {
   return (
-    <div
-      className={`animate-pulse rounded-2xl bg-slate-200 dark:bg-slate-950/60 ${className}`}
-    />
+    <div className={`animate-pulse rounded-2xl bg-slate-200 dark:bg-slate-950/60 ${className}`} />
   );
 }
 
@@ -27,7 +25,10 @@ export function SkeletonTable({ rows = 5 }: { rows?: number }) {
   return (
     <div className="space-y-3">
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex items-center gap-4 rounded-lg border border-slate-200 dark:border-slate-800/50 bg-white dark:bg-slate-950/30 px-4 py-3">
+        <div
+          key={i}
+          className="flex items-center gap-4 rounded-lg border border-slate-200 dark:border-slate-800/50 bg-white dark:bg-slate-950/30 px-4 py-3"
+        >
           <SkeletonBar className="h-4 w-1/4" />
           <SkeletonBar className="h-4 w-1/3" />
           <div className="ml-auto">

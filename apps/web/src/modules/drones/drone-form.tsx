@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { RecordStatus } from "@prisma/client";
+import Link from "next/link";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -42,7 +42,9 @@ export function DroneForm({
     <DetailPanel title={title} description={description}>
       <form action={action} className="space-y-4">
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Código</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Código
+          </span>
           <input
             type="text"
             name="code"
@@ -53,7 +55,9 @@ export function DroneForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Número de serie</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Número de serie
+          </span>
           <input
             type="text"
             name="serialNumber"
@@ -65,7 +69,9 @@ export function DroneForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Fabricante</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Fabricante
+          </span>
           <input
             type="text"
             name="manufacturer"
@@ -76,7 +82,9 @@ export function DroneForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Modelo</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Modelo
+          </span>
           <input
             type="text"
             name="model"
@@ -88,7 +96,9 @@ export function DroneForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Vencimiento seguro</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Vencimiento seguro
+          </span>
           <input
             type="date"
             name="insuranceExpiry"
@@ -98,7 +108,9 @@ export function DroneForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Grupo de trabajo</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Grupo de trabajo
+          </span>
           <select
             name="costCenterId"
             defaultValue={initialValues.costCenterId}
@@ -114,7 +126,9 @@ export function DroneForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Estado</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Estado
+          </span>
           <select
             name="status"
             defaultValue={initialValues.status}
@@ -129,7 +143,9 @@ export function DroneForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Notas</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Notas
+          </span>
           <textarea
             name="notes"
             rows={5}

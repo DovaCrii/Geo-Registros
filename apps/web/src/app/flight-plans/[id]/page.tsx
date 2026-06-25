@@ -6,29 +6,29 @@ import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { canEditEntity } from "@/lib/authorize";
 import { requirePageAuth } from "@/lib/require-page-auth";
-import { FlightPlanForm } from "@/modules/flight-plans/flight-plan-form";
-import { PermissionActions } from "@/modules/permissions/permission-actions";
-import { PermissionStatusBadge } from "@/modules/permissions/permission-status-badge";
-import { PermissionTimeline } from "@/modules/permissions/permission-timeline";
-import { DocumentUpload } from "@/modules/permissions/document-upload";
-import { FlightPlanChecklist } from "@/modules/dgac/flight-plan-checklist";
 import {
   DGAC_CHECKLIST_ITEMS,
   deriveChecklistState,
   evaluateChecklistSubmission,
   normalizeChecklist,
 } from "@/modules/dgac/checklist-items";
+import { FlightPlanChecklist } from "@/modules/dgac/flight-plan-checklist";
+import { FlightPlanForm } from "@/modules/flight-plans/flight-plan-form";
+import { DocumentUpload } from "@/modules/permissions/document-upload";
+import { PermissionActions } from "@/modules/permissions/permission-actions";
+import { PermissionStatusBadge } from "@/modules/permissions/permission-status-badge";
+import { PermissionTimeline } from "@/modules/permissions/permission-timeline";
+import { WeatherCard } from "@/modules/weather/weather-card";
 import { listActiveClients } from "@/server/clients/queries";
 import { listActiveCostCenters } from "@/server/cost-centers/queries";
 import { listActiveDrones } from "@/server/drones/queries";
 import { deleteFlightPlan, updateFlightPlan } from "@/server/flight-plans/actions";
-import { listActiveOperators } from "@/server/operators/queries";
 import { getFlightPlanById } from "@/server/flight-plans/queries";
+import { listActiveOperators } from "@/server/operators/queries";
 import { getPermissionDocuments, getPermissionHistory } from "@/server/permissions/queries";
 import { getWeatherForecast } from "@/server/weather/service";
-import { WeatherCard } from "@/modules/weather/weather-card";
-import { canEditEntity } from "@/lib/authorize";
 
 export const dynamic = "force-dynamic";
 
@@ -102,8 +102,13 @@ export default async function FlightPlanDetailPage({
     if (!record) {
       return (
         <PageShell>
-          <DetailPanel title="Plan de vuelo no encontrado" description="El registro operativo solicitado no existe o ya no está disponible.">
-            <p className="text-sm text-slate-500 dark:text-slate-400">Volvé al listado de planes de vuelo y seleccioná un registro válido.</p>
+          <DetailPanel
+            title="Plan de vuelo no encontrado"
+            description="El registro operativo solicitado no existe o ya no está disponible."
+          >
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Volvé al listado de planes de vuelo y seleccioná un registro válido.
+            </p>
           </DetailPanel>
         </PageShell>
       );
@@ -119,7 +124,10 @@ export default async function FlightPlanDetailPage({
     ]);
 
     const clientOptionsWithCurrent = withCurrentOption(
-      clients.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.name}` : item.name })),
+      clients.map((item) => ({
+        id: item.id,
+        label: item.code ? `${item.code} · ${item.name}` : item.name,
+      })),
       { id: record.clientId, label: labelFromList(clients, record.clientId, record.clientId) },
     );
 
@@ -129,8 +137,14 @@ export default async function FlightPlanDetailPage({
     );
 
     const operatorOptionsWithCurrent = withCurrentOption(
-      operators.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.fullName}` : item.fullName })),
-      { id: record.operatorId, label: labelFromList(operators, record.operatorId, record.operatorId) },
+      operators.map((item) => ({
+        id: item.id,
+        label: item.code ? `${item.code} · ${item.fullName}` : item.fullName,
+      })),
+      {
+        id: record.operatorId,
+        label: labelFromList(operators, record.operatorId, record.operatorId),
+      },
     );
 
     const currentDrone = drones.find((item) => item.id === record.droneId) ?? null;
@@ -138,7 +152,9 @@ export default async function FlightPlanDetailPage({
     const currentCostCenter = costCenters.find((item) => item.id === record.costCenterId) ?? null;
     const currentClient = clients.find((item) => item.id === record.clientId) ?? null;
     const persistedChecklist = normalizeChecklist(record.dgacChecklist);
-    const weatherReady = Boolean(weatherData && !("error" in weatherData)) || Boolean(persistedChecklist["weather-check"]);
+    const weatherReady =
+      Boolean(weatherData && !("error" in weatherData)) ||
+      Boolean(persistedChecklist["weather-check"]);
 
     const suggestedChecklist = deriveChecklistState({
       record: {
@@ -202,7 +218,9 @@ export default async function FlightPlanDetailPage({
           Object.values(record.dgacChecklist as Record<string, unknown>).some(Boolean),
       ),
       5: permissionEvents.length > 0 || record.permissionStatus !== "DRAFT",
-      6: Boolean(weatherData && !("error" in weatherData)) || Boolean(persistedChecklist["weather-check"]),
+      6:
+        Boolean(weatherData && !("error" in weatherData)) ||
+        Boolean(persistedChecklist["weather-check"]),
     };
 
     const completedCount = STEP_META.filter((s) => stepCompletion[s.tab]).length;
@@ -294,18 +312,22 @@ export default async function FlightPlanDetailPage({
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <span className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${
-                        done && !active
-                          ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
-                          : active
-                            ? "bg-accent/20 dark:bg-cyan-400/20 text-accent-strong dark:text-cyan-100"
-                            : "bg-slate-200 dark:bg-slate-950 text-slate-500 dark:text-slate-400"
-                      }`}>
+                      <span
+                        className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${
+                          done && !active
+                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+                            : active
+                              ? "bg-accent/20 dark:bg-cyan-400/20 text-accent-strong dark:text-cyan-100"
+                              : "bg-slate-200 dark:bg-slate-950 text-slate-500 dark:text-slate-400"
+                        }`}
+                      >
                         {done && !active ? "✓" : step.tab}
                       </span>
                       <div>
                         <p className="text-sm font-semibold">{step.label}</p>
-                        <p className="text-xs text-slate-400 dark:text-slate-500">{step.description}</p>
+                        <p className="text-xs text-slate-400 dark:text-slate-500">
+                          {step.description}
+                        </p>
                       </div>
                     </div>
                   </Link>
@@ -316,23 +338,58 @@ export default async function FlightPlanDetailPage({
 
           {activeTab === 1 && (
             <div className="space-y-6">
-              <DetailPanel title="Entidades relacionadas" description="Abrí los registros maestros vinculados a este plan.">
+              <DetailPanel
+                title="Entidades relacionadas"
+                description="Abrí los registros maestros vinculados a este plan."
+              >
                 <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-                  <Link href={`/cost-centers/${record.costCenterId}`} className="rounded-lg border border-slate-200 bg-white px-4 py-3 transition hover:bg-slate-50 dark:border-slate-800/80 dark:bg-slate-950/45 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Grupo de trabajo</p>
-                    <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">{currentCostCenter ? `${currentCostCenter.code} · ${currentCostCenter.name}` : "Sin asignar"}</p>
+                  <Link
+                    href={`/cost-centers/${record.costCenterId}`}
+                    className="rounded-lg border border-slate-200 bg-white px-4 py-3 transition hover:bg-slate-50 dark:border-slate-800/80 dark:bg-slate-950/45 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5"
+                  >
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                      Grupo de trabajo
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">
+                      {currentCostCenter
+                        ? `${currentCostCenter.code} · ${currentCostCenter.name}`
+                        : "Sin asignar"}
+                    </p>
                   </Link>
-                  <Link href={`/clients/${record.clientId}`} className="rounded-lg border border-slate-200 bg-white px-4 py-3 transition hover:bg-slate-50 dark:border-slate-800/80 dark:bg-slate-950/45 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Cliente</p>
-                    <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">{currentClient ? currentClient.name : "Sin asignar"}</p>
+                  <Link
+                    href={`/clients/${record.clientId}`}
+                    className="rounded-lg border border-slate-200 bg-white px-4 py-3 transition hover:bg-slate-50 dark:border-slate-800/80 dark:bg-slate-950/45 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5"
+                  >
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                      Cliente
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">
+                      {currentClient ? currentClient.name : "Sin asignar"}
+                    </p>
                   </Link>
-                  <Link href={`/drones/${record.droneId}`} className="rounded-lg border border-slate-200 bg-white px-4 py-3 transition hover:bg-slate-50 dark:border-slate-800/80 dark:bg-slate-950/45 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Dron</p>
-                    <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">{currentDrone ? `${currentDrone.model} · ${currentDrone.serialNumber}` : "Sin asignar"}</p>
+                  <Link
+                    href={`/drones/${record.droneId}`}
+                    className="rounded-lg border border-slate-200 bg-white px-4 py-3 transition hover:bg-slate-50 dark:border-slate-800/80 dark:bg-slate-950/45 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5"
+                  >
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                      Dron
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">
+                      {currentDrone
+                        ? `${currentDrone.model} · ${currentDrone.serialNumber}`
+                        : "Sin asignar"}
+                    </p>
                   </Link>
-                  <Link href={`/operators/${record.operatorId}`} className="rounded-lg border border-slate-200 bg-white px-4 py-3 transition hover:bg-slate-50 dark:border-slate-800/80 dark:bg-slate-950/45 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Operador</p>
-                    <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">{currentOperator ? currentOperator.fullName : "Sin asignar"}</p>
+                  <Link
+                    href={`/operators/${record.operatorId}`}
+                    className="rounded-lg border border-slate-200 bg-white px-4 py-3 transition hover:bg-slate-50 dark:border-slate-800/80 dark:bg-slate-950/45 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5"
+                  >
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                      Operador
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">
+                      {currentOperator ? currentOperator.fullName : "Sin asignar"}
+                    </p>
                   </Link>
                 </div>
               </DetailPanel>
@@ -348,13 +405,18 @@ export default async function FlightPlanDetailPage({
                     title: record.title,
                     operationDate: formatDateInput(record.operationDate),
                     notes: record.notes ?? "",
-                    geometryPayload: record.geometryJson ? JSON.stringify(record.geometryJson, null, 2) : "",
+                    geometryPayload: record.geometryJson
+                      ? JSON.stringify(record.geometryJson, null, 2)
+                      : "",
                     costCenterId: record.costCenterId,
                     clientId: record.clientId,
                     droneId: record.droneId,
                     operatorId: record.operatorId,
                   }}
-                  costCenterOptions={costCenters.map((item) => ({ id: item.id, label: `${item.code} · ${item.name}` }))}
+                  costCenterOptions={costCenters.map((item) => ({
+                    id: item.id,
+                    label: `${item.code} · ${item.name}`,
+                  }))}
                   clientOptions={clientOptionsWithCurrent}
                   droneOptions={droneOptionsWithCurrent}
                   operatorOptions={operatorOptionsWithCurrent}
@@ -366,14 +428,37 @@ export default async function FlightPlanDetailPage({
                     {[
                       { label: "Código", value: record.code },
                       { label: "Fecha", value: formatDateInput(record.operationDate) },
-                      { label: "Cliente", value: currentClient ? currentClient.name : "Sin asignar" },
-                      { label: "Grupo", value: currentCostCenter ? `${currentCostCenter.code} · ${currentCostCenter.name}` : "Sin asignar" },
-                      { label: "Dron", value: currentDrone ? `${currentDrone.model} · ${currentDrone.serialNumber}` : "Sin asignar" },
-                      { label: "Operador", value: currentOperator ? currentOperator.fullName : "Sin asignar" },
+                      {
+                        label: "Cliente",
+                        value: currentClient ? currentClient.name : "Sin asignar",
+                      },
+                      {
+                        label: "Grupo",
+                        value: currentCostCenter
+                          ? `${currentCostCenter.code} · ${currentCostCenter.name}`
+                          : "Sin asignar",
+                      },
+                      {
+                        label: "Dron",
+                        value: currentDrone
+                          ? `${currentDrone.model} · ${currentDrone.serialNumber}`
+                          : "Sin asignar",
+                      },
+                      {
+                        label: "Operador",
+                        value: currentOperator ? currentOperator.fullName : "Sin asignar",
+                      },
                     ].map((item) => (
-                      <div key={item.label} className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800/80 dark:bg-slate-950/45">
-                        <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">{item.label}</p>
-                        <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">{item.value}</p>
+                      <div
+                        key={item.label}
+                        className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-800/80 dark:bg-slate-950/45"
+                      >
+                        <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                          {item.label}
+                        </p>
+                        <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">
+                          {item.value}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -384,19 +469,32 @@ export default async function FlightPlanDetailPage({
 
           {activeTab === 2 && (
             <div className="space-y-6">
-              <DetailPanel title="Geometría" description="Revisá el área de operación y abrí el editor satelital.">
+              <DetailPanel
+                title="Geometría"
+                description="Revisá el área de operación y abrí el editor satelital."
+              >
                 <div className="space-y-4">
                   <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800/80 dark:bg-slate-950/45">
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Estado actual</p>
-                    <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">{record.geometryType ?? "Sin geometría adjunta todavía"}</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                      Estado actual
+                    </p>
+                    <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">
+                      {record.geometryType ?? "Sin geometría adjunta todavía"}
+                    </p>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     {canEdit ? (
-                      <Link href={`/flight-plans/${record.id}/geometry`} className="inline-flex items-center justify-center rounded-lg border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-accent-strong dark:text-cyan-100 transition hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20">
+                      <Link
+                        href={`/flight-plans/${record.id}/geometry`}
+                        className="inline-flex items-center justify-center rounded-lg border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-accent-strong dark:text-cyan-100 transition hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20"
+                      >
                         Abrir editor satelital
                       </Link>
                     ) : null}
-                    <Link href={`/flight-plans/${record.id}/geometry`} className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-700/80 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800">
+                    <Link
+                      href={`/flight-plans/${record.id}/geometry`}
+                      className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-700/80 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800"
+                    >
                       Ver área de operación
                     </Link>
                   </div>
@@ -406,7 +504,10 @@ export default async function FlightPlanDetailPage({
           )}
 
           {activeTab === 3 && (
-            <DetailPanel title="Documentos" description="Adjuntá y gestioná los documentos operativos de este plan.">
+            <DetailPanel
+              title="Documentos"
+              description="Adjuntá y gestioná los documentos operativos de este plan."
+            >
               <DocumentUpload flightPlanId={record.id} documents={documents} />
             </DetailPanel>
           )}
@@ -417,19 +518,28 @@ export default async function FlightPlanDetailPage({
                 flightPlanId={record.id}
                 initialChecklist={record.dgacChecklist}
                 suggestedChecklist={suggestedChecklist}
-                geometryLink={record.geometryJson ? `/flight-plans/${record.id}/geometry` : undefined}
+                geometryLink={
+                  record.geometryJson ? `/flight-plans/${record.id}/geometry` : undefined
+                }
               />
             </div>
           )}
 
           {activeTab === 5 && (
             <div className="space-y-6">
-              <DetailPanel title="Flujo de permisos" description="Gestioná el estado del permiso y sus transiciones.">
+              <DetailPanel
+                title="Flujo de permisos"
+                description="Gestioná el estado del permiso y sus transiciones."
+              >
                 <div className="space-y-6">
                   <div className="rounded-lg border border-slate-200 bg-white px-4 py-3 dark:border-slate-800/80 dark:bg-slate-950/45">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-medium text-slate-900 dark:text-white">Estado de preparación DGAC</p>
-                      <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${checklistReview.canSubmit ? "bg-success/10 dark:bg-emerald-500/15 text-success dark:text-emerald-200" : "bg-status-warning/10 dark:bg-amber-500/15 text-status-warning dark:text-amber-200"}`}>
+                      <p className="text-sm font-medium text-slate-900 dark:text-white">
+                        Estado de preparación DGAC
+                      </p>
+                      <span
+                        className={`rounded-full px-3 py-1 text-[11px] font-semibold ${checklistReview.canSubmit ? "bg-success/10 dark:bg-emerald-500/15 text-success dark:text-emerald-200" : "bg-status-warning/10 dark:bg-amber-500/15 text-status-warning dark:text-amber-200"}`}
+                      >
                         {checklistReview.canSubmit ? "Listo para envío" : "Pendiente"}
                       </span>
                     </div>
@@ -442,7 +552,9 @@ export default async function FlightPlanDetailPage({
                             key={item.id}
                             className={`rounded-lg border px-3 py-2 text-xs leading-5 ${checked ? "border-success/20 dark:border-emerald-500/20 bg-success/5 dark:bg-emerald-500/[0.04] text-success dark:text-emerald-50" : "border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 text-slate-600 dark:text-slate-300"}`}
                           >
-                            <span className="font-medium">{checked ? "✓" : "○"} {item.label}</span>
+                            <span className="font-medium">
+                              {checked ? "✓" : "○"} {item.label}
+                            </span>
                           </div>
                         );
                       })}
@@ -453,17 +565,23 @@ export default async function FlightPlanDetailPage({
                     <AlertCard
                       severity="warning"
                       title="Checklist DGAC incompleta"
-                      message={checklistReview.missingItems.map((item) => `${item.label} — ${item.hint}`).join(". ")}
+                      message={checklistReview.missingItems
+                        .map((item) => `${item.label} — ${item.hint}`)
+                        .join(". ")}
                     />
                   ) : null}
 
                   <div>
-                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Estado actual</p>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                      Estado actual
+                    </p>
                     <PermissionStatusBadge status={record.permissionStatus} />
                   </div>
 
                   <div>
-                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Transiciones disponibles</p>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                      Transiciones disponibles
+                    </p>
                     <PermissionActions
                       flightPlanId={record.id}
                       currentStatus={record.permissionStatus}
@@ -472,7 +590,10 @@ export default async function FlightPlanDetailPage({
                   </div>
                 </div>
               </DetailPanel>
-              <DetailPanel title="Línea de tiempo" description="Auditoría de eventos vinculados al permiso.">
+              <DetailPanel
+                title="Línea de tiempo"
+                description="Auditoría de eventos vinculados al permiso."
+              >
                 <PermissionTimeline events={permissionEvents} />
               </DetailPanel>
             </div>
@@ -496,7 +617,8 @@ export default async function FlightPlanDetailPage({
                   </a>
                   <form action={deleteFlightPlan.bind(null, record.id)} className="space-y-3">
                     <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
-                      Esta acción lo saca de vistas activas, listados, conteos del panel y acceso a geometría.
+                      Esta acción lo saca de vistas activas, listados, conteos del panel y acceso a
+                      geometría.
                     </p>
                     <button
                       type="submit"
@@ -515,8 +637,13 @@ export default async function FlightPlanDetailPage({
   } catch {
     return (
       <PageShell>
-        <DetailPanel title="Plan de vuelo no disponible" description="No se pudieron cargar los datos. Verificá la conexión a la base de datos.">
-          <p className="text-sm text-slate-600 dark:text-slate-400">Recargá la página e intentá de nuevo.</p>
+        <DetailPanel
+          title="Plan de vuelo no disponible"
+          description="No se pudieron cargar los datos. Verificá la conexión a la base de datos."
+        >
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Recargá la página e intentá de nuevo.
+          </p>
         </DetailPanel>
       </PageShell>
     );

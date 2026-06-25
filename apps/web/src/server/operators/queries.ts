@@ -1,7 +1,6 @@
 import { RecordStatus } from "@prisma/client";
-
-import { prisma } from "@/lib/prisma";
 import type { ListQueryParams } from "@/lib/list-config/types";
+import { prisma } from "@/lib/prisma";
 
 type OperatorRow = {
   id: string;
@@ -16,7 +15,9 @@ type OperatorRow = {
   costCenter: { id: string; code: string; name: string } | null;
 };
 
-export async function listOperators(params?: ListQueryParams): Promise<{ rows: OperatorRow[]; total: number }> {
+export async function listOperators(
+  params?: ListQueryParams,
+): Promise<{ rows: OperatorRow[]; total: number }> {
   const search = params?.search;
   const page = params?.page ?? 1;
   const pageSize = params?.pageSize ?? 10;
@@ -38,8 +39,8 @@ export async function listOperators(params?: ListQueryParams): Promise<{ rows: O
   const where = { ...searchClause, ...statusClause, deletedAt: null };
 
   const orderBy = params?.sortField
-    ? { [params.sortField]: params.sortDir ?? "asc" } as any
-    : [{ fullName: "asc" }] as any;
+    ? ({ [params.sortField]: params.sortDir ?? "asc" } as any)
+    : ([{ fullName: "asc" }] as any);
 
   const [rows, total] = await Promise.all([
     prisma.operator.findMany({

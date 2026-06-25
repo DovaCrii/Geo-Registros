@@ -1,8 +1,8 @@
 import type { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
-import { requirePageAuth } from "@/lib/require-page-auth";
 import { prisma } from "@/lib/prisma";
+import { requirePageAuth } from "@/lib/require-page-auth";
 
 type EmailLogWithFlightPlan = Prisma.EmailLogGetPayload<{
   include: { flightPlan: { select: { id: true; code: true } } };
@@ -12,8 +12,10 @@ export const dynamic = "force-dynamic";
 
 const STATUS_COLORS: Record<string, string> = {
   sent: "text-success dark:text-emerald-300 bg-success/10 dark:bg-emerald-500/10 border-success/20 dark:border-emerald-400/20",
-  failed: "text-danger dark:text-red-300 bg-danger/10 dark:bg-red-500/10 border-danger/20 dark:border-red-400/20",
-  bounced: "text-status-warning dark:text-amber-300 bg-status-warning/10 dark:bg-amber-500/10 border-status-warning/20 dark:border-amber-400/20",
+  failed:
+    "text-danger dark:text-red-300 bg-danger/10 dark:bg-red-500/10 border-danger/20 dark:border-red-400/20",
+  bounced:
+    "text-status-warning dark:text-amber-300 bg-status-warning/10 dark:bg-amber-500/10 border-status-warning/20 dark:border-amber-400/20",
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -59,10 +61,22 @@ export default async function AdminEmailLogsPage() {
           </p>
           <div className="flex flex-wrap items-center gap-2 mt-3">
             {[
-              { label: "Notificación", tone: "bg-sky-100 text-sky-700 dark:bg-sky-500/10 dark:text-sky-300" },
-              { label: "Permiso", tone: "bg-violet-100 text-violet-700 dark:bg-violet-500/10 dark:text-violet-300" },
-              { label: "Reporte", tone: "bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300" },
-              { label: "Manual", tone: "bg-slate-100 text-slate-600 dark:bg-slate-500/10 dark:text-slate-300" },
+              {
+                label: "Notificación",
+                tone: "bg-sky-100 text-sky-700 dark:bg-sky-500/10 dark:text-sky-300",
+              },
+              {
+                label: "Permiso",
+                tone: "bg-violet-100 text-violet-700 dark:bg-violet-500/10 dark:text-violet-300",
+              },
+              {
+                label: "Reporte",
+                tone: "bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300",
+              },
+              {
+                label: "Manual",
+                tone: "bg-slate-100 text-slate-600 dark:bg-slate-500/10 dark:text-slate-300",
+              },
             ].map((t) => (
               <span
                 key={t.label}
@@ -75,19 +89,54 @@ export default async function AdminEmailLogsPage() {
         </div>
       </div>
 
-        <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/50 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
+      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/50 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <caption className="sr-only">Registro de correos enviados desde la plataforma</caption>
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/70">
-                <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Para</th>
-                <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Asunto</th>
-                <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Tipo</th>
-                <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Estado</th>
-                <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Enviado</th>
-                <th scope="col" className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Vuelo</th>
-                <th scope="col" className="text-right px-4 py-3 font-medium text-slate-600 dark:text-slate-400">Acción</th>
+                <th
+                  scope="col"
+                  className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400"
+                >
+                  Para
+                </th>
+                <th
+                  scope="col"
+                  className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400"
+                >
+                  Asunto
+                </th>
+                <th
+                  scope="col"
+                  className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400"
+                >
+                  Tipo
+                </th>
+                <th
+                  scope="col"
+                  className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400"
+                >
+                  Estado
+                </th>
+                <th
+                  scope="col"
+                  className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400"
+                >
+                  Enviado
+                </th>
+                <th
+                  scope="col"
+                  className="text-left px-4 py-3 font-medium text-slate-600 dark:text-slate-400"
+                >
+                  Vuelo
+                </th>
+                <th
+                  scope="col"
+                  className="text-right px-4 py-3 font-medium text-slate-600 dark:text-slate-400"
+                >
+                  Acción
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -99,9 +148,10 @@ export default async function AdminEmailLogsPage() {
                         No se han registrado correos todavía.
                       </p>
                       <p className="text-xs text-slate-400 dark:text-slate-500 leading-5">
-                        Los correos aparecen automáticamente al enviar notificaciones, permisos DGAC,
-                        reportes o envíos manuales desde la plataforma. Si esperabas ver correos y el
-                        listado está vacío, verificá que el servicio de email esté configurado.
+                        Los correos aparecen automáticamente al enviar notificaciones, permisos
+                        DGAC, reportes o envíos manuales desde la plataforma. Si esperabas ver
+                        correos y el listado está vacío, verificá que el servicio de email esté
+                        configurado.
                       </p>
                     </div>
                   </td>
@@ -126,7 +176,8 @@ export default async function AdminEmailLogsPage() {
                   <td className="px-4 py-3">
                     <span
                       className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${
-                        STATUS_COLORS[email.status] ?? "text-slate-600 bg-slate-100 border-slate-300 dark:text-slate-400 dark:bg-slate-400/10 dark:border-slate-400/20"
+                        STATUS_COLORS[email.status] ??
+                        "text-slate-600 bg-slate-100 border-slate-300 dark:text-slate-400 dark:bg-slate-400/10 dark:border-slate-400/20"
                       }`}
                     >
                       {email.status}

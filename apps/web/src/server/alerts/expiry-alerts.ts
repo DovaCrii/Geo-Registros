@@ -36,10 +36,7 @@ function formatDate(date: Date): string {
 }
 
 function buildAlert(target: ExpiryTarget, kind: AlertKind) {
-  const title =
-    kind === "expired"
-      ? `${target.label} vencido`
-      : `${target.label} por vencer`;
+  const title = kind === "expired" ? `${target.label} vencido` : `${target.label} por vencer`;
 
   const message =
     kind === "expired"

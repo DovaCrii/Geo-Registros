@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { transitionPermission } from "@/server/permissions/actions";
-import { checkRateLimit, getRateLimitReset } from "@/lib/rate-limit";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { validateCsrf } from "@/lib/csrf";
+import { checkRateLimit, getRateLimitReset } from "@/lib/rate-limit";
+import { transitionPermission } from "@/server/permissions/actions";
 
 export async function POST(request: NextRequest) {
   // CSRF check
@@ -19,10 +19,13 @@ export async function POST(request: NextRequest) {
   // Rate limit: 30 transitions/min per user
   const rlKey = `transition:${session.user.id}`;
   if (!checkRateLimit(rlKey, 30)) {
-    return NextResponse.json({ error: "Too many requests. Try again shortly." }, {
-      status: 429,
-      headers: { "Retry-After": getRateLimitReset(rlKey).toString() },
-    });
+    return NextResponse.json(
+      { error: "Too many requests. Try again shortly." },
+      {
+        status: 429,
+        headers: { "Retry-After": getRateLimitReset(rlKey).toString() },
+      },
+    );
   }
 
   try {
@@ -30,7 +33,10 @@ export async function POST(request: NextRequest) {
     const { flightPlanId, newStatus } = body;
 
     if (!flightPlanId || !newStatus) {
-      return NextResponse.json({ error: "flightPlanId and newStatus are required." }, { status: 400 });
+      return NextResponse.json(
+        { error: "flightPlanId and newStatus are required." },
+        { status: 400 },
+      );
     }
 
     await transitionPermission(flightPlanId, newStatus);

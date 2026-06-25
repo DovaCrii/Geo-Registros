@@ -12,10 +12,7 @@ interface AlertCardProps {
   className?: string;
 }
 
-const severityConfig: Record<
-  AlertSeverity,
-  { border: string; icon: string; bg: string }
-> = {
+const severityConfig: Record<AlertSeverity, { border: string; icon: string; bg: string }> = {
   info: {
     border: "border-l-accent",
     icon: "\u2139\uFE0F",
@@ -42,13 +39,7 @@ const severityConfig: Record<
  * AlertCard — barra izquierda de 4px + icono + mensaje.
  * Sin bordes completos, solo la línea lateral.
  */
-export function AlertCard({
-  severity,
-  title,
-  message,
-  action,
-  className = "",
-}: AlertCardProps) {
+export function AlertCard({ severity, title, message, action, className = "" }: AlertCardProps) {
   const config = severityConfig[severity];
 
   return (
@@ -61,11 +52,7 @@ export function AlertCard({
           {config.icon}
         </span>
         <div className="flex-1 min-w-0">
-          {title && (
-            <p className="text-sm font-semibold text-slate-800 dark:text-white">
-              {title}
-            </p>
-          )}
+          {title && <p className="text-sm font-semibold text-slate-800 dark:text-white">{title}</p>}
           <p className="text-sm text-slate-600 dark:text-slate-300">{message}</p>
         </div>
         {action && <div className="flex-shrink-0">{action}</div>}

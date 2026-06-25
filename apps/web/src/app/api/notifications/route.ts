@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getMyNotifications } from "@/server/notifications/queries";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { checkRateLimit, getRateLimitReset } from "@/lib/rate-limit";
+import { getMyNotifications } from "@/server/notifications/queries";
 
 export async function GET(request: NextRequest) {
   const session = await auth();
@@ -12,10 +12,13 @@ export async function GET(request: NextRequest) {
   // Rate limit: 60 requests/min per user (polling-friendly)
   const rlKey = `notif-list:${session.user.id}`;
   if (!checkRateLimit(rlKey, 60)) {
-    return NextResponse.json({ error: "Too many requests." }, {
-      status: 429,
-      headers: { "Retry-After": getRateLimitReset(rlKey).toString() },
-    });
+    return NextResponse.json(
+      { error: "Too many requests." },
+      {
+        status: 429,
+        headers: { "Retry-After": getRateLimitReset(rlKey).toString() },
+      },
+    );
   }
 
   const { searchParams } = request.nextUrl;

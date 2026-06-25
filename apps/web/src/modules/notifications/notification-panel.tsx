@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { markNotificationRead, markAllNotificationsRead } from "@/server/notifications/actions";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useToast } from "@/lib/toast-context";
+import { markAllNotificationsRead, markNotificationRead } from "@/server/notifications/actions";
 
 type Notification = {
   id: string;
@@ -97,9 +97,7 @@ export function NotificationPanel() {
 
   const handleMarkRead = async (id: string) => {
     await markNotificationRead(id);
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
-    );
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
     setUnreadCount((c) => Math.max(0, c - 1));
   };
 
@@ -123,8 +121,18 @@ export function NotificationPanel() {
         className="relative rounded-xl p-2 text-slate-400 transition hover:bg-slate-800/60 hover:text-white"
         aria-label="Notificaciones"
       >
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+          />
         </svg>
         {unreadCount > 0 && (
           <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-cyan-500 px-1 text-[10px] font-bold text-white">
@@ -161,9 +169,7 @@ export function NotificationPanel() {
                   <div
                     key={n.id}
                     className={`flex gap-3 border-b border-slate-800/50 px-4 py-3 transition ${
-                      n.read
-                        ? "opacity-70"
-                        : "bg-cyan-500/5 hover:bg-cyan-500/10"
+                      n.read ? "opacity-70" : "bg-cyan-500/5 hover:bg-cyan-500/10"
                     }`}
                   >
                     <span className="mt-0.5 text-sm">{TYPE_ICONS[n.type] ?? "🔔"}</span>

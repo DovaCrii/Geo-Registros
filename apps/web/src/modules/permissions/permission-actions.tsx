@@ -31,10 +31,14 @@ const TRANSITION_LABELS: Record<string, string> = {
 };
 
 const TRANSITION_TONES: Record<string, string> = {
-  AUTHORIZED: "border-emerald-500/30 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:hover:bg-emerald-500/20",
-  REJECTED: "border-rose-500/30 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-300 dark:hover:bg-rose-500/20",
-  CANCELLED: "border-rose-500/30 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-300 dark:hover:bg-rose-500/20",
-  CLOSED: "border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 dark:border-slate-600 dark:bg-slate-950/60 dark:text-slate-200 dark:hover:bg-slate-800",
+  AUTHORIZED:
+    "border-emerald-500/30 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:hover:bg-emerald-500/20",
+  REJECTED:
+    "border-rose-500/30 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-300 dark:hover:bg-rose-500/20",
+  CANCELLED:
+    "border-rose-500/30 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-300 dark:hover:bg-rose-500/20",
+  CLOSED:
+    "border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 dark:border-slate-600 dark:bg-slate-950/60 dark:text-slate-200 dark:hover:bg-slate-800",
 };
 
 export function PermissionActions({
@@ -106,7 +110,11 @@ export function PermissionActions({
   }
 
   if (nextStates.length === 0) {
-    return <p className="text-xs text-slate-600 dark:text-slate-500">No hay transiciones disponibles (estado terminal).</p>;
+    return (
+      <p className="text-xs text-slate-600 dark:text-slate-500">
+        No hay transiciones disponibles (estado terminal).
+      </p>
+    );
   }
 
   return (
@@ -127,7 +135,9 @@ export function PermissionActions({
 
       <div className="flex flex-wrap gap-2">
         {nextStates.map((state) => {
-          const toneClass = TRANSITION_TONES[state] ?? "border-cyan-400/30 bg-cyan-500/15 text-cyan-100 hover:bg-cyan-400/20";
+          const toneClass =
+            TRANSITION_TONES[state] ??
+            "border-cyan-400/30 bg-cyan-500/15 text-cyan-100 hover:bg-cyan-400/20";
           const blockedReason = transitionBlocks?.[state] ?? null;
 
           return (
@@ -139,7 +149,7 @@ export function PermissionActions({
               onClick={() => handleTransition(state)}
               className={`inline-flex items-center justify-center rounded-2xl border px-3 py-1.5 text-xs font-medium transition disabled:opacity-40 ${toneClass}`}
             >
-              {pending === state ? "Procesando..." : TRANSITION_LABELS[state] ?? state}
+              {pending === state ? "Procesando..." : (TRANSITION_LABELS[state] ?? state)}
             </button>
           );
         })}

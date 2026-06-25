@@ -20,7 +20,9 @@ export function EntityCardView({ entity }: { entity: EntityCard }) {
   return (
     <div
       onClick={() => router.push(entity.href)}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") router.push(entity.href); }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") router.push(entity.href);
+      }}
       role="button"
       tabIndex={0}
       className="group block w-full cursor-pointer rounded-2xl border border-slate-200 bg-white/95 p-5 text-left shadow-sm transition hover:border-cyan-400/30 hover:shadow-md hover:shadow-cyan-500/5 dark:border-slate-800/80 dark:bg-slate-950/50 dark:hover:border-cyan-500/30 dark:hover:shadow-cyan-500/5"
@@ -38,12 +40,16 @@ export function EntityCardView({ entity }: { entity: EntityCard }) {
       <div className="mt-4 flex items-center gap-4">
         <div className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-emerald-500" />
-          <span className="text-xs text-slate-600 dark:text-slate-400">{entity.active} activos</span>
+          <span className="text-xs text-slate-600 dark:text-slate-400">
+            {entity.active} activos
+          </span>
         </div>
         {entity.inactive > 0 && (
           <div className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-slate-400" />
-            <span className="text-xs text-slate-500 dark:text-slate-500">{entity.inactive} inactivos</span>
+            <span className="text-xs text-slate-500 dark:text-slate-500">
+              {entity.inactive} inactivos
+            </span>
           </div>
         )}
       </div>

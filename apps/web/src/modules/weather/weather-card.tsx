@@ -15,7 +15,10 @@ function WeatherDisplay({ data }: { data: WeatherData }) {
       {/* Temperature */}
       <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white/90 px-4 py-3 dark:border-slate-700/60 dark:bg-slate-950/50">
         <span className="text-sm text-slate-600 dark:text-slate-400">Temperatura</span>
-        <span className="text-base font-semibold text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-mono)" }}>
+        <span
+          className="text-base font-semibold text-slate-900 dark:text-white"
+          style={{ fontFamily: "var(--font-mono)" }}
+        >
           {data.temperatureMin !== null ? `${Math.round(data.temperatureMin)}${tempUnit}` : "--"}{" "}
           <span className="text-slate-500 dark:text-slate-500">/</span>{" "}
           {data.temperatureMax !== null ? `${Math.round(data.temperatureMax)}${tempUnit}` : "--"}
@@ -31,7 +34,10 @@ function WeatherDisplay({ data }: { data: WeatherData }) {
       {/* Wind */}
       <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white/90 px-4 py-3 dark:border-slate-700/60 dark:bg-slate-950/50">
         <span className="text-sm text-slate-600 dark:text-slate-400">Viento máx</span>
-        <span className="text-base font-semibold text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-mono)" }}>
+        <span
+          className="text-base font-semibold text-slate-900 dark:text-white"
+          style={{ fontFamily: "var(--font-mono)" }}
+        >
           {data.windSpeedMax !== null ? `${Math.round(data.windSpeedMax)} ${windUnit}` : "--"}
         </span>
       </div>
@@ -40,7 +46,10 @@ function WeatherDisplay({ data }: { data: WeatherData }) {
       {data.windDirection !== null && (
         <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white/90 px-4 py-3 dark:border-slate-700/60 dark:bg-slate-950/50">
           <span className="text-sm text-slate-600 dark:text-slate-400">Dirección</span>
-          <span className="text-base font-semibold text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-mono)" }}>
+          <span
+            className="text-base font-semibold text-slate-900 dark:text-white"
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
             {windDirectionLabel(data.windDirection)} ({data.windDirection}°)
           </span>
         </div>
@@ -65,22 +74,22 @@ function WeatherErrorDisplay({ error }: { error: string }) {
   );
 }
 
-export function WeatherCard({
-  data,
-}: {
-  data: WeatherData | WeatherError | null;
-}) {
+export function WeatherCard({ data }: { data: WeatherData | WeatherError | null }) {
   return (
     <div className="rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-xl shadow-slate-950/10 backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/50">
       <div className="mb-4 border-b border-slate-200 pb-3 dark:border-slate-800/80">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Condiciones climáticas</h2>
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+          Condiciones climáticas
+        </h2>
         <p className="text-sm leading-6 text-slate-600 dark:text-slate-400">
           Pronóstico estimado para la fecha y ubicación de la operación.
         </p>
       </div>
 
       {!data ? (
-        <p className="text-xs text-slate-600 dark:text-slate-500">No hay datos climáticos disponibles.</p>
+        <p className="text-xs text-slate-600 dark:text-slate-500">
+          No hay datos climáticos disponibles.
+        </p>
       ) : "error" in data ? (
         <WeatherErrorDisplay error={data.error} />
       ) : (

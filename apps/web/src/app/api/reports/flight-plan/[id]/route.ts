@@ -1,15 +1,12 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { generateFlightPlanReport } from "@/server/reports/pdf-service";
-import { getWeatherForecast } from "@/server/weather/service";
 import { auth } from "@/lib/auth";
 import { requirePermission } from "@/lib/authorize";
+import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitReset } from "@/lib/rate-limit";
+import { generateFlightPlanReport } from "@/server/reports/pdf-service";
+import { getWeatherForecast } from "@/server/weather/service";
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user) {
     return new NextResponse("Unauthorized", { status: 401 });

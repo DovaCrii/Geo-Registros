@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 type EmptyStateProps = {
   icon?: ReactNode;
@@ -38,7 +38,9 @@ export function EmptyState({ icon, title, description, action, steps }: EmptySta
 
       {steps && steps.length > 0 && (
         <div className="mt-6 space-y-3 text-left">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">Pasos para empezar</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
+            Pasos para empezar
+          </p>
           {steps.map((step) => (
             <div key={step.number} className="flex items-start gap-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/10 text-xs font-semibold text-accent-strong dark:text-cyan-300">
@@ -47,7 +49,9 @@ export function EmptyState({ icon, title, description, action, steps }: EmptySta
               <div>
                 <p className="text-sm font-medium text-slate-900 dark:text-white">{step.label}</p>
                 {step.description && (
-                  <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">{step.description}</p>
+                  <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
+                    {step.description}
+                  </p>
                 )}
               </div>
             </div>

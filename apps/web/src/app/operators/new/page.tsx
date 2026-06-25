@@ -18,7 +18,13 @@ export default async function NewOperatorPage() {
   return (
     <PageShell>
       <div className="space-y-6">
-        <Breadcrumbs items={[{ label: "Inicio", href: "/" }, { label: "Operadores RPAS", href: "/operators" }, { label: "Registrar operador" }]} />
+        <Breadcrumbs
+          items={[
+            { label: "Inicio", href: "/" },
+            { label: "Operadores RPAS", href: "/operators" },
+            { label: "Registrar operador" },
+          ]}
+        />
 
         <PageHeader
           eyebrow="Bloque 2 / Datos maestros"
@@ -32,7 +38,17 @@ export default async function NewOperatorPage() {
           action={createOperator}
           submitLabel="Registrar operador"
           costCenterOptions={costCenterOptions}
-          initialValues={{ code: "", fullName: "", email: "", phone: "", licenseNumber: "", licenseExpiry: "", notes: "", costCenterId: "", status: RecordStatus.ACTIVE }}
+          initialValues={{
+            code: "",
+            fullName: "",
+            email: "",
+            phone: "",
+            licenseNumber: "",
+            licenseExpiry: "",
+            notes: "",
+            costCenterId: "",
+            status: RecordStatus.ACTIVE,
+          }}
         />
       </div>
     </PageShell>

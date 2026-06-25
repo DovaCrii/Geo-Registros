@@ -5,8 +5,8 @@
  * KML or DXF string output (suitable for file download).
  */
 
-import tokml from "tokml";
 import DxfWriter from "dxf-writer";
+import tokml from "tokml";
 
 /* ------------------------------------------------------------------ */
 /*  GeoJSON type helper                                                */
@@ -51,10 +51,7 @@ export function exportDxf(fc: GeoJSON.FeatureCollection): string {
 }
 
 /** Write a single GeoJSON geometry object to the DXF drawing. */
-function writeGeometry(
-  dxf: DxfWriter,
-  geometry: GeoJSON.Geometry,
-): void {
+function writeGeometry(dxf: DxfWriter, geometry: GeoJSON.Geometry): void {
   switch (geometry.type) {
     /* ---- Point ---- */
     case "Point": {

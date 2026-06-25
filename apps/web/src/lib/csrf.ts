@@ -15,10 +15,7 @@ export function validateCsrf(request: Request): { valid: boolean; reason?: strin
 
   // Allowlist of accepted origins (must match NEXTAUTH_URL or app domain)
   const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-  const allowedOrigins = [
-    appUrl.replace(/\/+$/, ""),
-    "http://localhost:3000",
-  ];
+  const allowedOrigins = [appUrl.replace(/\/+$/, ""), "http://localhost:3000"];
 
   // If neither origin nor referer is present, reject
   if (!origin && !referer) {

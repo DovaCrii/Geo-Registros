@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
-
-import { FlowMap } from "./FlowMap";
+import { useMemo, useState } from "react";
 import { DocPreview } from "./DocPreview";
+import { FlowMap } from "./FlowMap";
 
 type HelpDoc = {
   id: string;
@@ -16,11 +15,41 @@ type HelpDoc = {
 };
 
 const SECTIONS = [
-  { title: "Antes del vuelo", items: ["Registro RPA", "Credencial piloto RPAS", "Restricciones del espacio aéreo", "Clima y ventanas operativas"] },
-  { title: "Durante la operación", items: ["Seguimiento del plan de vuelo", "Evidencia y bitácora", "Cambios de último momento", "Reportes operativos"] },
-  { title: "Después del vuelo", items: ["Cierre operativo", "Respaldo documental", "Entregables técnicos", "Trazabilidad del evento"] },
-  { title: "Marco normativo", items: ["DAN 151", "DAN 91", "DAN 119", "DAN 137", "DAN 19", "DAR 51", "Código Aeronáutico"] },
-  { title: "Gestión operativa", items: ["AOC / CEO", "SMS", "Manual de Operaciones", "SIGO / NEO / OIRS DGAC"] },
+  {
+    title: "Antes del vuelo",
+    items: [
+      "Registro RPA",
+      "Credencial piloto RPAS",
+      "Restricciones del espacio aéreo",
+      "Clima y ventanas operativas",
+    ],
+  },
+  {
+    title: "Durante la operación",
+    items: [
+      "Seguimiento del plan de vuelo",
+      "Evidencia y bitácora",
+      "Cambios de último momento",
+      "Reportes operativos",
+    ],
+  },
+  {
+    title: "Después del vuelo",
+    items: [
+      "Cierre operativo",
+      "Respaldo documental",
+      "Entregables técnicos",
+      "Trazabilidad del evento",
+    ],
+  },
+  {
+    title: "Marco normativo",
+    items: ["DAN 151", "DAN 91", "DAN 119", "DAN 137", "DAN 19", "DAR 51", "Código Aeronáutico"],
+  },
+  {
+    title: "Gestión operativa",
+    items: ["AOC / CEO", "SMS", "Manual de Operaciones", "SIGO / NEO / OIRS DGAC"],
+  },
 ] as const;
 
 type HelpCenterClientProps = {
@@ -41,7 +70,7 @@ export function HelpCenterClient({ docsByCategory }: HelpCenterClientProps) {
       (d) =>
         d.title.toLowerCase().includes(q) ||
         d.category.toLowerCase().includes(q) ||
-        d.fileName.toLowerCase().includes(q)
+        d.fileName.toLowerCase().includes(q),
     );
   }, [allDocs, search]);
 
@@ -104,7 +133,9 @@ export function HelpCenterClient({ docsByCategory }: HelpCenterClientProps) {
             key={section.title}
             className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-6 shadow-sm dark:shadow-xl dark:shadow-slate-950/10"
           >
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{section.title}</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+              {section.title}
+            </h2>
             <ul className="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-400">
               {section.items.map((item) => (
                 <li
@@ -126,8 +157,8 @@ export function HelpCenterClient({ docsByCategory }: HelpCenterClientProps) {
           Checklist operativo DGAC
         </h2>
         <p className="mt-2 text-sm leading-6 text-amber-800 dark:text-amber-50/80">
-          La checklist vive por plan de vuelo y se sincroniza localmente por navegador. Cada
-          misión tiene su propio checklist DGAC.
+          La checklist vive por plan de vuelo y se sincroniza localmente por navegador. Cada misión
+          tiene su propio checklist DGAC.
         </p>
       </section>
 
@@ -196,9 +227,7 @@ export function HelpCenterClient({ docsByCategory }: HelpCenterClientProps) {
       </div>
 
       {/* Preview modal */}
-      {selectedDoc && (
-        <DocPreview doc={selectedDoc} onClose={() => setSelectedDoc(null)} />
-      )}
+      {selectedDoc && <DocPreview doc={selectedDoc} onClose={() => setSelectedDoc(null)} />}
     </div>
   );
 }

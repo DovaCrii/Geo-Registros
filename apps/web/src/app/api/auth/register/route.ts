@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
-import { validateName, validateEmail, validatePassword } from "@/lib/validation";
+import { validateEmail, validateName, validatePassword } from "@/lib/validation";
 
 export async function POST(request: Request) {
   try {
@@ -26,10 +26,7 @@ export async function POST(request: Request) {
 
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
-      return NextResponse.json(
-        { error: "Este email ya está registrado." },
-        { status: 409 },
-      );
+      return NextResponse.json({ error: "Este email ya está registrado." }, { status: 409 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -44,9 +41,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch {
-    return NextResponse.json(
-      { error: "Error al registrarse. Intentá de nuevo." },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Error al registrarse. Intentá de nuevo." }, { status: 500 });
   }
 }

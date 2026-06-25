@@ -2,8 +2,8 @@ import type { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { requirePageAuth } from "@/lib/require-page-auth";
 import { prisma } from "@/lib/prisma";
+import { requirePageAuth } from "@/lib/require-page-auth";
 import { resendEmail } from "@/server/email/actions";
 
 type EmailLogWithFlightPlan = Prisma.EmailLogGetPayload<{
@@ -29,11 +29,7 @@ function formatDate(d: Date): string {
   });
 }
 
-export default async function EmailLogDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function EmailLogDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requirePageAuth("/admin/email-logs");
   const { id } = await params;
 
@@ -67,7 +63,13 @@ export default async function EmailLogDetailPage({
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{email.subject}</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             {TYPE_LABELS[email.type] ?? email.type} ·{" "}
-            <span className={email.status === "sent" ? "text-success dark:text-emerald-300" : "text-danger dark:text-red-300"}>
+            <span
+              className={
+                email.status === "sent"
+                  ? "text-success dark:text-emerald-300"
+                  : "text-danger dark:text-red-300"
+              }
+            >
               {email.status}
             </span>
           </p>
@@ -95,15 +97,21 @@ export default async function EmailLogDetailPage({
             </div>
             <div>
               <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Enviado</p>
-              <p className="text-sm text-slate-700 dark:text-slate-200 mt-1">{formatDate(email.sentAt)}</p>
+              <p className="text-sm text-slate-700 dark:text-slate-200 mt-1">
+                {formatDate(email.sentAt)}
+              </p>
             </div>
             <div>
               <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Tipo</p>
-              <p className="text-sm text-slate-700 dark:text-slate-200 mt-1">{TYPE_LABELS[email.type] ?? email.type}</p>
+              <p className="text-sm text-slate-700 dark:text-slate-200 mt-1">
+                {TYPE_LABELS[email.type] ?? email.type}
+              </p>
             </div>
             {email.flightPlan && (
               <div>
-                <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Plan de vuelo</p>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                  Plan de vuelo
+                </p>
                 <Link
                   href={`/flight-plans/${email.flightPlan.id}`}
                   className="text-sm text-accent dark:text-cyan-300 hover:text-accent-strong dark:hover:text-cyan-200 underline underline-offset-2 mt-1 inline-block"
@@ -114,8 +122,12 @@ export default async function EmailLogDetailPage({
             )}
             {email.error && (
               <div>
-                <p className="text-xs font-medium text-danger dark:text-red-300 uppercase tracking-wider">Error</p>
-                <p className="text-sm text-danger dark:text-red-300 mt-1 font-mono">{email.error}</p>
+                <p className="text-xs font-medium text-danger dark:text-red-300 uppercase tracking-wider">
+                  Error
+                </p>
+                <p className="text-sm text-danger dark:text-red-300 mt-1 font-mono">
+                  {email.error}
+                </p>
               </div>
             )}
           </div>
@@ -125,7 +137,9 @@ export default async function EmailLogDetailPage({
         <div className="lg:col-span-2">
           <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/50 overflow-hidden shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
             <div className="px-5 py-3 border-b border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/70">
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Contenido</p>
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Contenido
+              </p>
             </div>
             <div
               className="p-5 text-sm text-slate-700 dark:text-slate-300 leading-relaxed prose max-w-none dark:prose-invert"

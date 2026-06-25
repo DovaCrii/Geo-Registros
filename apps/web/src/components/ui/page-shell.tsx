@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode, useState } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { type ReactNode, useState } from "react";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { FlowGuide } from "@/modules/flow-guide/flow-guide";
 import { NotificationPanel } from "@/modules/notifications/notification-panel";

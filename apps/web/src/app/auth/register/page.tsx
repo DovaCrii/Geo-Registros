@@ -1,9 +1,9 @@
 ﻿"use client";
 
-import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { validateName, validateEmail, validatePassword } from "@/lib/validation";
+import { useRouter } from "next/navigation";
+import { type FormEvent, useState } from "react";
+import { validateEmail, validateName, validatePassword } from "@/lib/validation";
 
 type FieldErrors = {
   fullName?: string;
@@ -89,7 +89,11 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           {serverError && (
-            <div role="alert" aria-live="polite" className="rounded-lg border border-red-200 dark:border-rose-500/30 bg-red-50 dark:bg-rose-500/10 px-4 py-3 text-sm text-danger dark:text-rose-300">
+            <div
+              role="alert"
+              aria-live="polite"
+              className="rounded-lg border border-red-200 dark:border-rose-500/30 bg-red-50 dark:bg-rose-500/10 px-4 py-3 text-sm text-danger dark:text-rose-300"
+            >
               {serverError}
             </div>
           )}

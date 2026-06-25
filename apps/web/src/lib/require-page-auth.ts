@@ -1,14 +1,11 @@
 import "server-only";
 
-import { Role } from "@prisma/client";
+import type { Role } from "@prisma/client";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 
-export async function requirePageAuth(
-  callbackUrl: string,
-  allowedRoles?: Role[],
-) {
+export async function requirePageAuth(callbackUrl: string, allowedRoles?: Role[]) {
   const session = await auth();
 
   if (!session?.user) {

@@ -5,10 +5,26 @@
 // ─────────────────────────────────────────────────────────────
 
 const pains = [
-  { title: "Archivos dispersos", desc: "Fotos, informes, KML y planillas repartidos en carpetas sin orden ni trazabilidad.", icon: "folder" },
-  { title: "Falta de trazabilidad", desc: "Sin registro claro de quién hizo cada vuelo, cuándo y con qué resultados.", icon: "route" },
-  { title: "Reportes manuales", desc: "Horas armando informes que podrían generarse automáticamente desde los datos.", icon: "report" },
-  { title: "Entregables difíciles", desc: "Modelos 3D, nubes de puntos y ortomosaicos que cuesta compartir y revisar.", icon: "package" },
+  {
+    title: "Archivos dispersos",
+    desc: "Fotos, informes, KML y planillas repartidos en carpetas sin orden ni trazabilidad.",
+    icon: "folder",
+  },
+  {
+    title: "Falta de trazabilidad",
+    desc: "Sin registro claro de quién hizo cada vuelo, cuándo y con qué resultados.",
+    icon: "route",
+  },
+  {
+    title: "Reportes manuales",
+    desc: "Horas armando informes que podrían generarse automáticamente desde los datos.",
+    icon: "report",
+  },
+  {
+    title: "Entregables difíciles",
+    desc: "Modelos 3D, nubes de puntos y ortomosaicos que cuesta compartir y revisar.",
+    icon: "package",
+  },
 ] as const;
 
 const processSteps = [
@@ -17,14 +33,27 @@ const processSteps = [
   { step: "03", label: "Documentación", desc: "Adjuntá seguro, credenciales y respaldos." },
   { step: "04", label: "Revisión normativa", desc: "Validá requisitos antes de enviar." },
   { step: "05", label: "Envío / autorización", desc: "Seguimiento del estado DGAC." },
-  { step: "06", label: "Ejecución del vuelo", desc: "Registro operacional del trabajo en terreno." },
+  {
+    step: "06",
+    label: "Ejecución del vuelo",
+    desc: "Registro operacional del trabajo en terreno.",
+  },
   { step: "07", label: "Informe / trazabilidad", desc: "Cierre, evidencia y entregables." },
 ] as const;
 
 const pillars = [
-  { title: "Mapa como centro de mando", desc: "Dibujá zonas, activá capas y mantené la operación visible desde el inicio." },
-  { title: "Permisos y documentos guiados", desc: "Ordená checklist, vigencias, observaciones y respaldos antes de volar." },
-  { title: "Trazabilidad comercializable", desc: "Cerrá cada vuelo con evidencia, historial y reportes listos para auditoría." },
+  {
+    title: "Mapa como centro de mando",
+    desc: "Dibujá zonas, activá capas y mantené la operación visible desde el inicio.",
+  },
+  {
+    title: "Permisos y documentos guiados",
+    desc: "Ordená checklist, vigencias, observaciones y respaldos antes de volar.",
+  },
+  {
+    title: "Trazabilidad comercializable",
+    desc: "Cerrá cada vuelo con evidencia, historial y reportes listos para auditoría.",
+  },
 ] as const;
 
 const proofPoints = [
@@ -34,27 +63,81 @@ const proofPoints = [
 ] as const;
 
 const modules = [
-  { title: "GeoRegistro de Terreno", desc: "Asocia coordenadas, EPSG, capas KML/KMZ y GeoJSON a cada levantamiento." , icon: "map"},
-  { title: "Gestión de Vuelos", desc: "Planifica, ejecuta y registra cada misión con dron. Historial completo por operador y flota.", icon: "flight" },
-  { title: "Control de Entregables", desc: "Centraliza ortomosaicos, nubes de puntos, modelos 3D y fotografías georreferenciadas.", icon: "deliverables" },
-  { title: "Visor Técnico 2D/3D", desc: "Visualiza modelos, mide distancias, alterna capas y navega el terreno desde el navegador.", icon: "viewer" },
-  { title: "Dashboard Ejecutivo", desc: "KPIs por proyecto, avance de cobertura, entregables validados y estado de flota.", icon: "dashboard" },
-  { title: "Reportes Automáticos", desc: "Genera informes técnicos profesionales con un clic. Exporta a PDF listo para entregar.", icon: "report" },
+  {
+    title: "GeoRegistro de Terreno",
+    desc: "Asocia coordenadas, EPSG, capas KML/KMZ y GeoJSON a cada levantamiento.",
+    icon: "map",
+  },
+  {
+    title: "Gestión de Vuelos",
+    desc: "Planifica, ejecuta y registra cada misión con dron. Historial completo por operador y flota.",
+    icon: "flight",
+  },
+  {
+    title: "Control de Entregables",
+    desc: "Centraliza ortomosaicos, nubes de puntos, modelos 3D y fotografías georreferenciadas.",
+    icon: "deliverables",
+  },
+  {
+    title: "Visor Técnico 2D/3D",
+    desc: "Visualiza modelos, mide distancias, alterna capas y navega el terreno desde el navegador.",
+    icon: "viewer",
+  },
+  {
+    title: "Dashboard Ejecutivo",
+    desc: "KPIs por proyecto, avance de cobertura, entregables validados y estado de flota.",
+    icon: "dashboard",
+  },
+  {
+    title: "Reportes Automáticos",
+    desc: "Genera informes técnicos profesionales con un clic. Exporta a PDF listo para entregar.",
+    icon: "report",
+  },
 ] as const;
 
 const useCases = [
-  { title: "Minería", desc: "Control de avance de extracción, monitoreo de botaderos, modelos volumétricos y estabilidad de taludes.", icon: "mine" },
-  { title: "Ingeniería y Construcción", desc: "Seguimiento de obras, cómputos de movimiento de tierra, inspección de avance y as-built.", icon: "build" },
-  { title: "Infraestructura", desc: "Inspección de puentes, torres, líneas de transmisión, ductos y activos lineales.", icon: "infra" },
-  { title: "Medioambiente", desc: "Monitoreo de humedales, cobertura vegetal, cierres de faenas y líneas de base.", icon: "eco" },
-  { title: "Topografía y Fotogrametría", desc: "Levantamiento de precisión, curvas de nivel, modelos digitales de terreno y ortofotos.", icon: "survey" },
-  { title: "Inspección Técnica", desc: "Termografía, multiespectral, detección de anomalías, registro fotográfico georreferenciado.", icon: "inspect" },
+  {
+    title: "Minería",
+    desc: "Control de avance de extracción, monitoreo de botaderos, modelos volumétricos y estabilidad de taludes.",
+    icon: "mine",
+  },
+  {
+    title: "Ingeniería y Construcción",
+    desc: "Seguimiento de obras, cómputos de movimiento de tierra, inspección de avance y as-built.",
+    icon: "build",
+  },
+  {
+    title: "Infraestructura",
+    desc: "Inspección de puentes, torres, líneas de transmisión, ductos y activos lineales.",
+    icon: "infra",
+  },
+  {
+    title: "Medioambiente",
+    desc: "Monitoreo de humedales, cobertura vegetal, cierres de faenas y líneas de base.",
+    icon: "eco",
+  },
+  {
+    title: "Topografía y Fotogrametría",
+    desc: "Levantamiento de precisión, curvas de nivel, modelos digitales de terreno y ortofotos.",
+    icon: "survey",
+  },
+  {
+    title: "Inspección Técnica",
+    desc: "Termografía, multiespectral, detección de anomalías, registro fotográfico georreferenciado.",
+    icon: "inspect",
+  },
 ] as const;
 
 const specs = [
-  "Coordenadas UTM / WGS84", "EPSG por proyecto", "Capas KML, KMZ, GeoJSON y DXF",
-  "Ortomosaicos georreferenciados", "Nubes de puntos", "Modelos 3D texturizados",
-  "Registro fotográfico con GPS", "Control de versiones", "Exportación de reportes",
+  "Coordenadas UTM / WGS84",
+  "EPSG por proyecto",
+  "Capas KML, KMZ, GeoJSON y DXF",
+  "Ortomosaicos georreferenciados",
+  "Nubes de puntos",
+  "Modelos 3D texturizados",
+  "Registro fotográfico con GPS",
+  "Control de versiones",
+  "Exportación de reportes",
 ] as const;
 
 const beforeAfter = {
@@ -83,7 +166,10 @@ function NavBar() {
     <nav className="fixed top-0 z-50 w-full border-b border-slate-200 bg-white/90 backdrop-blur-2xl dark:border-slate-800/50 dark:bg-slate-950/90">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>
+          <span
+            className="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
+            style={{ fontFamily: "var(--font-space-grotesk)" }}
+          >
             AeroFlow
           </span>
         </Link>
@@ -158,7 +244,7 @@ function HeroSection() {
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <Link
               href="/auth/login"
-                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-7 py-3 text-sm font-medium text-white shadow-lg shadow-cyan-500/20 transition hover:from-cyan-400 hover:to-emerald-400 hover:shadow-cyan-500/30 dark:from-cyan-400 dark:to-emerald-400 dark:text-slate-950 dark:hover:from-cyan-300 dark:hover:to-emerald-300"
+              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-7 py-3 text-sm font-medium text-white shadow-lg shadow-cyan-500/20 transition hover:from-cyan-400 hover:to-emerald-400 hover:shadow-cyan-500/30 dark:from-cyan-400 dark:to-emerald-400 dark:text-slate-950 dark:hover:from-cyan-300 dark:hover:to-emerald-300"
             >
               Probar demo
             </Link>
@@ -172,18 +258,32 @@ function HeroSection() {
 
           <div className="grid gap-3 pt-4 sm:grid-cols-3">
             {proofPoints.map((item) => (
-              <div key={item.value} className="rounded-2xl border border-cyan-500/15 bg-white/85 p-4 shadow-sm shadow-cyan-950/5 backdrop-blur dark:border-cyan-500/15 dark:bg-slate-950/45">
-                <p className="font-mono text-2xl font-bold text-cyan-700 dark:text-cyan-200">{item.value}</p>
-                <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">{item.label}</p>
+              <div
+                key={item.value}
+                className="rounded-2xl border border-cyan-500/15 bg-white/85 p-4 shadow-sm shadow-cyan-950/5 backdrop-blur dark:border-cyan-500/15 dark:bg-slate-950/45"
+              >
+                <p className="font-mono text-2xl font-bold text-cyan-700 dark:text-cyan-200">
+                  {item.value}
+                </p>
+                <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">
+                  {item.label}
+                </p>
               </div>
             ))}
           </div>
 
           <div className="grid gap-3 pt-4 sm:grid-cols-3">
             {pillars.map((pillar) => (
-              <div key={pillar.title} className="rounded-2xl border border-slate-200 bg-white/90 p-4 backdrop-blur dark:border-slate-800/60 dark:bg-slate-950/45">
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">{pillar.title}</p>
-                <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">{pillar.desc}</p>
+              <div
+                key={pillar.title}
+                className="rounded-2xl border border-slate-200 bg-white/90 p-4 backdrop-blur dark:border-slate-800/60 dark:bg-slate-950/45"
+              >
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                  {pillar.title}
+                </p>
+                <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">
+                  {pillar.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -191,7 +291,7 @@ function HeroSection() {
 
         {/* ───── Hero Visual ───── */}
         <div className="relative hidden lg:block">
-            <div className="w-full overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-2xl shadow-cyan-950/10 dark:border-slate-700/60 dark:bg-slate-950/85">
+          <div className="w-full overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-2xl shadow-cyan-950/10 dark:border-slate-700/60 dark:bg-slate-950/85">
             <div className="relative bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.16),_transparent_26%),radial-gradient(circle_at_bottom_right,_rgba(16,185,129,0.10),_transparent_24%)]">
               <div className="geo-grid-subtle absolute inset-0" />
 
@@ -202,12 +302,21 @@ function HeroSection() {
                     <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
                       <circle cx="12" cy="12" r="6.5" stroke="currentColor" strokeWidth="1.5" />
                       <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-                      <path d="M12 3.5V6M12 18v2.5M20.5 12H18M6 12H3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <path
+                        d="M12 3.5V6M12 18v2.5M20.5 12H18M6 12H3.5"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
                     </svg>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700 dark:text-cyan-300">Centro operativo</p>
-                    <p className="text-lg font-semibold text-slate-900 dark:text-white">Mapa, capas y permisos en una vista</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700 dark:text-cyan-300">
+                      Centro operativo
+                    </p>
+                    <p className="text-lg font-semibold text-slate-900 dark:text-white">
+                      Mapa, capas y permisos en una vista
+                    </p>
                   </div>
                 </div>
 
@@ -220,27 +329,60 @@ function HeroSection() {
               <div className="space-y-5 p-6">
                 {/* Row 1: Key metrics */}
                 <div className="grid grid-cols-4 gap-4">
-                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/75">
-                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">Vuelos registrados</p>
-                      <p className="mt-2 text-3xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>24</p>
-                    </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/75">
-                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">Cobertura</p>
-                      <p className="mt-2 text-3xl font-bold text-cyan-700 dark:text-cyan-200" style={{ fontFamily: "var(--font-mono)" }}>92%</p>
-                    </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/75">
-                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">Entregables</p>
-                      <p className="mt-2 text-3xl font-bold text-emerald-700 dark:text-emerald-200" style={{ fontFamily: "var(--font-mono)" }}>18</p>
-                    </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/75">
-                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">Modelos activos</p>
-                      <p className="mt-2 text-3xl font-bold text-amber-700 dark:text-amber-200" style={{ fontFamily: "var(--font-mono)" }}>4</p>
-                    </div>
+                  <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/75">
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">
+                      Vuelos registrados
+                    </p>
+                    <p
+                      className="mt-2 text-3xl font-bold text-slate-900 dark:text-white"
+                      style={{ fontFamily: "var(--font-space-grotesk)" }}
+                    >
+                      24
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/75">
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">
+                      Cobertura
+                    </p>
+                    <p
+                      className="mt-2 text-3xl font-bold text-cyan-700 dark:text-cyan-200"
+                      style={{ fontFamily: "var(--font-mono)" }}
+                    >
+                      92%
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/75">
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">
+                      Entregables
+                    </p>
+                    <p
+                      className="mt-2 text-3xl font-bold text-emerald-700 dark:text-emerald-200"
+                      style={{ fontFamily: "var(--font-mono)" }}
+                    >
+                      18
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/75">
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-400">
+                      Modelos activos
+                    </p>
+                    <p
+                      className="mt-2 text-3xl font-bold text-amber-700 dark:text-amber-200"
+                      style={{ fontFamily: "var(--font-mono)" }}
+                    >
+                      4
+                    </p>
+                  </div>
                 </div>
 
                 {/* Row 2: Map visualization — clean, no overlaps */}
                 <div className="relative h-[300px] overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/90 dark:border-slate-800/80 dark:bg-slate-950/80">
-                  <svg className="absolute inset-0 h-full w-full" viewBox="0 0 800 260" fill="none" preserveAspectRatio="xMidYMid slice">
+                  <svg
+                    className="absolute inset-0 h-full w-full"
+                    viewBox="0 0 800 260"
+                    fill="none"
+                    preserveAspectRatio="xMidYMid slice"
+                  >
                     <path
                       d="M60 200 Q 180 180 280 150 Q 400 110 500 80 Q 600 50 720 40"
                       stroke="rgba(34,211,238,0.35)"
@@ -257,27 +399,70 @@ function HeroSection() {
                     <circle cx="320" cy="110" r="4" fill="#22c55e" />
                     <circle cx="400" cy="140" r="4" fill="#22c55e" />
                     <circle cx="260" cy="150" r="4" fill="#22c55e" />
-                    <text x="310" y="98" fill="#94a3b8" fontSize="11">GCP-01</text>
-                    <text x="396" y="130" fill="#94a3b8" fontSize="11">GCP-02</text>
-                    <text x="248" y="164" fill="#94a3b8" fontSize="11">KP-03</text>
+                    <text x="310" y="98" fill="#94a3b8" fontSize="11">
+                      GCP-01
+                    </text>
+                    <text x="396" y="130" fill="#94a3b8" fontSize="11">
+                      GCP-02
+                    </text>
+                    <text x="248" y="164" fill="#94a3b8" fontSize="11">
+                      KP-03
+                    </text>
 
                     {/* Grid lines */}
-                    <line x1="200" y1="0" x2="200" y2="260" stroke="rgba(148,163,184,0.06)" strokeWidth="1" />
-                    <line x1="400" y1="0" x2="400" y2="260" stroke="rgba(148,163,184,0.06)" strokeWidth="1" />
-                    <line x1="600" y1="0" x2="600" y2="260" stroke="rgba(148,163,184,0.06)" strokeWidth="1" />
-                    <line x1="0" y1="130" x2="800" y2="130" stroke="rgba(148,163,184,0.06)" strokeWidth="1" />
+                    <line
+                      x1="200"
+                      y1="0"
+                      x2="200"
+                      y2="260"
+                      stroke="rgba(148,163,184,0.06)"
+                      strokeWidth="1"
+                    />
+                    <line
+                      x1="400"
+                      y1="0"
+                      x2="400"
+                      y2="260"
+                      stroke="rgba(148,163,184,0.06)"
+                      strokeWidth="1"
+                    />
+                    <line
+                      x1="600"
+                      y1="0"
+                      x2="600"
+                      y2="260"
+                      stroke="rgba(148,163,184,0.06)"
+                      strokeWidth="1"
+                    />
+                    <line
+                      x1="0"
+                      y1="130"
+                      x2="800"
+                      y2="130"
+                      stroke="rgba(148,163,184,0.06)"
+                      strokeWidth="1"
+                    />
                   </svg>
 
                   {/* Status badge (only overlay, small and top-left) */}
                   <div className="absolute left-4 top-4 rounded-xl border border-slate-200 bg-white/90 px-4 py-2.5 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/90">
-                    <p className="text-xs font-medium text-slate-600 dark:text-slate-400">Trazabilidad operativa</p>
-                    <p className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-white">Mapa vivo · 3 capas activas</p>
+                    <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      Trazabilidad operativa
+                    </p>
+                    <p className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-white">
+                      Mapa vivo · 3 capas activas
+                    </p>
                   </div>
 
                   <div className="absolute right-4 top-4 w-44 rounded-xl border border-slate-200 bg-white/90 p-3 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/90">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">Capas</p>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      Capas
+                    </p>
                     {["Área de vuelo", "Documentos", "Permiso DGAC"].map((layer) => (
-                      <div key={layer} className="mt-2 flex items-center justify-between gap-3 text-xs text-slate-700 dark:text-slate-300">
+                      <div
+                        key={layer}
+                        className="mt-2 flex items-center justify-between gap-3 text-xs text-slate-700 dark:text-slate-300"
+                      >
                         <span>{layer}</span>
                         <span className="h-3 w-6 rounded-full bg-cyan-400/80" />
                       </div>
@@ -286,7 +471,9 @@ function HeroSection() {
 
                   {/* Bottom-right badge */}
                   <div className="absolute bottom-4 right-4 rounded-xl border border-slate-200 bg-white/90 px-4 py-2 backdrop-blur dark:border-slate-700/60 dark:bg-slate-950/90">
-                    <p className="text-[11px] text-slate-600 dark:text-slate-500">EPSG: 32719 · WGS84 / UTM</p>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-500">
+                      EPSG: 32719 · WGS84 / UTM
+                    </p>
                   </div>
                 </div>
 
@@ -321,15 +508,20 @@ function HeroSection() {
 
 function ProblemSection() {
   return (
-    <section id="plataforma" className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8 bg-slate-50 dark:bg-transparent">
+    <section
+      id="plataforma"
+      className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8 bg-slate-50 dark:bg-transparent"
+    >
       <div className="mx-auto mb-16 max-w-2xl text-center">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">El problema</p>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">
+          El problema
+        </p>
         <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
           La información de terreno no debería perderse entre carpetas, correos y planillas
         </h2>
         <p className="text-base leading-7 text-slate-600 dark:text-slate-400">
           En proyectos técnicos, cada vuelo, imagen, coordenada y modelo debe quedar trazado.
-            AeroFlow centraliza la información para que los equipos puedan consultar, controlar y
+          AeroFlow centraliza la información para que los equipos puedan consultar, controlar y
           reportar con claridad.
         </p>
       </div>
@@ -343,7 +535,9 @@ function ProblemSection() {
             <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
               <PainGlyph kind={pain.icon} />
             </div>
-            <h3 className="mb-2 text-lg font-semibold text-slate-900 dark:text-white">{pain.title}</h3>
+            <h3 className="mb-2 text-lg font-semibold text-slate-900 dark:text-white">
+              {pain.title}
+            </h3>
             <p className="text-base leading-7 text-slate-600 dark:text-slate-400">{pain.desc}</p>
           </div>
         ))}
@@ -359,23 +553,37 @@ function StatsSection() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="text-center">
             <p className="font-mono text-4xl font-bold text-cyan-700 dark:text-cyan-200">4</p>
-            <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-400">Planes de vuelo activos</p>
+            <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-400">
+              Planes de vuelo activos
+            </p>
             <p className="text-xs text-slate-400 dark:text-slate-500">Desde DRAFT hasta CLOSED</p>
           </div>
           <div className="text-center">
             <p className="font-mono text-4xl font-bold text-emerald-700 dark:text-emerald-200">3</p>
-            <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-400">Equipos de trabajo</p>
-            <p className="text-xs text-slate-400 dark:text-slate-500">Minería, construcción, topografía</p>
+            <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-400">
+              Equipos de trabajo
+            </p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">
+              Minería, construcción, topografía
+            </p>
           </div>
           <div className="text-center">
             <p className="font-mono text-4xl font-bold text-cyan-700 dark:text-cyan-200">17</p>
-            <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-400">Eventos de trazabilidad</p>
-            <p className="text-xs text-slate-400 dark:text-slate-500">Permisos, documentos, cambios de estado</p>
+            <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-400">
+              Eventos de trazabilidad
+            </p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">
+              Permisos, documentos, cambios de estado
+            </p>
           </div>
           <div className="text-center">
             <p className="font-mono text-4xl font-bold text-emerald-700 dark:text-emerald-200">5</p>
-            <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-400">Documentos internos</p>
-            <p className="text-xs text-slate-400 dark:text-slate-500">Normativa, guías, procedimientos</p>
+            <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-400">
+              Documentos internos
+            </p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">
+              Normativa, guías, procedimientos
+            </p>
           </div>
         </div>
       </div>
@@ -385,31 +593,46 @@ function StatsSection() {
 
 function SolutionSection() {
   return (
-    <section id="proceso" className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30">
+    <section
+      id="proceso"
+      className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-16 max-w-2xl text-center">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-700 dark:text-emerald-300">La solución</p>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-700 dark:text-emerald-300">
+            La solución
+          </p>
           <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
             Del vuelo al informe técnico en un solo flujo
           </h2>
         </div>
 
-          <div className="relative grid gap-4 md:grid-cols-2 xl:grid-cols-7">
-            {processSteps.map((s, i) => (
-            <div key={s.step} className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-800/60 dark:bg-slate-950/45">
+        <div className="relative grid gap-4 md:grid-cols-2 xl:grid-cols-7">
+          {processSteps.map((s, i) => (
+            <div
+              key={s.step}
+              className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-800/60 dark:bg-slate-950/45"
+            >
               <div className="mb-3 flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-cyan-500/20 bg-cyan-50 text-lg font-bold text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-300" style={{ fontFamily: "var(--font-mono)" }}>
+                <div
+                  className="flex h-12 w-12 items-center justify-center rounded-full border border-cyan-500/20 bg-cyan-50 text-lg font-bold text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-300"
+                  style={{ fontFamily: "var(--font-mono)" }}
+                >
                   {s.step}
                 </div>
                 <div>
-                  <p className="text-base font-semibold text-slate-900 dark:text-white">{s.label}</p>
-                  <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Etapa {i + 1}</p>
+                  <p className="text-base font-semibold text-slate-900 dark:text-white">
+                    {s.label}
+                  </p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                    Etapa {i + 1}
+                  </p>
                 </div>
               </div>
               <p className="text-base leading-7 text-slate-700 dark:text-slate-300">{s.desc}</p>
             </div>
-            ))}
-          </div>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -422,14 +645,27 @@ function PainGlyph({ kind }: { kind: string }) {
     case "folder":
       return (
         <svg viewBox="0 0 24 24" fill="none" className={common}>
-          <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h4l2 2h7A2.5 2.5 0 0 1 21 9.5v8A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5v-10Z" stroke="currentColor" />
+          <path
+            d="M3 7.5A2.5 2.5 0 0 1 5.5 5h4l2 2h7A2.5 2.5 0 0 1 21 9.5v8A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5v-10Z"
+            stroke="currentColor"
+          />
         </svg>
       );
     case "route":
       return (
         <svg viewBox="0 0 24 24" fill="none" className={common}>
-          <path d="M6 6h3l2 4 3-2h4" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M6 18h4l2-4 3 2h3" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M6 6h3l2 4 3-2h4"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M6 18h4l2-4 3 2h3"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
           <circle cx="6" cy="6" r="1.5" fill="currentColor" />
           <circle cx="18" cy="6" r="1.5" fill="currentColor" />
           <circle cx="6" cy="18" r="1.5" fill="currentColor" />
@@ -439,7 +675,10 @@ function PainGlyph({ kind }: { kind: string }) {
     case "report":
       return (
         <svg viewBox="0 0 24 24" fill="none" className={common}>
-          <path d="M7 3.5h7l3 3V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" stroke="currentColor" />
+          <path
+            d="M7 3.5h7l3 3V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z"
+            stroke="currentColor"
+          />
           <path d="M14 3.5V7h3" stroke="currentColor" />
           <path d="M8.5 11h7M8.5 14h7M8.5 17h4" stroke="currentColor" strokeLinecap="round" />
         </svg>
@@ -447,8 +686,17 @@ function PainGlyph({ kind }: { kind: string }) {
     default:
       return (
         <svg viewBox="0 0 24 24" fill="none" className={common}>
-          <path d="M4 7.5h16M6.5 7.5v11M17.5 7.5v11M6.5 18.5h11" stroke="currentColor" strokeLinecap="round" />
-          <path d="m9 11 3 3 3-5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M4 7.5h16M6.5 7.5v11M17.5 7.5v11M6.5 18.5h11"
+            stroke="currentColor"
+            strokeLinecap="round"
+          />
+          <path
+            d="m9 11 3 3 3-5"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       );
   }
@@ -470,13 +718,20 @@ function VisualGlyph({ kind }: { kind: string }) {
       return (
         <svg viewBox="0 0 24 24" fill="none" className={common}>
           <path d="M3.5 12h17" stroke="currentColor" strokeLinecap="round" />
-          <path d="M13 5.5 20 12l-7 6.5-1.5-5.5H6l2-1 2-1.5 1-5Z" stroke="currentColor" strokeLinejoin="round" />
+          <path
+            d="M13 5.5 20 12l-7 6.5-1.5-5.5H6l2-1 2-1.5 1-5Z"
+            stroke="currentColor"
+            strokeLinejoin="round"
+          />
         </svg>
       );
     case "deliverables":
       return (
         <svg viewBox="0 0 24 24" fill="none" className={common}>
-          <path d="M7 3.5h6l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" stroke="currentColor" />
+          <path
+            d="M7 3.5h6l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z"
+            stroke="currentColor"
+          />
           <path d="M13 3.5V8h4" stroke="currentColor" />
           <path d="M8.5 12h7M8.5 15h7M8.5 18h4" stroke="currentColor" strokeLinecap="round" />
         </svg>
@@ -484,7 +739,10 @@ function VisualGlyph({ kind }: { kind: string }) {
     case "viewer":
       return (
         <svg viewBox="0 0 24 24" fill="none" className={common}>
-          <path d="M12 5.5C16.5 5.5 20 12 20 12s-3.5 6.5-8 6.5S4 12 4 12s3.5-6.5 8-6.5Z" stroke="currentColor" />
+          <path
+            d="M12 5.5C16.5 5.5 20 12 20 12s-3.5 6.5-8 6.5S4 12 4 12s3.5-6.5 8-6.5Z"
+            stroke="currentColor"
+          />
           <circle cx="12" cy="12" r="2.25" fill="currentColor" />
         </svg>
       );
@@ -492,13 +750,20 @@ function VisualGlyph({ kind }: { kind: string }) {
       return (
         <svg viewBox="0 0 24 24" fill="none" className={common}>
           <path d="M4 18.5h16" stroke="currentColor" strokeLinecap="round" />
-          <path d="M6.5 18.5V12M12 18.5V8M17.5 18.5V10" stroke="currentColor" strokeLinecap="round" />
+          <path
+            d="M6.5 18.5V12M12 18.5V8M17.5 18.5V10"
+            stroke="currentColor"
+            strokeLinecap="round"
+          />
         </svg>
       );
     case "report":
       return (
         <svg viewBox="0 0 24 24" fill="none" className={common}>
-          <path d="M7 3.5h7l3 3V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" stroke="currentColor" />
+          <path
+            d="M7 3.5h7l3 3V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z"
+            stroke="currentColor"
+          />
           <path d="M14 3.5V7h3" stroke="currentColor" />
           <path d="M8.5 11h7M8.5 14h7M8.5 17h4" stroke="currentColor" strokeLinecap="round" />
         </svg>
@@ -507,7 +772,12 @@ function VisualGlyph({ kind }: { kind: string }) {
       return (
         <svg viewBox="0 0 24 24" fill="none" className={common}>
           <path d="M4 18h16" stroke="currentColor" strokeLinecap="round" />
-          <path d="M6 17l3-7 3 4 2-3 4 6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M6 17l3-7 3 4 2-3 4 6"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
           <path d="M14 6.5h4" stroke="currentColor" strokeLinecap="round" />
         </svg>
       );
@@ -556,10 +826,15 @@ function VisualGlyph({ kind }: { kind: string }) {
 
 function ModulesSection() {
   return (
-    <section id="módulos" className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8 bg-slate-50 dark:bg-transparent">
+    <section
+      id="módulos"
+      className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8 bg-slate-50 dark:bg-transparent"
+    >
       <div className="mx-auto mb-16 max-w-2xl text-center">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">Módulos</p>
-          <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">
+          Módulos
+        </p>
+        <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
           Una plataforma, todas las herramientas
         </h2>
         <p className="text-base leading-7 text-slate-600 dark:text-slate-400">
@@ -590,10 +865,15 @@ function ModulesSection() {
 
 function DashboardPreview() {
   return (
-    <section id="casos-de-uso" className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30">
+    <section
+      id="casos-de-uso"
+      className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-16 max-w-2xl text-center">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">Dashboard</p>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">
+            Dashboard
+          </p>
           <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
             Visualizá el estado operativo completo
           </h2>
@@ -622,7 +902,10 @@ function DashboardPreview() {
                 <div className="h-2 w-24 rounded bg-slate-200 dark:bg-slate-700/60" />
               </div>
               {["Panel", "Vuelos", "Entregables", "Modelos", "Reportes"].map((item) => (
-                <div key={item} className="mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-white">
+                <div
+                  key={item}
+                  className="mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-white"
+                >
                   <span className="h-2 w-2 rounded-full bg-slate-400 dark:bg-slate-600" />
                   {item}
                 </div>
@@ -633,8 +916,8 @@ function DashboardPreview() {
             <div className="flex-1 p-5">
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                    <div className="h-4 w-32 rounded bg-slate-200 dark:bg-slate-700/40" />
-                    <div className="mt-1 h-3 w-48 rounded bg-slate-100 dark:bg-slate-700/20" />
+                  <div className="h-4 w-32 rounded bg-slate-200 dark:bg-slate-700/40" />
+                  <div className="mt-1 h-3 w-48 rounded bg-slate-100 dark:bg-slate-700/20" />
                 </div>
                 <div className="flex gap-2">
                   <div className="h-8 w-24 rounded-lg border border-cyan-500/20 bg-cyan-50 dark:bg-cyan-500/10" />
@@ -643,10 +926,13 @@ function DashboardPreview() {
 
               <div className="mb-5 grid grid-cols-4 gap-3">
                 {["12 planes", "86% avance", "24 vuelos", "18 entregables"].map((m) => (
-                    <div key={m} className="rounded-xl border border-slate-200 bg-white/90 p-3 dark:border-slate-700/40 dark:bg-slate-950/40">
-                      <div className="h-2 w-16 rounded bg-slate-200 dark:bg-slate-700/40" />
-                      <div className="mt-2 h-5 w-20 rounded bg-cyan-100 dark:bg-cyan-500/20" />
-                    </div>
+                  <div
+                    key={m}
+                    className="rounded-xl border border-slate-200 bg-white/90 p-3 dark:border-slate-700/40 dark:bg-slate-950/40"
+                  >
+                    <div className="h-2 w-16 rounded bg-slate-200 dark:bg-slate-700/40" />
+                    <div className="mt-2 h-5 w-20 rounded bg-cyan-100 dark:bg-cyan-500/20" />
+                  </div>
                 ))}
               </div>
 
@@ -672,9 +958,11 @@ function UseCasesSection() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8 bg-slate-50 dark:bg-transparent">
       <div className="mx-auto mb-16 max-w-2xl text-center">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-700 dark:text-emerald-300">Casos de uso</p>
-          <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
-            Industrias que ya confían en el georegistro técnico
+        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-700 dark:text-emerald-300">
+          Casos de uso
+        </p>
+        <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
+          Industrias que ya confían en el georegistro técnico
         </h2>
       </div>
 
@@ -700,10 +988,15 @@ function UseCasesSection() {
 
 function TechnicalSection() {
   return (
-    <section id="tecnología" className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30">
+    <section
+      id="tecnología"
+      className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-16 max-w-2xl text-center">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-amber-700 dark:text-amber-300">Tecnología</p>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-amber-700 dark:text-amber-300">
+            Tecnología
+          </p>
           <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
             Precisión técnica sin complejidad operativa
           </h2>
@@ -713,7 +1006,7 @@ function TechnicalSection() {
           {specs.map((spec) => (
             <div
               key={spec}
-            className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/90 px-5 py-3 transition hover:border-amber-500/20 dark:border-slate-800/50 dark:bg-slate-950/40"
+              className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/90 px-5 py-3 transition hover:border-amber-500/20 dark:border-slate-800/50 dark:bg-slate-950/40"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-amber-500/70" />
               <span className="text-sm text-slate-700 dark:text-slate-300">{spec}</span>
@@ -729,9 +1022,11 @@ function BeforeAfterSection() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8 bg-slate-50 dark:bg-transparent">
       <div className="mx-auto mb-16 max-w-2xl text-center">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">El cambio</p>
-          <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
-            Antes y después de AeroFlow
+        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">
+          El cambio
+        </p>
+        <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
+          Antes y después de AeroFlow
         </h2>
       </div>
 
@@ -741,8 +1036,13 @@ function BeforeAfterSection() {
           <h3 className="mb-6 text-lg font-semibold text-rose-700 dark:text-rose-300">Antes</h3>
           <ul className="space-y-4">
             {beforeAfter.before.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-600 dark:text-slate-400">
-                  <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-rose-500/20 bg-rose-100 text-xs text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">✕</span>
+              <li
+                key={item}
+                className="flex items-start gap-3 text-sm leading-6 text-slate-600 dark:text-slate-400"
+              >
+                <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-rose-500/20 bg-rose-100 text-xs text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
+                  ✕
+                </span>
                 {item}
               </li>
             ))}
@@ -751,11 +1051,18 @@ function BeforeAfterSection() {
 
         {/* After */}
         <div className="rounded-2xl border border-emerald-500/15 bg-emerald-50 p-8 dark:bg-emerald-500/[0.03]">
-          <h3 className="mb-6 text-lg font-semibold text-emerald-700 dark:text-emerald-300">Con AeroFlow</h3>
+          <h3 className="mb-6 text-lg font-semibold text-emerald-700 dark:text-emerald-300">
+            Con AeroFlow
+          </h3>
           <ul className="space-y-4">
             {beforeAfter.after.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm leading-6 text-slate-700 dark:text-slate-300">
-                  <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-100 text-xs text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">✓</span>
+              <li
+                key={item}
+                className="flex items-start gap-3 text-sm leading-6 text-slate-700 dark:text-slate-300"
+              >
+                <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-100 text-xs text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">
+                  ✓
+                </span>
                 {item}
               </li>
             ))}
@@ -768,10 +1075,15 @@ function BeforeAfterSection() {
 
 function CtaSection() {
   return (
-    <section id="demo" className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30">
+    <section
+      id="demo"
+      className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-white/95 p-12 text-center shadow-2xl shadow-cyan-950/5 backdrop-blur dark:border-slate-800/60 dark:bg-gradient-to-b dark:from-slate-900/80 dark:to-slate-950/60">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">Comenzá ahora</p>
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">
+            Comenzá ahora
+          </p>
           <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">
             Listo para probar AeroFlow
           </h2>
@@ -794,11 +1106,16 @@ function CtaSection() {
             </Link>
           </div>
           <div className="mx-auto mt-8 max-w-sm rounded-xl border border-slate-200 bg-slate-50/80 p-4 text-left dark:border-slate-700/40 dark:bg-slate-950/40">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Demo local</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+              Demo local
+            </p>
             <code className="block text-xs leading-6 text-slate-600 dark:text-slate-400">
-              SEED_ADMIN_EMAIL=demo@aeroflow.io<br />
-              SEED_ADMIN_PASSWORD=demo1234<br />
-              SEED_DEMO=true<br />
+              SEED_ADMIN_EMAIL=demo@aeroflow.io
+              <br />
+              SEED_ADMIN_PASSWORD=demo1234
+              <br />
+              SEED_DEMO=true
+              <br />
               npm run seed:dev
             </code>
           </div>
@@ -813,18 +1130,41 @@ function Footer() {
     <footer className="border-t border-slate-200 dark:border-slate-800/40">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 py-10 sm:flex-row sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
-            <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-space-grotesk)" }}>
+          <span
+            className="text-base font-bold tracking-tight text-slate-900 dark:text-white"
+            style={{ fontFamily: "var(--font-space-grotesk)" }}
+          >
             AeroFlow
           </span>
         </div>
         <div className="flex gap-8 text-sm text-slate-600 dark:text-slate-500">
-          <Link href="#plataforma" className="transition hover:text-slate-900 dark:hover:text-slate-300">Plataforma</Link>
-          <Link href="#módulos" className="transition hover:text-slate-900 dark:hover:text-slate-300">Módulos</Link>
-          <Link href="#casos-de-uso" className="transition hover:text-slate-900 dark:hover:text-slate-300">Casos de uso</Link>
-          <Link href="#tecnología" className="transition hover:text-slate-900 dark:hover:text-slate-300">Tecnología</Link>
+          <Link
+            href="#plataforma"
+            className="transition hover:text-slate-900 dark:hover:text-slate-300"
+          >
+            Plataforma
+          </Link>
+          <Link
+            href="#módulos"
+            className="transition hover:text-slate-900 dark:hover:text-slate-300"
+          >
+            Módulos
+          </Link>
+          <Link
+            href="#casos-de-uso"
+            className="transition hover:text-slate-900 dark:hover:text-slate-300"
+          >
+            Casos de uso
+          </Link>
+          <Link
+            href="#tecnología"
+            className="transition hover:text-slate-900 dark:hover:text-slate-300"
+          >
+            Tecnología
+          </Link>
         </div>
         <p className="text-sm text-slate-600 dark:text-slate-500">
-           © {new Date().getFullYear()} AeroFlow. Todos los derechos reservados.
+          © {new Date().getFullYear()} AeroFlow. Todos los derechos reservados.
         </p>
       </div>
     </footer>

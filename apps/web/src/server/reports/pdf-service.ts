@@ -1,5 +1,12 @@
+import type {
+  Client,
+  CostCenter,
+  Document,
+  Drone,
+  Operator,
+  PermissionEvent,
+} from "@prisma/client";
 import PDFDocument from "pdfkit";
-import type { PermissionEvent, Document, CostCenter, Client, Drone, Operator } from "@prisma/client";
 import type { WeatherData } from "@/server/weather/service";
 
 export type FlightPlanReportData = {
@@ -97,12 +104,7 @@ export function generateFlightPlanReport(data: FlightPlanReportData): Promise<Bu
       .moveDown(0.3);
 
     // Separator line
-    doc
-      .moveTo(55, doc.y)
-      .lineTo(540, doc.y)
-      .strokeColor(COLORS.border)
-      .stroke()
-      .moveDown(0.5);
+    doc.moveTo(55, doc.y).lineTo(540, doc.y).strokeColor(COLORS.border).stroke().moveDown(0.5);
 
     // ─── Section: Mission Info ────────────────────────
     doc
@@ -171,10 +173,21 @@ export function generateFlightPlanReport(data: FlightPlanReportData): Promise<Bu
         .moveDown(0.2);
 
       const weatherRows = [
-        ["Temperatura mín", w.temperatureMin !== null ? `${Math.round(w.temperatureMin)}${tempUnit}` : "--"],
-        ["Temperatura máx", w.temperatureMax !== null ? `${Math.round(w.temperatureMax)}${tempUnit}` : "--"],
+        [
+          "Temperatura mín",
+          w.temperatureMin !== null ? `${Math.round(w.temperatureMin)}${tempUnit}` : "--",
+        ],
+        [
+          "Temperatura máx",
+          w.temperatureMax !== null ? `${Math.round(w.temperatureMax)}${tempUnit}` : "--",
+        ],
         ["Viento máx", w.windSpeedMax !== null ? `${Math.round(w.windSpeedMax)} km/h` : "--"],
-        ["Dirección", w.windDirection !== null ? `${windDirection(w.windDirection)} (${w.windDirection}°)` : "--"],
+        [
+          "Dirección",
+          w.windDirection !== null
+            ? `${windDirection(w.windDirection)} (${w.windDirection}°)`
+            : "--",
+        ],
       ];
 
       weatherRows.forEach(([label, value]) => {
@@ -243,9 +256,10 @@ export function generateFlightPlanReport(data: FlightPlanReportData): Promise<Bu
       const recent = data.permissionEvents.slice(0, 10);
       recent.forEach((ev) => {
         const dateStr = formatShortDate(ev.createdAt);
-        const eventLabel = ev.eventType === "TRANSITION"
-          ? `${ev.fromStatus ?? "—"} → ${ev.toStatus ?? "—"}`
-          : ev.eventType.replace(/_/g, " ");
+        const eventLabel =
+          ev.eventType === "TRANSITION"
+            ? `${ev.fromStatus ?? "—"} → ${ev.toStatus ?? "—"}`
+            : ev.eventType.replace(/_/g, " ");
 
         doc
           .fontSize(9)

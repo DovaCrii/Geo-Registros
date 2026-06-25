@@ -14,7 +14,9 @@ export default async function OperatorsPage({
   const queryParams = new URLSearchParams();
   if (params.q) queryParams.set("q", params.q);
   if (params.page) queryParams.set("page", params.page);
-  await requirePageAuth(queryParams.toString() ? `/operators?${queryParams.toString()}` : "/operators");
+  await requirePageAuth(
+    queryParams.toString() ? `/operators?${queryParams.toString()}` : "/operators",
+  );
 
   try {
     return <ListPage config={operatorListConfig} fetchData={listOperators} searchParams={params} />;
@@ -23,8 +25,12 @@ export default async function OperatorsPage({
     return (
       <div className="p-6">
         <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/50 p-6">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Operadores no disponibles</h2>
-          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">La base de datos no está disponible.</p>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+            Operadores no disponibles
+          </h2>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            La base de datos no está disponible.
+          </p>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{message}</p>
         </div>
       </div>

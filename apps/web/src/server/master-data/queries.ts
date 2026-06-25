@@ -13,9 +13,7 @@ export type MasterDataSummary = {
   operators: EntitySummary;
 };
 
-export function summarize<T extends { status: string }>(
-  items: T[],
-): EntitySummary {
+export function summarize<T extends { status: string }>(items: T[]): EntitySummary {
   return {
     total: items.length,
     active: items.filter((x) => x.status === "ACTIVE").length,

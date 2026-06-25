@@ -1,6 +1,6 @@
 import { Resend } from "resend";
-import type { NotificationType } from "@/server/notifications/service";
 import { logEmail } from "@/server/email/log-email";
+import type { NotificationType } from "@/server/notifications/service";
 
 let resend: Resend | null = null;
 
@@ -77,7 +77,9 @@ function buildHtml(params: {
               <p style="color:#94a3b8;font-size:14px;line-height:1.6;margin:8px 0 0;">
                 ${params.message}
               </p>
-              ${params.link ? `
+              ${
+                params.link
+                  ? `
               <table cellpadding="0" cellspacing="0" style="margin:20px 0 0;">
                 <tr>
                   <td style="background-color:#22d3ee20;border-radius:12px;border:1px solid #22d3ee40;">
@@ -86,7 +88,9 @@ function buildHtml(params: {
                     </a>
                   </td>
                 </tr>
-              </table>` : ""}
+              </table>`
+                  : ""
+              }
             </td>
           </tr>
           <!-- Footer -->

@@ -32,7 +32,8 @@ export function validatePassword(value: string): string | null {
 
 export function validateCode(value: string, label = "Código"): string | null {
   if (!value.trim()) return `${label} es obligatorio.`;
-  if (!CODE_RE.test(value)) return `${label} solo admite letras mayúsculas y números, sin espacios.`;
+  if (!CODE_RE.test(value))
+    return `${label} solo admite letras mayúsculas y números, sin espacios.`;
   return null;
 }
 
@@ -49,7 +50,11 @@ export function validateSerialNumber(value: string): string | null {
   return null;
 }
 
-export function validateOptionalText(value: string | null | undefined, label: string, maxLength = 500): string | null {
+export function validateOptionalText(
+  value: string | null | undefined,
+  label: string,
+  maxLength = 500,
+): string | null {
   if (!value) return null;
   if (value.length > maxLength) return `${label} no puede superar los ${maxLength} caracteres.`;
   return null;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 
 interface SectionCardProps {
   title: string;
@@ -48,11 +48,7 @@ export function SectionCard({
         {actions && <div className="flex items-center gap-2">{actions}</div>}
       </button>
 
-      {open && (
-        <div className="border-t border-border-soft px-4 py-3">
-          {children}
-        </div>
-      )}
+      {open && <div className="border-t border-border-soft px-4 py-3">{children}</div>}
     </div>
   );
 }

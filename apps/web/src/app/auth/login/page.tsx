@@ -1,9 +1,9 @@
 ﻿"use client";
 
-import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, Suspense, useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { type FormEvent, Suspense, useState } from "react";
 
 function LoginForm() {
   const router = useRouter();
@@ -53,14 +53,16 @@ function LoginForm() {
               AeroFlow
             </h1>
           </Link>
-          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-            Ingresá a la plataforma
-          </p>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Ingresá a la plataforma</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {error && (
-            <div role="alert" aria-live="polite" className="rounded-lg border border-red-200 dark:border-rose-500/30 bg-red-50 dark:bg-rose-500/10 px-4 py-3 text-sm text-danger dark:text-rose-300">
+            <div
+              role="alert"
+              aria-live="polite"
+              className="rounded-lg border border-red-200 dark:border-rose-500/30 bg-red-50 dark:bg-rose-500/10 px-4 py-3 text-sm text-danger dark:text-rose-300"
+            >
               {error}
             </div>
           )}

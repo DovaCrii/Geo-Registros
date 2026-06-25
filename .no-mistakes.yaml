@@ -1,0 +1,15 @@
+agent: opencode
+commands:
+  test: "npm run test"
+  lint: "npx @biomejs/biome check apps/web/src/ backend/"
+  format: "npx @biomejs/biome format --write apps/web/src/ backend/"
+auto_fix:
+  lint: 3
+test:
+  evidence:
+    store_in_repo: true
+ignore_patterns:
+  - ".next/**"
+  - "node_modules/**"
+  - "storage/**"
+  - "public/**"

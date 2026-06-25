@@ -7,8 +7,7 @@ import { PageShell } from "@/components/ui/page-shell";
 import { StatusChip } from "@/components/ui/status-chip";
 import { requirePageAuth } from "@/lib/require-page-auth";
 import { ClientForm } from "@/modules/clients/client-form";
-import { deleteClient } from "@/server/clients/actions";
-import { updateClient } from "@/server/clients/actions";
+import { deleteClient, updateClient } from "@/server/clients/actions";
 import { getClientById } from "@/server/clients/queries";
 
 export const dynamic = "force-dynamic";
@@ -27,8 +26,13 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
     if (!record) {
       return (
         <PageShell>
-          <DetailPanel title="Cliente no encontrado" description="El cliente solicitado no existe o ya no está disponible.">
-            <p className="text-sm text-slate-500 dark:text-slate-400">Volvé al listado y seleccioná un cliente válido.</p>
+          <DetailPanel
+            title="Cliente no encontrado"
+            description="El cliente solicitado no existe o ya no está disponible."
+          >
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Volvé al listado y seleccioná un cliente válido.
+            </p>
           </DetailPanel>
         </PageShell>
       );
@@ -49,22 +53,46 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
             eyebrow="Bloque 2 / Datos maestros"
             title={record.name}
             description="Editá los datos del cliente."
-            actions={<StatusChip label={record.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"} tone={toneFromStatus(record.status)} />}
+            actions={
+              <StatusChip
+                label={record.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"}
+                tone={toneFromStatus(record.status)}
+              />
+            }
           />
 
-          <DetailPanel title="Planes de vuelo vinculados" description="Planes operativos donde este cliente ya está asociado.">
+          <DetailPanel
+            title="Planes de vuelo vinculados"
+            description="Planes operativos donde este cliente ya está asociado."
+          >
             <div className="space-y-2">
-              {record.flightPlans.length > 0 ? record.flightPlans.map((flightPlan) => (
-                <a key={flightPlan.id} href={`/flight-plans/${flightPlan.id}`} className="block rounded-lg border border-slate-200 bg-white px-4 py-3 transition hover:bg-slate-50 dark:border-slate-800/80 dark:bg-slate-950/45 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-medium text-slate-800 dark:text-white">{flightPlan.code} · {flightPlan.title}</p>
-                      <p className="mt-1 text-xs text-slate-600 dark:text-slate-500">{flightPlan.operationDate.toISOString().slice(0, 10)}</p>
+              {record.flightPlans.length > 0 ? (
+                record.flightPlans.map((flightPlan) => (
+                  <a
+                    key={flightPlan.id}
+                    href={`/flight-plans/${flightPlan.id}`}
+                    className="block rounded-lg border border-slate-200 bg-white px-4 py-3 transition hover:bg-slate-50 dark:border-slate-800/80 dark:bg-slate-950/45 dark:hover:border-accent/40 dark:hover:bg-cyan-500/5"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-medium text-slate-800 dark:text-white">
+                          {flightPlan.code} · {flightPlan.title}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-600 dark:text-slate-500">
+                          {flightPlan.operationDate.toISOString().slice(0, 10)}
+                        </p>
+                      </div>
+                      <span className="text-xs text-slate-600 dark:text-slate-400">
+                        {flightPlan.permissionStatus}
+                      </span>
                     </div>
-                    <span className="text-xs text-slate-600 dark:text-slate-400">{flightPlan.permissionStatus}</span>
-                  </div>
-                </a>
-              )) : <p className="text-sm text-slate-500">Este cliente todavía no tiene planes de vuelo vinculados.</p>}
+                  </a>
+                ))
+              ) : (
+                <p className="text-sm text-slate-500">
+                  Este cliente todavía no tiene planes de vuelo vinculados.
+                </p>
+              )}
             </div>
           </DetailPanel>
 
@@ -83,10 +111,14 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
             }}
           />
 
-          <DetailPanel title="Zona de riesgo" description="La eliminación lógica oculta este cliente sin perder su historial.">
+          <DetailPanel
+            title="Zona de riesgo"
+            description="La eliminación lógica oculta este cliente sin perder su historial."
+          >
             <form action={deleteClient.bind(null, record.id)} className="space-y-3">
               <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
-                Esta acción lo saca de listados, selectores y conteos del panel. Los planes de vuelo vinculados se conservan.
+                Esta acción lo saca de listados, selectores y conteos del panel. Los planes de vuelo
+                vinculados se conservan.
               </p>
               <button
                 type="submit"
@@ -102,8 +134,13 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
   } catch {
     return (
       <PageShell>
-        <DetailPanel title="Cliente no disponible" description="No se pudieron cargar los datos. Verificá la conexión a la base de datos.">
-          <p className="text-sm text-slate-500 dark:text-slate-400">Recargá la página e intentá de nuevo.</p>
+        <DetailPanel
+          title="Cliente no disponible"
+          description="No se pudieron cargar los datos. Verificá la conexión a la base de datos."
+        >
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Recargá la página e intentá de nuevo.
+          </p>
         </DetailPanel>
       </PageShell>
     );

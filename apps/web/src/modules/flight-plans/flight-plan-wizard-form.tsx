@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, type ChangeEvent } from "react";
 import Link from "next/link";
+import { type ChangeEvent, useEffect, useState } from "react";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -66,7 +66,7 @@ function SelectField({
             {option.label}
           </option>
         ))}
-        </select>
+      </select>
       {error ? <p className="text-xs text-rose-600 dark:text-rose-300">{error}</p> : null}
     </label>
   );
@@ -162,7 +162,8 @@ export function FlightPlanWizardForm({
     if (targetStep === 0) {
       if (!values.code.trim()) nextErrors.code = "Completá el código interno.";
       if (!values.title.trim()) nextErrors.title = "Completá el título.";
-      if (!values.operationDate.trim()) nextErrors.operationDate = "Seleccioná la fecha de operación.";
+      if (!values.operationDate.trim())
+        nextErrors.operationDate = "Seleccioná la fecha de operación.";
     }
 
     if (targetStep === 1) {
@@ -199,8 +200,12 @@ export function FlightPlanWizardForm({
               <div className="flex items-start gap-3">
                 <StepBadge current={step} step={index} />
                 <div>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{item.label}</p>
-                  <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-500">{item.description}</p>
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                    {item.label}
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-500">
+                    {item.description}
+                  </p>
                 </div>
               </div>
             </div>
@@ -225,11 +230,15 @@ export function FlightPlanWizardForm({
               title={errors.code}
               className={fieldClass(Boolean(errors.code))}
             />
-            {errors.code ? <p className="text-xs text-rose-600 dark:text-rose-300">{errors.code}</p> : null}
+            {errors.code ? (
+              <p className="text-xs text-rose-600 dark:text-rose-300">{errors.code}</p>
+            ) : null}
           </label>
 
           <label className="block space-y-2">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">Título</span>
+            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
+              Título
+            </span>
             <input
               type="text"
               name="title"
@@ -241,11 +250,15 @@ export function FlightPlanWizardForm({
               title={errors.title}
               className={fieldClass(Boolean(errors.title))}
             />
-            {errors.title ? <p className="text-xs text-rose-600 dark:text-rose-300">{errors.title}</p> : null}
+            {errors.title ? (
+              <p className="text-xs text-rose-600 dark:text-rose-300">{errors.title}</p>
+            ) : null}
           </label>
 
           <label className="block space-y-2">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">Fecha de operación</span>
+            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
+              Fecha de operación
+            </span>
             <input
               type="date"
               name="operationDate"
@@ -256,11 +269,15 @@ export function FlightPlanWizardForm({
               title={errors.operationDate}
               className={fieldClass(Boolean(errors.operationDate))}
             />
-            {errors.operationDate ? <p className="text-xs text-rose-600 dark:text-rose-300">{errors.operationDate}</p> : null}
+            {errors.operationDate ? (
+              <p className="text-xs text-rose-600 dark:text-rose-300">{errors.operationDate}</p>
+            ) : null}
           </label>
 
           <label className="block space-y-2">
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">Notas operativas</span>
+            <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
+              Notas operativas
+            </span>
             <textarea
               name="notes"
               rows={4}
@@ -273,17 +290,46 @@ export function FlightPlanWizardForm({
         </section>
 
         <section className={step === 1 ? "space-y-4" : "hidden"}>
-          <SelectField name="costCenterId" label="Grupo de trabajo" value={values.costCenterId} error={errors.costCenterId} onChange={handleFieldChange} options={costCenterOptions} />
-          <SelectField name="clientId" label="Cliente" value={values.clientId} error={errors.clientId} onChange={handleFieldChange} options={clientOptions} />
-          <SelectField name="droneId" label="Dron" value={values.droneId} error={errors.droneId} onChange={handleFieldChange} options={droneOptions} />
-          <SelectField name="operatorId" label="Operador" value={values.operatorId} error={errors.operatorId} onChange={handleFieldChange} options={operatorOptions} />
+          <SelectField
+            name="costCenterId"
+            label="Grupo de trabajo"
+            value={values.costCenterId}
+            error={errors.costCenterId}
+            onChange={handleFieldChange}
+            options={costCenterOptions}
+          />
+          <SelectField
+            name="clientId"
+            label="Cliente"
+            value={values.clientId}
+            error={errors.clientId}
+            onChange={handleFieldChange}
+            options={clientOptions}
+          />
+          <SelectField
+            name="droneId"
+            label="Dron"
+            value={values.droneId}
+            error={errors.droneId}
+            onChange={handleFieldChange}
+            options={droneOptions}
+          />
+          <SelectField
+            name="operatorId"
+            label="Operador"
+            value={values.operatorId}
+            error={errors.operatorId}
+            onChange={handleFieldChange}
+            options={operatorOptions}
+          />
         </section>
 
         <section className={step === 2 ? "space-y-4" : "hidden"}>
           <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-5 text-sm leading-6 text-cyan-900 dark:bg-cyan-500/[0.05] dark:text-cyan-100">
             <p className="font-semibold">El área de operación se define en mapa</p>
             <p className="mt-2 text-cyan-800/80 dark:text-cyan-200/80">
-              Creá primero el plan operativo. Luego abrí el editor satelital para dibujar, importar o ajustar la zona de vuelo con herramientas visuales.
+              Creá primero el plan operativo. Luego abrí el editor satelital para dibujar, importar
+              o ajustar la zona de vuelo con herramientas visuales.
             </p>
           </div>
 
@@ -318,7 +364,7 @@ export function FlightPlanWizardForm({
           </button>
 
           {canGoNext ? (
-              <button
+            <button
               type="button"
               onClick={handleContinue}
               className="inline-flex items-center justify-center rounded-2xl border border-cyan-500/30 bg-cyan-50 px-4 py-2.5 text-sm font-medium text-cyan-700 transition hover:border-cyan-400/50 hover:bg-cyan-100 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-400/20"

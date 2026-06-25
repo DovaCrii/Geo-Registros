@@ -23,7 +23,12 @@ export async function uploadHelpDoc(formData: FormData) {
 
   const title = readString(formData, "title");
   const category = readString(formData, "category") || "General";
-  const slug = readString(formData, "slug") || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const slug =
+    readString(formData, "slug") ||
+    title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
   const file = formData.get("file");
 
   if (!title) throw new Error("title is required.");

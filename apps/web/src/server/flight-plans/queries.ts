@@ -1,6 +1,6 @@
-import { prisma } from "@/lib/prisma";
+import type { PermissionStatus } from "@prisma/client";
 import type { ListQueryParams } from "@/lib/list-config/types";
-import { PermissionStatus } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 type FlightPlanRow = {
   id: string;
@@ -15,7 +15,9 @@ type FlightPlanRow = {
   operator: { id: string; fullName: string } | null;
 };
 
-export async function listFlightPlans(params?: ListQueryParams): Promise<{ rows: FlightPlanRow[]; total: number }> {
+export async function listFlightPlans(
+  params?: ListQueryParams,
+): Promise<{ rows: FlightPlanRow[]; total: number }> {
   const search = params?.search;
   const page = params?.page ?? 1;
   const pageSize = params?.pageSize ?? 10;
@@ -39,8 +41,8 @@ export async function listFlightPlans(params?: ListQueryParams): Promise<{ rows:
   const where = { ...searchFilter, ...statusFilter, deletedAt: null };
 
   const orderBy = params?.sortField
-    ? { [params.sortField]: params.sortDir ?? "asc" } as any
-    : [{ operationDate: "desc" }, { code: "asc" }] as any;
+    ? ({ [params.sortField]: params.sortDir ?? "asc" } as any)
+    : ([{ operationDate: "desc" }, { code: "asc" }] as any);
 
   const [rows, total] = await Promise.all([
     prisma.flightPlan.findMany({

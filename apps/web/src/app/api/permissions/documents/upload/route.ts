@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir, unlink } from "fs/promises";
+import { mkdir, unlink, writeFile } from "fs/promises";
+import { type NextRequest, NextResponse } from "next/server";
 import path from "path";
-import { attachDocument } from "@/server/permissions/actions";
-import { checkRateLimit, getRateLimitReset } from "@/lib/rate-limit";
 import { auth } from "@/lib/auth";
 import { validateCsrf } from "@/lib/csrf";
+import { checkRateLimit, getRateLimitReset } from "@/lib/rate-limit";
+import { attachDocument } from "@/server/permissions/actions";
 
 const STORAGE_ROOT = process.env.STORAGE_ROOT || "./storage/documents";
 
@@ -16,10 +16,10 @@ const ALLOWED_MIME_TYPES = new Set([
   "image/webp",
   "image/tiff",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",       // .xlsx
-  "application/vnd.google-earth.kml+xml",                                   // .kml
-  "application/vnd.google-earth.kmz",                                       // .kmz
-  "application/zip",                                                        // .kmz fallback
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+  "application/vnd.google-earth.kml+xml", // .kml
+  "application/vnd.google-earth.kmz", // .kmz
+  "application/zip", // .kmz fallback
   "text/plain",
 ]);
 
@@ -83,7 +83,9 @@ export async function POST(request: NextRequest) {
 
     if (!ALLOWED_MIME_TYPES.has(file.type)) {
       return NextResponse.json(
-        { error: `File type "${file.type}" is not allowed. Accepted: PDF, images, DOCX, XLSX, KML/KMZ, TXT.` },
+        {
+          error: `File type "${file.type}" is not allowed. Accepted: PDF, images, DOCX, XLSX, KML/KMZ, TXT.`,
+        },
         { status: 415 },
       );
     }

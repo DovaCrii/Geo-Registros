@@ -43,10 +43,7 @@ export function FlowGuide() {
 
       {/* Overlay */}
       {isOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
-          onClick={toggle}
-        />
+        <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" onClick={toggle} />
       )}
 
       {/* Panel */}

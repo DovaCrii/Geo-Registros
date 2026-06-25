@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback } from "react";
 
 type PaginationProps = {
   total: number;
@@ -35,7 +35,7 @@ export function Pagination({ total, page, pageSize }: PaginationProps) {
   return (
     <div className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 px-4 py-3">
       <p className="text-xs text-slate-500 dark:text-slate-400">
-        {total} registro{(total !== 1) ? "s" : ""}
+        {total} registro{total !== 1 ? "s" : ""}
       </p>
 
       <div className="flex items-center gap-2">
@@ -65,11 +65,7 @@ export function Pagination({ total, page, pageSize }: PaginationProps) {
   );
 }
 
-function renderPageNumbers(
-  current: number,
-  total: number,
-  goTo: (p: number) => void,
-) {
+function renderPageNumbers(current: number, total: number, goTo: (p: number) => void) {
   const pages: (number | "...")[] = [];
 
   if (total <= 7) {

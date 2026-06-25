@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { RecordStatus } from "@prisma/client";
+import Link from "next/link";
 
 import { StatusChip } from "@/components/ui/status-chip";
-import { ListColumn, ListConfig } from "@/lib/list-config/types";
+import type { ListColumn, ListConfig } from "@/lib/list-config/types";
 
 type OperatorRow = {
   id: string;
@@ -25,7 +25,9 @@ export const operatorColumns: ListColumn<OperatorRow>[] = [
   {
     key: "code",
     header: "Código",
-    render: (row) => <span className="font-medium text-slate-900 dark:text-white">{row.code ?? "—"}</span>,
+    render: (row) => (
+      <span className="font-medium text-slate-900 dark:text-white">{row.code ?? "—"}</span>
+    ),
   },
   {
     key: "operator",
@@ -33,7 +35,9 @@ export const operatorColumns: ListColumn<OperatorRow>[] = [
     render: (row) => (
       <div className="space-y-1">
         <p className="font-medium text-slate-900 dark:text-white">{row.fullName}</p>
-        <p className="text-xs text-slate-600 dark:text-slate-500">{row.licenseNumber ?? "Licencia pendiente"}</p>
+        <p className="text-xs text-slate-600 dark:text-slate-500">
+          {row.licenseNumber ?? "Licencia pendiente"}
+        </p>
       </div>
     ),
   },
@@ -45,7 +49,10 @@ export const operatorColumns: ListColumn<OperatorRow>[] = [
         <p>{row.email ?? row.phone ?? "Sin contacto"}</p>
         <p className="text-xs text-slate-600 dark:text-slate-500">
           {row.costCenter ? (
-            <Link href={`/cost-centers/${row.costCenter.id}`} className="transition hover:text-cyan-600 dark:hover:text-cyan-300">
+            <Link
+              href={`/cost-centers/${row.costCenter.id}`}
+              className="transition hover:text-cyan-600 dark:hover:text-cyan-300"
+            >
               {row.costCenter.code} — {row.costCenter.name}
             </Link>
           ) : (
@@ -62,10 +69,14 @@ export const operatorColumns: ListColumn<OperatorRow>[] = [
       if (!row.licenseExpiry) return <span className="text-sm text-slate-500">—</span>;
       const date = new Date(row.licenseExpiry);
       const isExpired = date < new Date();
-        return (
-        <span className={`text-sm ${isExpired ? "text-red-600 dark:text-red-400" : "text-slate-700 dark:text-slate-300"}`}>
+      return (
+        <span
+          className={`text-sm ${isExpired ? "text-red-600 dark:text-red-400" : "text-slate-700 dark:text-slate-300"}`}
+        >
           {date.toISOString().slice(0, 10)}
-          {isExpired && <span className="ml-1.5 text-xs text-red-600 dark:text-red-400">(Vencida)</span>}
+          {isExpired && (
+            <span className="ml-1.5 text-xs text-red-600 dark:text-red-400">(Vencida)</span>
+          )}
         </span>
       );
     },
@@ -73,13 +84,21 @@ export const operatorColumns: ListColumn<OperatorRow>[] = [
   {
     key: "status",
     header: "Estado",
-    render: (row) => <StatusChip label={row.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"} tone={toneFromStatus(row.status)} />,
+    render: (row) => (
+      <StatusChip
+        label={row.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"}
+        tone={toneFromStatus(row.status)}
+      />
+    ),
   },
   {
     key: "actions",
     header: "Acciones",
     render: (row) => (
-      <Link href={`/operators/${row.id}`} className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200">
+      <Link
+        href={`/operators/${row.id}`}
+        className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200"
+      >
         Editar
       </Link>
     ),
@@ -95,9 +114,7 @@ export const operatorListConfig: ListConfig<OperatorRow> = {
     { field: "q", label: "Buscar", type: "search", placeholder: "Nombre, código o licencia…" },
     { field: "status", label: "Estado", type: "status" },
   ],
-  headerActions: [
-    { href: "/operators/new", label: "Registrar operador", variant: "primary" },
-  ],
+  headerActions: [{ href: "/operators/new", label: "Registrar operador", variant: "primary" }],
   sidebar: {
     title: "Resumen del operador",
     description: "Datos personales, licencia y grupo de trabajo del operador RPA.",

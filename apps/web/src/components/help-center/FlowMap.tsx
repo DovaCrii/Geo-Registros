@@ -6,16 +6,18 @@ const STEPS = [
   { step: "03", label: "Documentación", desc: "Adjuntá seguro, credenciales y respaldos." },
   { step: "04", label: "Revisión normativa", desc: "Validá requisitos antes de enviar." },
   { step: "05", label: "Envío / autorización", desc: "Seguimiento del estado DGAC." },
-  { step: "06", label: "Ejecución del vuelo", desc: "Registro operacional del trabajo en terreno." },
+  {
+    step: "06",
+    label: "Ejecución del vuelo",
+    desc: "Registro operacional del trabajo en terreno.",
+  },
   { step: "07", label: "Informe / trazabilidad", desc: "Cierre, evidencia y entregables." },
 ] as const;
 
 export function FlowMap() {
   return (
     <section className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-6 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
-      <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-        Flujo operacional
-      </h2>
+      <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Flujo operacional</h2>
       <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
         Las 7 etapas del ciclo completo de una operación RPAS en AeroFlow.
       </p>

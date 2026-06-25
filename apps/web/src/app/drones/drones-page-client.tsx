@@ -1,7 +1,7 @@
 "use client";
 
-import { droneListConfig } from "@/modules/drones/drone-list.config";
 import { ListPageClient } from "@/components/ui/list-page-client";
+import { droneListConfig } from "@/modules/drones/drone-list.config";
 import {
   batchActivateDrones,
   batchDeactivateDrones,

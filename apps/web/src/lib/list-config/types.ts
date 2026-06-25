@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 /** A single column definition for a configurable list page. */
 export interface ListColumn<Row> {

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { FlightPlanChecklist } from "./flight-plan-checklist";
 
 // --- Mocks ---
@@ -68,10 +68,14 @@ describe("FlightPlanChecklist", () => {
         initialChecklist={{ "drone-registered": true, "client-assigned": true }}
       />,
     );
-    const droneCb = screen.getByText("Dron registrado")
-      .closest("label")?.querySelector('input[type="checkbox"]');
-    const clientCb = screen.getByText("Cliente asignado")
-      .closest("label")?.querySelector('input[type="checkbox"]');
+    const droneCb = screen
+      .getByText("Dron registrado")
+      .closest("label")
+      ?.querySelector('input[type="checkbox"]');
+    const clientCb = screen
+      .getByText("Cliente asignado")
+      .closest("label")
+      ?.querySelector('input[type="checkbox"]');
     expect(droneCb).toBeChecked();
     expect(clientCb).toBeChecked();
   });
@@ -105,11 +109,7 @@ describe("FlightPlanChecklist", () => {
 
     // Wait for the fetch to reject and toast to be called
     await vi.waitFor(() => {
-      expect(mockToast).toHaveBeenCalledWith(
-        "error",
-        "Error al guardar",
-        "Database error",
-      );
+      expect(mockToast).toHaveBeenCalledWith("error", "Error al guardar", "Database error");
     });
   });
 

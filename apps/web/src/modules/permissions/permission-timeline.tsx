@@ -30,7 +30,11 @@ export function PermissionTimeline({
   }>;
 }) {
   if (events.length === 0) {
-    return <p className="text-sm text-slate-600 dark:text-slate-500">Todavía no hay eventos registrados.</p>;
+    return (
+      <p className="text-sm text-slate-600 dark:text-slate-500">
+        Todavía no hay eventos registrados.
+      </p>
+    );
   }
 
   return (
@@ -64,7 +68,9 @@ export function PermissionTimeline({
                 <p className="text-xs text-slate-600 dark:text-slate-500">{event.description}</p>
               ) : null}
 
-               <p className="text-xs text-slate-600 dark:text-slate-500">{formatter(new Date(event.createdAt))}</p>
+              <p className="text-xs text-slate-600 dark:text-slate-500">
+                {formatter(new Date(event.createdAt))}
+              </p>
             </div>
           </div>
         );

@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // ─── Onboarding key ────────────────────────────────────────────
 
@@ -31,11 +31,36 @@ type ChecklistItem = {
 };
 
 const CHECKLIST: ChecklistItem[] = [
-  { id: "cost-center", label: "Crear un grupo de trabajo", href: "/cost-centers/new", hint: "Organizá las operaciones por centro de costo." },
-  { id: "client", label: "Agregar un cliente", href: "/clients/new", hint: "Cada plan de vuelo necesita un mandante." },
-  { id: "drone", label: "Registrar un dron", href: "/drones/new", hint: "Necesitás al menos un dron activo en el sistema." },
-  { id: "operator", label: "Registrar un operador", href: "/operators/new", hint: "Sin operador asignado no se puede volar." },
-  { id: "flight-plan", label: "Crear un plan de vuelo", href: "/flight-plans/new", hint: "El plan une todos los elementos anteriores." },
+  {
+    id: "cost-center",
+    label: "Crear un grupo de trabajo",
+    href: "/cost-centers/new",
+    hint: "Organizá las operaciones por centro de costo.",
+  },
+  {
+    id: "client",
+    label: "Agregar un cliente",
+    href: "/clients/new",
+    hint: "Cada plan de vuelo necesita un mandante.",
+  },
+  {
+    id: "drone",
+    label: "Registrar un dron",
+    href: "/drones/new",
+    hint: "Necesitás al menos un dron activo en el sistema.",
+  },
+  {
+    id: "operator",
+    label: "Registrar un operador",
+    href: "/operators/new",
+    hint: "Sin operador asignado no se puede volar.",
+  },
+  {
+    id: "flight-plan",
+    label: "Crear un plan de vuelo",
+    href: "/flight-plans/new",
+    hint: "El plan une todos los elementos anteriores.",
+  },
 ];
 
 // ─── Tour steps ────────────────────────────────────────────────
@@ -51,19 +76,22 @@ const TOUR_STEPS: TourStep[] = [
   {
     selector: '[href="/dashboard"]',
     title: "Panel operativo",
-    description: "Tu centro de control. Acá ves el resumen de todo: acciones pendientes, próximos vencimientos y actividad reciente.",
+    description:
+      "Tu centro de control. Acá ves el resumen de todo: acciones pendientes, próximos vencimientos y actividad reciente.",
     placement: "right",
   },
   {
     selector: '[href="/master-data"]',
     title: "Datos maestros",
-    description: "Vista consolidada de grupos de trabajo, clientes, flota y operadores. Todo lo que necesitás para arrancar.",
+    description:
+      "Vista consolidada de grupos de trabajo, clientes, flota y operadores. Todo lo que necesitás para arrancar.",
     placement: "right",
   },
   {
     selector: '[href="/flight-plans"]',
     title: "Planes de vuelo",
-    description: "El corazón de la plataforma. Creá misiones, definí el área de operación, gestioná permisos y documentación DGAC.",
+    description:
+      "El corazón de la plataforma. Creá misiones, definí el área de operación, gestioná permisos y documentación DGAC.",
     placement: "right",
   },
   {
@@ -141,8 +169,8 @@ export function OnboardingDialog() {
               Bienvenido a AeroFlow
             </h2>
             <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">
-              Plataforma geoespacial para vuelos, georegistro e informes técnicos.
-              Seguí estos pasos para arrancar:
+              Plataforma geoespacial para vuelos, georegistro e informes técnicos. Seguí estos pasos
+              para arrancar:
             </p>
           </div>
 
@@ -176,13 +204,21 @@ export function OnboardingDialog() {
                     aria-label={done ? `Desmarcar ${item.label}` : `Marcar ${item.label}`}
                   >
                     {done && (
-                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <svg
+                        className="h-3 w-3"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={3}
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     )}
                   </button>
                   <div className="min-w-0 flex-1">
-                    <p className={`text-sm font-medium ${done ? "text-emerald-700 dark:text-emerald-300 line-through" : "text-slate-800 dark:text-slate-200"}`}>
+                    <p
+                      className={`text-sm font-medium ${done ? "text-emerald-700 dark:text-emerald-300 line-through" : "text-slate-800 dark:text-slate-200"}`}
+                    >
                       <Link
                         href={item.href}
                         onClick={() => {
@@ -299,9 +335,7 @@ export function OnboardingDialog() {
             <span
               key={i}
               className={`h-1.5 w-1.5 rounded-full transition ${
-                i === tourStep
-                  ? "bg-accent dark:bg-cyan-400"
-                  : "bg-slate-300 dark:bg-slate-700"
+                i === tourStep ? "bg-accent dark:bg-cyan-400" : "bg-slate-300 dark:bg-slate-700"
               }`}
             />
           ))}

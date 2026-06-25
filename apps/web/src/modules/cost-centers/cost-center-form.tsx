@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { RecordStatus } from "@prisma/client";
+import Link from "next/link";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -30,7 +30,9 @@ export function CostCenterForm({
     <DetailPanel title={title} description={description}>
       <form action={action} className="space-y-4">
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Código</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Código
+          </span>
           <input
             type="text"
             name="code"
@@ -42,7 +44,9 @@ export function CostCenterForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Nombre</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Nombre
+          </span>
           <input
             type="text"
             name="name"
@@ -54,7 +58,9 @@ export function CostCenterForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Estado</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Estado
+          </span>
           <select
             name="status"
             defaultValue={initialValues.status}
@@ -69,7 +75,9 @@ export function CostCenterForm({
         </label>
 
         <label className="block space-y-2">
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Descripción</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
+            Descripción
+          </span>
           <textarea
             name="description"
             rows={5}

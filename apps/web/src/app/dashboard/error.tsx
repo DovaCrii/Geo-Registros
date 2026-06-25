@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function DashboardError({
   error,
@@ -17,9 +17,12 @@ export default function DashboardError({
   return (
     <div className="flex min-h-[60vh] items-center justify-center p-8">
       <div className="max-w-md rounded-3xl border border-slate-200 bg-white/95 p-8 text-center shadow-2xl backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/55">
-        <h2 className="mb-2 text-lg font-bold text-slate-900 dark:text-white">No se pudo cargar el panel</h2>
+        <h2 className="mb-2 text-lg font-bold text-slate-900 dark:text-white">
+          No se pudo cargar el panel
+        </h2>
         <p className="mb-6 text-sm text-slate-600 dark:text-slate-400">
-          Ocurrió un error al recuperar los datos del dashboard. Si el problema persiste, recargá la página o revisá la conexión a la base de datos.
+          Ocurrió un error al recuperar los datos del dashboard. Si el problema persiste, recargá la
+          página o revisá la conexión a la base de datos.
         </p>
         <div className="flex justify-center gap-3">
           <button

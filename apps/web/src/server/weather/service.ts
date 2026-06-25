@@ -42,10 +42,10 @@ function extractCoordinates(geometryJson: unknown): { lat: number; lon: number }
       case "Polygon": {
         const ring = (coords as number[][][])[0];
         if (!ring || ring.length === 0) return null;
-        const avg = ring.reduce(
-          (acc, [lon, lat]) => ({ lat: acc.lat + lat, lon: acc.lon + lon }),
-          { lat: 0, lon: 0 },
-        );
+        const avg = ring.reduce((acc, [lon, lat]) => ({ lat: acc.lat + lat, lon: acc.lon + lon }), {
+          lat: 0,
+          lon: 0,
+        });
         return { lat: avg.lat / ring.length, lon: avg.lon / ring.length };
       }
       case "MultiPolygon": {

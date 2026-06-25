@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 const PUBLIC_PATHS = ["/", "/auth"];
 
@@ -15,7 +15,10 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Allow public routes.
-  if (PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`)) || pathname.startsWith("/api/auth")) {
+  if (
+    PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`)) ||
+    pathname.startsWith("/api/auth")
+  ) {
     return NextResponse.next();
   }
 

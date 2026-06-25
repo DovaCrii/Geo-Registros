@@ -1,11 +1,11 @@
-import { DataColumn, DataTable } from "@/components/ui/data-table";
+import { type DataColumn, DataTable } from "@/components/ui/data-table";
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { FilterBar, FilterField } from "@/components/ui/filter-bar";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { PrimaryButton } from "@/components/ui/primary-button";
 import { StatusChip } from "@/components/ui/status-chip";
-import { MasterDataModuleConfig, MasterDataRow } from "@/modules/master-data/catalog";
+import type { MasterDataModuleConfig, MasterDataRow } from "@/modules/master-data/catalog";
 
 const columns: Array<DataColumn<MasterDataRow>> = [
   {
@@ -65,7 +65,8 @@ export function MasterDataPage({ config }: { config: MasterDataModuleConfig }) {
             <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-4">
               <p className="text-sm font-medium text-cyan-200">Operational form zone</p>
               <p className="mt-2 text-sm leading-6 text-slate-400">
-                This panel is reserved for creation and editing once Block 2 connects domain models and actions.
+                This panel is reserved for creation and editing once Block 2 connects domain models
+                and actions.
               </p>
             </div>
             <div className="space-y-3 rounded-2xl border border-slate-800/80 bg-slate-900/70 p-4">

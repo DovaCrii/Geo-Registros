@@ -25,7 +25,11 @@ export function generateDashboardExcel(data: DashboardExportData): Buffer {
 
   const summaryWs = XLSX.utils.json_to_sheet(summaryRows);
   XLSX.utils.sheet_add_aoa(summaryWs, [["Resumen del Dashboard", ""]], { origin: "A1" });
-  XLSX.utils.sheet_add_aoa(summaryWs, [["Generado por Aeroflow", new Date().toISOString().slice(0, 10)]], { origin: "A4" });
+  XLSX.utils.sheet_add_aoa(
+    summaryWs,
+    [["Generado por Aeroflow", new Date().toISOString().slice(0, 10)]],
+    { origin: "A4" },
+  );
   XLSX.utils.sheet_add_aoa(summaryWs, [["Métrica", "Valor"]], { origin: "A6" });
   // Fix: our json starts at row 7
   summaryWs["!ref"] = `A1:B${summaryRows.length + 6}`;

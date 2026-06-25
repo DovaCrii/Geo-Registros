@@ -1,14 +1,14 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
-  VALID_TRANSITIONS,
-  TERMINAL_STATES,
-  isValidTransition,
-  isTerminalState,
   getAllowedTransitions,
-  validateTransition,
   getStatusLabel,
   getStatusTone,
+  isTerminalState,
+  isValidTransition,
   STATUS_LABELS,
+  TERMINAL_STATES,
+  VALID_TRANSITIONS,
+  validateTransition,
 } from "./transitions";
 
 // ─── DATA INTEGRITY ──────────────────────────────────────
@@ -55,10 +55,7 @@ describe("State machine data integrity", () => {
   it("has all 10 states in STATUS_LABELS", () => {
     const allStates = Object.keys(VALID_TRANSITIONS);
     for (const state of allStates) {
-      expect(
-        STATUS_LABELS,
-        `State "${state}" is missing a Spanish label`,
-      ).toHaveProperty(state);
+      expect(STATUS_LABELS, `State "${state}" is missing a Spanish label`).toHaveProperty(state);
     }
   });
 
@@ -133,10 +130,7 @@ describe("Transition table (15 transitions)", () => {
   });
 
   it("matches the total allowed transitions defined", () => {
-    const totalAllowed = Object.values(VALID_TRANSITIONS).reduce(
-      (sum, arr) => sum + arr.length,
-      0,
-    );
+    const totalAllowed = Object.values(VALID_TRANSITIONS).reduce((sum, arr) => sum + arr.length, 0);
     expect(totalAllowed).toBe(15);
   });
 });
@@ -220,9 +214,7 @@ describe("validateTransition", () => {
   });
 
   it("rejects self-transition (same state)", () => {
-    expect(validateTransition("DRAFT", "DRAFT")).toBe(
-      "Flight plan is already in DRAFT status.",
-    );
+    expect(validateTransition("DRAFT", "DRAFT")).toBe("Flight plan is already in DRAFT status.");
   });
 
   it("rejects transition from terminal state CLOSED", () => {

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useToast } from "@/lib/toast-context";
 
 const DOC_TYPE_LABELS: Record<string, string> = {
@@ -167,7 +167,9 @@ export function DocumentUpload({
               <div key={doc.id} className="relative">
                 <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 dark:border-slate-800/80 dark:bg-slate-950/70">
                   <div className="min-w-0 flex-1 space-y-0.5">
-                    <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-200">{doc.fileName}</p>
+                    <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-200">
+                      {doc.fileName}
+                    </p>
                     <p className="text-xs text-slate-600 dark:text-slate-500">
                       {DOC_TYPE_LABELS[doc.docType] ?? doc.docType}
                     </p>
@@ -216,7 +218,9 @@ export function DocumentUpload({
           </div>
         </div>
       ) : (
-        <p className="text-xs text-slate-600 dark:text-slate-500">Todavía no hay documentos adjuntos.</p>
+        <p className="text-xs text-slate-600 dark:text-slate-500">
+          Todavía no hay documentos adjuntos.
+        </p>
       )}
     </div>
   );

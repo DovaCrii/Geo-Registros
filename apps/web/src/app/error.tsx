@@ -21,7 +21,8 @@ export default function RootError({
         </div>
         <h1 className="mb-2 text-xl font-bold text-white">Algo salió mal</h1>
         <p className="mb-6 text-sm leading-6 text-slate-400">
-          Ocurrió un error inesperado al cargar esta página. Si el problema persiste, recargá la página o intentá de nuevo.
+          Ocurrió un error inesperado al cargar esta página. Si el problema persiste, recargá la
+          página o intentá de nuevo.
         </p>
         <button
           onClick={reset}

@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { RecordStatus } from "@prisma/client";
+import Link from "next/link";
 
 import { StatusChip } from "@/components/ui/status-chip";
-import { ListColumn, ListConfig } from "@/lib/list-config/types";
+import type { ListColumn, ListConfig } from "@/lib/list-config/types";
 
 type ClientRow = {
   id: string;
@@ -23,7 +23,9 @@ export const clientColumns: ListColumn<ClientRow>[] = [
     key: "code",
     header: "Código",
     sortable: true,
-    render: (row) => <span className="font-medium text-slate-900 dark:text-white">{row.code ?? "—"}</span>,
+    render: (row) => (
+      <span className="font-medium text-slate-900 dark:text-white">{row.code ?? "—"}</span>
+    ),
   },
   {
     key: "name",
@@ -42,7 +44,9 @@ export const clientColumns: ListColumn<ClientRow>[] = [
     render: (row) => (
       <div className="space-y-1 text-slate-700 dark:text-slate-300">
         <p>{row.contactName ?? "—"}</p>
-        {row.contactEmail && <p className="text-xs text-slate-600 dark:text-slate-500">{row.contactEmail}</p>}
+        {row.contactEmail && (
+          <p className="text-xs text-slate-600 dark:text-slate-500">{row.contactEmail}</p>
+        )}
       </div>
     ),
   },
@@ -50,13 +54,21 @@ export const clientColumns: ListColumn<ClientRow>[] = [
     key: "status",
     header: "Estado",
     sortable: true,
-    render: (row) => <StatusChip label={row.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"} tone={toneFromStatus(row.status)} />,
+    render: (row) => (
+      <StatusChip
+        label={row.status === RecordStatus.ACTIVE ? "Activo" : "Inactivo"}
+        tone={toneFromStatus(row.status)}
+      />
+    ),
   },
   {
     key: "actions",
     header: "Acciones",
     render: (row) => (
-      <Link href={`/clients/${row.id}`} className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200">
+      <Link
+        href={`/clients/${row.id}`}
+        className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200"
+      >
         Editar
       </Link>
     ),
@@ -72,9 +84,7 @@ export const clientListConfig: ListConfig<ClientRow> = {
     { field: "q", label: "Buscar", type: "search", placeholder: "Código, nombre o contacto…" },
     { field: "status", label: "Estado", type: "status" },
   ],
-  headerActions: [
-    { href: "/clients/new", label: "Registrar cliente", variant: "primary" },
-  ],
+  headerActions: [{ href: "/clients/new", label: "Registrar cliente", variant: "primary" }],
   sidebar: {
     title: "Resumen del cliente",
     description: "Datos de contacto y estado operativo del cliente.",

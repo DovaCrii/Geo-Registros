@@ -30,9 +30,7 @@ export function importKml(text: string): ImportResult {
   // kml() types return Geometry | null; filter out null geometries
   const fc: GeoJSON.FeatureCollection = {
     type: "FeatureCollection",
-    features: raw.features.filter(
-      (f): f is GeoJSON.Feature => f.geometry !== null,
-    ),
+    features: raw.features.filter((f): f is GeoJSON.Feature => f.geometry !== null),
   };
   const count = fc.features.length;
 
@@ -55,9 +53,7 @@ function point(coords: [number, number]): GeoJSON.Feature<GeoJSON.Point> {
   };
 }
 
-function lineString(
-  coords: Array<[number, number]>,
-): GeoJSON.Feature<GeoJSON.LineString> {
+function lineString(coords: Array<[number, number]>): GeoJSON.Feature<GeoJSON.LineString> {
   return {
     type: "Feature",
     geometry: { type: "LineString", coordinates: coords },
@@ -65,9 +61,7 @@ function lineString(
   };
 }
 
-function polygon(
-  rings: Array<Array<[number, number]>>,
-): GeoJSON.Feature<GeoJSON.Polygon> {
+function polygon(rings: Array<Array<[number, number]>>): GeoJSON.Feature<GeoJSON.Polygon> {
   return {
     type: "Feature",
     geometry: { type: "Polygon", coordinates: rings },
@@ -108,17 +102,13 @@ function arcToLineString(
   return lineString(coords);
 }
 
-function isFeatureClosed(
-  vertices: Array<{ x: number; y: number }>,
-): boolean {
+function isFeatureClosed(vertices: Array<{ x: number; y: number }>): boolean {
   if (vertices.length < 3) return false;
   const first = vertices[0];
   const last = vertices[vertices.length - 1];
   // DXF uses floating point equality — within a small tolerance is closed
   const EPS = 1e-8;
-  return (
-    Math.abs(first.x - last.x) < EPS && Math.abs(first.y - last.y) < EPS
-  );
+  return Math.abs(first.x - last.x) < EPS && Math.abs(first.y - last.y) < EPS;
 }
 
 /** Convert a single DXF entity to a GeoJSON Feature (or null if unsupported). */
@@ -135,9 +125,7 @@ function dxfEntityToGeoJson(entity: Record<string, unknown>): GeoJSON.Feature | 
 
     /* ---- LINE ---- */
     case "LINE": {
-      const vertices = entity.vertices as
-        | Array<{ x: number; y: number }>
-        | undefined;
+      const vertices = entity.vertices as Array<{ x: number; y: number }> | undefined;
       if (!vertices || vertices.length < 2) return null;
       const coords = vertices.map((v) => [v.x, v.y] as [number, number]);
       return lineString(coords);
@@ -146,19 +134,13 @@ function dxfEntityToGeoJson(entity: Record<string, unknown>): GeoJSON.Feature | 
     /* ---- LWPOLYLINE / POLYLINE ---- */
     case "LWPOLYLINE":
     case "POLYLINE": {
-      const rawVertices = entity.vertices as
-        | Array<{ x: number; y: number }>
-        | undefined;
+      const rawVertices = entity.vertices as Array<{ x: number; y: number }> | undefined;
       if (!rawVertices || rawVertices.length < 2) return null;
 
-      let closed =
-        (entity.closed as boolean) ||
-        (entity.shape as boolean) ||
-        isFeatureClosed(rawVertices);
+      const closed =
+        (entity.closed as boolean) || (entity.shape as boolean) || isFeatureClosed(rawVertices);
 
-      const coords = rawVertices.map(
-        (v) => [v.x, v.y] as [number, number],
-      );
+      const coords = rawVertices.map((v) => [v.x, v.y] as [number, number]);
 
       if (closed && coords.length >= 3) {
         // Ensure the ring is explicitly closed for GeoJSON
@@ -182,9 +164,7 @@ function dxfEntityToGeoJson(entity: Record<string, unknown>): GeoJSON.Feature | 
 
     /* ---- ARC (→ line string approximation) ---- */
     case "ARC": {
-      const centerArc = entity.center as
-        | { x: number; y: number }
-        | undefined;
+      const centerArc = entity.center as { x: number; y: number } | undefined;
       const radiusArc = entity.radius as number | undefined;
       const startAngle = (entity.startAngle as number) ?? 0;
       const endAngle = (entity.endAngle as number) ?? 0;

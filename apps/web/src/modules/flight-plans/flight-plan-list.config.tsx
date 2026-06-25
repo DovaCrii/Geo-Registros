@@ -1,8 +1,8 @@
+import type { PermissionStatus } from "@prisma/client";
 import Link from "next/link";
-import { PermissionStatus } from "@prisma/client";
 
 import { StatusBadge } from "@/components/ui/status-badge";
-import { ListColumn, ListConfig } from "@/lib/list-config/types";
+import type { ListColumn, ListConfig } from "@/lib/list-config/types";
 
 type FlightPlanRow = {
   id: string;
@@ -42,7 +42,9 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
     render: (row) => (
       <div className="space-y-1">
         <p className="font-medium text-slate-900 dark:text-white">{row.title}</p>
-        <p className="text-xs text-slate-600 dark:text-slate-500">{row.operationDate.toISOString().slice(0, 10)}</p>
+        <p className="text-xs text-slate-600 dark:text-slate-500">
+          {row.operationDate.toISOString().slice(0, 10)}
+        </p>
       </div>
     ),
   },
@@ -53,14 +55,21 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
       <div className="space-y-1 text-slate-700 dark:text-slate-300">
         <p className="text-xs text-slate-700 dark:text-slate-300">
           {row.costCenter ? (
-              <Link href={`/cost-centers/${row.costCenter.id}`} className="transition hover:text-cyan-600 dark:hover:text-cyan-300">
+            <Link
+              href={`/cost-centers/${row.costCenter.id}`}
+              className="transition hover:text-cyan-600 dark:hover:text-cyan-300"
+            >
               {row.costCenter.code}
             </Link>
           ) : (
             "—"
-          )}{" "}·{" "}
+          )}{" "}
+          ·{" "}
           {row.client ? (
-              <Link href={`/clients/${row.client.id}`} className="transition hover:text-cyan-600 dark:hover:text-cyan-300">
+            <Link
+              href={`/clients/${row.client.id}`}
+              className="transition hover:text-cyan-600 dark:hover:text-cyan-300"
+            >
               {row.client.name}
             </Link>
           ) : (
@@ -69,14 +78,21 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
         </p>
         <p className="text-xs text-slate-600 dark:text-slate-500">
           {row.drone ? (
-              <Link href={`/drones/${row.drone.id}`} className="transition hover:text-cyan-600 dark:hover:text-cyan-300">
+            <Link
+              href={`/drones/${row.drone.id}`}
+              className="transition hover:text-cyan-600 dark:hover:text-cyan-300"
+            >
               {row.drone.model}
             </Link>
           ) : (
             "—"
-          )}{" / "}
+          )}
+          {" / "}
           {row.operator ? (
-              <Link href={`/operators/${row.operator.id}`} className="transition hover:text-cyan-600 dark:hover:text-cyan-300">
+            <Link
+              href={`/operators/${row.operator.id}`}
+              className="transition hover:text-cyan-600 dark:hover:text-cyan-300"
+            >
               {row.operator.fullName}
             </Link>
           ) : (
@@ -127,7 +143,10 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
     header: "Acciones",
     render: (row) => (
       <div className="flex gap-2">
-        <Link href={`/flight-plans/${row.id}`} className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200">
+        <Link
+          href={`/flight-plans/${row.id}`}
+          className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200"
+        >
           Editar
         </Link>
         {row.geometryType && (
@@ -146,7 +165,8 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
 export const flightPlanListConfig: ListConfig<FlightPlanRow> = {
   eyebrow: "Bloque 1 / Operación principal",
   title: "Planes de vuelo",
-  description: "Gestioná los registros operativos de vuelos RPAS con flujo de permisos, geometría, documentos y clima.",
+  description:
+    "Gestioná los registros operativos de vuelos RPAS con flujo de permisos, geometría, documentos y clima.",
   columns: flightPlanColumns,
   filters: [
     { field: "q", label: "Buscar", type: "search", placeholder: "Código o título…" },
@@ -169,9 +189,7 @@ export const flightPlanListConfig: ListConfig<FlightPlanRow> = {
       ],
     },
   ],
-  headerActions: [
-    { href: "/flight-plans/new", label: "Crear plan de vuelo", variant: "primary" },
-  ],
+  headerActions: [{ href: "/flight-plans/new", label: "Crear plan de vuelo", variant: "primary" }],
   sidebar: {
     title: "Cobertura del plan",
     description: "Flujo de permisos, geometría, documentos y clima conectados.",

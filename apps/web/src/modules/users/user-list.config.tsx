@@ -1,5 +1,5 @@
+import type { Role } from "@prisma/client";
 import Link from "next/link";
-import { Role } from "@prisma/client";
 
 import { StatusChip } from "@/components/ui/status-chip";
 import type { ListColumn, ListConfig } from "@/lib/list-config/types";
@@ -52,7 +52,10 @@ export const userColumns: ListColumn<UserRow>[] = [
     header: "Rol",
     sortable: true,
     render: (row) => (
-      <StatusChip label={ROLE_LABELS[row.role] ?? row.role} tone={ROLE_TONES[row.role] ?? "neutral"} />
+      <StatusChip
+        label={ROLE_LABELS[row.role] ?? row.role}
+        tone={ROLE_TONES[row.role] ?? "neutral"}
+      />
     ),
   },
   {
@@ -60,7 +63,10 @@ export const userColumns: ListColumn<UserRow>[] = [
     header: "Estado",
     sortable: true,
     render: (row) => (
-      <StatusChip label={row.active ? "Activo" : "Inactivo"} tone={row.active ? "success" : "neutral"} />
+      <StatusChip
+        label={row.active ? "Activo" : "Inactivo"}
+        tone={row.active ? "success" : "neutral"}
+      />
     ),
   },
   {
@@ -68,14 +74,19 @@ export const userColumns: ListColumn<UserRow>[] = [
     header: "Creado",
     sortable: true,
     render: (row) => (
-      <span className="text-sm text-slate-600 dark:text-slate-400">{row.createdAt.toISOString().slice(0, 10)}</span>
+      <span className="text-sm text-slate-600 dark:text-slate-400">
+        {row.createdAt.toISOString().slice(0, 10)}
+      </span>
     ),
   },
   {
     key: "actions",
     header: "Acciones",
     render: (row) => (
-      <Link href={`/admin/users/${row.id}`} className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200">
+      <Link
+        href={`/admin/users/${row.id}`}
+        className="text-sm font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200"
+      >
         Editar
       </Link>
     ),
@@ -98,9 +109,7 @@ export const userListConfig: ListConfig<UserRow> = {
     },
     { field: "status", label: "Estado", type: "status" },
   ],
-  headerActions: [
-    { href: "/admin/users/new", label: "Crear usuario", variant: "primary" },
-  ],
+  headerActions: [{ href: "/admin/users/new", label: "Crear usuario", variant: "primary" }],
   batchActions: [
     { label: "Desactivar", handler: "deactivate", variant: "warning" },
     { label: "Reactivar", handler: "reactivate", variant: "primary" },
@@ -108,9 +117,7 @@ export const userListConfig: ListConfig<UserRow> = {
   sidebar: {
     title: "Gestión de usuarios",
     description: "Creá, editá y gestioná usuarios del sistema y sus roles.",
-    items: [
-      { label: "Total usuarios", value: "—", tone: "info" },
-    ],
+    items: [{ label: "Total usuarios", value: "—", tone: "info" }],
     action: { href: "/admin/users/new", label: "Crear usuario" },
   },
   searchPlaceholder: "Nombre o correo…",

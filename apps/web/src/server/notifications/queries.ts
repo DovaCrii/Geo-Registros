@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 const DEFAULT_PAGE_SIZE = 10;
 

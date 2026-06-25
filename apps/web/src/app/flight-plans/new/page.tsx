@@ -1,5 +1,5 @@
-import { DetailPanel } from "@/components/ui/detail-panel";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
 import { requirePageAuth } from "@/lib/require-page-auth";
@@ -32,7 +32,13 @@ export default async function NewFlightPlanPage() {
   return (
     <PageShell>
       <div className="space-y-6">
-        <Breadcrumbs items={[{ label: "Inicio", href: "/" }, { label: "Planes de vuelo", href: "/flight-plans" }, { label: "Crear plan de vuelo" }]} />
+        <Breadcrumbs
+          items={[
+            { label: "Inicio", href: "/" },
+            { label: "Planes de vuelo", href: "/flight-plans" },
+            { label: "Crear plan de vuelo" },
+          ]}
+        />
 
         <PageHeader
           eyebrow="Bloque 3 / Planes de vuelo"
@@ -41,11 +47,15 @@ export default async function NewFlightPlanPage() {
         />
 
         {missingDependencies.length > 0 ? (
-          <DetailPanel title="Datos maestros requeridos" description="Antes de crear el plan necesitás completar los registros base del flujo.">
+          <DetailPanel
+            title="Datos maestros requeridos"
+            description="Antes de crear el plan necesitás completar los registros base del flujo."
+          >
             <div className="space-y-4">
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                Faltan datos en: {missingDependencies.map((item) => item.label).join(", ")}.
-                Si la base de datos está offline, los selectores también quedarán indisponibles hasta recuperar conectividad.
+                Faltan datos en: {missingDependencies.map((item) => item.label).join(", ")}. Si la
+                base de datos está offline, los selectores también quedarán indisponibles hasta
+                recuperar conectividad.
               </p>
 
               <div className="grid gap-3 sm:grid-cols-2">
@@ -79,10 +89,22 @@ export default async function NewFlightPlanPage() {
             droneId: "",
             operatorId: "",
           }}
-          costCenterOptions={costCenters.map((item) => ({ id: item.id, label: `${item.code} · ${item.name}` }))}
-          clientOptions={clients.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.name}` : item.name }))}
-          droneOptions={drones.map((item) => ({ id: item.id, label: `${item.model} · ${item.serialNumber}` }))}
-          operatorOptions={operators.map((item) => ({ id: item.id, label: item.code ? `${item.code} · ${item.fullName}` : item.fullName }))}
+          costCenterOptions={costCenters.map((item) => ({
+            id: item.id,
+            label: `${item.code} · ${item.name}`,
+          }))}
+          clientOptions={clients.map((item) => ({
+            id: item.id,
+            label: item.code ? `${item.code} · ${item.name}` : item.name,
+          }))}
+          droneOptions={drones.map((item) => ({
+            id: item.id,
+            label: `${item.model} · ${item.serialNumber}`,
+          }))}
+          operatorOptions={operators.map((item) => ({
+            id: item.id,
+            label: item.code ? `${item.code} · ${item.fullName}` : item.fullName,
+          }))}
           geometrySummary="Sin geometría adjunta todavía"
         />
       </div>

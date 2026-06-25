@@ -1,9 +1,8 @@
 import { createReadStream } from "fs";
 import { stat } from "fs/promises";
+import { NextResponse } from "next/server";
 import path from "path";
 import { Readable } from "stream";
-
-import { NextResponse } from "next/server";
 
 import { getHelpDocById } from "@/server/help-docs/storage";
 

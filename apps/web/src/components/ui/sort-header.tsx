@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback } from "react";
 
 type SortHeaderProps = {
   field: string;
@@ -47,8 +47,16 @@ export function SortHeader({ field, label }: SortHeaderProps) {
     >
       <span>{label}</span>
       <span className="flex flex-col leading-none opacity-0 transition group-hover:opacity-100">
-        <span className={`text-[8px] ${isActive && currentDir === "asc" ? "text-accent dark:text-cyan-300" : "text-slate-400 dark:text-slate-500"}`}>▲</span>
-        <span className={`text-[8px] ${isActive && currentDir === "desc" ? "text-accent dark:text-cyan-300" : "text-slate-400 dark:text-slate-500"}`}>▼</span>
+        <span
+          className={`text-[8px] ${isActive && currentDir === "asc" ? "text-accent dark:text-cyan-300" : "text-slate-400 dark:text-slate-500"}`}
+        >
+          ▲
+        </span>
+        <span
+          className={`text-[8px] ${isActive && currentDir === "desc" ? "text-accent dark:text-cyan-300" : "text-slate-400 dark:text-slate-500"}`}
+        >
+          ▼
+        </span>
       </span>
       {isActive && (
         <span className="text-[10px] text-accent dark:text-cyan-300">

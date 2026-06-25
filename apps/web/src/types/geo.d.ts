@@ -8,10 +8,7 @@ declare module "tokml" {
     description?: string;
   }
 
-  function tokml(
-    geojson: GeoJSON.FeatureCollection,
-    options?: TokmlOptions,
-  ): string;
+  function tokml(geojson: GeoJSON.FeatureCollection, options?: TokmlOptions): string;
 
   export default tokml;
 }

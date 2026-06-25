@@ -38,9 +38,12 @@ export function BatchToolbar({ selectedCount, actions, onAction, onClear }: Batc
           const base =
             "inline-flex items-center justify-center rounded-lg border px-3 py-1.5 text-xs font-medium transition";
           const variants: Record<string, string> = {
-            primary: "border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 text-accent-strong dark:text-cyan-100 hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20",
-            danger: "border-red-300 bg-red-50 text-red-700 hover:border-red-400 hover:bg-red-100 dark:border-red-400/30 dark:bg-red-500/15 dark:text-red-200 dark:hover:border-red-300/50 dark:hover:bg-red-400/20",
-            warning: "border-amber-300 bg-amber-50 text-amber-700 hover:border-amber-400 hover:bg-amber-100 dark:border-amber-400/30 dark:bg-amber-500/15 dark:text-amber-200 dark:hover:border-amber-300/50 dark:hover:bg-amber-400/20",
+            primary:
+              "border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 text-accent-strong dark:text-cyan-100 hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20",
+            danger:
+              "border-red-300 bg-red-50 text-red-700 hover:border-red-400 hover:bg-red-100 dark:border-red-400/30 dark:bg-red-500/15 dark:text-red-200 dark:hover:border-red-300/50 dark:hover:bg-red-400/20",
+            warning:
+              "border-amber-300 bg-amber-50 text-amber-700 hover:border-amber-400 hover:bg-amber-100 dark:border-amber-400/30 dark:bg-amber-500/15 dark:text-amber-200 dark:hover:border-amber-300/50 dark:hover:bg-amber-400/20",
           };
           const variant = variants[action.variant ?? "primary"] ?? variants.primary;
           const isBusy = loading === action.handler;

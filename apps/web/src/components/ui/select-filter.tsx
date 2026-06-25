@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback } from "react";
 
 type SelectFilterProps = {
   label: string;
@@ -13,7 +13,12 @@ type SelectFilterProps = {
 /**
  * URL-driven select filter with immediate navigation.
  */
-export function SelectFilter({ label, paramName, placeholder = "Todos", options }: SelectFilterProps) {
+export function SelectFilter({
+  label,
+  paramName,
+  placeholder = "Todos",
+  options,
+}: SelectFilterProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const current = searchParams.get(paramName) ?? "";
@@ -36,7 +41,9 @@ export function SelectFilter({ label, paramName, placeholder = "Todos", options 
 
   return (
     <label className="space-y-2">
-      <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">{label}</span>
+      <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
+        {label}
+      </span>
       <select
         value={current}
         onChange={handleChange}

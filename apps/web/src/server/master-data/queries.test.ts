@@ -32,11 +32,7 @@ describe("summarize", () => {
   });
 
   it("ignores unknown statuses (not ACTIVE/INACTIVE)", () => {
-    const items = [
-      { status: "ACTIVE" },
-      { status: "PENDING" },
-      { status: "INACTIVE" },
-    ];
+    const items = [{ status: "ACTIVE" }, { status: "PENDING" }, { status: "INACTIVE" }];
     const result = summarize(items);
     expect(result).toEqual({ total: 3, active: 1, inactive: 1 });
   });

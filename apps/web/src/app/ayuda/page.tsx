@@ -1,7 +1,7 @@
+import { HelpCenterClient } from "@/components/help-center/HelpCenterClient";
 import { PageShell } from "@/components/ui/page-shell";
 import { requirePageAuth } from "@/lib/require-page-auth";
 import { listHelpDocs } from "@/server/help-docs/storage";
-import { HelpCenterClient } from "@/components/help-center/HelpCenterClient";
 
 export default async function HelpPage() {
   await requirePageAuth("/ayuda");

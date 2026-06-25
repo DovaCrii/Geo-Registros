@@ -13,13 +13,7 @@ interface MetricCardProps {
   className?: string;
 }
 
-export function MetricCard({
-  icon,
-  value,
-  label,
-  trend,
-  className = "",
-}: MetricCardProps) {
+export function MetricCard({ icon, value, label, trend, className = "" }: MetricCardProps) {
   const trendColor = {
     up: "text-status-success",
     down: "text-status-danger",
@@ -56,9 +50,7 @@ export function MetricCard({
         <p className="font-heading text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
           {value}
         </p>
-        <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
-          {label}
-        </p>
+        <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{label}</p>
       </div>
     </div>
   );

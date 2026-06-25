@@ -29,7 +29,11 @@ function toneFromPermissionStatus(status: string) {
   return STATUS_TONES[status] ?? "neutral";
 }
 
-export default async function FlightPlanGeometryPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function FlightPlanGeometryPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const session = await requirePageAuth(`/flight-plans/${id}/geometry`);
   const canEdit = session?.user?.role ? canEditEntity(String(session.user.role)) : false;
@@ -40,8 +44,13 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
     if (!record) {
       return (
         <PageShell>
-          <DetailPanel title="Plan de vuelo no encontrado" description="El espacio de geometría necesita un registro operativo válido antes de cargar el GeoJSON canónico.">
-            <p className="text-sm text-slate-600 dark:text-slate-400">Volvé al listado y elegí un plan de vuelo existente.</p>
+          <DetailPanel
+            title="Plan de vuelo no encontrado"
+            description="El espacio de geometría necesita un registro operativo válido antes de cargar el GeoJSON canónico."
+          >
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Volvé al listado y elegí un plan de vuelo existente.
+            </p>
           </DetailPanel>
         </PageShell>
       );
@@ -62,8 +71,14 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
                 >
                   Volver al plan
                 </Link>
-                <StatusChip label={canEdit ? "Edición habilitada" : "Solo lectura"} tone={canEdit ? "success" : "neutral"} />
-                <StatusChip label={record.permissionStatus} tone={toneFromPermissionStatus(record.permissionStatus)} />
+                <StatusChip
+                  label={canEdit ? "Edición habilitada" : "Solo lectura"}
+                  tone={canEdit ? "success" : "neutral"}
+                />
+                <StatusChip
+                  label={record.permissionStatus}
+                  tone={toneFromPermissionStatus(record.permissionStatus)}
+                />
               </div>
             }
           />
@@ -74,16 +89,24 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
               description="Dibujá, medí, importá y exportá geometría desde el mapa. El GeoJSON interno se mantiene como formato avanzado."
               action={updateFlightPlanGeometry.bind(null, record.id)}
               flightPlanId={record.id}
-              initialPayload={record.geometryJson ? JSON.stringify(record.geometryJson, null, 2) : ""}
+              initialPayload={
+                record.geometryJson ? JSON.stringify(record.geometryJson, null, 2) : ""
+              }
             />
           ) : (
-            <DetailPanel title="Modo revisión" description="Este perfil puede ver la geometría, pero no editarla.">
+            <DetailPanel
+              title="Modo revisión"
+              description="Este perfil puede ver la geometría, pero no editarla."
+            >
               <div className="space-y-4 text-sm leading-6 text-slate-600 dark:text-slate-300">
                 <p>
-                  La geometría está protegida para perfiles de lectura y revisión. Si necesitás cambios, pedí que un perfil operativo abra el editor.
+                  La geometría está protegida para perfiles de lectura y revisión. Si necesitás
+                  cambios, pedí que un perfil operativo abra el editor.
                 </p>
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/60">
-                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-500">Estado actual</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-500">
+                    Estado actual
+                  </p>
                   <p className="mt-2 font-medium text-slate-900 dark:text-white">
                     {record.geometryType ?? "Sin geometría adjunta todavía"}
                   </p>
@@ -99,10 +122,11 @@ export default async function FlightPlanGeometryPage({ params }: { params: Promi
 
     return (
       <PageShell>
-        <DetailPanel title="Espacio de geometría no disponible" description="La página apunta a Prisma real, pero la base no está lista o no responde.">
-          <p className="text-sm text-slate-600 dark:text-slate-300">
-            {message}
-          </p>
+        <DetailPanel
+          title="Espacio de geometría no disponible"
+          description="La página apunta a Prisma real, pero la base no está lista o no responde."
+        >
+          <p className="text-sm text-slate-600 dark:text-slate-300">{message}</p>
         </DetailPanel>
       </PageShell>
     );

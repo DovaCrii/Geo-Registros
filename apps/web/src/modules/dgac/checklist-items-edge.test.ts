@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
-  normalizeChecklist,
-  normalizeChecklistPatch,
   deriveChecklistState,
   evaluateChecklistSubmission,
+  normalizeChecklist,
+  normalizeChecklistPatch,
 } from "./checklist-items";
 
 // ─── normalizeChecklist ──────────────────────────────────
@@ -240,14 +240,11 @@ describe("evaluateChecklistSubmission", () => {
       ...validSource,
       drone: { insuranceExpiry: new Date("2020-01-01") },
     };
-    const review = evaluateChecklistSubmission(
-      source as typeof validSource,
-      {
-        "drone-registered": true,
-        "population-check": true,
-        "restriction-check": true,
-      },
-    );
+    const review = evaluateChecklistSubmission(source as typeof validSource, {
+      "drone-registered": true,
+      "population-check": true,
+      "restriction-check": true,
+    });
     // drone-registered is automated — override is ignored if source data fails
     expect(review.canSubmit).toBe(false);
     expect(review.missingItemIds).toContain("drone-registered");

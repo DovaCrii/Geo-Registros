@@ -1,10 +1,9 @@
 "use client";
 
 import { useCallback, useState } from "react";
-
-import { DraggableTable } from "@/components/ui/draggable-table";
-import type { DataColumn } from "@/components/ui/data-table";
 import { BatchToolbar } from "@/components/ui/batch-toolbar";
+import type { DataColumn } from "@/components/ui/data-table";
+import { DraggableTable } from "@/components/ui/draggable-table";
 import type { BatchAction } from "@/lib/list-config/types";
 
 type SelectableTableProps<Row extends { id: string }> = {
@@ -85,10 +84,7 @@ export function SelectableTable<Row extends { id: string }>({
     />
   );
 
-  const allColumns = [
-    { ...checkboxCol, header: "", headerContent: selectAllHeader },
-    ...columns,
-  ];
+  const allColumns = [{ ...checkboxCol, header: "", headerContent: selectAllHeader }, ...columns];
 
   return (
     <div className="space-y-4">

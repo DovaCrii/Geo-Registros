@@ -129,11 +129,16 @@ body {
   color: #f8fafc;
 }
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
   font-family: var(--font-space-grotesk), sans-serif;
 }
 
-code, .font-mono {
+code,
+.font-mono {
   font-family: var(--font-mono), monospace;
 }
 
@@ -146,7 +151,8 @@ a {
   text-decoration: none;
 }
 
-button, input {
+button,
+input {
   font: inherit;
 }
 
@@ -219,7 +225,8 @@ button, input {
 /* ─── 🌀 Pulsing dot ──────────────────────────────────── */
 
 @keyframes pulseDot {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -236,7 +243,8 @@ button, input {
 /* ─── 📐 Metric card float ────────────────────────────── */
 
 @keyframes floatMetric {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
