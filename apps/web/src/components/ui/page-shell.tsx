@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { type ReactNode, useState } from "react";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { FieldModeToggle } from "@/components/field-mode-toggle";
 import { FlowGuide } from "@/modules/flow-guide/flow-guide";
 import { NotificationPanel } from "@/modules/notifications/notification-panel";
 
@@ -113,6 +114,11 @@ function SidebarContent({ pathname, onClick }: { pathname?: string; onClick?: ()
               Salir
             </button>
           </div>
+
+          {/* Field mode toggle */}
+          <div className="mt-3">
+            <FieldModeToggle />
+          </div>
         </div>
       )}
     </>
@@ -149,7 +155,10 @@ export function PageShell({ children }: { children: ReactNode }) {
               </Link>
             )}
           </div>
-          <NotificationPanel />
+          <div className="flex items-center gap-2">
+            <FieldModeToggle />
+            <NotificationPanel />
+          </div>
         </div>
       </div>
 
@@ -176,9 +185,9 @@ export function PageShell({ children }: { children: ReactNode }) {
       </aside>
 
       {/* ── Main content ───────────────────────────────── */}
-      <div className="mx-auto flex min-h-screen w-full max-w-[1600px] gap-6 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-screen w-full max-w-[1600px] gap-6 px-4 py-6 sm:px-6 lg:px-8 field-mode-main">
         {/* Desktop sidebar (always visible) */}
-        <aside className="hidden w-64 shrink-0 lg:block">
+        <aside className="hidden w-64 shrink-0 lg:block field-mode-sidebar">
           <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/55 p-5 shadow-sm dark:shadow-2xl dark:shadow-cyan-950/10 lg:sticky lg:top-6">
             <SidebarContent pathname={pathname} />
           </div>

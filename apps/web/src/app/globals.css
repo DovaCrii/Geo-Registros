@@ -317,3 +317,45 @@ input {
 .animate-panel-in {
   animation: panelIn 0.2s ease-out forwards;
 }
+
+/* ─── 🌤 Field Mode — tablet en terreno ────────────── */
+
+html.field-mode {
+  /* Larger base font */
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2rem;
+
+  /* Higher contrast */
+  --text-primary: #0a0f1e;
+  --border-strong: rgba(71, 85, 105, 0.9);
+}
+
+html.dark.field-mode {
+  --text-primary: #f0f6ff;
+  --border-strong: rgba(100, 116, 139, 0.9);
+}
+
+/* Larger interactive targets */
+html.field-mode button,
+html.field-mode a:not(.field-mode-toggle-deny),
+html.field-mode input,
+html.field-mode select,
+html.field-mode textarea {
+  font-size: var(--text-sm);
+  min-height: 2.75rem; /* ~44px for touch targets */
+}
+
+/* Collapse desktop sidebar in field mode */
+html.field-mode .field-mode-sidebar {
+  display: none !important;
+}
+
+/* Expand main content to full width when sidebar is hidden */
+html.field-mode .field-mode-main {
+  max-width: 100% !important;
+}
