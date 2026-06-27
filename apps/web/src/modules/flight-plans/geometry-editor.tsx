@@ -381,6 +381,7 @@ export function GeometryEditor({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const drawControlRef = useRef<MaplibreTerradrawControl | null>(null);
   const initialLoadedRef = useRef(false);
+  const prevFeatureCountRef = useRef(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const parsed = useMemo(() => parseGeoJsonPayload(payload), [payload]);
   const enabledLayerCount = useMemo(() => Object.values(layers).filter(Boolean).length, [layers]);
@@ -529,7 +530,22 @@ export function GeometryEditor({
 
     const cleaned = featuresToCleanGeoJson(fc.features as GeoJSON.Feature[]);
     setPayload(JSON.stringify(cleaned, null, 2));
-    setMeasurements(computeMeasurements(cleaned));
+    const newMeasurements = computeMeasurements(cleaned);
+    setMeasurements(newMeasurements);
+
+    // Micro-interaction: toast with measurement on draw
+    if (
+      newMeasurements.featureCount > 0 &&
+      newMeasurements.totalArea !== "—" &&
+      prevFeatureCountRef.current !== newMeasurements.featureCount
+    ) {
+      toast(
+        "success",
+        "Geometría actualizada",
+        `Área: ${newMeasurements.totalArea} · Perímetro: ${newMeasurements.totalPerimeter}`,
+      );
+    }
+    prevFeatureCountRef.current = newMeasurements.featureCount;
 
     // Check for restriction zone intersections
     const polygons = cleaned.features.filter(

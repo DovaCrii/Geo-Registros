@@ -121,7 +121,7 @@ function ExpandedPanel({
     data.expiringDrones + data.expiringOperators + data.observedCount > 0;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-80 rounded-xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700/80 dark:bg-slate-950/95 dark:shadow-2xl dark:shadow-cyan-950/10">
+    <div className="fixed bottom-4 right-4 z-50 w-80 animate-panel-in rounded-xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700/80 dark:bg-slate-950/95 dark:shadow-2xl dark:shadow-cyan-950/10">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-800/60">
         <div className="flex items-center gap-2">
