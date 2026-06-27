@@ -205,7 +205,10 @@ export const flightPlanListConfig: ListConfig<FlightPlanRow> = {
       ],
     },
   ],
-  headerActions: [{ href: "/flight-plans/new", label: "Crear plan de vuelo", variant: "primary" }],
+  headerActions: [
+    { href: "/flight-plans/new", label: "Crear plan de vuelo", variant: "primary" },
+    { href: "/flight-plans?view=calendar", label: "Calendario", variant: "secondary" },
+  ],
   sidebar: {
     title: "Cobertura del plan",
     description: "Flujo de permisos, geometría, documentos y clima conectados.",

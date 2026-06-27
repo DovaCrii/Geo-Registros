@@ -1,6 +1,7 @@
 import { ListPage } from "@/components/ui/list-page";
 import { requirePageAuth } from "@/lib/require-page-auth";
 import { flightPlanListConfig } from "@/modules/flight-plans/flight-plan-list.config";
+import { FlightPlansView } from "@/modules/flight-plans/flight-plans-view";
 import { listFlightPlans } from "@/server/flight-plans/queries";
 
 export const dynamic = "force-dynamic";
@@ -18,10 +19,19 @@ export default async function FlightPlansPage({
     queryParams.toString() ? `/flight-plans?${queryParams.toString()}` : "/flight-plans",
   );
 
+  const view = params.view === "calendar" ? "calendar" : "table";
+
   try {
-    return (
-      <ListPage config={flightPlanListConfig} fetchData={listFlightPlans} searchParams={params} />
-    );
+    if (view === "calendar") {
+      const { getCalendarData } = await import("@/server/flight-plans/calendar-queries");
+      const now = new Date();
+      const year = Number(params.year) || now.getFullYear();
+      const month = Number(params.month) || now.getMonth() + 1;
+      const calendarData = await getCalendarData(year, month);
+      return <FlightPlansView view="calendar" calendarData={calendarData} searchParams={params} />;
+    }
+
+    return <FlightPlansView view="table" searchParams={params} />;
   } catch (error) {
     const message = error instanceof Error ? error.message : "Error de base de datos desconocido.";
     return (
