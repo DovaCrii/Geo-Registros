@@ -16,6 +16,7 @@ import {
 } from "@/modules/dgac/checklist-items";
 import { FlightPlanChecklist } from "@/modules/dgac/flight-plan-checklist";
 import { FlightPlanForm } from "@/modules/flight-plans/flight-plan-form";
+import { InlineTooltip } from "@/components/ui/inline-tooltip";
 import { DocumentUpload } from "@/modules/permissions/document-upload";
 import { PermissionActions } from "@/modules/permissions/permission-actions";
 import { PermissionStatusBadge } from "@/modules/permissions/permission-status-badge";
@@ -534,8 +535,9 @@ export default async function FlightPlanDetailPage({
                 <div className="space-y-6">
                   <div className="rounded-lg border border-slate-200 bg-white px-4 py-3 dark:border-slate-800/80 dark:bg-slate-950/45">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-medium text-slate-900 dark:text-white">
+                      <p className="text-sm font-medium text-slate-900 dark:text-white flex items-center gap-1.5">
                         Estado de preparación DGAC
+                        <InlineTooltip content="La DGAC (Dirección General de Aeronáutica Civil) exige ciertos requisitos antes de autorizar un vuelo RPAS. Esta checklist interna ayuda a verificar que todo esté en orden antes del envío." position="top" />
                       </p>
                       <span
                         className={`rounded-full px-3 py-1 text-[11px] font-semibold ${checklistReview.canSubmit ? "bg-success/10 dark:bg-emerald-500/15 text-success dark:text-emerald-200" : "bg-status-warning/10 dark:bg-amber-500/15 text-status-warning dark:text-amber-200"}`}
@@ -572,15 +574,17 @@ export default async function FlightPlanDetailPage({
                   ) : null}
 
                   <div>
-                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500 flex items-center gap-1.5">
                       Estado actual
+                      <InlineTooltip content="El estado refleja la etapa del permiso DGAC. DRAFT = borrador interno. AUTHORIZED = habilitado para volar. CLOSED = operación finalizada." position="top" />
                     </p>
                     <PermissionStatusBadge status={record.permissionStatus} />
                   </div>
 
                   <div>
-                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">
+                    <p className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500 flex items-center gap-1.5">
                       Transiciones disponibles
+                      <InlineTooltip content="Cada estado permite avanzar o retroceder según el flujo DGAC. Por ejemplo, de OBSERVADO podés volver a IN_REVIEW para corregir, o marcar EXPIRED si no se respondió a tiempo." position="top" />
                     </p>
                     <PermissionActions
                       flightPlanId={record.id}

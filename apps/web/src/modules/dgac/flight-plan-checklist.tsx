@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
+import { InlineTooltip } from "@/components/ui/inline-tooltip";
 import { useToast } from "@/lib/toast-context";
 import { DGAC_CHECKLIST_ITEMS, normalizeChecklist } from "@/modules/dgac/checklist-items";
 
@@ -62,7 +63,10 @@ export function FlightPlanChecklist({
       <div className="space-y-4">
         <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 dark:border-slate-800/80 dark:bg-slate-950/45">
           <div>
-            <p className="text-sm font-medium text-slate-900 dark:text-white">Progreso</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white flex items-center gap-1.5">
+                Progreso
+                <InlineTooltip content="Esta checklist resume los requisitos operativos previos a la autorización DGAC. Al marcar un ítem se guarda automáticamente." position="top" />
+              </p>
             <p className="text-xs text-slate-600 dark:text-slate-500">
               {done} de {items.length} completados
             </p>
@@ -101,7 +105,18 @@ export function FlightPlanChecklist({
                   className="mt-1 h-4 w-4 rounded border-slate-300 bg-white text-cyan-500 focus:ring-cyan-400/40 dark:border-slate-600 dark:bg-slate-950 dark:text-cyan-400"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-slate-900 dark:text-white">{item.label}</p>
+                  <p className="text-sm font-medium text-slate-900 dark:text-white flex items-center gap-1.5">
+                    {item.label}
+                    {item.id === "population-check" && (
+                      <InlineTooltip content="La DGAC distingue entre vuelos en zona poblada (mayor restricción) y no poblada. Esta clasificación afecta los requisitos de seguro y distancia mínima." size="sm" />
+                    )}
+                    {item.id === "restriction-check" && (
+                      <InlineTooltip content="Verificá espacios aéreos controlados, servidumbres, parques nacionales, zonas militares y áreas sensibles. El mapa muestra las restricciones activas." size="sm" />
+                    )}
+                    {item.id === "weather-check" && (
+                      <InlineTooltip content="La evaluación meteorológica considera viento máximo, visibilidad, temperatura y precipitación. Los datos provienen de Open-Meteo según la ubicación y fecha del plan." size="sm" />
+                    )}
+                  </p>
                   <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-500">
                     {item.hint}
                   </p>

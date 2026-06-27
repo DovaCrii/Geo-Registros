@@ -11,6 +11,7 @@ import { StatusChip } from "@/components/ui/status-chip";
 import { exportDxf, exportKml } from "@/lib/geo-export";
 import type { ImportResult } from "@/lib/geo-import";
 import { importDxf, importKml, importKmz } from "@/lib/geo-import";
+import { checkRestrictionIntersection, getRestrictionsGeoJSON } from "@/lib/geo-restrictions";
 import { useToast } from "@/lib/toast-context";
 
 const emptyFeatureCollection: GeoJSON.FeatureCollection = {
@@ -373,6 +374,7 @@ export function GeometryEditor({
     satellite: true,
     operationArea: true,
     importedReferences: true,
+    restrictions: true,
   });
   const { toast } = useToast();
   const mapRef = useRef<MaplibreMap | null>(null);
@@ -471,6 +473,33 @@ export function GeometryEditor({
 
       map.addControl(control, "top-right");
       drawControlRef.current = control;
+
+      // Add restricted zones layer
+      const restrictionsGeoJSON = getRestrictionsGeoJSON();
+      map.addSource("restricted-zones", {
+        type: "geojson",
+        data: restrictionsGeoJSON,
+      });
+      map.addLayer({
+        id: "restricted-zones-fill",
+        type: "fill",
+        source: "restricted-zones",
+        paint: {
+          "fill-color": ["match", ["get", "severity"], "no-fly", "#ef4444", "#f59e0b"],
+          "fill-opacity": 0.15,
+        },
+      });
+      map.addLayer({
+        id: "restricted-zones-outline",
+        type: "line",
+        source: "restricted-zones",
+        paint: {
+          "line-color": ["match", ["get", "severity"], "no-fly", "#ef4444", "#f59e0b"],
+          "line-width": 2,
+          "line-opacity": 0.6,
+        },
+      });
+
       setTerraDrawReady(true);
     });
 
@@ -501,7 +530,30 @@ export function GeometryEditor({
     const cleaned = featuresToCleanGeoJson(fc.features as GeoJSON.Feature[]);
     setPayload(JSON.stringify(cleaned, null, 2));
     setMeasurements(computeMeasurements(cleaned));
-  }, []);
+
+    // Check for restriction zone intersections
+    const polygons = cleaned.features.filter(
+      (f): f is GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> =>
+        f.geometry?.type === "Polygon" || f.geometry?.type === "MultiPolygon",
+    );
+    const seen = new Set<string>();
+    for (const poly of polygons) {
+      const hits = checkRestrictionIntersection(poly.geometry);
+      for (const hit of hits) {
+        if (seen.has(hit.id)) continue;
+        seen.add(hit.id);
+        const severityLabel =
+          hit.severity === "no-fly"
+            ? "Zona restringida"
+            : "Precaución";
+        toast(
+          hit.severity === "no-fly" ? "error" : "info",
+          `${severityLabel}: ${hit.name}`,
+          hit.description,
+        );
+      }
+    }
+  }, [toast]);
 
   // ── Load existing GeoJSON into Terra Draw (once, when ready) ─────
   useEffect(() => {
@@ -652,6 +704,14 @@ export function GeometryEditor({
           "visibility",
           next.satellite ? "visible" : "none",
         );
+      }
+
+      if (layer === "restrictions") {
+        const fillLayer = mapRef.current?.getLayer("restricted-zones-fill");
+        const outlineLayer = mapRef.current?.getLayer("restricted-zones-outline");
+        const visibility = next.restrictions ? "visible" : "none";
+        if (fillLayer) mapRef.current?.setLayoutProperty("restricted-zones-fill", "visibility", visibility);
+        if (outlineLayer) mapRef.current?.setLayoutProperty("restricted-zones-outline", "visibility", visibility);
       }
 
       return next;
@@ -954,6 +1014,11 @@ export function GeometryEditor({
                       key: "importedReferences" as const,
                       label: "Referencias importadas",
                       desc: "KML, KMZ o DXF cargados",
+                    },
+                    {
+                      key: "restrictions" as const,
+                      label: "Zonas restringidas",
+                      desc: "Aeropuertos, zonas prohibidas",
                     },
                   ].map((item) => (
                     <button

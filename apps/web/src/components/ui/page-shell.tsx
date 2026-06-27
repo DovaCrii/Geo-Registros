@@ -76,17 +76,17 @@ function SidebarContent({ pathname, onClick }: { pathname?: string; onClick?: ()
 
   return (
     <>
-      <div className="mb-6 space-y-1 text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent dark:text-cyan-300">
+      <Link href="/dashboard" className="group mb-6 block space-y-1 text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent transition group-hover:text-accent-strong dark:text-cyan-300 dark:group-hover:text-cyan-200">
           AeroFlow
         </p>
-        <h2 className="font-heading text-xl font-semibold text-slate-900 dark:text-white">
+        <h2 className="font-heading text-xl font-semibold text-slate-900 transition group-hover:text-accent-strong dark:text-white dark:group-hover:text-cyan-200">
           Espacio operacional
         </h2>
-        <p className="text-sm leading-5 text-slate-500 dark:text-slate-400">
+        <p className="text-sm leading-5 text-slate-500 transition group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-300">
           Base de datos maestra para operaciones de vuelo, documentos y flujos geoespaciales.
         </p>
-      </div>
+      </Link>
       <NavLinks pathname={pathname} onClick={onClick} />
 
       {/* User menu */}
@@ -140,6 +140,14 @@ export function PageShell({ children }: { children: ReactNode }) {
                 AeroFlow
               </span>
             </button>
+            {pathname !== "/dashboard" && (
+              <Link
+                href="/dashboard"
+                className="rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-500 transition hover:border-accent/30 hover:text-accent dark:border-slate-700/60 dark:text-slate-400 dark:hover:border-cyan-500/30 dark:hover:text-cyan-200"
+              >
+                Panel
+              </Link>
+            )}
           </div>
           <NotificationPanel />
         </div>
@@ -178,7 +186,15 @@ export function PageShell({ children }: { children: ReactNode }) {
 
         <main className="min-w-0 flex-1">
           {/* Top bar */}
-          <div className="mb-4 hidden items-center justify-end lg:flex">
+          <div className="mb-4 hidden items-center justify-end gap-3 lg:flex">
+            {pathname !== "/dashboard" && (
+              <Link
+                href="/dashboard"
+                className="text-xs font-medium text-slate-400 transition hover:text-accent dark:text-slate-500 dark:hover:text-cyan-300"
+              >
+                ← Volver al panel
+              </Link>
+            )}
             <NotificationPanel />
           </div>
           <ErrorBoundary>{children}</ErrorBoundary>

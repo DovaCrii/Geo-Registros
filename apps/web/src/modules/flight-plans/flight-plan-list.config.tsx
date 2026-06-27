@@ -163,6 +163,22 @@ export const flightPlanColumns: ListColumn<FlightPlanRow>[] = [
 ];
 
 export const flightPlanListConfig: ListConfig<FlightPlanRow> = {
+  emptyState: {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L10 16L18 8" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" />
+      </svg>
+    ),
+    title: "No hay planes de vuelo",
+    description: "Los planes de vuelo son el centro de la operación. Cread uno nuevo para activar el flujo completo de permisos, geometría, documentos y seguimiento.",
+    steps: [
+      { number: 1, label: "Registrá un dron y un operador", description: "Antes de crear un plan necesitás tener al menos un dron y un operador activos." },
+      { number: 2, label: "Creá el plan de vuelo", description: "Completá los datos básicos: fecha, cliente, grupo de trabajo y tipo de operación." },
+      { number: 3, label: "Seguí el flujo operacional", description: "Agregá geometría, documentos y permisos paso a paso desde el detalle del plan." },
+    ],
+  },
+
   eyebrow: "Bloque 1 / Operación principal",
   title: "Planes de vuelo",
   description:

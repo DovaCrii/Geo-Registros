@@ -5,6 +5,8 @@ import "./globals.css";
 import { SessionWrapper } from "@/components/ui/session-wrapper";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { ToastProvider } from "@/lib/toast-context";
+import { OperationalPanel } from "@/components/operational-panel";
+import { getOperationalPanelData } from "@/server/operational-panel/queries";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,7 +32,14 @@ export const metadata: Metadata = {
     "AeroFlow centraliza vuelos, georegistros, modelos 2D/3D, ortomosaicos, nubes de puntos, entregables y reportes técnicos para ingeniería, minería, topografía e infraestructura.",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  let panelData = null;
+  try {
+    panelData = await getOperationalPanelData();
+  } catch {
+    // panel stays hidden if data fetch fails
+  }
+
   return (
     <html lang="es" className="scroll-smooth" suppressHydrationWarning>
       <body
@@ -39,7 +48,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       >
         <ThemeProvider>
           <SessionWrapper>
-            <ToastProvider>{children}</ToastProvider>
+            <ToastProvider>
+              {children}
+              {panelData && <OperationalPanel initialData={panelData} />}
+            </ToastProvider>
           </SessionWrapper>
         </ThemeProvider>
       </body>

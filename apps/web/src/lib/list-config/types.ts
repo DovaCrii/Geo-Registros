@@ -68,6 +68,18 @@ export interface BatchAction {
   handler: string;
 }
 
+/** Contextual empty state for a list module. */
+export interface ListEmptyState {
+  /** SVG icon element (12-char string for a simple icon, or a ReactNode). */
+  icon?: ReactNode;
+  /** Title override. Defaults to "No hay registros todavía". */
+  title?: string;
+  /** Description override. */
+  description?: string;
+  /** Optional steps for first-time users. */
+  steps?: Array<{ number: number; label: string; description?: string }>;
+}
+
 /** Configuration for a generic list page. */
 export interface ListConfig<Row> {
   /** Page eyebrow / breadcrumb. */
@@ -92,6 +104,8 @@ export interface ListConfig<Row> {
   searchPlaceholder?: string;
   /** Number of rows per page. Default 10. */
   pageSize?: number;
+  /** Contextual empty state configuration. Falls back to generic when not set. */
+  emptyState?: ListEmptyState;
 }
 
 /** Standardised filter params passed to every query function. */

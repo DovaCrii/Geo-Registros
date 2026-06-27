@@ -459,6 +459,126 @@ function NoPriorityState() {
   );
 }
 
+// ─── Semaphore Status ─────────────────────────────────────────
+
+function SemaphoreStatus({ stats }: { stats: Awaited<ReturnType<typeof getDashboardStats>> }) {
+  const hasBlocking = stats.pending.observed > 0;
+  const hasWarnings =
+    stats.pending.missingDocuments > 0 ||
+    stats.pending.noGeometry > 0 ||
+    stats.expiring.drones.length + stats.expiring.operators.length > 0;
+  const hasInfo = stats.pending.inReview > 0 || stats.pending.upcomingFlights > 0;
+  const isEmpty = stats.flightPlans.total === 0;
+
+  let level: "red" | "amber" | "green";
+  let label: string;
+  let description: string;
+
+  if (isEmpty) {
+    level = "amber";
+    label = "Sin actividad";
+    description = "Creá tu primer plan de vuelo para activar el panel.";
+  } else if (hasBlocking) {
+    level = "red";
+    label = "Requiere atención";
+    description = "Hay permisos observados que bloquean la operación.";
+  } else if (hasWarnings) {
+    level = "amber";
+    label = "Pendientes por resolver";
+    description = "Revisá documentos, geometría o vencimientos antes de operar.";
+  } else if (hasInfo) {
+    level = "green";
+    label = "Operacional";
+    description = "Todo en orden. Mantené el seguimiento de revisiones y vuelos próximos.";
+  } else {
+    level = "green";
+    label = "Todo al día";
+    description = "No hay pendientes operativos. Aprovechá de revisar vigencias.";
+  }
+
+  const colorMap = {
+    red: {
+      dot: "bg-red-500",
+      border: "border-red-200 dark:border-red-800/40",
+      bg: "bg-red-50 dark:bg-red-950/40",
+      text: "text-red-700 dark:text-red-300",
+      label: "text-red-600 dark:text-red-400",
+      muted: "text-red-500/70 dark:text-red-400/70",
+    },
+    amber: {
+      dot: "bg-amber-400",
+      border: "border-amber-200 dark:border-amber-800/40",
+      bg: "bg-amber-50 dark:bg-amber-950/40",
+      text: "text-amber-700 dark:text-amber-300",
+      label: "text-amber-600 dark:text-amber-400",
+      muted: "text-amber-500/70 dark:text-amber-400/70",
+    },
+    green: {
+      dot: "bg-emerald-500",
+      border: "border-emerald-200 dark:border-emerald-800/40",
+      bg: "bg-emerald-50 dark:bg-emerald-950/40",
+      text: "text-emerald-700 dark:text-emerald-300",
+      label: "text-emerald-600 dark:text-emerald-400",
+      muted: "text-emerald-500/70 dark:text-emerald-400/70",
+    },
+  };
+
+  const c = colorMap[level];
+
+  return (
+    <div className={`rounded-xl border p-5 shadow-sm dark:shadow-xl dark:shadow-slate-950/10 ${c.border} ${c.bg}`}>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex items-start gap-4">
+          {/* Traffic light dot */}
+          <div className="relative mt-1">
+            <span className={`flex h-5 w-5 rounded-full ${c.dot} shadow-sm`} />
+            {level === "red" && (
+              <span className="absolute -inset-1 animate-ping rounded-full bg-red-500/30" />
+            )}
+          </div>
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className={`text-xs font-semibold uppercase tracking-[0.22em] ${c.label}`}>
+                Estado operativo
+              </p>
+              <span className={`rounded-full border border-current/20 px-2 py-0.5 text-[10px] font-semibold ${c.label}`}>
+                {label}
+              </span>
+            </div>
+            <p className={`mt-1 max-w-xl text-sm leading-6 ${c.muted}`}>{description}</p>
+          </div>
+        </div>
+
+        {/* Compact counters */}
+        {!isEmpty && (
+          <div className="flex shrink-0 flex-wrap gap-3 text-xs">
+            {stats.pending.observed > 0 && (
+              <span className="rounded-md border border-red-200 bg-red-50 px-2.5 py-1 font-medium text-red-600 dark:border-red-800/40 dark:bg-red-950/40 dark:text-red-400">
+                {stats.pending.observed} observados
+              </span>
+            )}
+            {stats.pending.inReview > 0 && (
+              <span className="rounded-md border border-amber-200 bg-amber-50 px-2.5 py-1 font-medium text-amber-600 dark:border-amber-800/40 dark:bg-amber-950/40 dark:text-amber-400">
+                {stats.pending.inReview} en revisión
+              </span>
+            )}
+            {stats.pending.upcomingFlights > 0 && (
+              <span className="rounded-md border border-accent/20 bg-accent/5 px-2.5 py-1 font-medium text-accent-strong dark:border-cyan-800/40 dark:bg-cyan-950/40 dark:text-cyan-300">
+                {stats.pending.upcomingFlights} próximos
+              </span>
+            )}
+            {stats.expiring.drones.length + stats.expiring.operators.length > 0 && (
+              <span className="rounded-md border border-amber-200 bg-amber-50 px-2.5 py-1 font-medium text-amber-600 dark:border-amber-800/40 dark:bg-amber-950/40 dark:text-amber-400">
+                {stats.expiring.drones.length + stats.expiring.operators.length} vencimientos
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── Page ─────────────────────────────────────────────────────
 
 export default async function DashboardPage({
@@ -492,6 +612,8 @@ export default async function DashboardPage({
             y mantené el control sin perder contexto.
           </p>
         </div>
+
+        <SemaphoreStatus stats={stats} />
 
         <NextActionCard action={nextAction} />
         <WorkflowStrip stages={workflowStages} />

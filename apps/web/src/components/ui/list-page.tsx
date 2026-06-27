@@ -189,41 +189,48 @@ export async function ListPage<Row extends { id: string }>({
         {rows.length === 0 ? (
           <EmptyState
             icon={
-              <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
-                <path
-                  d="M9 17v-2m3 2v-4m3 4v-6M5 10l7-7 7 7M5 19h14"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              config.emptyState?.icon ?? (
+                <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
+                  <path
+                    d="M9 17v-2m3 2v-4m3 4v-6M5 10l7-7 7 7M5 19h14"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )
             }
-            title="No hay registros todavía"
-            description="Aún no se ha creado ningún registro en esta sección. Una vez que haya datos, aparecerán aquí."
+            title={config.emptyState?.title ?? "No hay registros todavía"}
+            description={
+              config.emptyState?.description ??
+              "Aún no se ha creado ningún registro en esta sección. Una vez que haya datos, aparecerán aquí."
+            }
             action={
               config.headerActions?.[0]
                 ? { label: config.headerActions[0].label, href: config.headerActions[0].href }
                 : undefined
             }
-            steps={[
-              {
-                number: 1,
-                label: "Completá los datos maestros",
-                description:
-                  "Asegurate de tener grupos de trabajo, clientes, drones y operadores activos.",
-              },
-              {
-                number: 2,
-                label: "Usá el formulario de creación",
-                description: "Completá los datos del registro y guardalo.",
-              },
-              {
-                number: 3,
-                label: "Administrá desde esta vista",
-                description: "Buscá, filtrá y gestioná todos tus registros desde un solo lugar.",
-              },
-            ]}
+            steps={
+              config.emptyState?.steps ?? [
+                {
+                  number: 1,
+                  label: "Completá los datos maestros",
+                  description:
+                    "Asegurate de tener grupos de trabajo, clientes, drones y operadores activos.",
+                },
+                {
+                  number: 2,
+                  label: "Usá el formulario de creación",
+                  description: "Completá los datos del registro y guardalo.",
+                },
+                {
+                  number: 3,
+                  label: "Administrá desde esta vista",
+                  description: "Buscá, filtrá y gestioná todos tus registros desde un solo lugar.",
+                },
+              ]
+            }
           />
         ) : (
           <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_360px]">

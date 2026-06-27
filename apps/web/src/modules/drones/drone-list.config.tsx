@@ -109,6 +109,22 @@ export const droneColumns: ListColumn<DroneRow>[] = [
 ];
 
 export const droneListConfig: ListConfig<DroneRow> = {
+  emptyState: {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+        <circle cx="12" cy="6" r="2.25" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+    ),
+    title: "No hay drones registrados",
+    description: "Registrá tu primer dron para empezar a operar. Necesitás al menos un dron activo para crear planes de vuelo.",
+    steps: [
+      { number: 1, label: "Registrá el dron", description: "Completá modelo, serie y fabricante." },
+      { number: 2, label: "Asigná un grupo de trabajo", description: "Opcional, ayuda a organizar la flota." },
+      { number: 3, label: "Cargá el seguro", description: "Mantené el vencimiento al día para operar sin corticciones." },
+    ],
+  },
+
   eyebrow: "Bloque 2 / Datos maestros",
   title: "Flota RPAS",
   description:

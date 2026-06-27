@@ -76,6 +76,21 @@ export const clientColumns: ListColumn<ClientRow>[] = [
 ];
 
 export const clientListConfig: ListConfig<ClientRow> = {
+  emptyState: {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.5v-1.5a3 3 0 0 0-3-3H9a3 3 0 0 0-3 3v1.5" />
+        <circle cx="12" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+    ),
+    title: "No hay clientes registrados",
+    description: "Los clientes se asocian a los planes de vuelo para identificar la operación. Registrá tu primer cliente para empezar.",
+    steps: [
+      { number: 1, label: "Registrá el cliente", description: "Completá nombre, datos de contacto y grupo de trabajo." },
+      { number: 2, label: "Asociálo a planes de vuelo", description: "Cada plan puede tener un cliente asociado para seguimiento." },
+      { number: 3, label: "Gestioná desde esta vista", description: "Buscá, filtrá y administrá todos tus clientes." },
+    ],
+  },
   eyebrow: "Bloque 2 / Datos maestros",
   title: "Clientes",
   description: "Registrá y gestioná los clientes asociados a cada plan de vuelo y operación.",
