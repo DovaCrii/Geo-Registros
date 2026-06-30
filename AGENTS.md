@@ -1,108 +1,126 @@
 # AGENTS.md
 
-## Objetivo del proyecto
-AeroFlow es una plataforma para operaciones de vuelos RPA/dron, con planificación de misiones, gestión documental, permisos, seguimiento geo-espacial y trazabilidad operativa.
+## Propósito
+AeroFlow es una plataforma para operaciones de vuelos RPA/dron: planificación de misiones, gestión documental, permisos, seguimiento geo-espacial y trazabilidad operativa.
 
-## Stack detectado
+Este archivo define cómo deben trabajar los agentes en el repo sin bloquear tareas normales. La regla principal es simple: **avanzar con cambios seguros, pedir permiso cuando haya riesgo real y dejar evidencia verificable**.
+
+## Stack del proyecto
 - Next.js 15
 - React 19
 - TypeScript
 - Prisma 6
 - Vitest
 - Tailwind CSS 3
-- Autenticación con NextAuth
+- NextAuth
 - MapLibre y TerraDraw para geometría interactiva
-- Almacenamiento local de desarrollo en `prisma/data/aeroflow.db`
+- SQLite local de desarrollo en `prisma/data/aeroflow.db`
 
-## Comandos disponibles
-- `npm run dev`
-- `npm run build`
-- `npm run start`
-- `npm run typecheck`
-- `npm run test`
-- `npm run test:watch`
-- `npm run prisma:generate`
-- `npm run prisma:migrate`
-- `npm run seed:dev`
+## Comandos útiles
+- Desarrollo: `npm run dev`
+- Build: `npm run build`
+- Producción local: `npm run start`
+- Tipado: `npm run typecheck`
+- Tests: `npm run test`
+- Tests watch: `npm run test:watch`
+- Prisma generate: `npm run prisma:generate`
+- Prisma migrate: `npm run prisma:migrate`
+- Seed dev: `npm run seed:dev`
 
-## Rol de OpenCode
-- Herramienta principal de desarrollo y orquestación.
-- Ejecuta la implementación, cambios de código y tareas amplias.
-- Mantiene la memoria operativa mediante Engram.
+## Modo de trabajo recomendado
+1. Leer primero `AGENTS.md`, `DECISIONS.md` y `KNOWN_BUGS.md` si existen.
+2. Revisar estado del repo antes de editar: `git status --short`.
+3. Mantener cambios chicos, verificables y fáciles de revertir.
+4. Si la tarea afecta comportamiento, acompañarla con typecheck, test o build según corresponda.
+5. Reportar solo lo importante: qué cambió, cómo se verificó y qué queda pendiente.
 
-## Rol de Codex
-- Reviewer técnico.
-- Planner corto para dividir solicitudes grandes en tareas pequeñas.
-- QA para revisar build, lint, tipado, regresiones y cambios.
-- Apoyo puntual de implementación solo si el usuario lo solicita explícitamente.
+## Roles
 
-## Reglas de seguridad
-- No modificar lógica de negocio salvo instrucción explícita del usuario.
-- No instalar dependencias sin aprobación explícita.
-- No borrar ni sobrescribir configuración existente de OpenCode.
-- No modificar archivos de Engram ni duplicar su memoria.
-- No cambiar estructura del proyecto salvo para configuración y documentación de Codex.
-- No usar acceso completo como flujo normal.
-- No configurar Codex como orquestador principal.
+### OpenCode
+- Orquestador principal de desarrollo.
+- Ejecuta tareas amplias de implementación.
+- Mantiene memoria operativa mediante Engram.
+
+### Codex
+- Reviewer técnico, planner corto y apoyo de QA.
+- Puede implementar cambios puntuales cuando el usuario lo pide o cuando la tarea sea pequeña y de bajo riesgo.
+- Debe evitar convertirse en orquestador principal si OpenCode está llevando la implementación.
+
+## Permisos por defecto
+
+### Se puede hacer sin pedir permiso
+- Leer archivos del repo.
+- Editar documentación, configuración local del propio agente y cambios mecánicos de bajo riesgo.
+- Refactors pequeños que no cambien comportamiento observable.
+- Ejecutar comandos de verificación locales que no instalen dependencias ni modifiquen datos importantes.
+- Crear handoffs, planes cortos, revisiones y reportes de QA.
+
+### Pedir permiso antes
+- Instalar, actualizar o remover dependencias.
+- Ejecutar migraciones que modifiquen datos persistentes.
+- Cambiar contratos de dominio, flujos críticos, permisos, autenticación o modelo de datos.
+- Borrar archivos, mover carpetas grandes o reestructurar el proyecto.
+- Usar comandos destructivos o acceso fuera del workspace.
+
+### No hacer
+- No agregar `Co-Authored-By` ni atribución de IA en commits.
+- No sobrescribir cambios del usuario sin verificar `git status`.
+- No modificar archivos internos de Engram ni duplicar su memoria.
+- No borrar configuración existente de OpenCode.
+- No hacer cambios masivos si una tarea pequeña resuelve el problema.
 
 ## Criterio de tarea terminada
-- La tarea se considera terminada cuando el cambio está documentado, validado y no deja archivos nuevos sin registrar.
-- Toda implementación debe quedar acompañada de revisión y QA cuando aplique.
-- Si la tarea afecta comportamiento, debe existir verificación con build, typecheck o tests según corresponda.
+Una tarea está lista cuando:
+- El cambio solicitado está aplicado o el bloqueo está explicado.
+- No quedan archivos nuevos o modificados sin mencionar.
+- Se ejecutó la validación adecuada, o se explica por qué no se ejecutó.
+- Si hubo decisión técnica nueva, queda documentada donde corresponda.
 
-## Uso de modelos
-- Usar modelos rápidos para revisión, planeación breve y QA.
-- Escalar a modelos más capaces solo cuando exista complejidad real o riesgo técnico.
-- Preferir respuestas concisas, orientadas a acción y con hallazgos concretos.
+## Validación sugerida
+- Cambios de documentación: revisar diff.
+- Cambios TypeScript/React: `npm run typecheck` y tests relevantes.
+- Cambios de UI: typecheck + revisión visual cuando aplique.
+- Cambios Prisma/modelo de datos: `npm run prisma:generate`, tests relevantes y cuidado con migraciones.
+- Cambios amplios: `npm run build` antes de cerrar.
 
 ## Uso de subagentes
-- Usar subagentes solo para análisis paralelo cuando ayuden a reducir riesgo o tiempo.
+- Usarlos solo cuando reduzcan riesgo o contexto: revisión, QA, seguridad, frontend, backend o arquitectura.
 - No usar subagentes para editar los mismos archivos en paralelo.
-- Consolidar resultados antes de proponer o aplicar cambios.
-- Evitar subagentes innecesarios para ahorrar uso del plan Plus.
+- Esperar y consolidar resultados antes de decidir o reportar.
+- Evitarlos para tareas chicas donde agregan más fricción que valor.
 
-## Regla de no duplicar Engram
+## Engram
 - Engram es la memoria persistente del proyecto.
-- Codex no debe guardar memoria duplicada, resúmenes paralelos ni estados redundantes.
-- Si existe una decisión o contexto ya capturado por Engram, Codex debe referenciarlo y no recrearlo.
+- No crear resúmenes paralelos si la información ya está en Engram.
+- Si se descubre una decisión, convención, bugfix o hallazgo no obvio, guardarlo en Engram cuando la herramienta esté disponible.
 
-## Flujo recomendado OpenCode + Codex
-1. OpenCode ejecuta el desarrollo principal.
-2. Engram mantiene la memoria y el contexto persistente.
-3. Codex revisa, planifica y audita.
-4. Codex no debe guardar memoria duplicada.
-5. Codex puede generar un handoff claro para que OpenCode ejecute la tarea principal.
-6. Codex solo implementa si el usuario lo pide explícitamente.
-7. Los subagentes de Codex solo se usan para análisis paralelo, no para editar los mismos archivos.
+## Commits
+- Usar conventional commits.
+- No incluir `Co-Authored-By`.
+- No commitear sin revisar el diff.
+- No mezclar cambios no relacionados en el mismo commit.
 
-## Uso de subagentes en Codex
-- Usar subagentes solo para revisión, QA, seguridad, frontend, backend o arquitectura.
-- No usar subagentes para editar archivos en paralelo.
-- Esperar a que todos los subagentes terminen antes de consolidar conclusiones.
-- Evitar subagentes innecesarios para ahorrar uso del plan Plus.
+## Prompts útiles
 
-## Prompts diarios
-### Prompt de inicio
-Revisa el estado actual del repo, detecta riesgos, resume el contexto útil y dime cuál es la siguiente tarea pequeña que conviene ejecutar con OpenCode.
+### Inicio
+Revisa el estado actual del repo, detecta riesgos, resume el contexto útil y dime cuál es la siguiente tarea pequeña que conviene ejecutar.
 
-### Prompt de revisión
+### Revisión
 Audita los cambios recientes, detecta regresiones, inconsistencias, deuda técnica y diferencias con el contrato operativo de AeroFlow.
 
-### Prompt de QA
+### QA
 Verifica build, typecheck, tests y archivos modificados. Reporta solo fallos concretos, riesgos reales y pasos de validación pendientes.
 
-### Prompt de handoff hacia OpenCode
+### Handoff hacia OpenCode
 Prepara un handoff breve y accionable para OpenCode con objetivo, archivos probables, pasos de implementación y criterio de aceptación.
 
-### Prompt de cierre de sesión
+### Cierre
 Resume lo revisado hoy, lista decisiones o riesgos nuevos y deja una sola siguiente acción prioritaria para retomar mañana.
 
-## Contexto optimizado para sesiones futuras
+## Contexto para sesiones futuras
 Leer primero y en este orden:
 1. `AGENTS.md`
-2. `PROJECT_STATUS.md`
-3. `ROADMAP.md`
-4. `TASKS.md`
-5. `docs/OPENCODE_HANDOFF.md`
+2. `DECISIONS.md`
+3. `KNOWN_BUGS.md`
 
-Usar `docs/00_DOCUMENTATION_INDEX.md` solo cuando se necesite ubicar documentación extendida. Evitar pegar contexto largo en prompts; si falta contexto estable, actualizar estos documentos breves en vez de duplicarlo en la conversación.
+Mantener el contexto corto. Si un documento no ayuda a decidir o verificar, no cargarlo.
