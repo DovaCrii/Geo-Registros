@@ -147,7 +147,7 @@ function HeroSection() {
           </p>
           <h1 className="text-4xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl">
             Convertí vuelos con drones en{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-emerald-400">
+            <span className="bg-gradient-to-r from-cyan-700 to-emerald-600 bg-clip-text text-transparent dark:from-cyan-300 dark:to-emerald-400">
               operaciones listas para auditar
             </span>
           </h1>
@@ -155,12 +155,14 @@ function HeroSection() {
             AeroFlow reúne misión, mapa, capas, documentos, permisos DGAC/SIGO y reportes en un
             flujo profesional para equipos de ingeniería, minería, topografía e infraestructura.
           </p>
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-50 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-700 dark:border-cyan-500/20 dark:bg-cyan-500/10 dark:text-cyan-200">
-            Entrada rápida al workspace operativo
+          <div className="grid max-w-xl gap-3 rounded-2xl border border-slate-200 bg-white/75 p-4 shadow-sm shadow-cyan-950/5 backdrop-blur dark:border-slate-800/70 dark:bg-slate-950/45 sm:grid-cols-3">
+            {["Mapa primero", "Permisos DGAC", "Evidencia auditada"].map((item) => (
+              <div key={item} className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200">
+                <span className="h-2 w-2 rounded-full bg-cyan-500" />
+                {item}
+              </div>
+            ))}
           </div>
-          <p className="max-w-lg text-sm leading-6 text-slate-500 dark:text-slate-400">
-            El mapa es la puerta de entrada: desde ahí llegás a permisos, geometría, documentos y revisión.
-          </p>
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <Link
               href="/auth/login"
@@ -180,9 +182,6 @@ function HeroSection() {
             >
               Ver workflow
             </Link>
-          </div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-50 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-cyan-700 dark:border-cyan-500/20 dark:bg-cyan-500/10 dark:text-cyan-200">
-            Acceso directo al workspace operativo
           </div>
           <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
             Después de ingresar, abrís un plan de vuelo y entrás directo al área de operación con mapa, geometría y documentos.
@@ -266,6 +265,13 @@ function HeroSection() {
                       className="drone-path"
                     />
                     <circle cx="720" cy="40" r="5" fill="#22d3ee" className="pulse-dot" />
+                    <g className="drone-scan" transform="translate(700 26)">
+                      <path d="M20 12h-6l-2-3-2 3H4" stroke="#22d3ee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      <circle cx="4" cy="12" r="3" stroke="#22d3ee" strokeWidth="1.5" />
+                      <circle cx="20" cy="12" r="3" stroke="#22d3ee" strokeWidth="1.5" />
+                      <circle cx="12" cy="9" r="2" fill="#22d3ee" />
+                      <path d="M12 11v6" stroke="#22d3ee" strokeWidth="1.5" strokeLinecap="round" />
+                    </g>
                     <polygon
                       points="200,120 320,80 480,100 440,180 240,170"
                       stroke="rgba(34,211,238,0.30)"
@@ -608,7 +614,7 @@ function ModulesSection() {
 
 function DashboardPreview() {
   return (
-    <section id="casos-de-uso" className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30">
+    <section id="dashboard" className="border-t border-slate-200 bg-slate-50 py-28 dark:border-slate-800/40 dark:bg-slate-950/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-16 max-w-2xl text-center">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-700 dark:text-cyan-300">Dashboard</p>
@@ -639,9 +645,9 @@ function DashboardPreview() {
               <div className="mb-6 space-y-1">
                 <div className="h-2 w-24 rounded bg-slate-200 dark:bg-slate-700/60" />
               </div>
-              {["Panel", "Vuelos", "Entregables", "Modelos", "Reportes"].map((item) => (
+              {["Panel", "Vuelos", "Permisos", "Flota", "Reportes"].map((item, index) => (
                 <div key={item} className="mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-white">
-                  <span className="h-2 w-2 rounded-full bg-slate-400 dark:bg-slate-600" />
+                  <span className={`h-2 w-2 rounded-full ${index === 0 ? "bg-cyan-500" : "bg-slate-400 dark:bg-slate-600"}`} />
                   {item}
                 </div>
               ))}
@@ -649,30 +655,50 @@ function DashboardPreview() {
 
             {/* Content */}
             <div className="flex-1 p-5">
-              <div className="mb-5 flex items-center justify-between">
+              <div className="mb-5 flex items-center justify-between gap-4">
                 <div>
-                    <div className="h-4 w-32 rounded bg-slate-200 dark:bg-slate-700/40" />
-                    <div className="mt-1 h-3 w-48 rounded bg-slate-100 dark:bg-slate-700/20" />
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-700 dark:text-cyan-300">Semáforo operativo</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">Zona norte · permiso en revisión</p>
                 </div>
                 <div className="flex gap-2">
-                  <div className="h-8 w-24 rounded-lg border border-cyan-500/20 bg-cyan-50 dark:bg-cyan-500/10" />
+                  <div className="rounded-lg border border-cyan-500/20 bg-cyan-50 px-3 py-2 text-xs font-semibold text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-200">
+                    Acción: completar geometría
+                  </div>
                 </div>
               </div>
 
-              <div className="mb-5 grid grid-cols-4 gap-3">
-                {["12 planes", "86% avance", "24 vuelos", "18 entregables"].map((m) => (
-                    <div key={m} className="rounded-xl border border-slate-200 bg-white/90 p-3 dark:border-slate-700/40 dark:bg-slate-950/40">
-                      <div className="h-2 w-16 rounded bg-slate-200 dark:bg-slate-700/40" />
-                      <div className="mt-2 h-5 w-20 rounded bg-cyan-100 dark:bg-cyan-500/20" />
-                    </div>
+              <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {[
+                  ["12", "planes"],
+                  ["86%", "avance"],
+                  ["24", "vuelos"],
+                  ["18", "entregables"],
+                ].map(([value, label]) => (
+                  <div key={label} className="rounded-xl border border-slate-200 bg-white/90 p-3 dark:border-slate-700/40 dark:bg-slate-950/40">
+                    <p className="font-heading text-xl font-semibold text-slate-900 dark:text-white">{value}</p>
+                    <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">{label}</p>
+                  </div>
                 ))}
               </div>
 
               {/* Map placeholder */}
               <div className="geo-grid-subtle relative h-44 rounded-xl border border-slate-200 bg-slate-50/90 dark:border-slate-700/40 dark:bg-slate-950/60">
+                <svg className="absolute inset-0 h-full w-full" viewBox="0 0 520 180" fill="none" preserveAspectRatio="none">
+                  <polygon points="115,55 230,34 370,58 330,130 145,122" fill="rgba(34, 211, 238, 0.08)" stroke="rgba(8, 145, 178, 0.35)" strokeWidth="1.5" />
+                  <path d="M70 145 C160 112 220 120 300 80 C360 50 410 52 470 32" stroke="rgba(8, 145, 178, 0.45)" strokeWidth="2" className="drone-path" />
+                  <circle cx="145" cy="122" r="4" fill="#10b981" />
+                  <circle cx="230" cy="34" r="4" fill="#10b981" />
+                  <circle cx="370" cy="58" r="4" fill="#10b981" />
+                  <g className="drone-scan" transform="translate(452 20) scale(.8)">
+                    <path d="M20 12h-6l-2-3-2 3H4" stroke="#0891b2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="4" cy="12" r="3" stroke="#0891b2" strokeWidth="1.5" />
+                    <circle cx="20" cy="12" r="3" stroke="#0891b2" strokeWidth="1.5" />
+                    <circle cx="12" cy="9" r="2" fill="#0891b2" />
+                  </g>
+                </svg>
                 <div className="absolute left-3 top-3 rounded-lg border border-slate-200 bg-white/90 px-3 py-2 dark:border-slate-700/40 dark:bg-slate-950/80">
-                  <div className="h-2 w-16 rounded bg-cyan-500/30" />
-                  <div className="mt-1 h-2 w-24 rounded bg-slate-200 dark:bg-slate-700/30" />
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">Misión activa</p>
+                  <p className="mt-1 text-xs font-medium text-slate-800 dark:text-slate-200">Ruta + zona + GCP</p>
                 </div>
                 <div className="absolute bottom-3 right-3 rounded-lg border border-slate-200 bg-white/90 px-3 py-2 text-xs text-slate-600 dark:border-slate-700/40 dark:bg-slate-950/80 dark:text-slate-500">
                   EPSG: 32719 · WGS84 / UTM
@@ -688,7 +714,7 @@ function DashboardPreview() {
 
 function UseCasesSection() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8 bg-slate-50 dark:bg-transparent">
+    <section id="casos-de-uso" className="mx-auto max-w-7xl px-4 py-28 sm:px-6 lg:px-8 bg-slate-50 dark:bg-transparent">
       <div className="mx-auto mb-16 max-w-2xl text-center">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-700 dark:text-emerald-300">Casos de uso</p>
           <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white sm:text-4xl">

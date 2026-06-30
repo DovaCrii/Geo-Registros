@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { SortHeader } from "@/components/ui/sort-header";
 import type { DataColumn } from "@/components/ui/data-table";
+import { uiCardRadius, uiFocusRing, uiKicker, uiSurface } from "@/components/ui/design-tokens";
 
 function storageKey(reorderKey: string) {
   return `aeroflow:column-order:${reorderKey}`;
@@ -126,7 +127,7 @@ export function DraggableTable<Row>({
   }, []);
 
   return (
-    <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800/80 dark:bg-slate-950/45 dark:shadow-xl dark:shadow-slate-950/10">
+    <section className={`overflow-hidden ${uiCardRadius} ${uiSurface}`}>
       <div className="border-b border-slate-200 px-6 py-5 dark:border-slate-800/80">
         <h2 className="font-heading text-lg font-semibold text-slate-900 dark:text-white">{title}</h2>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{description}</p>
@@ -151,13 +152,13 @@ export function DraggableTable<Row>({
                       onDragOver={handleDragOver}
                       onDrop={(e) => handleDrop(e, idx)}
                       onDragEnd={handleDragEnd}
-                      className="group inline-flex w-full cursor-grab items-center gap-2 text-left active:cursor-grabbing"
+                      className={`group inline-flex w-full cursor-grab items-center gap-2 rounded-md text-left active:cursor-grabbing ${uiFocusRing}`}
                     >
                       <span className="text-slate-400 transition group-hover:text-slate-500 dark:text-slate-600 dark:group-hover:text-slate-400">⠿</span>
                       {column.sortable ? (
                         <SortHeader field={column.sortField ?? column.key} label={column.header} />
                       ) : (
-                        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
+                        <span className={uiKicker}>
                           {column.header}
                         </span>
                       )}
@@ -165,7 +166,7 @@ export function DraggableTable<Row>({
                   ) : column.sortable ? (
                     <SortHeader field={column.sortField ?? column.key} label={column.header} />
                   ) : (
-                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
+                    <span className={uiKicker}>
                       {column.header}
                     </span>
                   ))}
@@ -175,7 +176,7 @@ export function DraggableTable<Row>({
           </thead>
           <tbody className="divide-y divide-slate-200 dark:divide-slate-800/70">
             {rows.map((row, index) => (
-              <tr key={index} className="transition hover:bg-slate-50 dark:hover:bg-slate-900/55">
+              <tr key={index} className="transition hover:bg-cyan-50/40 dark:hover:bg-slate-900/65">
                 {orderedColumns.map((column) => (
                   <td key={column.key} className="px-6 py-4 align-middle text-slate-700 dark:text-slate-200">
                     {column.render(row)}

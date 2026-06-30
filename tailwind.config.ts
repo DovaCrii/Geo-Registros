@@ -33,11 +33,18 @@ const config: Config = {
         sm: "0 1px 2px rgba(0, 0, 0, 0.05)",
         md: "0 4px 6px -1px rgba(0, 0, 0, 0.08)",
         lg: "0 10px 15px -3px rgba(0, 0, 0, 0.08)",
+        "ui-card": "0 18px 45px -28px rgba(15, 23, 42, 0.35)",
       },
       colors: {
         surface: {
           DEFAULT: "#f8fafc",
           elevated: "#f1f5f9",
+          panel: "#ffffff",
+          inverse: "#020617",
+        },
+        border: {
+          soft: "rgba(148, 163, 184, 0.28)",
+          strong: "rgba(71, 85, 105, 0.38)",
         },
         accent: {
           DEFAULT: "#0891b2",

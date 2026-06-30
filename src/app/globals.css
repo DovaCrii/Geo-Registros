@@ -175,8 +175,24 @@ button, input {
 }
 
 .drone-path {
-  stroke-dasharray: 8 6;
-  animation: dashMove 2s linear infinite;
+  stroke-dasharray: 10 8;
+  animation: dashMove 4s linear infinite;
+}
+
+@keyframes droneScan {
+  0%, 100% {
+    opacity: 0.45;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate3d(0, -3px, 0) scale(1.04);
+  }
+}
+
+.drone-scan {
+  animation: droneScan 3.5s ease-in-out infinite;
+  transform-origin: center;
 }
 
 /* ─── ✨ Fade-in on scroll ────────────────────────────── */
@@ -246,6 +262,31 @@ button, input {
 
 .float-metric {
   animation: floatMetric 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .drone-path,
+  .drone-scan,
+  .pulse-dot,
+  .float-metric,
+  .animate-fade-up,
+  .animate-fade-up-delay-1,
+  .animate-fade-up-delay-2,
+  .animate-fade-up-delay-3,
+  .animate-fade-up-delay-4 {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 .float-metric-delay-1 {
