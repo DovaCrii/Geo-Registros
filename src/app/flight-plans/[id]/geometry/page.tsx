@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import "maplibre-gl/dist/maplibre-gl.css";
+
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
