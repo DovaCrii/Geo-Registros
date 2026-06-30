@@ -2,6 +2,8 @@
 
 import type { ReactNode } from "react";
 
+import { CheckCircleIcon, InfoIcon, WarningIcon, XCircleIcon } from "@/components/ui/linear-icons";
+
 /**
  * StatusBadge uses 5 visual variants and maps the operational states into them.
  * This keeps the UI consistent without losing compatibility with the existing workflow statuses.
@@ -65,15 +67,15 @@ const statusVariantByOperationalStatus: Record<OperationalStatus, StatusVariant>
   expired: "warning",
 };
 
-const statusIconMap: Record<OperationalStatus, string> = {
-  planned: "FileText",
-  "in-review": "Clock",
-  approved: "CheckCircle",
-  rejected: "XCircle",
-  "in-execution": "PlayCircle",
-  completed: "CheckCircle",
-  cancelled: "Slash",
-  expired: "AlertTriangle",
+const statusIconMap: Record<OperationalStatus, ReactNode> = {
+  planned: <InfoIcon className="h-3.5 w-3.5" />,
+  "in-review": <InfoIcon className="h-3.5 w-3.5" />,
+  approved: <CheckCircleIcon className="h-3.5 w-3.5" />,
+  rejected: <XCircleIcon className="h-3.5 w-3.5" />,
+  "in-execution": <InfoIcon className="h-3.5 w-3.5" />,
+  completed: <CheckCircleIcon className="h-3.5 w-3.5" />,
+  cancelled: <InfoIcon className="h-3.5 w-3.5" />,
+  expired: <WarningIcon className="h-3.5 w-3.5" />,
 };
 
 function getStatusBadgeSizeClasses(size: "sm" | "md") {
@@ -108,7 +110,5 @@ export function StatusBadge({ status, label, size = "md" }: StatusBadgeProps) {
 // ─── Icon helpers ────────────────────────────────────────────
 
 export function StatusIcon({ status }: { status: OperationalStatus }): ReactNode {
-  // Each status maps to a lucide icon name for documentation clarity.
-  // Usage: <StatusIcon status="approved" />
-  return <span className="text-xs text-slate-500 dark:text-slate-400">{statusIconMap[status]}</span>;
+  return <span className="inline-flex text-slate-500 dark:text-slate-400">{statusIconMap[status]}</span>;
 }

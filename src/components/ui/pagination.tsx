@@ -3,6 +3,8 @@
 import { useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { uiCardRadius, uiSurface } from "@/components/ui/design-tokens";
+
 type PaginationProps = {
   total: number;
   page: number;
@@ -41,7 +43,7 @@ export function Pagination({ total, page, pageSize }: PaginationProps) {
   if (totalPages <= 1) return null;
 
   return (
-    <div className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 px-4 py-3">
+    <div className={`flex items-center justify-between ${uiCardRadius} ${uiSurface} px-4 py-3`}>
       <p className="text-xs text-slate-500 dark:text-slate-400">
         {total} registro{(total !== 1) ? "s" : ""}
       </p>

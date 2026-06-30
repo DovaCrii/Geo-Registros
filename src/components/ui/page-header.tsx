@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 
+import { uiCardRadius, uiSurface } from "@/components/ui/design-tokens";
+
 export function PageHeader({
   eyebrow,
   title,
@@ -12,7 +14,7 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <header className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/55 p-6 shadow-sm dark:shadow-2xl dark:shadow-cyan-950/10">
+    <header className={`${uiCardRadius} ${uiSurface} p-6`}>
       <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-3">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent-strong dark:text-cyan-300">{eyebrow}</p>

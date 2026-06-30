@@ -2,6 +2,8 @@
 
 import { useState, type ReactNode } from "react";
 
+import { uiCardRadius, uiSurface } from "@/components/ui/design-tokens";
+
 interface SectionCardProps {
   title: string;
   /** @default true */
@@ -22,7 +24,7 @@ export function SectionCard({
 
   return (
     <div
-      className={`rounded-lg border border-border-soft bg-white shadow-sm dark:bg-surface-elevated dark:shadow-none ${className}`}
+      className={`${uiCardRadius} ${uiSurface} ${className}`}
     >
       <button
         type="button"
@@ -49,7 +51,7 @@ export function SectionCard({
       </button>
 
       {open && (
-        <div className="border-t border-border-soft px-4 py-3">
+        <div className="border-t border-slate-200 dark:border-slate-800/80 px-4 py-3">
           {children}
         </div>
       )}

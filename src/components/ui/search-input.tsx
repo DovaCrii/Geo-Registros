@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { uiKicker } from "@/components/ui/design-tokens";
+
 type SearchInputProps = {
   placeholder?: string;
   paramName?: string;
@@ -64,9 +66,7 @@ export function SearchInput({
 
   return (
     <label className="space-y-2">
-      <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">
-        Búsqueda
-      </span>
+      <span className={uiKicker}>Búsqueda</span>
       <div className="relative">
         <input
           type="text"

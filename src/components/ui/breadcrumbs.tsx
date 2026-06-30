@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { uiKicker } from "@/components/ui/design-tokens";
+
 type Crumb = {
   label: string;
   href?: string;
@@ -9,7 +11,7 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
   if (items.length === 0) return null;
 
   return (
-    <nav aria-label="Breadcrumb" className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+    <nav aria-label="Breadcrumb" className={`mb-4 ${uiKicker}`}>
       <ol className="flex flex-wrap items-center gap-2">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;

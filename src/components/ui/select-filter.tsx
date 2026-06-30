@@ -3,6 +3,8 @@
 import { useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { uiKicker } from "@/components/ui/design-tokens";
+
 type SelectFilterProps = {
   label: string;
   paramName: string;
@@ -43,7 +45,7 @@ export function SelectFilter({ label, paramName, placeholder = "Todos", options 
 
   return (
     <label className="space-y-2">
-      <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">{label}</span>
+      <span className={uiKicker}>{label}</span>
       <select
         value={current}
         onChange={handleChange}

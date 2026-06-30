@@ -1,11 +1,11 @@
 ﻿import Link from "next/link";
 
 import { EmptyState } from "@/components/ui/empty-state";
-import { StatusChip } from "@/components/ui/status-chip";
 import { PageShell } from "@/components/ui/page-shell";
 import { MetricCard } from "@/components/ui/metric-card";
 import { AlertCard } from "@/components/ui/alert-card";
 import { StatusBadge, type OperationalStatus } from "@/components/ui/status-badge";
+import { uiCardRadius, uiSurface } from "@/components/ui/design-tokens";
 import { requirePageAuth } from "@/lib/require-page-auth";
 import { getDashboardStats } from "@/server/dashboard/queries";
 import { OnboardingDialog } from "@/modules/onboarding/onboarding-dialog";
@@ -100,60 +100,53 @@ function getReadinessLevel(stats: Awaited<ReturnType<typeof getDashboardStats>>)
 
 function ReadinessBanner({ stats }: { stats: Awaited<ReturnType<typeof getDashboardStats>> }) {
   const readiness = getReadinessLevel(stats);
+
   const levelConfig = {
     ready: {
-      label: "Listo para operar",
-      tone: "success" as const,
-      title: "Semáforo verde: la operación está despejada",
+      container: "border-emerald-200 bg-emerald-50/80 dark:border-emerald-500/20 dark:bg-emerald-500/[0.06]",
+      labelText: "text-emerald-700 dark:text-emerald-300",
+      status: "approved" as const,
+      heading: "Semáforo verde: la operación está despejada",
       message: "No hay bloqueos críticos. Mantené el monitoreo de vigencias y seguí con el flujo recomendado.",
-      badge: "Verde",
+      badgeLabel: "Listo para operar",
+      badgeText: "Verde",
     },
     caution: {
-      label: "Precaución",
-      tone: "warning" as const,
-      title: "Semáforo amarillo: hay puntos que conviene revisar",
+      container: "border-amber-200 bg-amber-50/80 dark:border-amber-500/20 dark:bg-amber-500/[0.06]",
+      labelText: "text-amber-700 dark:text-amber-300",
+      status: "in-review" as const,
+      heading: "Semáforo amarillo: hay puntos que conviene revisar",
       message: "No hay bloqueo total, pero sí vencimientos o seguimientos en curso. Priorizá lo que está arriba en la lista.",
-      badge: "Amarillo",
+      badgeLabel: "Precaución",
+      badgeText: "Amarillo",
     },
     critical: {
-      label: "Atención crítica",
-      tone: "danger" as const,
-      title: "Semáforo rojo: hay trabajo crítico pendiente",
+      container: "border-rose-200 bg-rose-50/80 dark:border-rose-500/20 dark:bg-rose-500/[0.06]",
+      labelText: "text-rose-700 dark:text-rose-300",
+      status: "rejected" as const,
+      heading: "Semáforo rojo: hay trabajo crítico pendiente",
       message: "Resolvé geometría, documentos o observaciones antes de seguir. El tablero ya te marca el punto de salida.",
-      badge: "Rojo",
+      badgeLabel: "Atención crítica",
+      badgeText: "Rojo",
     },
-  }[readiness];
+  };
+
+  const config = levelConfig[readiness];
 
   return (
-    <div className={`rounded-xl border p-6 shadow-sm dark:shadow-xl dark:shadow-slate-950/10 ${
-      readiness === "ready"
-        ? "border-emerald-200 bg-emerald-50/80 dark:border-emerald-500/20 dark:bg-emerald-500/[0.06]"
-        : readiness === "caution"
-          ? "border-amber-200 bg-amber-50/80 dark:border-amber-500/20 dark:bg-amber-500/[0.06]"
-          : "border-rose-200 bg-rose-50/80 dark:border-rose-500/20 dark:bg-rose-500/[0.06]"
-    }`}>
+    <div className={`rounded-xl border p-6 shadow-sm dark:shadow-xl dark:shadow-slate-950/10 ${config.container}`}>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className={`text-xs font-semibold uppercase tracking-[0.26em] ${
-            readiness === "ready"
-              ? "text-emerald-700 dark:text-emerald-300"
-              : readiness === "caution"
-                ? "text-amber-700 dark:text-amber-300"
-                : "text-rose-700 dark:text-rose-300"
-          }`}>
+          <p className={`text-xs font-semibold uppercase tracking-[0.26em] ${config.labelText}`}>
             Semáforo operativo
           </p>
-          <h2 className="mt-2 text-xl font-semibold text-slate-900 dark:text-white">{levelConfig.title}</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">{levelConfig.message}</p>
+          <h2 className="mt-2 text-xl font-semibold text-slate-900 dark:text-white">{config.heading}</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">{config.message}</p>
         </div>
         <div className="flex flex-col items-start gap-2 sm:items-end">
-          <StatusBadge
-            status={readiness === "ready" ? "approved" : readiness === "caution" ? "in-review" : "rejected"}
-            label={levelConfig.label}
-            size="sm"
-          />
+          <StatusBadge status={config.status} label={config.badgeLabel} size="sm" />
           <span className="rounded-full border border-current/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700 dark:text-slate-200">
-            {levelConfig.badge}
+            {config.badgeText}
           </span>
         </div>
       </div>
@@ -406,7 +399,7 @@ export default async function DashboardPage({
       <OnboardingDialog />
       <div className="space-y-6">
         {/* Header */}
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-6 shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
+        <div className={`${uiCardRadius} ${uiSurface} p-6`}>
           <p className="mb-1 text-xs font-semibold uppercase tracking-[0.28em] text-accent dark:text-cyan-300">Panel operativo</p>
           <h1 className="font-heading text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Bienvenido, {userName}</h1>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
@@ -544,7 +537,7 @@ export default async function DashboardPage({
                 {/* Export button */}
                 <div className="flex justify-end">
                   <a href="/api/reports/dashboard" className="inline-flex items-center gap-2 rounded-lg border border-success/20 dark:border-emerald-500/20 bg-success/5 dark:bg-emerald-500/10 px-4 py-2 text-xs font-medium text-success dark:text-emerald-200 transition hover:border-success/30 dark:hover:border-emerald-400/30 hover:bg-success/10 dark:hover:bg-emerald-500/20" download>
-                    <span aria-hidden="true">⬇</span>
+                    <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0-3-3m3 3 3-3m2 8H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2Z" /></svg>
                     Exportar Excel
                   </a>
                 </div>

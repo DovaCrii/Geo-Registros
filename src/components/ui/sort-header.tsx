@@ -46,13 +46,15 @@ export function SortHeader({ field, label }: SortHeaderProps) {
       className="group inline-flex items-center gap-1.5 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 transition hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
     >
       <span>{label}</span>
-      <span className="flex flex-col leading-none opacity-0 transition group-hover:opacity-100">
-        <span className={`text-[8px] ${isActive && currentDir === "asc" ? "text-accent dark:text-cyan-300" : "text-slate-400 dark:text-slate-500"}`}>▲</span>
-        <span className={`text-[8px] ${isActive && currentDir === "desc" ? "text-accent dark:text-cyan-300" : "text-slate-400 dark:text-slate-500"}`}>▼</span>
+      <span className="flex flex-col leading-none opacity-0 transition group-hover:opacity-100" aria-hidden="true">
+        <svg className={`h-2 w-2 ${isActive && currentDir === "asc" ? "text-accent dark:text-cyan-300" : "text-slate-400 dark:text-slate-500"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" /></svg>
+        <svg className={`h-2 w-2 ${isActive && currentDir === "desc" ? "text-accent dark:text-cyan-300" : "text-slate-400 dark:text-slate-500"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
       </span>
       {isActive && (
-        <span className="text-[10px] text-accent dark:text-cyan-300">
-          {currentDir === "asc" ? "↑" : "↓"}
+        <span className="text-accent dark:text-cyan-300" aria-hidden="true">
+          <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+            <path strokeLinecap="round" strokeLinejoin="round" d={currentDir === "asc" ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
+          </svg>
         </span>
       )}
     </button>
