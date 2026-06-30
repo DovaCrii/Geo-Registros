@@ -65,6 +65,25 @@ const statusVariantByOperationalStatus: Record<OperationalStatus, StatusVariant>
   expired: "warning",
 };
 
+const statusIconMap: Record<OperationalStatus, string> = {
+  planned: "FileText",
+  "in-review": "Clock",
+  approved: "CheckCircle",
+  rejected: "XCircle",
+  "in-execution": "PlayCircle",
+  completed: "CheckCircle",
+  cancelled: "Slash",
+  expired: "AlertTriangle",
+};
+
+function getStatusBadgeSizeClasses(size: "sm" | "md") {
+  return {
+    dotSize: size === "sm" ? "h-1.5 w-1.5" : "h-2 w-2",
+    padding: size === "sm" ? "px-1.5 py-0.5" : "px-2 py-0.5",
+    fontSize: size === "sm" ? "text-[11px]" : "text-xs",
+  };
+}
+
 interface StatusBadgeProps {
   status: OperationalStatus;
   label?: string;
@@ -74,9 +93,7 @@ interface StatusBadgeProps {
 
 export function StatusBadge({ status, label, size = "md" }: StatusBadgeProps) {
   const config = statusConfig[statusVariantByOperationalStatus[status]];
-  const dotSize = size === "sm" ? "h-1.5 w-1.5" : "h-2 w-2";
-  const padding = size === "sm" ? "px-1.5 py-0.5" : "px-2 py-0.5";
-  const fontSize = size === "sm" ? "text-[11px]" : "text-xs";
+  const { dotSize, padding, fontSize } = getStatusBadgeSizeClasses(size);
 
   return (
     <span
@@ -93,15 +110,5 @@ export function StatusBadge({ status, label, size = "md" }: StatusBadgeProps) {
 export function StatusIcon({ status }: { status: OperationalStatus }): ReactNode {
   // Each status maps to a lucide icon name for documentation clarity.
   // Usage: <StatusIcon status="approved" />
-  const iconMap: Record<OperationalStatus, string> = {
-    planned: "FileText",
-    "in-review": "Clock",
-    approved: "CheckCircle",
-    rejected: "XCircle",
-    "in-execution": "PlayCircle",
-    completed: "CheckCircle",
-    cancelled: "Slash",
-    expired: "AlertTriangle",
-  };
-  return <span className="text-xs text-slate-500 dark:text-slate-400">{iconMap[status]}</span>;
+  return <span className="text-xs text-slate-500 dark:text-slate-400">{statusIconMap[status]}</span>;
 }

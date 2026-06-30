@@ -8,6 +8,21 @@ type SearchInputProps = {
   paramName?: string;
 };
 
+function replaceSearchParam(
+  searchParams: ReturnType<typeof useSearchParams>,
+  paramName: string,
+  value: string,
+  router: ReturnType<typeof useRouter>,
+) {
+  const params = new URLSearchParams(searchParams.toString());
+  if (value) {
+    params.set(paramName, value);
+  } else {
+    params.delete(paramName);
+  }
+  router.replace(`?${params.toString()}`, { scroll: false });
+}
+
 /**
  * URL-driven search input with debounce.
  * Reads/writes `?q=` search param (configurable via paramName).
@@ -27,20 +42,16 @@ export function SearchInput({
     setValue(current);
   }, [searchParams, paramName]);
 
+  useEffect(() => () => clearTimeout(timerRef.current), []);
+
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newVal = e.target.value;
-      setValue(newVal);
+      const nextValue = e.target.value;
+      setValue(nextValue);
 
       clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => {
-        const params = new URLSearchParams(searchParams.toString());
-        if (newVal) {
-          params.set(paramName, newVal);
-        } else {
-          params.delete(paramName);
-        }
-        router.replace(`?${params.toString()}`, { scroll: false });
+        replaceSearchParam(searchParams, paramName, nextValue, router);
       }, 300);
     },
     [router, searchParams, paramName],
@@ -48,9 +59,7 @@ export function SearchInput({
 
   const handleClear = useCallback(() => {
     setValue("");
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete(paramName);
-    router.replace(`?${params.toString()}`, { scroll: false });
+    replaceSearchParam(searchParams, paramName, "", router);
   }, [router, searchParams, paramName]);
 
   return (

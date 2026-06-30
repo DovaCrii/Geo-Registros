@@ -10,6 +10,22 @@ type SelectFilterProps = {
   options: Array<{ value: string; label: string }>;
 };
 
+function replaceSearchParam(
+  searchParams: ReturnType<typeof useSearchParams>,
+  paramName: string,
+  value: string,
+  router: ReturnType<typeof useRouter>,
+) {
+  const params = new URLSearchParams(searchParams.toString());
+  params.delete("page");
+  if (value) {
+    params.set(paramName, value);
+  } else {
+    params.delete(paramName);
+  }
+  router.replace(`?${params.toString()}`, { scroll: false });
+}
+
 /**
  * URL-driven select filter with immediate navigation.
  */
@@ -20,16 +36,7 @@ export function SelectFilter({ label, paramName, placeholder = "Todos", options 
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const value = e.target.value;
-      const params = new URLSearchParams(searchParams.toString());
-      // Reset to page 1 when filter changes
-      params.delete("page");
-      if (value) {
-        params.set(paramName, value);
-      } else {
-        params.delete(paramName);
-      }
-      router.replace(`?${params.toString()}`, { scroll: false });
+      replaceSearchParam(searchParams, paramName, e.target.value, router);
     },
     [router, searchParams, paramName],
   );

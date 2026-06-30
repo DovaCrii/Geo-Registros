@@ -17,11 +17,11 @@ const toneClasses: Record<StatusTone, string> = {
     "border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-950/80 text-slate-600 dark:text-slate-300",
 };
 
+const STATUS_CHIP_BASE = "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium tracking-wide";
+
 export function StatusChip({ label, tone }: { label: string; tone: StatusTone }) {
   return (
-    <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium tracking-wide ${toneClasses[tone]}`}
-    >
+    <span className={`${STATUS_CHIP_BASE} ${toneClasses[tone]}`}>
       {label}
     </span>
   );

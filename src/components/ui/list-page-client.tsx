@@ -1,6 +1,6 @@
 "use client";
 
-import type { BatchAction, ListColumn, ListConfig } from "@/lib/list-config/types";
+import type { ListColumn, ListConfig } from "@/lib/list-config/types";
 import { DataColumn, DataTable } from "@/components/ui/data-table";
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { DraggableTable } from "@/components/ui/draggable-table";
@@ -13,7 +13,7 @@ import { SearchInput } from "@/components/ui/search-input";
 import { SelectableTable } from "@/components/ui/selectable-table";
 import { SelectFilter } from "@/components/ui/select-filter";
 import { StatusChip } from "@/components/ui/status-chip";
-import type { HeaderAction, SidebarConfig, ListQueryParams } from "@/lib/list-config/types";
+import type { HeaderAction, SidebarConfig } from "@/lib/list-config/types";
 
 function buildDataTableColumns<Row>(columns: ListColumn<Row>[]): Array<DataColumn<Row>> {
   return columns.map((col) => ({
@@ -102,6 +102,42 @@ function renderSidebar(sidebar: SidebarConfig, total: number) {
   );
 }
 
+function renderListTable<Row extends { id: string }>(
+  config: ListConfig<Row>,
+  rows: Row[],
+  desc: string,
+  columns: Array<DataColumn<Row>>,
+  batchHandlers?: Record<string, (ids: string[]) => Promise<void>>,
+) {
+  if (config.batchActions && batchHandlers) {
+    return (
+      <SelectableTable
+        title={config.title}
+        description={desc}
+        columns={columns}
+        rows={rows}
+        batchActions={config.batchActions}
+        batchHandlers={batchHandlers}
+        reorderKey={config.reorderKey}
+      />
+    );
+  }
+
+  if (config.reorderKey) {
+    return (
+      <DraggableTable
+        title={config.title}
+        description={desc}
+        columns={columns}
+        rows={rows}
+        reorderKey={config.reorderKey}
+      />
+    );
+  }
+
+  return <DataTable title={config.title} description={desc} columns={columns} rows={rows} />;
+}
+
 type ListPageClientProps<Row extends { id: string }> = {
   /** Entity list config object (imported on the client side so render fns work). */
   config: ListConfig<Row>;
@@ -132,10 +168,9 @@ export function ListPageClient<Row extends { id: string }>({
   const columns = buildDataTableColumns(config.columns);
   const page = Number(searchParams.page) || 1;
   const defaultPageSize = config.pageSize ?? 10;
-  const desc =
-    rows.length > 0
-      ? `Mostrando ${rows.length} de ${total} registros.`
-      : "No hay registros todavía.";
+  const hasRows = rows.length > 0;
+  const desc = hasRows ? `Mostrando ${rows.length} de ${total} registros.` : "No hay registros todavía.";
+  const primaryHeaderAction = config.headerActions?.[0];
 
   const content = (
     <div className="space-y-6">
@@ -150,51 +185,9 @@ export function ListPageClient<Row extends { id: string }>({
           <FilterBar>{renderFilters(config.filters)}</FilterBar>
         )}
 
-        {rows.length === 0 ? (
-          <EmptyState
-            icon={
-              <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
-                <path d="M9 17v-2m3 2v-4m3 4v-6M5 10l7-7 7 7M5 19h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            }
-            title="No hay registros todavía"
-            description="Aún no se ha creado ningún registro en esta sección. Una vez que haya datos, aparecerán aquí."
-            action={config.headerActions?.[0] ? { label: config.headerActions[0].label, href: config.headerActions[0].href } : undefined}
-            secondaryAction={{ label: "Volver al panel operativo", href: "/dashboard" }}
-            steps={[
-              { number: 1, label: "Completá los datos maestros", description: "Asegurate de tener grupos de trabajo, clientes, drones y operadores activos." },
-              { number: 2, label: "Usá el formulario de creación", description: "Completá los datos del registro y guardalo." },
-              { number: 3, label: "Administrá desde esta vista", description: "Buscá, filtrá y gestioná todos tus registros desde un solo lugar." },
-            ]}
-          />
-        ) : (
+        {hasRows ? (
           <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_360px]">
-            {config.batchActions && batchHandlers ? (
-              <SelectableTable
-                title={config.title}
-                description={desc}
-                columns={columns}
-                rows={rows}
-                batchActions={config.batchActions}
-                batchHandlers={batchHandlers}
-                reorderKey={config.reorderKey}
-              />
-            ) : config.reorderKey ? (
-              <DraggableTable
-                title={config.title}
-                description={desc}
-                columns={columns}
-                rows={rows}
-                reorderKey={config.reorderKey}
-              />
-            ) : (
-              <DataTable
-                title={config.title}
-                description={desc}
-                columns={columns}
-                rows={rows}
-              />
-            )}
+            {renderListTable(config, rows, desc, columns, batchHandlers)}
 
             {config.sidebar
               ? renderSidebar(config.sidebar, total)
@@ -209,6 +202,23 @@ export function ListPageClient<Row extends { id: string }>({
                 </DetailPanel>
               )}
           </div>
+        ) : (
+          <EmptyState
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6">
+                <path d="M9 17v-2m3 2v-4m3 4v-6M5 10l7-7 7 7M5 19h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            }
+            title="No hay registros todavía"
+            description="Aún no se ha creado ningún registro en esta sección. Una vez que haya datos, aparecerán aquí."
+            action={primaryHeaderAction ? { label: primaryHeaderAction.label, href: primaryHeaderAction.href } : undefined}
+            secondaryAction={{ label: "Volver al panel operativo", href: "/dashboard" }}
+            steps={[
+              { number: 1, label: "Completá los datos maestros", description: "Asegurate de tener grupos de trabajo, clientes, drones y operadores activos." },
+              { number: 2, label: "Usá el formulario de creación", description: "Completá los datos del registro y guardalo." },
+              { number: 3, label: "Administrá desde esta vista", description: "Buscá, filtrá y gestioná todos tus registros desde un solo lugar." },
+            ]}
+          />
         )}
 
         <Pagination total={total} page={page} pageSize={defaultPageSize} />

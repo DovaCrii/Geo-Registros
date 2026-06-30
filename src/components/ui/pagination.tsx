@@ -11,6 +11,20 @@ type PaginationProps = {
 
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900";
+const paginationControlBase =
+  `rounded-lg border px-3 py-1.5 text-xs font-medium transition hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed ${focusRing}`;
+const paginationNavControl =
+  `border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-950/80 text-slate-700 dark:text-slate-300 ${paginationControlBase}`;
+
+function replacePageParam(searchParams: ReturnType<typeof useSearchParams>, newPage: number, router: ReturnType<typeof useRouter>) {
+  const params = new URLSearchParams(searchParams.toString());
+  if (newPage <= 1) {
+    params.delete("page");
+  } else {
+    params.set("page", String(newPage));
+  }
+  router.replace(`?${params.toString()}`, { scroll: false });
+}
 
 export function Pagination({ total, page, pageSize }: PaginationProps) {
   const router = useRouter();
@@ -19,13 +33,7 @@ export function Pagination({ total, page, pageSize }: PaginationProps) {
 
   const goTo = useCallback(
     (newPage: number) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (newPage <= 1) {
-        params.delete("page");
-      } else {
-        params.set("page", String(newPage));
-      }
-      router.replace(`?${params.toString()}`, { scroll: false });
+      replacePageParam(searchParams, newPage, router);
     },
     [router, searchParams],
   );
@@ -44,7 +52,7 @@ export function Pagination({ total, page, pageSize }: PaginationProps) {
           disabled={page <= 1}
           onClick={() => goTo(page - 1)}
           aria-label="Página anterior"
-          className={`rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-950/80 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 transition hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed ${focusRing}`}
+          className={paginationNavControl}
         >
           ← Anterior
         </button>
@@ -56,7 +64,7 @@ export function Pagination({ total, page, pageSize }: PaginationProps) {
           disabled={page >= totalPages}
           onClick={() => goTo(page + 1)}
           aria-label="Página siguiente"
-          className={`rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-950/80 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 transition hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed ${focusRing}`}
+          className={paginationNavControl}
         >
           Siguiente →
         </button>
@@ -89,19 +97,19 @@ function renderPageNumbers(
       <span key={`ellipsis-${idx}`} className="px-1 text-xs text-slate-400 dark:text-slate-500">
         …
       </span>
-    ) : (
-      <button
-        type="button"
-        key={p}
-        onClick={() => goTo(p)}
-        aria-label={`Ir a la página ${p}`}
-        aria-current={p === current ? "page" : undefined}
-        className={`min-w-[28px] rounded-lg px-2 py-1.5 text-xs font-medium transition ${
-          p === current
-            ? "bg-accent/20 text-accent-strong dark:text-cyan-300 border border-accent/30 dark:border-cyan-400/30"
-            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 border border-transparent"
-        } ${focusRing}`}
-      >
+        ) : (
+          <button
+            type="button"
+            key={p}
+            onClick={() => goTo(p)}
+            aria-label={`Ir a la página ${p}`}
+            aria-current={p === current ? "page" : undefined}
+            className={`min-w-[28px] rounded-lg px-2 py-1.5 text-xs font-medium transition ${
+              p === current
+                ? "bg-accent/20 text-accent-strong dark:text-cyan-300 border border-accent/30 dark:border-cyan-400/30"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 border border-transparent"
+            } ${focusRing}`}
+          >
         {p}
       </button>
     ),

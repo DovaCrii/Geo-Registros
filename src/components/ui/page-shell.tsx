@@ -33,6 +33,15 @@ const navItemActive =
 const navItemInactive =
   "border-transparent text-slate-600 dark:text-slate-300 hover:border-accent/30 hover:bg-accent/5 hover:text-accent-strong dark:hover:border-cyan-500/30 dark:hover:bg-cyan-500/5 dark:hover:text-cyan-200";
 const FIELD_MODE_STORAGE_KEY = "aeroflow:field-mode";
+const FIELD_MODE_TOGGLE_BASE = "rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] transition";
+const FIELD_MODE_TOGGLE_ACTIVE =
+  "border-accent/30 bg-accent/10 text-accent-strong dark:border-cyan-400/30 dark:bg-cyan-500/10 dark:text-cyan-100";
+const FIELD_MODE_TOGGLE_INACTIVE =
+  "border-slate-300 bg-white text-slate-600 dark:border-slate-700/80 dark:bg-slate-950 dark:text-slate-300";
+
+function getFieldModeToggleClass(fieldMode: boolean) {
+  return `${FIELD_MODE_TOGGLE_BASE} ${fieldMode ? FIELD_MODE_TOGGLE_ACTIVE : FIELD_MODE_TOGGLE_INACTIVE}`;
+}
 
 function getActiveNavItem(pathname?: string) {
   if (!pathname) return ALL_NAV_ITEMS[0];
@@ -201,11 +210,11 @@ export function PageShell({ children }: { children: ReactNode }) {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setFieldMode((current) => !current)}
-              aria-pressed={fieldMode}
-              className={`rounded-lg border px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] transition ${fieldMode ? "border-accent/30 bg-accent/10 text-accent-strong dark:border-cyan-400/30 dark:bg-cyan-500/10 dark:text-cyan-100" : "border-slate-300 bg-white text-slate-600 dark:border-slate-700/80 dark:bg-slate-950 dark:text-slate-300"}`}
+              <button
+                type="button"
+                onClick={() => setFieldMode((current) => !current)}
+                aria-pressed={fieldMode}
+                className={getFieldModeToggleClass(fieldMode)}
               >
                 {fieldMode ? "Salir campo" : "Modo campo"}
               </button>
@@ -259,7 +268,7 @@ export function PageShell({ children }: { children: ReactNode }) {
                 type="button"
                 onClick={() => setFieldMode((current) => !current)}
                 aria-pressed={fieldMode}
-                className={`rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] transition ${fieldMode ? "border-accent/30 bg-accent/10 text-accent-strong dark:border-cyan-400/30 dark:bg-cyan-500/10 dark:text-cyan-100" : "border-slate-300 bg-white text-slate-600 dark:border-slate-700/80 dark:bg-slate-950 dark:text-slate-300"}`}
+                className={getFieldModeToggleClass(fieldMode)}
               >
                 {fieldMode ? "Salir campo" : "Modo campo"}
               </button>

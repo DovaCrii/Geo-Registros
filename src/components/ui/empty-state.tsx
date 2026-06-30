@@ -19,6 +19,12 @@ type EmptyStateProps = {
   }>;
 };
 
+const EMPTY_STATE_ACTION_BASE = "inline-flex items-center justify-center rounded-lg border px-5 py-2.5 text-sm font-medium transition";
+const EMPTY_STATE_PRIMARY_ACTION = "border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 text-accent-strong dark:text-cyan-100 hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20";
+const EMPTY_STATE_SECONDARY_ACTION = "border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-950/80 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:border-slate-600 dark:hover:bg-slate-800";
+const EMPTY_STATE_STEP_BASE = "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs font-semibold";
+const EMPTY_STATE_STEP_TONE = "border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/10 text-accent-strong dark:text-cyan-300";
+
 export function EmptyState({ icon, title, description, action, secondaryAction, steps }: EmptyStateProps) {
   return (
     <div className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-950/45 p-8 text-center shadow-sm dark:shadow-xl dark:shadow-slate-950/10">
@@ -33,17 +39,11 @@ export function EmptyState({ icon, title, description, action, secondaryAction, 
 
       {action && (
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <a
-            href={action.href}
-            className="inline-flex items-center justify-center rounded-lg border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/15 px-5 py-2.5 text-sm font-medium text-accent-strong dark:text-cyan-100 transition hover:border-accent/50 dark:hover:border-cyan-300/50 hover:bg-accent/15 dark:hover:bg-cyan-400/20"
-          >
+          <a href={action.href} className={`${EMPTY_STATE_ACTION_BASE} ${EMPTY_STATE_PRIMARY_ACTION}`}>
             {action.label}
           </a>
           {secondaryAction && (
-            <a
-              href={secondaryAction.href}
-              className="inline-flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-950/80 px-5 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:border-slate-600 dark:hover:bg-slate-800"
-            >
+            <a href={secondaryAction.href} className={`${EMPTY_STATE_ACTION_BASE} ${EMPTY_STATE_SECONDARY_ACTION}`}>
               {secondaryAction.label}
             </a>
           )}
@@ -55,9 +55,7 @@ export function EmptyState({ icon, title, description, action, secondaryAction, 
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">Pasos para empezar</p>
           {steps.map((step) => (
             <div key={step.number} className="flex items-start gap-3">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-accent/30 dark:border-cyan-400/30 bg-accent/10 dark:bg-cyan-500/10 text-xs font-semibold text-accent-strong dark:text-cyan-300">
-                {step.number}
-              </span>
+              <span className={`${EMPTY_STATE_STEP_BASE} ${EMPTY_STATE_STEP_TONE}`}>{step.number}</span>
               <div>
                 <p className="text-sm font-medium text-slate-900 dark:text-white">{step.label}</p>
                 {step.description && (
