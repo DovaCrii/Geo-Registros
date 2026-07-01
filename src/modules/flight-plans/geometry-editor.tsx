@@ -320,9 +320,13 @@ function serializeFeatures(features: GeoJSON.Feature[]): string {
 }
 
 function parseInitialFeatures(initialPayload: string): GeoJSON.Feature[] {
-  const parsed = parseGeoJsonPayload(initialPayload);
-  if (!parsed.valid) return [];
-  return normalizeFeatureCollection(normalizeToFeatures(parsed.data).filter(isPersistableFeature) as GeoJSON.Feature[]).features as GeoJSON.Feature[];
+  try {
+    const parsed = parseGeoJsonPayload(initialPayload);
+    if (!parsed.valid) return [];
+    return normalizeFeatureCollection(normalizeToFeatures(parsed.data).filter(isPersistableFeature) as GeoJSON.Feature[]).features as GeoJSON.Feature[];
+  } catch {
+    return [];
+  }
 }
 
 /** Infer the Terra Draw mode name from a GeoJSON geometry type. */
@@ -720,35 +724,41 @@ export function GeometryEditor({
   }, []);
 
   const syncFeaturesFromMap = useCallback(() => {
-    if (renderingMapRef.current) return;
-    const fc = drawControlRef.current?.getFeatures();
-    if (!fc) return;
+    try {
+      if (renderingMapRef.current) return;
+      const fc = drawControlRef.current?.getFeatures();
+      if (!fc) return;
 
-    const normalized = normalizeFeatureCollection(fc.features as GeoJSON.Feature[]).features as GeoJSON.Feature[];
-    const selected = drawControlRef.current?.getFeatures(true);
-    const nextSelectedId = selected ? getSelectedFeatureId(selected.features as GeoJSON.Feature[]) : null;
+      const normalized = normalizeFeatureCollection(fc.features as GeoJSON.Feature[]).features as GeoJSON.Feature[];
+      const selected = drawControlRef.current?.getFeatures(true);
+      const nextSelectedId = selected ? getSelectedFeatureId(selected.features as GeoJSON.Feature[]) : null;
 
-    setSelectedFeatureId(nextSelectedId);
-    skipNextMapRenderRef.current = true;
-    setFeatures((current) => {
-      const visibleIds = visibleFeatureIds;
-      const hiddenOrFiltered = current.filter((feature) => {
-        const id = getFeatureId(feature);
-        return !id || !visibleIds.has(id);
+      setSelectedFeatureId(nextSelectedId);
+      skipNextMapRenderRef.current = true;
+      setFeatures((current) => {
+        const visibleIds = visibleFeatureIds;
+        const hiddenOrFiltered = current.filter((feature) => {
+          const id = getFeatureId(feature);
+          return !id || !visibleIds.has(id);
+        });
+        const next = [...hiddenOrFiltered, ...normalized];
+        return next;
       });
-      const next = [...hiddenOrFiltered, ...normalized];
-      return next;
-    });
-    setSaveStatus("dirty");
-  }, [visibleFeatureIds]);
+      setSaveStatus("dirty");
+    } catch (error) {
+      console.error("[GeometryEditor] syncFeaturesFromMap failed", error);
+      setSaveStatus("error");
+      toast("error", "Error al sincronizar el mapa", "La edición actual no pudo actualizarse desde el mapa. Probá recargar la vista.");
+    }
+  }, [toast, visibleFeatureIds]);
 
   const renderFeaturesToMap = useCallback(
     (nextVisibleFeatures: GeoJSON.Feature[]) => {
-      const terraDraw = getTerraDraw();
-      if (!terraDraw || !terraDrawReady) return;
-
-      renderingMapRef.current = true;
       try {
+        const terraDraw = getTerraDraw();
+        if (!terraDraw || !terraDrawReady) return;
+
+        renderingMapRef.current = true;
         const existingFc = drawControlRef.current?.getFeatures();
         if (existingFc && existingFc.features.length > 0) {
           terraDraw.clear();
@@ -756,6 +766,9 @@ export function GeometryEditor({
         if (nextVisibleFeatures.length > 0) {
           terraDraw.addFeatures(featuresToTdFormat(nextVisibleFeatures) as any);
         }
+      } catch (error) {
+        console.error("[GeometryEditor] renderFeaturesToMap failed", error);
+        setSaveStatus("error");
       } finally {
         window.setTimeout(() => {
           renderingMapRef.current = false;
@@ -826,28 +839,44 @@ export function GeometryEditor({
 
   // ── Apply textarea content to map ─────────────────────────────────
   const handleApplyFromTextarea = useCallback(() => {
-    if (!parsed.valid) return;
+    try {
+      if (!parsed.valid) return;
 
-    const nextFeatures = normalizeFeatureCollection(normalizeToFeatures(parsed.data).filter(isPersistableFeature) as GeoJSON.Feature[]).features as GeoJSON.Feature[];
-    if (nextFeatures.length === 0) return;
+      const nextFeatures = normalizeFeatureCollection(normalizeToFeatures(parsed.data).filter(isPersistableFeature) as GeoJSON.Feature[]).features as GeoJSON.Feature[];
+      if (nextFeatures.length === 0) return;
 
-    setFeatures(nextFeatures);
-    setSaveStatus("dirty");
-    fitMapToPoints(mapRef.current!, parsed.data);
-  }, [parsed]);
+      setFeatures(nextFeatures);
+      setSaveStatus("dirty");
+      if (mapRef.current) {
+        fitMapToPoints(mapRef.current, parsed.data);
+      }
+    } catch (error) {
+      console.error("[GeometryEditor] handleApplyFromTextarea failed", error);
+      setSaveStatus("error");
+      toast("error", "GeoJSON inválido para el editor", "El contenido pudo leerse, pero no pudo aplicarse al mapa.");
+    }
+  }, [parsed, toast]);
 
   // ── Apply imported data to Terra Draw + textarea ──────────────────
   const applyImport = useCallback(
     (result: ImportResult) => {
-      const persistableFeatures = normalizeFeatureCollection(result.features.features.filter(isPersistableFeature) as GeoJSON.Feature[]).features as GeoJSON.Feature[];
+      try {
+        const persistableFeatures = normalizeFeatureCollection(result.features.features.filter(isPersistableFeature) as GeoJSON.Feature[]).features as GeoJSON.Feature[];
 
-      const cleaned = featuresToCleanGeoJson(persistableFeatures);
-      setFeatures(persistableFeatures);
-      setSelectedFeatureId(null);
-      setSaveStatus("dirty");
-      fitMapToPoints(mapRef.current!, cleaned);
+        const cleaned = featuresToCleanGeoJson(persistableFeatures);
+        setFeatures(persistableFeatures);
+        setSelectedFeatureId(null);
+        setSaveStatus("dirty");
+        if (mapRef.current) {
+          fitMapToPoints(mapRef.current, cleaned);
+        }
+      } catch (error) {
+        console.error("[GeometryEditor] applyImport failed", error);
+        setSaveStatus("error");
+        toast("error", "No se pudo importar la geometría", "El archivo fue leído, pero el editor no pudo cargarlo.");
+      }
     },
-    [],
+    [toast],
   );
 
   // ── Import file handler ───────────────────────────────────────────
