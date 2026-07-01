@@ -33,7 +33,7 @@ const navItemActive =
 const navItemInactive =
   "border-transparent text-slate-600 dark:text-slate-300 hover:border-accent/30 hover:bg-accent/5 hover:text-accent-strong dark:hover:border-cyan-500/30 dark:hover:bg-cyan-500/5 dark:hover:text-cyan-200";
 const FIELD_MODE_STORAGE_KEY = "aeroflow:field-mode";
-const FIELD_MODE_TOGGLE_BASE = "rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] transition";
+const FIELD_MODE_TOGGLE_BASE = "rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950";
 const FIELD_MODE_TOGGLE_ACTIVE =
   "border-accent/30 bg-accent/10 text-accent-strong dark:border-cyan-400/30 dark:bg-cyan-500/10 dark:text-cyan-100";
 const FIELD_MODE_TOGGLE_INACTIVE =
@@ -197,7 +197,7 @@ export function PageShell({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={() => setMobileNavOpen(!mobileNavOpen)}
-              className="flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700/80 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 transition hover:border-slate-400 dark:hover:border-slate-600"
+              className="flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700/80 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 transition hover:border-slate-400 dark:hover:border-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950"
               aria-label={mobileNavOpen ? "Cerrar menú" : "Abrir menú"}
             >
               <span className="text-lg leading-none">{mobileNavOpen ? "✕" : "☰"}</span>
@@ -227,12 +227,16 @@ export function PageShell({ children }: { children: ReactNode }) {
         </div>
 
       {/* ── Mobile nav overlay ─────────────────────────── */}
-      {mobileNavOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black/20 dark:bg-slate-950/60 backdrop-blur-sm lg:hidden"
-          onClick={() => setMobileNavOpen(false)}
-        />
-      )}
+      <div
+        className={`fixed inset-0 z-30 transition-opacity duration-300 lg:hidden ${
+          mobileNavOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setMobileNavOpen(false)}
+      >
+        <div className="absolute inset-0 bg-black/20 dark:bg-slate-950/60 backdrop-blur-sm" />
+      </div>
 
       {/* ── Mobile sidebar ─────────────────────────────── */}
       <aside

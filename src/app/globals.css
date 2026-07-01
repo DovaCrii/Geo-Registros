@@ -333,3 +333,20 @@ button, input {
 .animate-slide-up {
   animation: slideUp 0.25s ease-out forwards;
 }
+
+/* ─── 🍞 Toast slide-down (dismiss) ───────────────────── */
+
+@keyframes slideDown {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.2s ease-in forwards;
+}
