@@ -15,6 +15,7 @@ const ALL_NAV_ITEMS = [
   { href: "/drones", label: "Flota RPAS" },
   { href: "/operators", label: "Operadores RPAS" },
   { href: "/flight-plans", label: "Planes de vuelo" },
+  { href: "/operations/map", label: "Mapa global" },
   { href: "/master-data", label: "Datos maestros" },
   { href: "/ayuda", label: "Ayuda DGAC" },
   { href: "/admin/users", label: "Usuarios", adminOnly: true },

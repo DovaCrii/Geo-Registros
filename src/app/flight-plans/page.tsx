@@ -17,7 +17,7 @@ export default async function FlightPlansPage({
   await requirePageAuth(queryParams.toString() ? `/flight-plans?${queryParams.toString()}` : "/flight-plans");
 
   try {
-    return <ListPage config={flightPlanListConfig} fetchData={listFlightPlans} searchParams={params} />;
+    return <ListPage config={flightPlanListConfig} fetchData={listFlightPlans} searchParams={params} exportUrl="/api/export/flight-plans" />;
   } catch (error) {
     const message = error instanceof Error ? error.message : "Error de base de datos desconocido.";
     return (

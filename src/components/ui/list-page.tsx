@@ -23,6 +23,8 @@ type ListPageProps<Row extends { id: string }> = {
   searchParams: Record<string, string | undefined>;
   /** Server-action handlers keyed by the handler name defined in batchActions config. */
   batchHandlers?: Record<string, (ids: string[]) => Promise<void>>;
+  /** When set, shows an "Exportar CSV" button that links to this URL. */
+  exportUrl?: string;
 };
 
 function buildDataTableColumns<Row>(columns: ListColumn<Row>[]): Array<DataColumn<Row>> {
@@ -160,11 +162,29 @@ function groupRowsByDate<Row extends { id: string }>(rows: Row[], field: Extract
  * All filter state lives in URL search params. The page re-renders on
  * the server when params change (RSC + dynamic rendering).
  */
+function renderExportButton(exportUrl: string, searchParams: Record<string, string | undefined>, total: number) {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(searchParams)) {
+    if (value && key !== "page") params.set(key, value);
+  }
+  const href = `${exportUrl}?${params.toString()}`;
+
+  const base = "inline-flex items-center justify-center rounded-lg border px-4 py-2.5 text-sm font-medium transition";
+  const secondary = "border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-950/80 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:border-slate-600 dark:hover:bg-slate-800";
+
+  return total > 0 ? (
+    <a key="export-csv" href={href} className={`${base} ${secondary}`}>
+      Exportar CSV
+    </a>
+  ) : null;
+}
+
 export async function ListPage<Row extends { id: string }>({
   config,
   fetchData,
   searchParams,
   batchHandlers,
+  exportUrl,
 }: ListPageProps<Row>) {
   const calendarMode = Boolean(config.calendarView && config.basePath && searchParams.view === "calendar");
   const page = Number(calendarMode ? 1 : searchParams.page) || 1;
@@ -205,7 +225,12 @@ export async function ListPage<Row extends { id: string }>({
           eyebrow={config.eyebrow}
           title={config.title}
           description={config.description}
-          actions={renderActions(config.headerActions)}
+          actions={
+            <div className="flex flex-wrap items-center gap-3">
+              {renderActions(config.headerActions)}
+              {exportUrl && renderExportButton(exportUrl, searchParams, total)}
+            </div>
+          }
         />
 
         {toggleHref && (

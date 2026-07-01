@@ -17,7 +17,7 @@ export default async function CostCentersPage({
   await requirePageAuth(queryParams.toString() ? `/cost-centers?${queryParams.toString()}` : "/cost-centers");
 
   try {
-    return <ListPage config={costCenterListConfig} fetchData={listCostCenters} searchParams={params} />;
+    return <ListPage config={costCenterListConfig} fetchData={listCostCenters} searchParams={params} exportUrl="/api/export/cost-centers" />;
   } catch (error) {
     const message = error instanceof Error ? error.message : "Error de base de datos desconocido.";
     return (

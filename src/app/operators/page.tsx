@@ -17,7 +17,7 @@ export default async function OperatorsPage({
   await requirePageAuth(queryParams.toString() ? `/operators?${queryParams.toString()}` : "/operators");
 
   try {
-    return <ListPage config={operatorListConfig} fetchData={listOperators} searchParams={params} />;
+    return <ListPage config={operatorListConfig} fetchData={listOperators} searchParams={params} exportUrl="/api/export/operators" />;
   } catch (error) {
     const message = error instanceof Error ? error.message : "Error de base de datos desconocido.";
     return (

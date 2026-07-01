@@ -17,7 +17,7 @@ export default async function ClientsPage({
   await requirePageAuth(queryParams.toString() ? `/clients?${queryParams.toString()}` : "/clients");
 
   try {
-    return <ListPage config={clientListConfig} fetchData={listClients} searchParams={params} />;
+    return <ListPage config={clientListConfig} fetchData={listClients} searchParams={params} exportUrl="/api/export/clients" />;
   } catch (error) {
     const message = error instanceof Error ? error.message : "Error de base de datos desconocido.";
     return (

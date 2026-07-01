@@ -1,5 +1,6 @@
 "use server";
 
+import { unlink } from "fs/promises";
 import type { PermissionStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -194,7 +195,7 @@ export async function removeDocument(flightPlanId: string, documentId: string) {
 
   const doc = await prisma.document.findUnique({
     where: { id: documentId },
-    select: { fileName: true, docType: true, deletedAt: true },
+    select: { fileName: true, docType: true, filePath: true, deletedAt: true },
   });
 
   if (!doc) {
@@ -210,6 +211,9 @@ export async function removeDocument(flightPlanId: string, documentId: string) {
     where: { id: documentId },
     data: { deletedAt: new Date() },
   });
+
+  // Remove the file from disk (best-effort — don't fail if the file is gone)
+  await unlink(doc.filePath).catch(() => {});
 
   await prisma.permissionEvent.create({
     data: {

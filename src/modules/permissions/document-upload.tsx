@@ -210,7 +210,14 @@ export function DocumentUpload({
               <div key={doc.id} className="relative">
                 <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 dark:border-slate-800/80 dark:bg-slate-950/70">
                   <div className="min-w-0 flex-1 space-y-0.5">
-                    <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-200">{doc.fileName}</p>
+                    <a
+                      href={`/api/permissions/documents/${doc.id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="truncate text-sm font-medium text-cyan-700 transition hover:text-cyan-600 underline-offset-2 hover:underline dark:text-cyan-300 dark:hover:text-cyan-200"
+                    >
+                      {doc.fileName}
+                    </a>
                     <p className="text-xs text-slate-600 dark:text-slate-500">
                       {DOC_TYPE_LABELS[doc.docType] ?? doc.docType}
                     </p>
