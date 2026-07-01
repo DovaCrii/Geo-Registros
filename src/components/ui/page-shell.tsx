@@ -148,6 +148,14 @@ function SidebarContent({ pathname, onClick, fieldMode }: { pathname?: string; o
               <p className="truncate text-xs text-slate-500 dark:text-slate-400">
                 {session.user.email}
               </p>
+              {session.user.role === "ADMIN" && (
+                <Link
+                  href="/admin/users"
+                  className="mt-1 inline-flex text-xs font-medium text-cyan-700 transition hover:text-cyan-600 dark:text-cyan-300 dark:hover:text-cyan-200"
+                >
+                  Gestionar cuentas
+                </Link>
+              )}
             </div>
             <button
               type="button"
@@ -168,6 +176,7 @@ export function PageShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [fieldMode, setFieldMode] = useState(false);
+  const showHomeLink = pathname !== "/dashboard";
 
   useEffect(() => {
     try {
@@ -211,6 +220,14 @@ export function PageShell({ children }: { children: ReactNode }) {
             </p>
           </div>
           <div className="flex items-center gap-2">
+              {showHomeLink && (
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-950/80 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700 dark:text-slate-300 dark:hover:border-cyan-400/40 dark:hover:bg-cyan-500/10 dark:hover:text-cyan-100"
+                >
+                  Inicio
+                </Link>
+              )}
               <button
                 type="button"
                 onClick={() => setFieldMode((current) => !current)}
@@ -261,6 +278,14 @@ export function PageShell({ children }: { children: ReactNode }) {
           {/* Top bar */}
           <div className="mb-4 hidden items-center justify-end lg:flex">
             <div className="flex items-center gap-3">
+              {showHomeLink && (
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-950/80 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700 dark:text-slate-300 dark:hover:border-cyan-400/40 dark:hover:bg-cyan-500/10 dark:hover:text-cyan-100"
+                >
+                  Inicio
+                </Link>
+              )}
               <div className="hidden text-right xl:block">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
                   Uso en terreno

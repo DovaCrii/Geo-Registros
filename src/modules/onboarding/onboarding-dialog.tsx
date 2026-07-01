@@ -31,11 +31,11 @@ type ChecklistItem = {
 };
 
 const CHECKLIST: ChecklistItem[] = [
-  { id: "cost-center", label: "Crear un grupo de trabajo", href: "/cost-centers/new", hint: "Organizá las operaciones por centro de costo." },
-  { id: "client", label: "Agregar un cliente", href: "/clients/new", hint: "Cada plan de vuelo necesita un mandante." },
-  { id: "drone", label: "Registrar un dron", href: "/drones/new", hint: "Necesitás al menos un dron activo en el sistema." },
-  { id: "operator", label: "Registrar un operador", href: "/operators/new", hint: "Sin operador asignado no se puede volar." },
-  { id: "flight-plan", label: "Crear un plan de vuelo", href: "/flight-plans/new", hint: "El plan une todos los elementos anteriores." },
+  { id: "cost-center", label: "Abrir Grupos de trabajo", href: "/cost-centers/new", hint: "Creá el centro de costo que agrupa la operación." },
+  { id: "client", label: "Abrir Clientes", href: "/clients/new", hint: "Registrá el mandante antes de planificar el vuelo." },
+  { id: "drone", label: "Abrir Flota RPAS", href: "/drones/new", hint: "Dale de alta el dron que vas a usar." },
+  { id: "operator", label: "Abrir Operadores RPAS", href: "/operators/new", hint: "Asigná quién va a operar el vuelo." },
+  { id: "flight-plan", label: "Abrir Planes de vuelo", href: "/flight-plans/new", hint: "Armá la misión con los datos anteriores." },
 ];
 
 // ─── Tour steps ────────────────────────────────────────────────
@@ -51,25 +51,25 @@ const TOUR_STEPS: TourStep[] = [
   {
     selector: '[href="/dashboard"]',
     title: "Panel operativo",
-    description: "Tu centro de control. Acá ves el resumen de todo: acciones pendientes, próximos vencimientos y actividad reciente.",
+    description: "En el menú lateral, abrí 'Panel operativo' para ver el resumen, pendientes y actividad reciente.",
     placement: "right",
   },
   {
     selector: '[href="/master-data"]',
     title: "Datos maestros",
-    description: "Vista consolidada de grupos de trabajo, clientes, flota y operadores. Todo lo que necesitás para arrancar.",
+    description: "En el menú lateral, abrí 'Datos maestros' para gestionar grupos de trabajo, clientes, flota y operadores.",
     placement: "right",
   },
   {
     selector: '[href="/flight-plans"]',
     title: "Planes de vuelo",
-    description: "El corazón de la plataforma. Creá misiones, definí el área de operación, gestioná permisos y documentación DGAC.",
+    description: "Abrí 'Planes de vuelo' para crear la misión, definir geometría y seguir permisos/documentos DGAC.",
     placement: "right",
   },
   {
     selector: '[href="/ayuda"]',
     title: "Ayuda DGAC",
-    description: "Documentación y guías de referencia para cumplir con la normativa DGAC chilena.",
+    description: "Abrí 'Ayuda DGAC' para consultar guías y documentación de referencia.",
     placement: "right",
   },
 ];
@@ -83,6 +83,23 @@ export function OnboardingDialog() {
   const [tourStep, setTourStep] = useState(0);
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const highlightedTargetRef = useRef<HTMLElement | null>(null);
+  const hintRafRef = useRef<number | null>(null);
+  const [targetHint, setTargetHint] = useState<{ top: number; left: number; width: number; placement: "top" | "bottom" } | null>(null);
+
+  const HIGHLIGHT_CLASSES = [
+    "relative",
+    "z-[110]",
+    "outline",
+    "outline-4",
+    "outline-cyan-400/70",
+    "outline-offset-4",
+    "ring-4",
+    "ring-cyan-400/20",
+    "ring-offset-2",
+    "ring-offset-white",
+    "dark:ring-offset-slate-950",
+  ];
 
   // Show on first visit to dashboard
   useEffect(() => {
@@ -119,10 +136,59 @@ export function OnboardingDialog() {
     if (!tourActive) return;
     const step = TOUR_STEPS[tourStep];
     if (!step) return;
+
+    const clearHighlight = () => {
+      if (!highlightedTargetRef.current) return;
+      highlightedTargetRef.current.classList.remove(...HIGHLIGHT_CLASSES);
+      highlightedTargetRef.current.removeAttribute("data-onboarding-highlight");
+      highlightedTargetRef.current = null;
+    };
+
+    const clearHint = () => {
+      if (hintRafRef.current !== null) {
+        window.cancelAnimationFrame(hintRafRef.current);
+        hintRafRef.current = null;
+      }
+      setTargetHint(null);
+    };
+
+    clearHighlight();
+    clearHint();
+
     const el = document.querySelector(step.selector);
     if (el) {
+      const target = el as HTMLElement;
+      highlightedTargetRef.current = target;
+      target.setAttribute("data-onboarding-highlight", "true");
+      target.classList.add(...HIGHLIGHT_CLASSES);
       el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+      hintRafRef.current = window.requestAnimationFrame(() => {
+        const rect = target.getBoundingClientRect();
+        const hintWidth = Math.min(rect.width || 320, 320);
+        const hintHeight = 44;
+        const gap = 10;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const left = Math.min(Math.max(16, rect.left), Math.max(16, viewportWidth - hintWidth - 16));
+        const fitsBelow = rect.bottom + gap + hintHeight <= viewportHeight - 16;
+        const top = fitsBelow ? rect.bottom + gap : Math.max(16, rect.top - gap - hintHeight);
+
+        setTargetHint({
+          top,
+          left,
+          width: hintWidth,
+          placement: fitsBelow ? "bottom" : "top",
+        });
+      });
+    } else {
+      clearHint();
     }
+
+    return () => {
+      clearHighlight();
+      clearHint();
+    };
   }, [tourActive, tourStep]);
 
   if (!visible) return null;
@@ -142,7 +208,7 @@ export function OnboardingDialog() {
             </h2>
             <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">
               Plataforma geoespacial para vuelos, georegistro e informes técnicos.
-              Seguí estos pasos para arrancar:
+              Primero ubicá los módulos; después entrá y hacé los cambios en el orden correcto:
             </p>
           </div>
 
@@ -252,6 +318,23 @@ export function OnboardingDialog() {
 
   return (
     <div className="fixed inset-0 z-[100] bg-slate-950/40 backdrop-blur-[2px]">
+      {targetHint && (
+        <div
+          className="pointer-events-none fixed z-[111] max-w-[320px] rounded-2xl border border-cyan-400/40 bg-slate-950 px-3 py-2 text-xs font-medium text-white shadow-2xl shadow-cyan-950/20"
+          style={{
+            top: targetHint.top,
+            left: targetHint.left,
+            width: targetHint.width,
+            transform: targetHint.placement === "bottom" ? "translateY(0)" : "translateY(0)",
+          }}
+        >
+          <div className="flex items-center gap-2">
+            <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-400/20 text-cyan-300">→</span>
+            <span>Hacé clic acá</span>
+          </div>
+        </div>
+      )}
+
       {/* Tour tooltip */}
       <div
         ref={tooltipRef}

@@ -1,6 +1,7 @@
 export type GuideEntry = {
   title: string;
   icon: string;
+  focus?: string[];
   steps: string[];
   tip?: string;
 };
@@ -15,13 +16,20 @@ export const guideContent: Array<{ pattern: RegExp; entry: GuideEntry }> = [
     entry: {
       title: "Centro de comando",
       icon: "◉",
+      focus: [
+        "Tarjeta \"Siguiente acción\"",
+        "Semáforo operativo",
+        "Flujo recomendado",
+        "Pendientes de hoy",
+        "Actividad reciente",
+      ],
       steps: [
-        "Este es tu panel principal — arriba ves la siguiente acción recomendada para no perder tiempo.",
-        "Los indicadores te muestran: planes de vuelo, drones activos, operadores y clientes.",
-        "La sección de acciones pendientes te marca qué requiere atención hoy.",
-        "La línea de tiempo muestra la actividad reciente de permisos y documentos.",
-        "Usá la tarjeta de siguiente acción y los accesos rápidos para seguir el flujo correcto.",
-        "¿Primera vez? Creá un plan de vuelo para empezar a operar.",
+        "Usá la tarjeta 'Siguiente acción' para abrir el siguiente paso recomendado.",
+        "Leé el semáforo operativo para saber si hoy estás en verde, amarillo o rojo.",
+        "Revisá el flujo recomendado para ubicar en qué etapa estás.",
+        "Entrá a 'Pendientes de hoy' para resolver lo que bloquea el avance.",
+        "Mirá la actividad reciente para entender qué cambió y qué se hizo.",
+        "Si arrancás de cero, creá un plan de vuelo para activar el resto del tablero.",
       ],
       tip: "Tip: La tarjeta de siguiente acción prioriza el paso más útil según el estado operativo actual.",
     },

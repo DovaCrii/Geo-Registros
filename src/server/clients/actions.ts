@@ -4,6 +4,7 @@ import { RecordStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { requirePermission } from "@/lib/authorize";
 import { prisma } from "@/lib/prisma";
 
 function readString(formData: FormData, key: string) {
@@ -35,6 +36,8 @@ async function requireActiveClient(id: string) {
 }
 
 export async function createClient(formData: FormData) {
+  await requirePermission("settings:manage");
+
   const code = readOptionalString(formData, "code");
   const name = readString(formData, "name");
   const contactName = readOptionalString(formData, "contactName");
@@ -62,6 +65,7 @@ export async function createClient(formData: FormData) {
 }
 
 export async function updateClient(id: string, formData: FormData) {
+  await requirePermission("settings:manage");
   await requireActiveClient(id);
 
   const code = readOptionalString(formData, "code");
@@ -93,6 +97,7 @@ export async function updateClient(id: string, formData: FormData) {
 }
 
 export async function deleteClient(id: string) {
+  await requirePermission("settings:manage");
   await requireActiveClient(id);
 
   await prisma.client.update({

@@ -4,6 +4,7 @@ import { RecordStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { requirePermission } from "@/lib/authorize";
 import { prisma } from "@/lib/prisma";
 
 function readString(formData: FormData, key: string) {
@@ -35,6 +36,8 @@ async function requireActiveOperator(id: string) {
 }
 
 export async function createOperator(formData: FormData) {
+  await requirePermission("settings:manage");
+
   const code = readOptionalString(formData, "code");
   const fullName = readString(formData, "fullName");
   const email = readOptionalString(formData, "email");
@@ -68,6 +71,7 @@ export async function createOperator(formData: FormData) {
 }
 
 export async function updateOperator(id: string, formData: FormData) {
+  await requirePermission("settings:manage");
   await requireActiveOperator(id);
 
   const code = readOptionalString(formData, "code");
@@ -105,6 +109,7 @@ export async function updateOperator(id: string, formData: FormData) {
 }
 
 export async function deleteOperator(id: string) {
+  await requirePermission("settings:manage");
   await requireActiveOperator(id);
 
   await prisma.operator.update({

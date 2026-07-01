@@ -4,6 +4,7 @@ import { RecordStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { requirePermission } from "@/lib/authorize";
 import { prisma } from "@/lib/prisma";
 
 function readString(formData: FormData, key: string) {
@@ -30,6 +31,8 @@ async function requireActiveCostCenter(id: string) {
 }
 
 export async function createCostCenter(formData: FormData) {
+  await requirePermission("settings:manage");
+
   const code = readString(formData, "code");
   const name = readString(formData, "name");
   const description = readString(formData, "description");
@@ -53,6 +56,7 @@ export async function createCostCenter(formData: FormData) {
 }
 
 export async function updateCostCenter(id: string, formData: FormData) {
+  await requirePermission("settings:manage");
   await requireActiveCostCenter(id);
 
   const code = readString(formData, "code");
@@ -80,6 +84,7 @@ export async function updateCostCenter(id: string, formData: FormData) {
 }
 
 export async function deleteCostCenter(id: string) {
+  await requirePermission("settings:manage");
   await requireActiveCostCenter(id);
 
   await prisma.costCenter.update({

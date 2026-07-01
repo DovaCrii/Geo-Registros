@@ -16,6 +16,16 @@ async function requireAdmin() {
   }
 }
 
+async function countActiveAdmins(excludeUserId?: string) {
+  return prisma.user.count({
+    where: {
+      active: true,
+      role: Role.ADMIN,
+      ...(excludeUserId ? { id: { not: excludeUserId } } : {}),
+    },
+  });
+}
+
 function readString(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";
@@ -72,10 +82,26 @@ export async function updateUser(id: string, formData: FormData) {
   const password = readOptionalString(formData, "password");
   const validRoles = Object.values(Role);
 
+  const currentUser = await prisma.user.findUnique({
+    where: { id },
+    select: { role: true, active: true },
+  });
+
+  if (!currentUser) {
+    throw new Error("Usuario no encontrado.");
+  }
+
   const nameError = validateName(fullName, "Nombre completo");
   if (nameError) throw new Error(nameError);
 
   if (!validRoles.includes(role)) throw new Error("Rol inválido.");
+
+  if (currentUser.active && currentUser.role === Role.ADMIN && role !== Role.ADMIN) {
+    const remainingAdmins = await countActiveAdmins(id);
+    if (remainingAdmins === 0) {
+      throw new Error("No podés cambiar el último usuario ADMIN a otro rol.");
+    }
+  }
 
   const updateData: Record<string, unknown> = {
     fullName,
@@ -100,6 +126,23 @@ export async function updateUser(id: string, formData: FormData) {
 
 export async function deactivateUser(id: string) {
   await requireAdmin();
+
+  const target = await prisma.user.findUnique({
+    where: { id },
+    select: { role: true, active: true },
+  });
+
+  if (!target) {
+    throw new Error("Usuario no encontrado.");
+  }
+
+  if (target.active && target.role === Role.ADMIN) {
+    const remainingAdmins = await countActiveAdmins(id);
+    if (remainingAdmins === 0) {
+      throw new Error("No podés desactivar el último usuario ADMIN activo.");
+    }
+  }
+
   await prisma.user.update({
     where: { id },
     data: { active: false },
@@ -122,6 +165,20 @@ export async function reactivateUser(id: string) {
 
 export async function batchDeactivateUsers(ids: string[]) {
   await requireAdmin();
+
+  const targetAdmins = await prisma.user.count({
+    where: {
+      id: { in: ids },
+      active: true,
+      role: Role.ADMIN,
+    },
+  });
+
+  const remainingAdmins = await countActiveAdmins();
+  if (remainingAdmins - targetAdmins <= 0) {
+    throw new Error("No podés desactivar todos los usuarios ADMIN activos.");
+  }
+
   await prisma.user.updateMany({
     where: { id: { in: ids }, active: true },
     data: { active: false },

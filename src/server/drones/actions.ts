@@ -4,6 +4,7 @@ import { RecordStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { requirePermission } from "@/lib/authorize";
 import { prisma } from "@/lib/prisma";
 
 function readString(formData: FormData, key: string) {
@@ -35,6 +36,8 @@ async function requireActiveDrone(id: string) {
 }
 
 export async function createDrone(formData: FormData) {
+  await requirePermission("settings:manage");
+
   const code = readOptionalString(formData, "code");
   const serialNumber = readString(formData, "serialNumber");
   const manufacturer = readOptionalString(formData, "manufacturer");
@@ -66,6 +69,7 @@ export async function createDrone(formData: FormData) {
 }
 
 export async function updateDrone(id: string, formData: FormData) {
+  await requirePermission("settings:manage");
   await requireActiveDrone(id);
 
   const code = readOptionalString(formData, "code");
@@ -101,6 +105,7 @@ export async function updateDrone(id: string, formData: FormData) {
 }
 
 export async function deleteDrone(id: string) {
+  await requirePermission("settings:manage");
   await requireActiveDrone(id);
 
   await prisma.drone.update({
@@ -117,6 +122,7 @@ export async function deleteDrone(id: string) {
 /* ── Batch actions ─────────────────────────────────────── */
 
 export async function batchDeleteDrones(ids: string[]) {
+  await requirePermission("settings:manage");
   await prisma.drone.updateMany({
     where: { id: { in: ids }, deletedAt: null },
     data: { deletedAt: new Date() },
@@ -126,6 +132,7 @@ export async function batchDeleteDrones(ids: string[]) {
 }
 
 export async function batchActivateDrones(ids: string[]) {
+  await requirePermission("settings:manage");
   await prisma.drone.updateMany({
     where: { id: { in: ids }, deletedAt: null },
     data: { status: RecordStatus.ACTIVE },
@@ -134,6 +141,7 @@ export async function batchActivateDrones(ids: string[]) {
 }
 
 export async function batchDeactivateDrones(ids: string[]) {
+  await requirePermission("settings:manage");
   await prisma.drone.updateMany({
     where: { id: { in: ids }, deletedAt: null },
     data: { status: RecordStatus.INACTIVE },

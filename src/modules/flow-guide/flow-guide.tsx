@@ -76,6 +76,24 @@ export function FlowGuide() {
 
         {/* Steps */}
         <div className="max-h-[60vh] space-y-0 overflow-y-auto px-5 py-4">
+          {entry.focus && entry.focus.length > 0 && (
+            <div className="mb-4 rounded-2xl border border-cyan-500/15 bg-cyan-500/[0.04] px-4 py-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-300">
+                Elementos que vas a ver
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {entry.focus.map((item) => (
+                  <span
+                    key={item}
+                    className="rounded-full border border-cyan-500/20 bg-slate-950/80 px-2.5 py-1 text-[11px] text-slate-200"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {entry.steps.map((step, i) => (
             <div key={i} className="flex gap-3 pb-4 last:pb-0">
               <div className="flex flex-col items-center">

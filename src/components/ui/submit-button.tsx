@@ -6,17 +6,19 @@ export function SubmitButton({
   label,
   loadingLabel = "Guardando…",
   className = "",
+  disabled = false,
 }: {
   label: string;
   loadingLabel?: string;
   className?: string;
+  disabled?: boolean;
 }) {
   const { pending } = useFormStatus();
 
   return (
     <button
       type="submit"
-      disabled={pending}
+      disabled={pending || disabled}
       className={`inline-flex items-center justify-center rounded-lg border border-accent/30 bg-accent/10 px-6 py-2.5 text-sm font-medium text-accent-strong dark:text-cyan-100 transition hover:border-accent/50 hover:bg-accent/15 dark:hover:border-cyan-300/50 dark:hover:bg-cyan-400/20 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 ${className}`}
     >
       {pending ? (

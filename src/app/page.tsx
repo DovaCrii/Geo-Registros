@@ -418,19 +418,19 @@ function SolutionSection() {
           </h2>
         </div>
 
-          <div className="relative grid gap-4 md:grid-cols-2 xl:grid-cols-7">
+          <div className="relative grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
             {processSteps.map((s, i) => (
-            <div key={s.step} className="rounded-2xl border border-slate-200 bg-white/90 p-5 backdrop-blur dark:border-slate-800/60 dark:bg-slate-950/45">
-              <div className="mb-3 flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-cyan-500/20 bg-cyan-50 text-lg font-bold text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-300" style={{ fontFamily: "var(--font-mono)" }}>
+            <div key={s.step} className="rounded-2xl border border-slate-200 bg-white/90 p-6 backdrop-blur transition hover:border-emerald-500/20 hover:bg-white dark:border-slate-800/60 dark:bg-slate-950/45 dark:hover:bg-slate-900/60">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-500/20 bg-cyan-50 text-xl font-bold text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-300" style={{ fontFamily: "var(--font-mono)" }}>
                   {s.step}
                 </div>
                 <div>
-                  <p className="text-base font-semibold text-slate-900 dark:text-white">{s.label}</p>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white">{s.label}</p>
                   <p className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Etapa {i + 1}</p>
                 </div>
               </div>
-              <p className="text-base leading-7 text-slate-700 dark:text-slate-300">{s.desc}</p>
+              <p className="text-sm leading-6 text-slate-700 dark:text-slate-300">{s.desc}</p>
             </div>
             ))}
           </div>

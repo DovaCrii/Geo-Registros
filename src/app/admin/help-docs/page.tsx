@@ -19,7 +19,7 @@ export default async function AdminHelpDocsPage() {
       />
 
       <DetailPanel title="Subir documento" description="Guardamos el archivo y lo publicamos en /ayuda.">
-        <form action={uploadHelpDoc} encType="multipart/form-data" className="grid gap-4 md:grid-cols-2">
+        <form action={uploadHelpDoc} className="grid gap-4 md:grid-cols-2">
           <label className="space-y-2 md:col-span-2">
             <span className="text-xs uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400">Título</span>
             <input name="title" className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/20 dark:border-slate-700/80 dark:bg-slate-950/90 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-cyan-500/20" placeholder="Checklist permiso de vuelo" />

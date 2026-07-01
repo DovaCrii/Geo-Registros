@@ -29,6 +29,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[] | "admin"> = {
     "document:remove",
     "document:view",
     "report:export",
+    "settings:manage",
   ],
   JEFE_SEGURIDAD_AEREA: [
     "flight_plan:view",

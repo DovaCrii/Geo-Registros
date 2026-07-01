@@ -7,6 +7,7 @@ import { MaplibreTerradrawControl } from "@watergis/maplibre-gl-terradraw";
 
 import { DetailPanel } from "@/components/ui/detail-panel";
 import { StatusChip } from "@/components/ui/status-chip";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { useToast } from "@/lib/toast-context";
 import { importKml, importDxf, importKmz } from "@/lib/geo-import";
 import { exportKml, exportDxf } from "@/lib/geo-export";
@@ -553,6 +554,10 @@ export function GeometryEditor({
     setMeasurements(computeMeasurements(cleaned));
   }, []);
 
+  const syncMapState = useCallback(() => {
+    window.setTimeout(syncPayloadFromMap, 0);
+  }, [syncPayloadFromMap]);
+
   // ── Load existing GeoJSON into Terra Draw (once, when ready) ─────
   useEffect(() => {
     if (!terraDrawReady || initialLoadedRef.current) return;
@@ -569,7 +574,8 @@ export function GeometryEditor({
 
     // Fit map to the loaded geometry
     fitMapToPoints(mapRef.current!, parsed.data);
-  }, [terraDrawReady, parsed.valid, parsed.data, getTerraDraw]);
+    syncMapState();
+  }, [syncMapState, terraDrawReady, parsed.valid, parsed.data, getTerraDraw]);
 
   // ── Sync Terra Draw → hidden GeoJSON payload after draw/edit/delete ─
   useEffect(() => {
@@ -617,7 +623,8 @@ export function GeometryEditor({
 
     terraDraw.addFeatures(featuresToTdFormat(features) as any);
     fitMapToPoints(mapRef.current!, parsed.data);
-  }, [parsed, getTerraDraw]);
+    syncMapState();
+  }, [parsed, getTerraDraw, syncMapState]);
 
   // ── Apply imported data to Terra Draw + textarea ──────────────────
   const applyImport = useCallback(
@@ -631,10 +638,10 @@ export function GeometryEditor({
       terraDraw.addFeatures(featuresToTdFormat(persistableFeatures) as any);
 
       const cleaned = featuresToCleanGeoJson(persistableFeatures);
-      setPayload(cleaned.features.length > 0 ? JSON.stringify(cleaned, null, 2) : "");
       fitMapToPoints(mapRef.current!, cleaned);
+      syncMapState();
     },
-    [getTerraDraw],
+    [getTerraDraw, syncMapState],
   );
 
   // ── Import file handler ───────────────────────────────────────────
@@ -681,11 +688,20 @@ export function GeometryEditor({
       const terraDraw = getTerraDraw();
       if (!terraDraw) return;
 
+      if (mode === "delete-selection") {
+        const selectedCount = drawControlRef.current?.getFeatures(true)?.features.length ?? 0;
+
+        if (selectedCount === 0) {
+          toast("info", "Nada seleccionado", "Primero seleccioná una figura para poder borrarla.");
+          return;
+        }
+      }
+
       terraDraw.setMode(mode);
       setActiveMode(mode);
       window.setTimeout(syncPayloadFromMap, 0);
     },
-    [getTerraDraw, syncPayloadFromMap],
+    [getTerraDraw, syncPayloadFromMap, toast],
   );
 
   const handleLayerToggle = useCallback((layer: keyof typeof layers) => {
@@ -1007,13 +1023,12 @@ export function GeometryEditor({
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <button
-                    type="submit"
+                  <SubmitButton
+                    label="Guardar área de operación"
+                    loadingLabel="Guardando área…"
                     disabled={!canSaveGeometry}
-                    className="inline-flex items-center justify-center rounded-2xl border border-accent/30 bg-accent/10 px-4 py-2.5 text-sm font-medium text-accent-strong transition hover:border-accent/50 hover:bg-accent/15 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400 dark:border-cyan-400/30 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:border-cyan-300/50 dark:hover:bg-cyan-400/20 dark:disabled:border-slate-800 dark:disabled:bg-slate-950/50 dark:disabled:text-slate-500"
-                  >
-                    Guardar área de operación
-                  </button>
+                    className="rounded-2xl border border-accent/30 bg-accent/10 px-4 py-2.5 text-sm font-medium text-accent-strong transition hover:border-accent/50 hover:bg-accent/15 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400 dark:border-cyan-400/30 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:border-cyan-300/50 dark:hover:bg-cyan-400/20 dark:disabled:border-slate-800 dark:disabled:bg-slate-950/50 dark:disabled:text-slate-500"
+                  />
                   {!canSaveGeometry && (
                     <p className="text-xs text-amber-700 dark:text-amber-300">
                       Dibujá una geometría completa antes de guardar.

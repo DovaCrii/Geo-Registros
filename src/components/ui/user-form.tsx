@@ -108,6 +108,10 @@ export function UserForm(props: UserFormProps) {
             </option>
           ))}
         </select>
+        <p className="mt-2 text-xs leading-5 text-slate-500 dark:text-slate-400">
+          ADMIN tiene acceso total. OPERADOR_RPA trabaja planes de vuelo y documentos operativos, pero no administra datos maestros ni usuarios.
+          {mode === "edit" && user ? ` Rol actual: ${ROLE_LABELS[user.role] ?? user.role}.` : null}
+        </p>
       </div>
 
       <div>
@@ -132,6 +136,10 @@ export function UserForm(props: UserFormProps) {
           </span>
         </div>
       )}
+
+      <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
+        La plataforma protege al último ADMIN activo: no se puede desactivar ni degradar sin dejar otro administrador activo.
+      </div>
 
       <div className="flex items-center gap-3 pt-2">
         <button
