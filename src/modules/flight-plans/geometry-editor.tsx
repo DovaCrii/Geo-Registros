@@ -536,6 +536,7 @@ export function GeometryEditor({
   const drawControlRef = useRef<MaplibreTerradrawControl | null>(null);
   const renderingMapRef = useRef(false);
   const skipNextMapRenderRef = useRef(false);
+  const lastRenderedVisiblePayloadRef = useRef<string>("");
   const initialLoadedRef = useRef(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const parsed = useMemo(() => parseGeoJsonPayload(payload), [payload]);
@@ -733,17 +734,24 @@ export function GeometryEditor({
       const selected = drawControlRef.current?.getFeatures(true);
       const nextSelectedId = selected ? getSelectedFeatureId(selected.features as GeoJSON.Feature[]) : null;
 
+      const currentPayload = serializeFeatures(featuresRef.current);
+      const nextCurrent = featuresRef.current.filter((feature) => {
+        const id = getFeatureId(feature);
+        return !id || !normalized.some((nextFeature) => getFeatureId(nextFeature) === id);
+      });
+      const nextFeatures = [...nextCurrent, ...normalized];
+      const nextPayload = serializeFeatures(nextFeatures);
+
+      if (nextPayload === currentPayload) {
+        if (selectedFeatureId !== nextSelectedId) {
+          setSelectedFeatureId(nextSelectedId);
+        }
+        return;
+      }
+
       setSelectedFeatureId(nextSelectedId);
       skipNextMapRenderRef.current = true;
-      setFeatures((current) => {
-        const visibleIds = visibleFeatureIds;
-        const hiddenOrFiltered = current.filter((feature) => {
-          const id = getFeatureId(feature);
-          return !id || !visibleIds.has(id);
-        });
-        const next = [...hiddenOrFiltered, ...normalized];
-        return next;
-      });
+      setFeatures(nextFeatures);
       setSaveStatus("dirty");
     } catch (error) {
       console.error("[GeometryEditor] syncFeaturesFromMap failed", error);
@@ -758,7 +766,13 @@ export function GeometryEditor({
         const terraDraw = getTerraDraw();
         if (!terraDraw || !terraDrawReady) return;
 
+        const nextVisiblePayload = serializeFeatures(nextVisibleFeatures);
+        if (nextVisiblePayload === lastRenderedVisiblePayloadRef.current) {
+          return;
+        }
+
         renderingMapRef.current = true;
+        lastRenderedVisiblePayloadRef.current = nextVisiblePayload;
         const existingFc = drawControlRef.current?.getFeatures();
         if (existingFc && existingFc.features.length > 0) {
           terraDraw.clear();
