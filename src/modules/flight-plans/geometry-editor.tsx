@@ -12,6 +12,7 @@ import { useToast } from "@/lib/toast-context";
 import { importKml, importDxf, importKmz } from "@/lib/geo-import";
 import { exportKml, exportDxf } from "@/lib/geo-export";
 import { findGeoRestrictionConflicts } from "@/lib/geo-restrictions";
+import type { GeocodeResult } from "@/lib/geocoding";
 import type { ImportResult } from "@/lib/geo-import";
 
 const emptyFeatureCollection: GeoJSON.FeatureCollection = {
@@ -516,6 +517,11 @@ export function GeometryEditor({
   const [terraDrawReady, setTerraDrawReady] = useState(false);
   const [activeMode, setActiveMode] = useState<DrawMode | null>(null);
   const [importing, setImporting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<GeocodeResult[]>([]);
+  const [searchError, setSearchError] = useState("");
+  const [lastSearchResult, setLastSearchResult] = useState<GeocodeResult | null>(null);
   const [saveStatus, setSaveStatus] = useState<"clean" | "dirty" | "saving" | "error">("clean");
   const [measurements, setMeasurements] = useState(() =>
     features.length === 0 ? { totalArea: "—", totalPerimeter: "—", featureCount: 0 } : computeMeasurements({ type: "FeatureCollection", features }),
@@ -534,11 +540,14 @@ export function GeometryEditor({
   const mapRef = useRef<Map | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const drawControlRef = useRef<MaplibreTerradrawControl | null>(null);
+  const searchPointSourceId = "search-point-source";
+  const searchPointLayerId = "search-point-layer";
   const renderingMapRef = useRef(false);
   const skipNextMapRenderRef = useRef(false);
   const lastRenderedVisiblePayloadRef = useRef<string>("");
   const initialLoadedRef = useRef(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const searchAbortRef = useRef<AbortController | null>(null);
   const parsed = useMemo(() => parseGeoJsonPayload(payload), [payload]);
   const restrictionConflicts = useMemo(
     () => (parsed.valid ? findGeoRestrictionConflicts(parsed.data) : []),
@@ -690,6 +699,31 @@ export function GeometryEditor({
       new maplibregl.NavigationControl({ showCompass: false }),
       "top-right",
     );
+
+    map.on("load", () => {
+      if (!map.getSource(searchPointSourceId)) {
+        map.addSource(searchPointSourceId, {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features: [],
+          },
+        });
+
+        map.addLayer({
+          id: searchPointLayerId,
+          type: "circle",
+          source: searchPointSourceId,
+          paint: {
+            "circle-radius": 9,
+            "circle-color": "#06b6d4",
+            "circle-opacity": 0.85,
+            "circle-stroke-color": "#ffffff",
+            "circle-stroke-width": 2,
+          },
+        });
+      }
+    });
 
     map.on("load", () => {
       const control = new MaplibreTerradrawControl({
@@ -1014,6 +1048,77 @@ export function GeometryEditor({
     [handleSetMode],
   );
 
+  const handleSearch = useCallback(async () => {
+    const query = searchQuery.trim();
+    if (query.length < 3) {
+      setSearchResults([]);
+      setSearchError("Escribí al menos 3 caracteres.");
+      return;
+    }
+
+    searchAbortRef.current?.abort();
+    const controller = new AbortController();
+    searchAbortRef.current = controller;
+    setSearching(true);
+    setSearchError("");
+
+    try {
+      const response = await fetch(`/api/geocode?q=${encodeURIComponent(query)}`, { signal: controller.signal });
+      if (!response.ok) {
+        throw new Error("No se pudo resolver la búsqueda.");
+      }
+
+      const data = (await response.json()) as { results?: GeocodeResult[] };
+      setSearchResults(data.results ?? []);
+    } catch (error) {
+      if ((error as Error).name !== "AbortError") {
+        setSearchError(error instanceof Error ? error.message : "Error desconocido");
+        setSearchResults([]);
+      }
+    } finally {
+      setSearching(false);
+    }
+  }, [searchQuery]);
+
+  const focusSearchResult = useCallback((result: GeocodeResult) => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const source = map.getSource(searchPointSourceId) as maplibregl.GeoJSONSource | undefined;
+    source?.setData({
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [result.lng, result.lat],
+          },
+          properties: {
+            label: result.displayName,
+          },
+        },
+      ],
+    });
+
+    setLastSearchResult(result);
+    map.easeTo({ center: [result.lng, result.lat], zoom: 14, duration: 700 });
+    toast("info", "Ubicación encontrada", result.displayName);
+  }, [toast]);
+
+  const clearSearch = useCallback(() => {
+    setSearchQuery("");
+    setSearchResults([]);
+    setSearchError("");
+    const map = mapRef.current;
+    const source = map?.getSource(searchPointSourceId) as maplibregl.GeoJSONSource | undefined;
+    source?.setData({
+      type: "FeatureCollection",
+      features: [],
+    });
+    setLastSearchResult(null);
+  }, []);
+
   // ── Export handler ────────────────────────────────────────────────
   const handleExport = useCallback(
     (format: "kml" | "dxf") => {
@@ -1182,6 +1287,74 @@ export function GeometryEditor({
                     Volver al plan de vuelo
                   </Link>
                 </div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 dark:border-slate-800/80 dark:bg-slate-950/70">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Buscar lugar</p>
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Encontrá una localidad o referencia y centramos el mapa.</p>
+                <div className="mt-3 flex gap-2">
+                  <input
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        void handleSearch();
+                      }
+                    }}
+                    placeholder="Buscar ciudad, localidad o dirección"
+                    className="min-w-0 flex-1 rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => void handleSearch()}
+                    className="rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-4 py-2.5 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={searching}
+                  >
+                    {searching ? "Buscando…" : "Buscar"}
+                  </button>
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                  {lastSearchResult ? (
+                    <span className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2.5 py-1 text-cyan-100">
+                      Último destino: {lastSearchResult.displayName}
+                    </span>
+                  ) : (
+                    <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 dark:border-slate-800 dark:bg-slate-950/70">
+                      Sin destino fijado
+                    </span>
+                  )}
+                  {(searchQuery || searchResults.length > 0 || searchError) && (
+                    <button
+                      type="button"
+                      onClick={clearSearch}
+                      className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-slate-600 transition hover:border-cyan-500/30 hover:text-cyan-700 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:text-cyan-200"
+                    >
+                      Limpiar
+                    </button>
+                  )}
+                </div>
+                {searchError && <p className="mt-2 text-xs text-amber-700 dark:text-amber-300">{searchError}</p>}
+                {searchResults.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    {searchResults.map((result) => (
+                      <button
+                        key={`${result.source}-${result.displayName}-${result.lat}-${result.lng}`}
+                        type="button"
+                        onClick={() => focusSearchResult(result)}
+                        className="flex w-full items-start justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-left transition hover:border-cyan-500/30 hover:bg-cyan-50 dark:border-slate-800 dark:bg-slate-950/70 dark:hover:bg-cyan-500/10"
+                      >
+                        <span className="min-w-0">
+                          <span className="block truncate text-sm font-medium text-slate-900 dark:text-white">{result.displayName}</span>
+                          <span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-400">{result.type}</span>
+                        </span>
+                        <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-1 text-[10px] text-slate-500 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400">
+                          Ir
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 dark:border-slate-800/80 dark:bg-slate-950/70" role="status" aria-live="polite">
