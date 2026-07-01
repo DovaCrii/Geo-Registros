@@ -294,6 +294,37 @@ function findFeatureById(features: GeoJSON.Feature[], id: string | null) {
   return features.find((feature) => getFeatureId(feature) === id) ?? null;
 }
 
+function getFeatureEntityType(feature: GeoJSON.Feature): EntityType {
+  const properties = (feature.properties ?? {}) as Record<string, unknown>;
+  return (typeof properties.entityType === "string" && properties.entityType in ENTITY_LABELS
+    ? properties.entityType
+    : inferEntityTypeFromGeometryType(feature.geometry.type)) as EntityType;
+}
+
+function getFeatureName(feature: GeoJSON.Feature): string {
+  const properties = (feature.properties ?? {}) as Record<string, unknown>;
+  const id = getFeatureId(feature);
+  return typeof properties.name === "string" && properties.name.trim().length > 0
+    ? properties.name
+    : id ?? "Elemento sin nombre";
+}
+
+function getFeatureVisible(feature: GeoJSON.Feature): boolean {
+  const properties = (feature.properties ?? {}) as Record<string, unknown>;
+  return typeof properties.visible === "boolean" ? properties.visible : true;
+}
+
+function serializeFeatures(features: GeoJSON.Feature[]): string {
+  const cleaned = featuresToCleanGeoJson(normalizeFeatureCollection(features).features as GeoJSON.Feature[]);
+  return cleaned.features.length === 0 ? "" : JSON.stringify(cleaned, null, 2);
+}
+
+function parseInitialFeatures(initialPayload: string): GeoJSON.Feature[] {
+  const parsed = parseGeoJsonPayload(initialPayload);
+  if (!parsed.valid) return [];
+  return normalizeFeatureCollection(normalizeToFeatures(parsed.data).filter(isPersistableFeature) as GeoJSON.Feature[]).features as GeoJSON.Feature[];
+}
+
 /** Infer the Terra Draw mode name from a GeoJSON geometry type. */
 function inferModeFromGeometryType(type: string): string {
   if (type === "Point" || type === "MultiPoint") return "point";
@@ -475,16 +506,23 @@ export function GeometryEditor({
   flightPlanId: string;
   initialPayload: string;
 }) {
-  const [payload, setPayload] = useState(initialPayload);
+  const [features, setFeatures] = useState<GeoJSON.Feature[]>(() => parseInitialFeatures(initialPayload));
+  const featuresRef = useRef<GeoJSON.Feature[]>(features);
+  const [payload, setPayload] = useState(() => serializeFeatures(features));
   const [terraDrawReady, setTerraDrawReady] = useState(false);
   const [activeMode, setActiveMode] = useState<DrawMode | null>(null);
   const [importing, setImporting] = useState(false);
-  const [measurements, setMeasurements] = useState({ totalArea: "—", totalPerimeter: "—", featureCount: 0 });
+  const [saveStatus, setSaveStatus] = useState<"clean" | "dirty" | "saving" | "error">("clean");
+  const [measurements, setMeasurements] = useState(() =>
+    features.length === 0 ? { totalArea: "—", totalPerimeter: "—", featureCount: 0 } : computeMeasurements({ type: "FeatureCollection", features }),
+  );
   const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(null);
   const [layers, setLayers] = useState({
     satellite: true,
-    operationArea: true,
-    importedReferences: true,
+    "operation-area": true,
+    reference: true,
+    obstacle: true,
+    note: true,
   });
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -492,6 +530,8 @@ export function GeometryEditor({
   const mapRef = useRef<Map | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const drawControlRef = useRef<MaplibreTerradrawControl | null>(null);
+  const renderingMapRef = useRef(false);
+  const skipNextMapRenderRef = useRef(false);
   const initialLoadedRef = useRef(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const parsed = useMemo(() => parseGeoJsonPayload(payload), [payload]);
@@ -499,16 +539,37 @@ export function GeometryEditor({
     () => (parsed.valid ? findGeoRestrictionConflicts(parsed.data) : []),
     [parsed.data, parsed.valid],
   );
-  const enabledLayerCount = useMemo(
-    () => Object.values(layers).filter(Boolean).length,
-    [layers],
+  const enabledLayerCount = useMemo(() => (["operation-area", "reference", "obstacle", "note"] as EntityType[]).filter((key) => layers[key]).length, [layers]);
+  const visibleFeatures = useMemo(
+    () => features.filter((feature) => getFeatureVisible(feature) && layers[getFeatureEntityType(feature)]),
+    [features, layers],
   );
+  const visibleFeatureIds = useMemo(() => new Set(visibleFeatures.map((feature) => getFeatureId(feature)).filter(Boolean)), [visibleFeatures]);
+  const featureCounts = useMemo(() => {
+    const counts: Record<EntityType, { total: number; visible: number }> = {
+      "operation-area": { total: 0, visible: 0 },
+      reference: { total: 0, visible: 0 },
+      obstacle: { total: 0, visible: 0 },
+      note: { total: 0, visible: 0 },
+    };
+    for (const feature of features) {
+      const type = getFeatureEntityType(feature);
+      counts[type].total += 1;
+      if (getFeatureVisible(feature) && layers[type]) counts[type].visible += 1;
+    }
+    return counts;
+  }, [features, layers]);
+  const saveStatusLabel = {
+    clean: "Sin cambios",
+    dirty: "Cambios sin guardar",
+    saving: "Guardando…",
+    error: "Error al guardar",
+  }[saveStatus];
+  const saveStatusTone: "success" | "warning" | "danger" | "info" | "neutral" =
+    saveStatus === "dirty" ? "warning" : saveStatus === "saving" ? "info" : saveStatus === "error" ? "danger" : "success";
   const restrictionSignature = restrictionConflicts.map((zone) => zone.id).join("|");
   const lastRestrictionToastRef = useRef<string | null>(null);
-  const selectedFeature = useMemo(
-    () => (parsed.valid ? findFeatureById((parsed.data as GeoJSON.FeatureCollection).features, selectedFeatureId) : null),
-    [parsed, selectedFeatureId],
-  );
+  const selectedFeature = useMemo(() => findFeatureById(features, selectedFeatureId), [features, selectedFeatureId]);
   const workspaceModeSummary: {
     label: string;
     tone: "success" | "warning" | "danger" | "info" | "neutral";
@@ -555,6 +616,20 @@ export function GeometryEditor({
         : "Elegí una herramienta de dibujo para iniciar el área de operación.",
     };
   }, [activeMode, payload, restrictionConflicts.length, terraDrawReady]);
+
+  useEffect(() => {
+    featuresRef.current = features;
+    const nextPayload = serializeFeatures(features);
+    setPayload(nextPayload);
+    setMeasurements(
+      features.length === 0
+        ? { totalArea: "—", totalPerimeter: "—", featureCount: 0 }
+        : computeMeasurements({ type: "FeatureCollection", features }),
+    );
+    if (geometryPayloadInputRef.current) {
+      geometryPayloadInputRef.current.value = nextPayload;
+    }
+  }, [features]);
 
   useEffect(() => {
     if (!restrictionSignature) {
@@ -644,54 +719,82 @@ export function GeometryEditor({
     return drawControlRef.current?.getTerraDrawInstance() ?? null;
   }, []);
 
-  const syncPayloadFromMap = useCallback(() => {
+  const syncFeaturesFromMap = useCallback(() => {
+    if (renderingMapRef.current) return;
     const fc = drawControlRef.current?.getFeatures();
     if (!fc) return;
 
-    const normalized = normalizeFeatureCollection(fc.features as GeoJSON.Feature[]);
+    const normalized = normalizeFeatureCollection(fc.features as GeoJSON.Feature[]).features as GeoJSON.Feature[];
     const selected = drawControlRef.current?.getFeatures(true);
     const nextSelectedId = selected ? getSelectedFeatureId(selected.features as GeoJSON.Feature[]) : null;
-    const cleaned = featuresToCleanGeoJson(normalized.features as GeoJSON.Feature[]);
-    const nextPayload = cleaned.features.length === 0 ? "" : JSON.stringify(cleaned, null, 2);
-
-    if (geometryPayloadInputRef.current) {
-      geometryPayloadInputRef.current.value = nextPayload;
-    }
 
     setSelectedFeatureId(nextSelectedId);
+    skipNextMapRenderRef.current = true;
+    setFeatures((current) => {
+      const visibleIds = visibleFeatureIds;
+      const hiddenOrFiltered = current.filter((feature) => {
+        const id = getFeatureId(feature);
+        return !id || !visibleIds.has(id);
+      });
+      const next = [...hiddenOrFiltered, ...normalized];
+      return next;
+    });
+    setSaveStatus("dirty");
+  }, [visibleFeatureIds]);
 
-    if (cleaned.features.length === 0) {
-      setPayload("");
-      setMeasurements({ totalArea: "—", totalPerimeter: "—", featureCount: 0 });
+  const renderFeaturesToMap = useCallback(
+    (nextVisibleFeatures: GeoJSON.Feature[]) => {
+      const terraDraw = getTerraDraw();
+      if (!terraDraw || !terraDrawReady) return;
+
+      renderingMapRef.current = true;
+      try {
+        const existingFc = drawControlRef.current?.getFeatures();
+        if (existingFc && existingFc.features.length > 0) {
+          terraDraw.clear();
+        }
+        if (nextVisibleFeatures.length > 0) {
+          terraDraw.addFeatures(featuresToTdFormat(nextVisibleFeatures) as any);
+        }
+      } finally {
+        window.setTimeout(() => {
+          renderingMapRef.current = false;
+        }, 0);
+      }
+    },
+    [getTerraDraw, terraDrawReady],
+  );
+
+  useEffect(() => {
+    if (skipNextMapRenderRef.current) {
+      skipNextMapRenderRef.current = false;
       return;
     }
+    renderFeaturesToMap(visibleFeatures);
+  }, [renderFeaturesToMap, visibleFeatures]);
 
-    setPayload(nextPayload);
-    setMeasurements(computeMeasurements(cleaned));
+  const syncPayloadFromMap = useCallback(() => {
+    syncFeaturesFromMap();
+  }, [syncFeaturesFromMap]);
+
+  const markDirtyFeatures = useCallback((updater: (current: GeoJSON.Feature[]) => GeoJSON.Feature[]) => {
+    setFeatures((current) => normalizeFeatureCollection(updater(current)).features as GeoJSON.Feature[]);
+    setSaveStatus("dirty");
   }, []);
-
-  const syncMapState = useCallback(() => {
-    window.setTimeout(syncPayloadFromMap, 0);
-  }, [syncPayloadFromMap]);
 
   // ── Load existing GeoJSON into Terra Draw (once, when ready) ─────
   useEffect(() => {
     if (!terraDrawReady || initialLoadedRef.current) return;
 
-    const terraDraw = getTerraDraw();
-    if (!terraDraw) return;
     if (!parsed.valid) return;
 
-    const features = normalizeFeatureCollection(normalizeToFeatures(parsed.data).filter(isPersistableFeature) as GeoJSON.Feature[]).features;
     if (features.length === 0) return;
 
-    terraDraw.addFeatures(featuresToTdFormat(features) as any);
     initialLoadedRef.current = true;
 
     // Fit map to the loaded geometry
     fitMapToPoints(mapRef.current!, parsed.data);
-    syncMapState();
-  }, [syncMapState, terraDrawReady, parsed.valid, parsed.data, getTerraDraw]);
+  }, [terraDrawReady, parsed.valid, parsed.data, features.length]);
 
   // ── Sync Terra Draw → hidden GeoJSON payload after draw/edit/delete ─
   useEffect(() => {
@@ -725,39 +828,26 @@ export function GeometryEditor({
   const handleApplyFromTextarea = useCallback(() => {
     if (!parsed.valid) return;
 
-    const terraDraw = getTerraDraw();
-    if (!terraDraw) return;
+    const nextFeatures = normalizeFeatureCollection(normalizeToFeatures(parsed.data).filter(isPersistableFeature) as GeoJSON.Feature[]).features as GeoJSON.Feature[];
+    if (nextFeatures.length === 0) return;
 
-    // Clear existing features
-    const existingFc = drawControlRef.current?.getFeatures();
-    if (existingFc && existingFc.features.length > 0) {
-      terraDraw.clear();
-    }
-
-    const features = normalizeFeatureCollection(normalizeToFeatures(parsed.data).filter(isPersistableFeature) as GeoJSON.Feature[]).features;
-    if (features.length === 0) return;
-
-    terraDraw.addFeatures(featuresToTdFormat(features) as any);
+    setFeatures(nextFeatures);
+    setSaveStatus("dirty");
     fitMapToPoints(mapRef.current!, parsed.data);
-    syncMapState();
-  }, [parsed, getTerraDraw, syncMapState]);
+  }, [parsed]);
 
   // ── Apply imported data to Terra Draw + textarea ──────────────────
   const applyImport = useCallback(
     (result: ImportResult) => {
-      const terraDraw = getTerraDraw();
-      if (!terraDraw) return;
-
-      terraDraw.clear();
-      const persistableFeatures = normalizeFeatureCollection(result.features.features.filter(isPersistableFeature) as GeoJSON.Feature[]).features;
-
-      terraDraw.addFeatures(featuresToTdFormat(persistableFeatures) as any);
+      const persistableFeatures = normalizeFeatureCollection(result.features.features.filter(isPersistableFeature) as GeoJSON.Feature[]).features as GeoJSON.Feature[];
 
       const cleaned = featuresToCleanGeoJson(persistableFeatures);
+      setFeatures(persistableFeatures);
+      setSelectedFeatureId(null);
+      setSaveStatus("dirty");
       fitMapToPoints(mapRef.current!, cleaned);
-      syncMapState();
     },
-    [getTerraDraw, syncMapState],
+    [],
   );
 
   // ── Import file handler ───────────────────────────────────────────
@@ -798,6 +888,24 @@ export function GeometryEditor({
     [applyImport, toast],
   );
 
+  const handleDeleteSelectedFeature = useCallback(() => {
+    if (!selectedFeatureId) {
+      toast("info", "Nada seleccionado", "Seleccioná un elemento desde el mapa o la lista.");
+      return;
+    }
+
+    const exists = featuresRef.current.some((feature) => getFeatureId(feature) === selectedFeatureId);
+    if (!exists) {
+      setSelectedFeatureId(null);
+      toast("info", "Nada seleccionado", "La selección ya no existe en el mapa.");
+      return;
+    }
+
+    markDirtyFeatures((current) => current.filter((feature) => getFeatureId(feature) !== selectedFeatureId));
+    setSelectedFeatureId(null);
+    toast("success", "Elemento eliminado", "Se quitó la figura seleccionada. Guardá para persistir el cambio.");
+  }, [markDirtyFeatures, selectedFeatureId, toast]);
+
   // ── Set draw mode ────────────────────────────────────────────────
   const handleSetMode = useCallback(
     (mode: DrawMode) => {
@@ -805,32 +913,7 @@ export function GeometryEditor({
       if (!terraDraw) return;
 
       if (mode === "delete-selection") {
-        const selectedCount = drawControlRef.current?.getFeatures(true)?.features.length ?? 0;
-
-        if (selectedCount === 0) {
-          toast("info", "Nada seleccionado", "Primero seleccioná una figura para poder borrarla.");
-          return;
-        }
-
-        const selected = drawControlRef.current?.getFeatures(true);
-        const selectedId = selected ? getSelectedFeatureId(selected.features as GeoJSON.Feature[]) : null;
-        if (!selectedId) {
-          toast("info", "Nada seleccionado", "Primero seleccioná una figura para poder borrarla.");
-          return;
-        }
-
-        const all = drawControlRef.current?.getFeatures();
-        const remaining = (all?.features as GeoJSON.Feature[] | undefined)?.filter((feature) => getFeatureId(feature) !== selectedId) ?? [];
-
-        terraDraw.clear();
-        if (remaining.length > 0) {
-          const normalized = normalizeFeatureCollection(remaining);
-          terraDraw.addFeatures(featuresToTdFormat(normalized.features as any) as any);
-        }
-
-        setSelectedFeatureId(null);
-        window.setTimeout(syncPayloadFromMap, 0);
-        toast("success", "Figura eliminada", "Se quitó la selección actual.");
+        handleDeleteSelectedFeature();
         return;
       }
 
@@ -838,7 +921,7 @@ export function GeometryEditor({
       setActiveMode(mode);
       window.setTimeout(syncPayloadFromMap, 0);
     },
-    [getTerraDraw, syncPayloadFromMap, toast],
+    [getTerraDraw, handleDeleteSelectedFeature, syncPayloadFromMap],
   );
 
   const handleLayerToggle = useCallback((layer: keyof typeof layers) => {
@@ -856,6 +939,37 @@ export function GeometryEditor({
       return next;
     });
   }, []);
+
+  const updateFeatureProperties = useCallback(
+    (id: string, properties: Partial<FeatureMetadata>) => {
+      markDirtyFeatures((current) =>
+        current.map((feature) => {
+          if (getFeatureId(feature) !== id) return feature;
+          return {
+            ...feature,
+            properties: {
+              ...(feature.properties ?? {}),
+              ...properties,
+              updatedAt: new Date().toISOString(),
+            },
+          };
+        }),
+      );
+    },
+    [markDirtyFeatures],
+  );
+
+  const selectFeatureFromList = useCallback(
+    (id: string) => {
+      setSelectedFeatureId(id);
+      const feature = findFeatureById(featuresRef.current, id);
+      if (feature && mapRef.current) {
+        fitMapToPoints(mapRef.current, { type: "FeatureCollection", features: [feature] });
+      }
+      handleSetMode("select");
+    },
+    [handleSetMode],
+  );
 
   // ── Export handler ────────────────────────────────────────────────
   const handleExport = useCallback(
@@ -901,38 +1015,44 @@ export function GeometryEditor({
     [toast],
   );
 
-  const canSaveGeometry = parsed.valid && payload.trim().length > 0;
+  const canSaveGeometry = features.length > 0;
 
   const flushPayloadToForm = useCallback(() => {
     const fc = drawControlRef.current?.getFeatures();
-    if (!fc) return;
-
-    const normalized = normalizeFeatureCollection(fc.features as GeoJSON.Feature[]);
-    const cleaned = featuresToCleanGeoJson(normalized.features as GeoJSON.Feature[]);
-    const nextPayload = cleaned.features.length === 0 ? "" : JSON.stringify(cleaned, null, 2);
+    let nextFeatures = featuresRef.current;
+    if (fc) {
+      const normalized = normalizeFeatureCollection(fc.features as GeoJSON.Feature[]).features as GeoJSON.Feature[];
+      const hiddenOrFiltered = featuresRef.current.filter((feature) => {
+        const id = getFeatureId(feature);
+        return !id || !visibleFeatureIds.has(id);
+      });
+      nextFeatures = [...hiddenOrFiltered, ...normalized];
+      featuresRef.current = nextFeatures;
+      setFeatures(nextFeatures);
+    }
+    const nextPayload = serializeFeatures(nextFeatures);
 
     if (geometryPayloadInputRef.current) {
       geometryPayloadInputRef.current.value = nextPayload;
     }
 
     setPayload(nextPayload);
-    setMeasurements(cleaned.features.length === 0 ? { totalArea: "—", totalPerimeter: "—", featureCount: 0 } : computeMeasurements(cleaned));
-  }, []);
+    setSaveStatus("saving");
+  }, [visibleFeatureIds]);
 
   useEffect(() => {
     if (!selectedFeatureId) return;
-    if (!parsed.valid) return;
-    if (!findFeatureById((parsed.data as GeoJSON.FeatureCollection).features, selectedFeatureId)) {
+    if (!findFeatureById(features, selectedFeatureId)) {
       setSelectedFeatureId(null);
     }
-  }, [parsed, selectedFeatureId]);
+  }, [features, selectedFeatureId]);
 
   return (
     <form ref={formRef} action={action} onSubmit={flushPayloadToForm} className="space-y-6">
       <input type="hidden" name="flightPlanId" value={flightPlanId} />
       <input ref={geometryPayloadInputRef} type="hidden" name="geometryPayload" value={payload} />
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,72fr)_minmax(360px,28fr)]">
         <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white/95 shadow-xl shadow-slate-950/10 backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/45">
           <div className="border-b border-slate-200 bg-white/95 px-6 py-5 dark:border-slate-800/80 dark:bg-slate-950/75">
             <div className="flex flex-wrap items-start justify-between gap-4">
@@ -960,7 +1080,7 @@ export function GeometryEditor({
             </div>
           </div>
 
-          <div className="relative h-[480px] bg-slate-100 dark:bg-slate-950 sm:h-[600px] xl:h-[720px]">
+          <div className="relative h-[520px] bg-slate-100 dark:bg-slate-950 sm:h-[640px] xl:h-[calc(100vh-220px)] xl:min-h-[720px]">
             <div ref={containerRef} className="h-full w-full" />
             {/* Contextual hint */}
             <div className="pointer-events-none absolute left-4 top-4 max-w-xs rounded-2xl border border-white/70 bg-white/90 px-4 py-3 text-sm text-slate-700 shadow-lg shadow-slate-950/10 backdrop-blur dark:border-slate-800/70 dark:bg-slate-950/85 dark:text-slate-200">
@@ -992,9 +1112,35 @@ export function GeometryEditor({
           </div>
         </section>
 
-        <aside className="space-y-4">
+        <aside className="space-y-4 xl:max-h-[calc(100vh-120px)] xl:overflow-y-auto xl:pr-1">
           <DetailPanel title={title} description={description}>
             <div className="space-y-4">
+              <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 dark:border-slate-800/80 dark:bg-slate-950/70">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold text-slate-950 dark:text-white">Acciones principales</p>
+                  <StatusChip label={saveStatusLabel} tone={saveStatusTone} />
+                </div>
+                <div className="mt-3 flex flex-col gap-2">
+                  <SubmitButton
+                    label="Guardar cambios del mapa"
+                    loadingLabel="Guardando mapa…"
+                    disabled={!canSaveGeometry}
+                    className="rounded-2xl border border-accent/30 bg-accent/10 px-4 py-2.5 text-sm font-medium text-accent-strong transition hover:border-accent/50 hover:bg-accent/15 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400 dark:border-cyan-400/30 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:border-cyan-300/50 dark:hover:bg-cyan-400/20 dark:disabled:border-slate-800 dark:disabled:bg-slate-950/50 dark:disabled:text-slate-500"
+                  />
+                  {!canSaveGeometry && (
+                    <p className="text-xs text-amber-700 dark:text-amber-300">
+                      Dibujá o importá al menos un elemento antes de guardar.
+                    </p>
+                  )}
+                  <Link
+                    href={`/flight-plans/${flightPlanId}`}
+                    className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
+                  >
+                    Volver al plan de vuelo
+                  </Link>
+                </div>
+              </div>
+
               <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 dark:border-slate-800/80 dark:bg-slate-950/70" role="status" aria-live="polite">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
@@ -1052,11 +1198,11 @@ export function GeometryEditor({
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleSetMode("delete-selection")}
+                    onClick={handleDeleteSelectedFeature}
                     disabled={!selectedFeatureId}
                     className="inline-flex items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700 transition hover:border-rose-500/30 hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-rose-400/20 dark:bg-rose-500/10 dark:text-rose-200 dark:hover:bg-rose-500/20"
                   >
-                    Eliminar seleccionada
+                    Eliminar elemento seleccionado
                   </button>
                 </div>
               </div>
@@ -1074,10 +1220,10 @@ export function GeometryEditor({
                   <ToolbarButton
                     active={activeMode === "polygon"}
                     icon="⬠"
-                    label="Polígono"
+                    label="Crear polígono"
                     onClick={() => handleSetMode("polygon")}
                   />
-                  <ToolbarButton icon="📂" label="Importar" onClick={() => fileInputRef.current?.click()} />
+                  <ToolbarButton icon="📂" label="Importar KML/KMZ/DXF" onClick={() => fileInputRef.current?.click()} />
                   {measurements.featureCount > 0 ? (
                     <ToolbarButton icon="⬇" label="Exportar KML" onClick={() => handleExport("kml")} />
                   ) : null}
@@ -1145,7 +1291,7 @@ export function GeometryEditor({
                       key={mode.id}
                       active={activeMode === mode.id}
                       icon={mode.icon}
-                      label={mode.label}
+                      label={mode.id === "polygon" ? "Crear polígono" : `Crear ${mode.label.toLowerCase()}`}
                       onClick={() => handleSetMode(mode.id)}
                     />
                   ))}
@@ -1155,12 +1301,12 @@ export function GeometryEditor({
                   <span className="mr-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-500">
                     Modificar
                   </span>
-                  {DRAW_MODES.filter((m) => m.group === "edit").map((mode) => (
+                  {DRAW_MODES.filter((m) => m.group === "edit" && m.id !== "delete-selection").map((mode) => (
                     <ToolbarButton
                       key={mode.id}
                       active={activeMode === mode.id}
                       icon={mode.icon}
-                      label={mode.label}
+                      label={mode.id === "select" ? "Seleccionar en mapa" : mode.label}
                       onClick={() => handleSetMode(mode.id)}
                     />
                   ))}
@@ -1176,23 +1322,119 @@ export function GeometryEditor({
                   />
                   <ToolbarButton
                     icon="📂"
-                    label={importing ? "Importando..." : "Cargar archivo"}
+                    label={importing ? "Importando..." : "Importar KML/KMZ/DXF"}
                     onClick={() => fileInputRef.current?.click()}
                   />
                 </div>
 
                 <div className="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-3 dark:border-slate-800/80 dark:bg-slate-950/70">
                   <div className="flex items-center justify-between">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Elementos del mapa</p>
+                    <span className="text-[10px] text-slate-500 dark:text-slate-500">{visibleFeatures.length}/{features.length} visibles</span>
+                  </div>
+                  {features.length === 0 ? (
+                    <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-3 py-4 text-xs leading-5 text-slate-500 dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-400">
+                      Todavía no hay elementos. Creá un polígono o importá un archivo para empezar.
+                    </p>
+                  ) : (
+                    <div className="max-h-[360px] space-y-3 overflow-y-auto pr-1">
+                      {features.map((feature) => {
+                        const id = getFeatureId(feature) ?? "";
+                        const entityType = getFeatureEntityType(feature);
+                        const visible = getFeatureVisible(feature);
+                        const isSelected = selectedFeatureId === id;
+                        const props = (feature.properties ?? {}) as Record<string, unknown>;
+                        return (
+                          <div
+                            key={id}
+                            className={`space-y-3 rounded-2xl border p-3 transition ${
+                              isSelected
+                                ? "border-cyan-500/40 bg-cyan-50/80 dark:border-cyan-400/40 dark:bg-cyan-500/10"
+                                : "border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950/70"
+                            }`}
+                          >
+                            <div className="flex items-start gap-2">
+                              <span
+                                className="mt-2 h-3 w-3 shrink-0 rounded-full"
+                                style={{ backgroundColor: typeof props.color === "string" ? props.color : ENTITY_COLORS[entityType] }}
+                                aria-hidden="true"
+                              />
+                              <label className="min-w-0 flex-1 space-y-1">
+                                <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-500">Nombre</span>
+                                <input
+                                  value={getFeatureName(feature)}
+                                  onChange={(event) => updateFeatureProperties(id, { name: event.target.value })}
+                                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-900 outline-none transition focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950 dark:text-white"
+                                />
+                              </label>
+                            </div>
+                            <div className="grid grid-cols-[1fr_auto] gap-2">
+                              <select
+                                value={entityType}
+                                onChange={(event) => updateFeatureProperties(id, { entityType: event.target.value as EntityType, color: ENTITY_COLORS[event.target.value as EntityType] })}
+                                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 outline-none transition focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/15 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-200"
+                              >
+                                <option value="operation-area">Área de operación</option>
+                                <option value="reference">Referencia importada</option>
+                                <option value="obstacle">Obstáculo</option>
+                                <option value="note">Nota</option>
+                              </select>
+                              <input
+                                type="color"
+                                value={typeof props.color === "string" ? props.color : ENTITY_COLORS[entityType]}
+                                onChange={(event) => updateFeatureProperties(id, { color: event.target.value })}
+                                aria-label={`Color de ${getFeatureName(feature)}`}
+                                className="h-9 w-11 rounded-xl border border-slate-200 bg-white p-1 dark:border-slate-800 dark:bg-slate-950"
+                              />
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              <button
+                                type="button"
+                                onClick={() => selectFeatureFromList(id)}
+                                className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 transition hover:border-cyan-500/30 hover:bg-cyan-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-cyan-500/10"
+                              >
+                                Seleccionar
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => updateFeatureProperties(id, { visible: !visible })}
+                                className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 transition hover:border-cyan-500/30 hover:bg-cyan-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-cyan-500/10"
+                              >
+                                {visible ? "Ocultar" : "Mostrar"}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSelectedFeatureId(id);
+                                  markDirtyFeatures((current) => current.filter((item) => getFeatureId(item) !== id));
+                                  toast("success", "Elemento eliminado", "Guardá el mapa para persistir el cambio.");
+                                }}
+                                className="inline-flex items-center justify-center rounded-xl border border-rose-500/20 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700 transition hover:border-rose-500/30 hover:bg-rose-100 dark:border-rose-400/20 dark:bg-rose-500/10 dark:text-rose-200"
+                              >
+                                Eliminar
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-3 dark:border-slate-800/80 dark:bg-slate-950/70">
+                  <div className="flex items-center justify-between">
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Capas operativas</p>
                     <span className="text-[10px] text-slate-500 dark:text-slate-500">
-                      {enabledLayerCount}/3 visibles
+                      {enabledLayerCount}/4 capas visibles
                     </span>
                   </div>
 
                   {[
-                    { key: "satellite" as const, label: "Mapa base", desc: "Imagen satelital de referencia" },
-                    { key: "operationArea" as const, label: "Área de operación", desc: "Figuras activas del plan" },
-                    { key: "importedReferences" as const, label: "Referencias operativas", desc: "KML, KMZ o DXF cargados" },
+                    { key: "satellite" as const, label: "Mapa base", desc: "Imagen satelital de referencia", count: null },
+                    { key: "operation-area" as const, label: "Áreas de operación", desc: "Polígonos principales del plan", count: featureCounts["operation-area"] },
+                    { key: "reference" as const, label: "Referencias importadas", desc: "KML, KMZ, DXF o líneas de apoyo", count: featureCounts.reference },
+                    { key: "obstacle" as const, label: "Obstáculos", desc: "Zonas o puntos de riesgo", count: featureCounts.obstacle },
+                    { key: "note" as const, label: "Notas", desc: "Puntos de referencia operativa", count: featureCounts.note },
                   ].map((item) => (
                     <button
                       key={item.key}
@@ -1202,7 +1444,10 @@ export function GeometryEditor({
                     >
                       <span>
                         <span className="block text-sm font-medium text-slate-900 dark:text-white">{item.label}</span>
-                        <span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-500">{item.desc}</span>
+                        <span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-500">
+                          {item.desc}
+                          {item.count ? ` · ${item.count.visible}/${item.count.total} visibles` : ""}
+                        </span>
                       </span>
                       <span
                         className={`relative h-6 w-11 rounded-full transition ${
@@ -1218,33 +1463,6 @@ export function GeometryEditor({
                       </span>
                     </button>
                   ))}
-                </div>
-              </div>
-
-              <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800/80 dark:bg-slate-950/70">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-slate-950 dark:text-white">Acciones</p>
-                  <span className="text-xs text-slate-500 dark:text-slate-500">Guardar / volver</span>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <SubmitButton
-                    label="Guardar área de operación"
-                    loadingLabel="Guardando área…"
-                    disabled={!canSaveGeometry}
-                    className="rounded-2xl border border-accent/30 bg-accent/10 px-4 py-2.5 text-sm font-medium text-accent-strong transition hover:border-accent/50 hover:bg-accent/15 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400 dark:border-cyan-400/30 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:border-cyan-300/50 dark:hover:bg-cyan-400/20 dark:disabled:border-slate-800 dark:disabled:bg-slate-950/50 dark:disabled:text-slate-500"
-                  />
-                  {!canSaveGeometry && (
-                    <p className="text-xs text-amber-700 dark:text-amber-300">
-                      Dibujá una geometría completa antes de guardar.
-                    </p>
-                  )}
-                  <Link
-                    href={`/flight-plans/${flightPlanId}`}
-                    className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
-                  >
-                    Volver al plan de vuelo
-                  </Link>
                 </div>
               </div>
 

@@ -67,6 +67,31 @@ erDiagram
 
 ---
 
+## Estado actual del workspace
+
+### Editor satelital de planes de vuelo
+
+El workspace de geometría ahora está orientado a operación real:
+
+- panel de **elementos del mapa** para identificar figuras
+- renombrado directo de áreas, referencias, obstáculos y notas
+- selección explícita desde panel y mapa
+- eliminación de figuras con flujo más claro
+- capas operativas con visibilidad por tipo de entidad
+- guardado del `GeoJSON` desde estado canónico del editor
+- mayor espacio útil para el mapa y mejor distribución de herramientas
+
+### Acceso y experiencia de ingreso
+
+La pantalla de login fue ajustada para una presentación más consistente con la identidad visual actual del producto:
+
+- fondo inmersivo
+- mejor contraste
+- formulario más claro
+- CTA de acceso más visible
+
+---
+
 ## Stack
 
 | Capa | Tecnología |
