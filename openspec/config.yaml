@@ -1,0 +1,31 @@
+schema: spec-driven
+
+context: |
+  Tech stack: Next.js 15, React 19, TypeScript, Prisma, MapLibre GL JS, TerraDraw, Vitest.
+  Architecture: App Router with server actions and route handlers; geometry editor uses Terra Draw as the live map layer and persists GeoJSON through flight plan server actions.
+  Testing: npm run typecheck, npm run test, npm run build.
+  Style: functional-first UX, small safe changes, no unnecessary schema migration.
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes.
+    - Keep the first slice bounded to one session-sized change.
+  specs:
+    - Use Given/When/Then for scenarios.
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY).
+  design:
+    - Include sequence diagrams for complex flows.
+    - Document architecture decisions with rationale.
+  tasks:
+    - Group by phase, use hierarchical numbering.
+    - Keep tasks completable in one session.
+  apply:
+    - Follow existing code patterns.
+    tdd: true
+    test_command: "npm run test"
+  verify:
+    test_command: "npm run test"
+    build_command: "npm run build"
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas.

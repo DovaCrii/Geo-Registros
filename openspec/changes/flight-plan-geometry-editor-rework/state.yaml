@@ -1,0 +1,7 @@
+status: proposal
+current_phase: proposal
+next_recommended: spec
+artifacts:
+  - proposal.md
+notes:
+  - Geometry editor must stay schema-free for now; all new metadata lives inside GeoJSON properties.

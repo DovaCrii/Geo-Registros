@@ -29,6 +29,32 @@ type DrawMode =
   | "undo"
   | "redo";
 
+type EntityType = "operation-area" | "reference" | "obstacle" | "note";
+
+type FeatureMetadata = {
+  id: string;
+  name: string;
+  entityType: EntityType;
+  visible: boolean;
+  color: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+const ENTITY_LABELS: Record<EntityType, string> = {
+  "operation-area": "Área",
+  reference: "Referencia",
+  obstacle: "Obstáculo",
+  note: "Nota",
+};
+
+const ENTITY_COLORS: Record<EntityType, string> = {
+  "operation-area": "#0ea5e9",
+  reference: "#f59e0b",
+  obstacle: "#ef4444",
+  note: "#8b5cf6",
+};
+
 const DRAW_MODES: { id: DrawMode; label: string; icon: string; group: "draw" | "edit" }[] = [
   { id: "point", label: "Punto", icon: "⬤", group: "draw" },
   { id: "linestring", label: "Línea", icon: "╱", group: "draw" },
@@ -193,6 +219,79 @@ function featuresToCleanGeoJson(
     properties: f.properties ? { ...f.properties } : {},
   }));
   return { type: "FeatureCollection", features: cleaned };
+}
+
+function getFeatureId(feature: GeoJSON.Feature | any): string | null {
+  const props = (feature?.properties ?? {}) as Record<string, unknown>;
+  const id = typeof props.id === "string" ? props.id : typeof feature?.id === "string" ? feature.id : null;
+  return id;
+}
+
+function inferEntityTypeFromGeometryType(type: string): EntityType {
+  if (type === "Point" || type === "MultiPoint") return "note";
+  if (type === "LineString" || type === "MultiLineString") return "reference";
+  return "operation-area";
+}
+
+function createFeatureId() {
+  return globalThis.crypto?.randomUUID?.() ?? `feature-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function normalizeFeatureCollection(features: GeoJSON.Feature[]): GeoJSON.FeatureCollection {
+  const counters: Record<EntityType, number> = {
+    "operation-area": 0,
+    reference: 0,
+    obstacle: 0,
+    note: 0,
+  };
+
+  const now = new Date().toISOString();
+  const normalized = features.filter(isPersistableFeature).map((feature) => {
+    const properties = ((feature.properties ?? {}) as Record<string, unknown>);
+    const entityType = (typeof properties.entityType === "string" && properties.entityType in ENTITY_LABELS
+      ? properties.entityType
+      : inferEntityTypeFromGeometryType(feature.geometry.type)) as EntityType;
+
+    counters[entityType] += 1;
+    const index = counters[entityType];
+    const existingId = typeof properties.id === "string" ? properties.id : null;
+    const createdAt = typeof properties.createdAt === "string" ? properties.createdAt : now;
+
+    const metadata: FeatureMetadata = {
+      id: existingId ?? createFeatureId(),
+      name: typeof properties.name === "string" && properties.name.trim().length > 0
+        ? properties.name
+        : `${ENTITY_LABELS[entityType]} ${index}`,
+      entityType,
+      visible: typeof properties.visible === "boolean" ? properties.visible : true,
+      color: typeof properties.color === "string" && properties.color.trim().length > 0
+        ? properties.color
+        : ENTITY_COLORS[entityType],
+      createdAt,
+      updatedAt: now,
+    };
+
+    return {
+      type: "Feature" as const,
+      geometry: feature.geometry,
+      properties: {
+        ...properties,
+        ...metadata,
+      },
+    };
+  });
+
+  return { type: "FeatureCollection", features: normalized };
+}
+
+function getSelectedFeatureId(features: GeoJSON.Feature[]): string | null {
+  const selected = features.find((feature) => getFeatureId(feature));
+  return selected ? getFeatureId(selected) : null;
+}
+
+function findFeatureById(features: GeoJSON.Feature[], id: string | null) {
+  if (!id) return null;
+  return features.find((feature) => getFeatureId(feature) === id) ?? null;
 }
 
 /** Infer the Terra Draw mode name from a GeoJSON geometry type. */
@@ -381,12 +480,15 @@ export function GeometryEditor({
   const [activeMode, setActiveMode] = useState<DrawMode | null>(null);
   const [importing, setImporting] = useState(false);
   const [measurements, setMeasurements] = useState({ totalArea: "—", totalPerimeter: "—", featureCount: 0 });
+  const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(null);
   const [layers, setLayers] = useState({
     satellite: true,
     operationArea: true,
     importedReferences: true,
   });
   const { toast } = useToast();
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const geometryPayloadInputRef = useRef<HTMLInputElement | null>(null);
   const mapRef = useRef<Map | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const drawControlRef = useRef<MaplibreTerradrawControl | null>(null);
@@ -403,6 +505,10 @@ export function GeometryEditor({
   );
   const restrictionSignature = restrictionConflicts.map((zone) => zone.id).join("|");
   const lastRestrictionToastRef = useRef<string | null>(null);
+  const selectedFeature = useMemo(
+    () => (parsed.valid ? findFeatureById((parsed.data as GeoJSON.FeatureCollection).features, selectedFeatureId) : null),
+    [parsed, selectedFeatureId],
+  );
   const workspaceModeSummary: {
     label: string;
     tone: "success" | "warning" | "danger" | "info" | "neutral";
@@ -542,7 +648,17 @@ export function GeometryEditor({
     const fc = drawControlRef.current?.getFeatures();
     if (!fc) return;
 
-    const cleaned = featuresToCleanGeoJson(fc.features as GeoJSON.Feature[]);
+    const normalized = normalizeFeatureCollection(fc.features as GeoJSON.Feature[]);
+    const selected = drawControlRef.current?.getFeatures(true);
+    const nextSelectedId = selected ? getSelectedFeatureId(selected.features as GeoJSON.Feature[]) : null;
+    const cleaned = featuresToCleanGeoJson(normalized.features as GeoJSON.Feature[]);
+    const nextPayload = cleaned.features.length === 0 ? "" : JSON.stringify(cleaned, null, 2);
+
+    if (geometryPayloadInputRef.current) {
+      geometryPayloadInputRef.current.value = nextPayload;
+    }
+
+    setSelectedFeatureId(nextSelectedId);
 
     if (cleaned.features.length === 0) {
       setPayload("");
@@ -550,7 +666,7 @@ export function GeometryEditor({
       return;
     }
 
-    setPayload(JSON.stringify(cleaned, null, 2));
+    setPayload(nextPayload);
     setMeasurements(computeMeasurements(cleaned));
   }, []);
 
@@ -566,7 +682,7 @@ export function GeometryEditor({
     if (!terraDraw) return;
     if (!parsed.valid) return;
 
-    const features = normalizeToFeatures(parsed.data).filter(isPersistableFeature);
+    const features = normalizeFeatureCollection(normalizeToFeatures(parsed.data).filter(isPersistableFeature) as GeoJSON.Feature[]).features;
     if (features.length === 0) return;
 
     terraDraw.addFeatures(featuresToTdFormat(features) as any);
@@ -618,7 +734,7 @@ export function GeometryEditor({
       terraDraw.clear();
     }
 
-    const features = normalizeToFeatures(parsed.data).filter(isPersistableFeature);
+    const features = normalizeFeatureCollection(normalizeToFeatures(parsed.data).filter(isPersistableFeature) as GeoJSON.Feature[]).features;
     if (features.length === 0) return;
 
     terraDraw.addFeatures(featuresToTdFormat(features) as any);
@@ -633,7 +749,7 @@ export function GeometryEditor({
       if (!terraDraw) return;
 
       terraDraw.clear();
-      const persistableFeatures = result.features.features.filter(isPersistableFeature);
+      const persistableFeatures = normalizeFeatureCollection(result.features.features.filter(isPersistableFeature) as GeoJSON.Feature[]).features;
 
       terraDraw.addFeatures(featuresToTdFormat(persistableFeatures) as any);
 
@@ -695,6 +811,27 @@ export function GeometryEditor({
           toast("info", "Nada seleccionado", "Primero seleccioná una figura para poder borrarla.");
           return;
         }
+
+        const selected = drawControlRef.current?.getFeatures(true);
+        const selectedId = selected ? getSelectedFeatureId(selected.features as GeoJSON.Feature[]) : null;
+        if (!selectedId) {
+          toast("info", "Nada seleccionado", "Primero seleccioná una figura para poder borrarla.");
+          return;
+        }
+
+        const all = drawControlRef.current?.getFeatures();
+        const remaining = (all?.features as GeoJSON.Feature[] | undefined)?.filter((feature) => getFeatureId(feature) !== selectedId) ?? [];
+
+        terraDraw.clear();
+        if (remaining.length > 0) {
+          const normalized = normalizeFeatureCollection(remaining);
+          terraDraw.addFeatures(featuresToTdFormat(normalized.features as any) as any);
+        }
+
+        setSelectedFeatureId(null);
+        window.setTimeout(syncPayloadFromMap, 0);
+        toast("success", "Figura eliminada", "Se quitó la selección actual.");
+        return;
       }
 
       terraDraw.setMode(mode);
@@ -766,10 +903,34 @@ export function GeometryEditor({
 
   const canSaveGeometry = parsed.valid && payload.trim().length > 0;
 
+  const flushPayloadToForm = useCallback(() => {
+    const fc = drawControlRef.current?.getFeatures();
+    if (!fc) return;
+
+    const normalized = normalizeFeatureCollection(fc.features as GeoJSON.Feature[]);
+    const cleaned = featuresToCleanGeoJson(normalized.features as GeoJSON.Feature[]);
+    const nextPayload = cleaned.features.length === 0 ? "" : JSON.stringify(cleaned, null, 2);
+
+    if (geometryPayloadInputRef.current) {
+      geometryPayloadInputRef.current.value = nextPayload;
+    }
+
+    setPayload(nextPayload);
+    setMeasurements(cleaned.features.length === 0 ? { totalArea: "—", totalPerimeter: "—", featureCount: 0 } : computeMeasurements(cleaned));
+  }, []);
+
+  useEffect(() => {
+    if (!selectedFeatureId) return;
+    if (!parsed.valid) return;
+    if (!findFeatureById((parsed.data as GeoJSON.FeatureCollection).features, selectedFeatureId)) {
+      setSelectedFeatureId(null);
+    }
+  }, [parsed, selectedFeatureId]);
+
   return (
-    <form action={action} className="space-y-6">
+    <form ref={formRef} action={action} onSubmit={flushPayloadToForm} className="space-y-6">
       <input type="hidden" name="flightPlanId" value={flightPlanId} />
-      <input type="hidden" name="geometryPayload" value={payload} />
+      <input ref={geometryPayloadInputRef} type="hidden" name="geometryPayload" value={payload} />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
         <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white/95 shadow-xl shadow-slate-950/10 backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/45">
@@ -854,6 +1015,50 @@ export function GeometryEditor({
                     {restrictionConflicts.map((zone) => zone.label).join(" · ")}
                   </div>
                 )}
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 dark:border-slate-800/80 dark:bg-slate-950/70" role="status" aria-live="polite">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-500">Selección actual</p>
+                    <p className="mt-1 text-sm font-medium text-slate-900 dark:text-white">
+                      {selectedFeature?.properties && typeof selectedFeature.properties.name === "string"
+                        ? selectedFeature.properties.name
+                        : selectedFeatureId
+                          ? `ID ${selectedFeatureId}`
+                          : "Sin figura seleccionada"}
+                    </p>
+                  </div>
+                  <StatusChip label={selectedFeatureId ? "Seleccionada" : "Sin selección"} tone={selectedFeatureId ? "info" : "neutral"} />
+                </div>
+                {selectedFeature?.properties && (
+                  <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-600 dark:text-slate-400">
+                    <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 dark:border-slate-800 dark:bg-slate-950/70">
+                      Tipo: {String(selectedFeature.properties.entityType ?? "operation-area")}
+                    </span>
+                    <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 dark:border-slate-800 dark:bg-slate-950/70">
+                      Color: {String(selectedFeature.properties.color ?? "—")}
+                    </span>
+                  </div>
+                )}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedFeatureId(null)}
+                    disabled={!selectedFeatureId}
+                    className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white/90 px-3 py-2 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-200 dark:hover:border-slate-700 dark:hover:bg-slate-800"
+                  >
+                    Cancelar selección
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSetMode("delete-selection")}
+                    disabled={!selectedFeatureId}
+                    className="inline-flex items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700 transition hover:border-rose-500/30 hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-rose-400/20 dark:bg-rose-500/10 dark:text-rose-200 dark:hover:bg-rose-500/20"
+                  >
+                    Eliminar seleccionada
+                  </button>
+                </div>
               </div>
 
                 <div className="rounded-2xl border border-cyan-500/20 bg-cyan-50/80 p-4 dark:border-cyan-500/20 dark:bg-cyan-500/[0.06]" role="status" aria-live="polite">
